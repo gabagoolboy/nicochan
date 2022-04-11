@@ -1,0 +1,32 @@
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<div style="text-align:center">
+<form action="{{ action }}" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="token" value="{{ token }}">
+	<h2>Upload banner</h2>
+	<p><input type="file" name="file"></p>
+
+	<p><small>Banners must be &lt; {{ config.banner_size|filesize }} and have image dimensions {{ config.banner_width }}px x {{ config.banner_height}}px.<br/></small></p>
+
+	<p><input type="submit" value="Upload"></p>
+</form>
+<hr>
+
+<h2>Banners already in use</h2>
+<form action="{{ action }}" method="post">
+<input type="hidden" name="token" value="{{ token }}">
+<table>
+<tbody>
+{% for banner in banners %}
+	<tr>
+	{% if board.uri != '' %}
+	<td><input name="delete[]" type="checkbox" value="{{banner}}"></td><td><img src="static/banners/{{board.uri}}/{{banner}}"></td>
+	{% else %}
+	<td><input name="delete[]" type="checkbox" value="{{banner}}"></td><td><img src="static/banners_priority/{{banner}}"></td>
+	{% endif %}
+	</tr>
+{% endfor %}
+</tbody>
+</table>
+<p><input type="submit" value="Delete selected"></p>
+</form>
+</div>

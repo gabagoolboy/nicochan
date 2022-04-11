@@ -1,0 +1,89 @@
+{% if mod %}
+  <script src='main.js'></script>
+  <script src='js/jquery.min.js'></script>
+  <script src='js/mobile-style.js'></script>
+
+  <script src="js/mod/chartist.min.js"></script>
+  <link rel='stylesheet' href='stylesheets/mod/chartist.min.css'>
+{% else %}
+  <script src='{{ config.root }}/main.js'></script>
+  <script src='{{ config.root }}/js/jquery.min.js'></script>
+  <script src='{{ config.root }}/js/mobile-style.js'></script>
+
+  <script src="{{ config.root }}/js/mod/chartist.min.js"></script>
+  <link rel='stylesheet' href='{{ config.root }}/stylesheets/mod/chartist.min.css'>
+{% endif %}
+
+{% if (mod) or (public_hourly) %}
+<h2>Hourly Statistic</h2>
+<section>
+<div class="ct-chart" id="hourly"></div>
+</section>
+{% endif %}
+
+<h2>Weekly Statistics for this (and prev) week</h2>
+<section>
+<div class="ct-chart" id="week"></div>
+</section>
+
+
+<h2>View Board Spesific Stats</h2>
+<section>
+    {% if mod %}
+      <a href="?/statistics">[Full Statistics]</a>
+      {% for board in boards %}
+        <a href="?/{{board.uri}}/statistics">[{{board.uri}}]</a>
+      {% endfor %}
+    {% else %}
+      <a href="{{ config.root }}/{{ stat_filename }}">[Full Statistics]</a>
+      {% for board in boards %}
+        <a href="{{ config.root }}/{{ board.uri }}/{{ stat_filename }}">[{{board.uri}}]</a>
+      {% endfor %}
+    {% endif %}
+</section>
+
+
+
+<script type="text/javascript">{% verbatim %}
+
+{% endverbatim %}{% if (mod) or (public_hourly) %}{% verbatim %}
+var data_24h = {
+  labels: [ "AM", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+            "PM", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" ],
+  series: [
+    [{% endverbatim %}{{ statistics_24h }}{% verbatim %}]
+  ]
+};
+
+var options_24h = {
+  width: 800,
+  height: 300
+};
+
+new Chartist.Line('#hourly', data_24h, options_24h);
+{% endverbatim %}{% endif %}{% verbatim %}
+
+
+var data_week = {
+  labels: [{% endverbatim %}{{ statistics_week_labels }}{% verbatim %}],
+  series: [
+    [{% endverbatim %}{{ statistics_week_past }}{% verbatim %}],
+    [{% endverbatim %}{{ statistics_week }}{% verbatim %}]
+  ]
+};
+
+var options_week = {
+  width: 800,
+  height: 300,
+
+  seriesBarDistance: 10,
+  reverseData: true,
+  horizontalBars: true,
+  axisY: {
+    offset: 70
+  }
+};
+
+new Chartist.Bar('#week', data_week, options_week);
+
+{% endverbatim %}</script>

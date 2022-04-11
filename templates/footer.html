@@ -1,0 +1,21 @@
+<footer>
+
+    <p class="unimportant" style="margin-top:5px;text-align:center;">-&nbsp;Tinyboard&nbsp;+&nbsp;
+	<a href="https://engine.vichan.net/">vichan</a>&nbsp;+&nbsp;
+	<a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a>&nbsp;+&nbsp;
+	<a href="https://github.com/perdedora/nicochan">nicochan</a>&nbsp;{{ config.version }}
+
+        <br>Tinyboard Copyright &copy; 2010-2014 Tinyboard Development Group
+        <br><a href="https://engine.vichan.net/">vichan</a> Copyright &copy; 2012-2018 vichan-devel
+        <br><a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a> Copyright &copy; 2017-2018 NPFchan
+	<br><a href="https://github.com/perdedora/nicochan">Magalichan</a> Copyright &copy; 2021-2022 nicochan</p>
+
+    {% if config.show_timer %}
+	<p class="unimportant" style="text-align:center;">Took: {{ microtime() }}</p>
+	{% endif %}
+
+
+    {% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
+
+
+</footer>

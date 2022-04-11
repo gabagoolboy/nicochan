@@ -1,0 +1,143 @@
+{% if post and board %}
+	{% set action = '?/' ~ board ~ '/ban' ~ delete_str ~ '/' ~ post %}
+{% else %}
+	{% set action = '?/ban' %}
+{% endif %}
+
+{% if reasons %}
+<script type="text/javascript">
+$(window).load(function(){
+	{% for key, reason in reasons %}
+		$('#ResonSelectorID_{{ key }}').click(function() { populateFormJQuery('#BanFormID', $.parseJSON(data_{{ key }})); });
+		var data_{{ key }} = '{"reason":"{{ reason.reason|escape('js') }}","ban_length":"{{ reason.length|escape('js') }}"}';
+	{% endfor %}
+});
+</script>
+{% endif %}
+
+<form action="{{ action }}" method="post" id="BanFormID">
+	<input type="hidden" name="token" value="{{ token }}">
+	{% if redirect %}
+		<input type="hidden" name="redirect" value="{{ redirect|e }}">
+	{% endif %}
+	{% if post and board %}
+		<input type="hidden" name="delete" value="{% if delete %}1{% else %}0{% endif %}">
+	{% endif %}
+
+	<table>
+
+		<tr>
+			<th>
+				<label for="ip">{% trans 'IP' %} <span class="unimportant">{% trans '(or subnet)' %}</span></label>
+			</th>
+			<td>
+				{% if not hide_ip %}
+					<input type="text" name="ip" id="ip" size="30" maxlength="40" value="{{ ip|e }}">
+				{% else %}
+					<em>{% trans 'hidden' %}</em>
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<label for="ip">Unique User Cookie</span></label>
+			</th>
+			<td>
+				{% if not hide_ip %}
+					<input type="text" name="uuser_cookie" id="uuser_cookie" size="40" maxlength="40" value="{{ uusercookie|e }}">
+				{% else %}
+					<em>{% trans 'hidden' %}</em>
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<th>
+				<label for="reason">{% trans 'Reason' %}</label>
+			</th>
+			<td>
+				<textarea name="reason" id="reason" rows="5" cols="30">{{ reason|e }}</textarea>
+			</td>
+		</tr>
+		{% if post and board and not delete %}
+			<tr>
+				<th>
+					<label for="reason">{% trans 'Message' %}</label>
+				</th>
+				<td>
+					<input type="checkbox" id="public_message" name="public_message"{% if config.mod.check_ban_message %} checked{% endif %}>
+					<input type="text" name="message" id="message" size="35" maxlength="200" value="{{ config.mod.default_ban_message|e }}">
+					<span class="unimportant">({% trans 'public; attached to post' %})</span>
+					<script type="text/javascript">
+						document.getElementById('message').disabled = !document.getElementById('public_message').checked;
+						document.getElementById('public_message').onchange = function() {
+							document.getElementById('message').disabled = !this.checked;
+						}
+					</script>
+				</td>
+			</tr>
+		{% endif %}
+		<tr>
+			<th>
+				<label for="length">{% trans 'Length' %}</label>
+			</th>
+			<td>
+				<input type="text" name="ban_length" id="ban_length" size="20" maxlength="40">
+					<span class="unimportant">(eg. "2d1h30m" or "2 days")</span></td>
+			</tr>
+		<tr>
+			<th>
+				<label for="options">{% trans 'Options' %}</label>
+				</th>
+				<td>
+					<label><input type="checkbox" id="raid" name="raid">Esconde texto</label>
+					<label><input type="checkbox" id="appeal" name="appeal">Não permitir apelos</label>
+
+				</td>
+			</tr>
+		</tr>
+			<th>{% trans 'Board' %}</th>
+			<td>
+				<ul style="list-style:none;padding:2px 5px">
+					{% if mod|hasPermission(config.mod.ban_all_boards) %}
+						<li>
+							<input type="radio" name="board" value="*" id="ban-allboards" checked>
+							<label style="display:inline" for="ban-allboards">
+								<em>{% trans 'all boards' %}</em>
+							</label>
+						</li>
+					{% endif %}
+
+					{% for board in boards %}
+						<li>
+							<input type="radio" name="board" value="{{ board.uri }}" id="ban-board-{{ board.uri }}">
+							<label style="display:inline" for="ban-board-{{ board.uri }}">
+								{{ config.board_abbreviation|format(board.uri) }} - {{ board.title|e }}
+							</label>
+						</li>
+					{% endfor %}
+				</ul>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input name="new_ban" type="submit" value="{% trans 'New Ban' %}"></td>
+		</tr>
+	</table>
+</form>
+
+{% if reasons %}
+<h3>Predefined Ban Reasons:</h3>
+
+<table class="ReasonTableForm">
+	<tr>
+		<td>Length</td>
+		<td>Reason</td>
+	</tr>
+	{% for key, reason in reasons %}
+		<tr id="ResonSelectorID_{{ key }}">
+			<td>{% if not reason.length %}forever{% else %}{{ reason.length|e }}{% endif %}</td>
+			<td>{{ reason.reason|e }}</td>
+		</tr>
+	{% endfor %}
+</table>
+{% endif %}

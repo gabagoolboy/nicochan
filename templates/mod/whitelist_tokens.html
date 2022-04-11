@@ -1,0 +1,18 @@
+<fieldset>
+  <legend>All Tokens</legend>
+  <table class="modlog">
+    <thead>
+      <th>ID</th>
+      <th>IP</th>
+      <th>IP Hash</th>
+    </thead>
+    <tbody>
+		{% for token in wl_tokens %}
+    <tr>
+	    <th>{{ token.id }}</th><td>{{ token.ip }}</td><td><a href="?/IP/{{ token.ip_hash }}">{{ token.ip_hash}}</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</fieldset>
+{% include 'mod/whitelist_token_gen.html' %}

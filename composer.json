@@ -1,0 +1,67 @@
+{
+    "name": "perdora/nicochan",
+    "description": "Vichan is a light-weight, fast, highly configurable and user-friendly imageboard software package released under a non-restrictive open-source license. It is written in PHP and has few dependencies.",
+    "type": "project",
+    "config": {
+        "platform": {
+            "php": "7.3.0"
+        }
+    },
+    "require": {
+	"ext-pdo": "*",
+	"ext-gd": "*",
+        "gettext/gettext": "^4.4",
+        "twig/twig": "^2.9",
+        "mrclay/minify": "^3.0",
+	"lifo/ip": "^1.0",
+	"dapphp/securimage": "^4.0",
+        "ezyang/htmlpurifier": "^4.14",
+	"phpmyadmin/twig-i18n-extension": "^4.0",
+	"geoip2/geoip2": "^2.0"
+    },
+    "autoload": {
+        "classmap": ["inc/"],
+        "files": [
+            "inc/bootstrap.php",
+            "inc/display.php",
+            "inc/template.php",
+            "inc/database.php",
+            "inc/events.php",
+            "inc/api.php",
+            "inc/mod/auth.php",
+            "inc/functions.php",
+	    "inc/shadow-delete.php"
+        ]
+    },
+    "license": "MIT",
+    "authors": [
+	{
+            "name": "savetheinternet",
+            "homepage": "https://github.com/savetheinternet"
+        },
+        {
+            "name": "czaks",
+            "homepage": "https://github.com/czaks"
+        },
+        {
+            "name": "ctrlcctrlv",
+            "homepage": "https://github.com/ctrlcctrlv"
+        },
+        {
+            "name": "h00j",
+            "homepage": "https://github.com/h00j"
+        },
+        {
+            "name": "Daniel Saunders",
+            "email": "dsaunders@dansaunders.me"
+        }
+    ],
+    "suggest": {
+        "ext-imagick": "Allows the use of ImageMagick for image handling",
+        "ext-openssl": "Allows for enhanced security features through OpenSSL",
+        "ext-apcu": "Allows the use of APCu for cache storage",
+        "ext-redis": "Allows the use of Redis for cache storage",
+        "ext-memcached": "Allows the use of Memcached for cache storage",
+        "ext-xcache": "Allows the use of XCache for cache storage"
+    }
+}

@@ -1,0 +1,17 @@
+
+Solve this captcha in order to proceed.
+<form id="whitelist_form" enctype="multipart/form-data" action="/post.php" method="post" style="margin-bottom: 0em; padding-top: 15px;">
+	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+	<script src="/js/whitelist-dialog.js" async defer></script>
+	<style>
+	#whitelist_form div.h-captcha > div {
+	   margin: 0px auto;
+	}
+	button.alert_button {
+		display: none;
+	}
+	</style>
+
+	<div class="h-captcha" data-sitekey="{{ config.hcaptcha_public }}"></div>
+	<input id="whitelist_submit" name="whitelist" value="Continue" type="submit" style="margin-top: 15px;">
+</form>

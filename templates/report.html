@@ -1,0 +1,18 @@
+<form action="{{ config.post_url }}" method="post" id="report_form">
+	{% if error %}
+		<div class="error">
+			<strong>{{ error|e }}</strong>
+		</div>
+	{% endif %}
+	<input type="hidden" name="board" value="{{ board.uri }}">
+	<input type="hidden" name="{{ post|e }}" value="1">
+	<p>{% trans %}Enter reason below...{% endtrans %}</p>
+	<input type="text" id="reason" name="reason" value="{{ reason_prefill|e|addslashes }}">
+	{% if config.report_captcha %}
+		<p>{% trans %}To submit your report, please fill out the CAPTCHA below.{% endtrans %}</p>
+		{{ captcha['html'] }}<br/>
+		<input class="captcha_text" name="captcha_text" size="25" maxlength="6" autocomplete="off" type="text" value="">
+		<input class="captcha_cookie" name="captcha_cookie" type="hidden" autocomplete="off" value="{{ captcha['cookie']|e }}"><br/>
+	{% endif %}
+	<input name="report" value="{% trans %}Submit{% endtrans %}" type="submit">
+</form>

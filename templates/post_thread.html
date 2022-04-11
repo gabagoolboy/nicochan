@@ -1,0 +1,148 @@
+{% apply spaceless %}
+{# tabs and new lines will be ignored #}
+<div class="thread {% if post.shadow %}shadow-thread{% endif %}" id="thread_{{ post.id }}" data-board="{{ board.uri }}">
+{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
+
+{% include 'post/fileinfo.html' %}
+<div class="post op" id="op_{{ post.id }}" {%if post.num_files > 1%}style='clear:both'{%endif%}><p class="intro">
+	{% if not post.shadow %}<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />{% endif %}
+	<label for="delete_{{ post.id }}">
+		{% include 'post/subject.html' %}&nbsp;
+		{% include 'post/name.html' %}&nbsp;
+		{% include 'post/ip.html' %}
+		{% include 'post/flag.html' %}&nbsp;
+		{% include 'post/time.html' %}&nbsp;
+	</label>
+	{% include 'post/poster_id.html' %}&nbsp;
+	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', '50') }}{% else %}{{ post.link }}{% endif %}">No.</a>
+	<a class="post_no" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', '50') }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
+	{% if post.sticky %}
+		{% if config.font_awesome %}
+			<i class="fa fa-thumb-tack" title="Sticky"></i>
+		{% else %}
+			<img class="icon" title="Sticky" src="{{ config.image_sticky }}" alt="Sticky" />
+		{% endif %}
+	{% endif %}
+	{% if post.locked %}
+		{% if config.font_awesome %}
+			<i class="fa fa-lock" title="Locked"></i>
+		{% else %}
+			<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
+		{% endif %}
+	{% endif %}
+	{% if post.bumplocked and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
+		{% if config.font_awesome %}
+			<i class="fa fa-anchor" title="Bumplocked"></i>
+		{% else %}
+			<img class="icon" title="Bumplocked" src="{{ config.image_bumplocked }}" alt="Bumplocked" />
+		{% endif %}
+	{% endif %}
+	{% if post.cycle %}
+		{% if config.font_awesome %}
+			<i class="fa fa-refresh" title="Cyclical"></i>
+		{% else %}
+			<img class="icon" title="Cyclical" src="{{ config.image_sticky }}" alt="Cyclical" />
+		{% endif %}
+	{% endif %}
+	{% if index %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}Reply{% endtrans %}]</a>
+	{% endif %}
+	{% if not post.shadow %}
+		{% if isnoko50 %}
+			<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}View All{% endtrans %}]</a>
+		{% endif %}
+		{% if hasnoko50 and not isnoko50 %}
+			{% set lastcount = config.noko50_count %}
+			<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
+		{% endif %}
+	{% endif %}
+
+	{% include 'post/post_controls.html' %}
+	</p>
+	<div class="body">
+		{% endapply %}{% if index %}{{ post.body|truncate_body(post.link) }}{% else %}{{ post.body }}{% endif %}{% apply spaceless %}
+		{% if post.modifiers['ban message'] %}
+			{{ config.mod.ban_message|format(post.modifiers['ban message']) }}
+		{% endif %}
+		{% if post.modifiers['warning message'] %}
+			{{ config.mod.warning_message|format(post.modifiers['warning message']) }}
+		{% endif %}
+		{% if post.modifiers['bantz message'] %}
+			{{ config.mod.bantz_message|format(post.modifiers['bantz message']) }}
+		{% endif %}
+	</div>
+	{% if post.omitted or post.omitted_images %}
+		<span class="omitted">
+			{% if post.omitted %}
+				{% trans %}
+					1 post
+				{% plural post.omitted %}
+					{{ count }} posts
+				{% endtrans %}
+				{% if post.omitted_images %}
+					 {% trans %}and{% endtrans %}&nbsp;
+				{% endif %}
+			{% endif %}
+			{% if post.omitted_images %}
+				{% trans %}
+					1 image reply
+				{% plural post.omitted_images %}
+					{{ count }} image replies
+				{% endtrans %}
+			{% endif %} {% trans %}omitted. Click reply to view.{% endtrans %}
+		</span>
+	{% endif %}
+{% if not index %}
+{% endif %}
+</div>{% endapply %}
+{% set hr = post.hr %}
+
+
+{% set post_shadow = post.shadow %}
+{% set post_omitted = post.omitted %}
+{% set post_omitted_images = post.omitted_images %}
+
+
+{% for post in post.posts %}
+	{% include 'post_reply.html' %}
+{% endfor %}
+<br class="clear"/>
+
+
+
+{% if not post_shadow %}
+
+
+	{% if isnoko50 %}
+		{% if post_omitted or post_omitted_images %}<span class="omitted">{% endif %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post) }}">[{% trans %}View All{% endtrans %}]</a>
+		{% if post_omitted or post_omitted_images %}
+			 (
+			{% if post_omitted %}
+				{% trans %}
+					1 post
+				{% plural post_omitted %}
+					{{ count }} posts
+				{% endtrans %}
+				{% if post_omitted_images %}
+					 {% trans %}and{% endtrans %}
+				{% endif %}
+			{% endif %}
+			{% if post_omitted_images %}
+				{% trans %}
+					1 image reply
+				{% plural post_omitted_images %}
+					{{ count }} image replies
+				{% endtrans %}
+			{% endif %} {% trans %}omitted{% endtrans %})</span>
+		{% endif %}
+	{% endif %}
+	{% if hasnoko50 and not isnoko50 %}
+		{% set lastcount = config.noko50_count %}
+		<a href="{{ post.root }}{{ board.dir }}{{ config.dir.res }}{{ link_for(post, true) }}">[{% trans %}Last 1 Post{% plural lastcount %}Last {{ count }} Posts{% endtrans %}]</a>
+	{% endif %}
+
+{% endif %}
+
+{% if hr %}<hr/>{% endif %}
+</div>
