@@ -1190,7 +1190,7 @@ function handle_appeal(){
 	$query->bindValue(':message', substr($_POST['appeal'], 0, $config['ban_appeals_max_appeal_text_len']));
 	$query->execute() or error(db_error($query));
 
-	displayBan($ban, $ban['appealable']);
+	displayBan($ban);
 
 }
 
