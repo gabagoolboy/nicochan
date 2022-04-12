@@ -157,7 +157,7 @@
 				{% else %}
 					<p>
 						{% trans %}You last appealed this ban on{% endtrans %}
-						<strong>{{ denied_appeals[denied_appeals|length - 1]|strftime(config.ban_date) }}</strong>
+						<strong>{{ denied_appeals[denied_appeals|length - 1].time|strftime(config.ban_date) }}</strong>
 						{% trans %}and it was denied.{% endtrans %}
 					</p>
 					<p>{% trans %}You may appeal this ban again. Please enter your reasoning below.{% endtrans %}</p>
