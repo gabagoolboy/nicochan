@@ -926,10 +926,10 @@ function displayBan($ban) {
 	$pending_appeal = false;
 
 	if ($config['ban_appeals']) {
-		$query = query("SELECT `time`, `denied` FROM ``ban_appeals`` WHERE `ban_id` = " . (int)$ban['id']) or error(db_error());
+		$query = query("SELECT `time`, `denied`, `denial_reason` FROM ``ban_appeals`` WHERE `ban_id` = " . (int)$ban['id']) or error(db_error());
 		while ($ban_appeal = $query->fetch(PDO::FETCH_ASSOC)) {
 			if ($ban_appeal['denied']) {
-				$denied_appeals[] = $ban_appeal['time'];
+				$denied_appeals[] = ['time' => $ban_appeal['time'], 'reason' => substr($ban_appeal['denial_reason'], 1, -1)];
 			} else {
 				$pending_appeal = $ban_appeal['time'];
 			}

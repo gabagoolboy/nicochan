@@ -1164,7 +1164,7 @@ function handle_appeal(){
 	if (!isset($ban))
 		error(_("That ban doesn't exist or is not for you."));
 
-	if ((int)$ban['appealable'] !== 1)
+	if (!(bool)$ban['appealable'])
 		error("Apelo desativado para esse ban");
 
 
@@ -1184,7 +1184,7 @@ function handle_appeal(){
 			error(_("There is already a pending appeal for this ban."));
 	}
 
-	$query = prepare("INSERT INTO ``ban_appeals`` VALUES (NULL, :ban_id, :time, :message, 0)");
+	$query = prepare("INSERT INTO ``ban_appeals`` VALUES (NULL, :ban_id, :time, :message, 0, NULL)");
 	$query->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
 	$query->bindValue(':message', substr($_POST['appeal'], 0, $config['ban_appeals_max_appeal_text_len']));

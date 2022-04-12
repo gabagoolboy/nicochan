@@ -548,7 +548,11 @@ class Bans {
 		$query->bindValue(':cookie', $uuser_cookie);
 		$query->bindValue(':mod', $mod_id);
 		$query->bindValue(':time', time());
-		$query->bindValue(':appeal', ($appeal ? 1 : 0), PDO::PARAM_INT);
+
+		if($appeal)
+			$query->bindValue(':appeal', true, PDO::PARAM_INT);
+		else
+			$query->bindValue(':appeal', false, PDO::PARAM_INT);
 
 		if ($reason !== '') {
 			$reason = escape_markup_modifiers($reason);

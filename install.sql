@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS `bans` (
   `reason` text,
   `seen` tinyint(1) NOT NULL,
   `post` blob,
+  `appealable` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `expires` (`expires`),
   KEY `ipstart` (`ipstart`,`ipend`),
@@ -124,6 +125,7 @@ CREATE TABLE IF NOT EXISTS `ban_appeals` (
   `time` int(10) UNSIGNED NOT NULL,
   `message` text NOT NULL,
   `denied` tinyint(1) NOT NULL,
+  `denial_reason` text,
   PRIMARY KEY (`id`),
   KEY `ban_id` (`ban_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

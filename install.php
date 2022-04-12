@@ -796,6 +796,7 @@ if (file_exists($config['has_installed'])) {
 				); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;') or error(db_error());
 			query('ALTER TABLE ``custom_geoip`` MODIFY `country` varchar(6) NOT NULL;');
 			query('ALTER TABLE ``bans`` ADD `appealable` tinyint(1) DEFAULT 1 NOT NULL AFTER `post`;');
+			query('ALTER TABLE ``ban_appeals`` ADD `denial_reason` text AFTER `denied`;');
 			foreach($boards as &$board){
 				query(sprintf('ALTER TABLE ``posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
 				query(sprintf('ALTER TABLE ``shadow_posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());

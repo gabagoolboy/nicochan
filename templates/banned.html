@@ -120,21 +120,39 @@
 		{% elseif denied_appeals|length >= config.ban_appeals_max %}
 			{% if denied_appeals|length == 1 %}
 				<p>
-					{% trans %}You appealed this ban on{% endtrans %}
-					<strong>{{ denied_appeals[0]|strftime(config.ban_date) }}</strong>
-					{% trans %}and it was denied. You may not appeal this ban again.{% endtrans %}
+					{% trans %}You appealed this ban on{% endtrans %}&nbsp;
+					<strong>{{ denied_appeals[0].time|strftime(config.ban_date) }}</strong>
+					&nbsp;{% trans %}and it was denied. You may not appeal this ban again.{% endtrans %}
 				</p>
+				{% if denied_appeals[0].reason %}
+					<hr/>
+						<h4>Resposta da moderadora: </h4>
+						<p>{{ denied_appeals[0].reason }}</p>
+					{% endif %}
 			{% else %}
 				<p>{% trans %}You have submitted the maximum number of ban appeals allowed. You may not appeal this ban again.{% endtrans %}</p>
+				{% if denied_appeals[denied_appeals|length - 1].reason %}
+					<hr/>
+						<h4>Resposta da moderadora: </h4>
+						<p>{{ denied_appeals[denied_appeals|length - 1].reason }}</p>
+					{% endif %}
 			{% endif %}
 		{% else %}
 			{% if denied_appeals|length %}
 				{% if denied_appeals|length == 1 %}
 					<p>
 					{% trans %}You appealed this ban on{% endtrans %}&nbsp;
-						<strong>{{ denied_appeals[0]|strftime(config.ban_date) }}</strong>
-						{% trans %}and it was denied.{% endtrans %}
+						<strong>{{ denied_appeals[0].time|strftime(config.ban_date) }}</strong>
+						&nbsp;{% trans %}and it was denied.{% endtrans %}
+
 					</p>
+					{% if denied_appeals[0].reason %}
+						<hr/>
+						<h4>Resposta da moderadora: </h4>
+						<p>{{ denied_appeals[0].reason }}</p>
+						<hr/>
+					{% endif %}
+
 					<p>{% trans %}You may appeal this ban again. Please enter your reasoning below.{% endtrans %}</p>
 				{% else %}
 					<p>

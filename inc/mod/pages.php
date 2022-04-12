@@ -1300,7 +1300,7 @@ function mod_bans_json() {
 }
 
 function mod_ban_appeals() {
-	global $config, $board;
+	global $config, $board, $pdo;
 
 	if (!hasPermission($config['mod']['view_ban_appeals']))
 		error($config['error']['noaccess']);
@@ -1328,7 +1328,9 @@ function mod_ban_appeals() {
 			query("DELETE FROM ``ban_appeals`` WHERE `id` = " . $ban['id']) or error(db_error());
 		} else {
 			modLog('Denied ban appeal #' . $ban['id'] . ' for ' . $ban['mask']);
-			query("UPDATE ``ban_appeals`` SET `denied` = 1 WHERE `id` = " . $ban['id']) or error(db_error());
+			query("UPDATE ``ban_appeals`` SET `denied` = 1 " .
+				(isset($_POST['deny-reason']) ? ', `denial_reason` = "' . $pdo->quote($_POST['deny-reason']) . '"' : "") .
+				" WHERE `id` = " . $ban['id']) or error(db_error());
 		}
 
 		header('Location: ?/ban-appeals', true, $config['redirect_http']);
