@@ -110,8 +110,6 @@ function mod_dashboard() {
 
 	$args['logout_token'] = make_secure_link_token('logout');
 
-	$args['current_user'] = &$mod['username'];
-
 	mod_page(_('Dashboard'), 'mod/dashboard.html', $args);
 }
 
@@ -1184,18 +1182,16 @@ function mod_announcements() {
 	if (!hasPermission($config['mod']['announcements']))
 		error($config['error']['noaccess']);
 
+	require_once 'inc/announcements.php';
 
 	// Add, Edit, or Delete Announcement
 	if (isset($_POST['add_announcement'], $_POST['announcement']) && $_POST['announcement'] != '') {
-		require_once 'inc/announcements.php';
 		Announcements::new_announcement($_POST['announcement']);
 	}
 	else if (isset($_POST['edit_announcement'], $_POST['announcement'], $_POST['id']) && $_POST['announcement'] != '') {
-		require_once 'inc/announcements.php';
 		Announcements::edit_announcement($_POST['id'], $_POST['announcement']);
 	}
 	else if (isset($_POST['delete_announcement'], $_POST['id'])) {
-		require_once 'inc/announcements.php';
 		Announcements::delete_announcement($_POST['id']);
 	}
 
@@ -1217,7 +1213,7 @@ function mod_announcements_json() {
 	// Compress the json for faster loads
 	if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) ob_start("ob_gzhandler");
 
-	Announcements::stream_json(false, !hasPermission($config['mod']['announcements']));
+	Announcements::stream_json(false, !hasPermission($config['mod']['announcements']), $config['announcements']['date_format']);
 }
 
 function mod_ban() {

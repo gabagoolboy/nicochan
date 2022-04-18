@@ -63,7 +63,7 @@ $(document).ready(function(){
 		}
 	}
 
-	var do_localtime = function(elem) {	
+	var do_localtime = function(elem) {
 		var times = elem.getElementsByTagName('time');
 		var currentTime = Date.now();
 
@@ -74,13 +74,13 @@ $(document).ready(function(){
 			times[i].setAttribute('data-local', 'true');
 
 			if (!localStorage.show_relative_time || localStorage.show_relative_time === 'false') {
-				times[i].innerHTML = dateformat(iso8601(t));
+			//	times[i].innerHTML = dateformat(iso8601(t));
 				times[i].setAttribute('title', timeDifference(currentTime, postTime.getTime()));
 			} else {
 				times[i].innerHTML = timeDifference(currentTime, postTime.getTime());
 				times[i].setAttribute('title', dateformat(iso8601(t)));
 			}
-		
+
 		}
 	};
 

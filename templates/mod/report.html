@@ -4,7 +4,7 @@
 	<br>
 	{% trans 'Reason' %}: {{ report.reason }}
 	<br>
-	{% trans 'Report date' %}: {{ report.time|strftime(config.post_date) }}
+	{% trans 'Report date' %}: {{ report.time|strftime }}
 	<br>
 	{% if mod|hasPermission(config.mod.show_ip, report.board) %}
 		{% trans 'Reported by' %}: <a href="?/IP/{{ report.ip }}">{{ report.ip }}</a>

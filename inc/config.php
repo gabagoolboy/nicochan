@@ -1144,7 +1144,7 @@
 	$config['announcements']['page'] = true;
 
 	// Same as above, but used for Global Announcements pages and lists.
-	$config['announcements']['date_format'] = '%m/%d/%y';
+	$config['announcements']['date_format'] = 'Y-m-d';
 
 	// Filenames for json files
 	$config['announcements']['file_json'] = "announcements.json";
@@ -1164,10 +1164,17 @@
 	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
 	// The format string passed to strftime() for displaying dates.
-	// http://www.php.net/manual/en/function.strftime.php
-	$config['post_date'] = '%m/%d/%y (%a) %H:%M:%S';
-	// Same as above, but used for "you are banned' pages.
-	$config['ban_date'] = '%A %e %B, %Y';
+	// https://framework.zend.com/manual/1.12/en/zend.date.constants.html#zend.date.constants.selfdefinedformats
+	// Some aren't avaiable, but this is the best list I could find
+	$config['post_date'] = 'MM/dd/yy (EEE) HH:mm:ss';
+	// The format string passed to JavaScript's strfdate() for displaying local dates.
+	// https://www.php.net/manual/en/function.strftime.php
+	$config['post_date_js'] = '%m/%d/%y (%a) %T';
+	// Same as above, but used for catalog tooltips.
+	$config['catalog_date'] = 'M d H:i';
+	// Same as above, but used for 'you are banned' pages.
+	$config['ban_date'] = 'l j F, Y';
+
 
 	// The names on the post buttons. (On most imageboards, these are both just "Post").
 	$config['button_newtopic'] = _('New Topic');

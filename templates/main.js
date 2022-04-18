@@ -404,7 +404,7 @@ function ready() {
 
 
 var hideAnnouncements = 0;
-var post_date = "{{ config.post_date }}";
+var post_date = "{{ config.post_date_js }}";
 var max_images = {{ config.max_images }};
 if (typeof active_page === "undefined") {
 	active_page = "page";

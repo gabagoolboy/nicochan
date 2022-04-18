@@ -34,7 +34,7 @@
 					{{ note.body }}
 				</td>
 				<td class="minimal">
-					{{ note.time|strftime(config.post_date) }}
+					{{ note.time|strftime }}
 				</td>
 			</tr>
 		{% endfor %}
@@ -85,7 +85,7 @@
 					{% endif %}
 				</td>
 				<td style="white-space: nowrap">
-					<span title="{{ ban.created|strftime(config.post_date) }}">
+					<span title="{{ ban.created|strftime }}">
 						{{ ban.created|ago }} ago
 					</span>
 				</td>
@@ -100,7 +100,7 @@
 					{% if ban.expires == 0 %}
 						<em>{% trans 'never' %}</em>
 					{% else %}
-						{{ ban.expires|strftime(config.post_date) }}
+						{{ ban.expires|strftime }}
 						{% if ban.expires > time() %}
 							 <small>(in {{ ban.expires|until }})</small>
 						{% endif %}
@@ -159,7 +159,7 @@
 					<a href="?/IP/{{ log.ip }}">{{ log.ip }}</a>
 				</td>
 				<td class="minimal">
-					<span title="{{ log.time|strftime(config.post_date) }}">{{ log.time|ago }}</span>
+					<span title="{{ log.time|strftime }}">{{ log.time|ago }}</span>
 				</td>
 				<td class="minimal">
 					{% if log.board %}

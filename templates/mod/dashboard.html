@@ -1,4 +1,4 @@
-<p class="unimportant" style="text-align: center; margin-top: -15px"><strong>Logada como: {{ current_user }}</strong></p>
+<p class="unimportant" style="text-align: center; margin-top: -15px"><strong>Logada como: {{ mod.username }}</strong></p>
 <fieldset>
 	<legend>{% trans 'Boards' %}</legend>
 
@@ -60,7 +60,7 @@
 										<em>deleted?</em>
 									{% endif %}
 									at
-									{{ post.time|strftime(config.post_date) }}
+									{{ post.time|strftime }}
 								</small>
 							</li>
 						{% endfor %}

@@ -41,13 +41,13 @@
 		</tr>
 		<tr>
 			<th>{% trans 'Set' %}</th>
-			<td>{{ ban.created|strftime(config.post_date) }}</td>
+			<td>{{ ban.created|strftime }}</td>
 		</tr>
 		<tr>
 			<th>{% trans 'Expires' %}</th>
 			<td>
 				{% if ban.expires %}
-					{{ ban.expires|strftime(config.post_date) }}
+					{{ ban.expires|strftime }}
 				{% else %}
 					<em>{% trans 'never' %}</em>
 				{% endif %}
@@ -78,7 +78,7 @@
 	<table style="margin: 10px 0">
 		<tr>
 			<th>{% trans 'Appeal time' %}</th>
-			<td>{{ ban.time|strftime(config.post_date) }}</td>
+			<td>{{ ban.time|strftime }}</td>
 		</tr>
 		<tr>
 			<th>{% trans 'Appeal reason' %}</th>

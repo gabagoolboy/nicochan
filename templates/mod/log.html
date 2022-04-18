@@ -33,7 +33,7 @@
 				{% endif %}
 			</td>
 			<td class="minimal">
-				<span title="{{ log.time|strftime(config.post_date) }}">{{ log.time|ago }}</span>
+				<span title="{{ log.time|strftime }}">{{ log.time|ago }}</span>
 			</td>
 			<td class="minimal">
 				{% if log.board %}

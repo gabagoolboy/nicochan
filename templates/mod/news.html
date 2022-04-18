@@ -53,7 +53,7 @@
 				<em>{% trans 'no subject' %}</em>
 			{% endif %}
 			<small class="unimportant">
-				&nbsp;&mdash;&nbsp; {% trans 'by' %} {{ post.name }} {% trans 'at' %} {{ post.time|strftime(config.post_date) }}
+				&nbsp;&mdash;&nbsp; {% trans 'by' %} {{ post.name }} {% trans 'at' %} {{ post.time|strftime }}
 			</small>
 		</h2>
 		<p>

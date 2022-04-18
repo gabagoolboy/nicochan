@@ -160,8 +160,23 @@ function twig_push_filter($array, $value) {
 	return $array;
 }
 
-function twig_strftime_filter($date, $format) {
-	return gmstrftime($format, $date);
+function twig_strftime_filter($date, $format = false) {
+	global $config;
+
+	if (isset($format) && $format)
+		return gmdate($format, $date);
+
+	$fmt = new IntlDateFormatter(
+		$config['locale'],
+		null,
+		null,
+		$config['timezone'],
+		null,
+		$config['post_date']
+	);
+
+	$dt = new DateTime("@$date");
+	return $fmt->format($dt);
 }
 
 function twig_hasPermission_filter($mod, $permission, $board = null) {

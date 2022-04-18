@@ -48,7 +48,7 @@
 							{{ note.body }}
 						</td>
 						<td class="minimal">
-							{{ note.time|strftime(config.post_date) }}
+							{{ note.time|strftime }}
 						</td>
 						{% if mod|hasPermission(config.mod.remove_notes) %}
 							<td class="minimal">
@@ -176,13 +176,13 @@
 					</tr>
 					<tr>
 						<th>{% trans 'Set' %}</th>
-						<td>{{ ban.created|strftime(config.post_date) }}</td>
+						<td>{{ ban.created|strftime }}</td>
 					</tr>
 					<tr>
 						<th>{% trans 'Expires' %}</th>
 						<td>
 							{% if ban.expires %}
-								{{ ban.expires|strftime(config.post_date) }}
+								{{ ban.expires|strftime }}
 							{% else %}
 								<em>{% trans 'never' %}</em>
 							{% endif %}
@@ -253,7 +253,7 @@
 						{% endif %}
 					</td>
 					<td class="minimal">
-						<span title="{{ log.time|strftime(config.post_date) }}">{{ log.time|ago }}</span>
+						<span title="{{ log.time|strftime }}">{{ log.time|ago }}</span>
 					</td>
 					<td class="minimal">
 						{% if log.board %}

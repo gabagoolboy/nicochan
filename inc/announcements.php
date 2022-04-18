@@ -8,12 +8,12 @@ class Announcements {
 
     static public function new_announcement($announcement, $mod_id = false) {
 		global $mod, $config;
-		
+
 		if ($mod_id === false) {
 			$mod_id = isset($mod['id']) ? $mod['id'] : -1;
 		}
 
-        
+
 		$query = prepare("INSERT INTO ``announcements`` VALUES (NULL, :mod, :time, :text)");
 		$query->bindValue(':mod', $mod_id);
         $query->bindValue(':time', time());
@@ -25,8 +25,8 @@ class Announcements {
 			error(sprintf($config['error']['required'], "Announcement"));
 
 		$query->execute() or error(db_error($query));
-		
-        
+
+
 		modLog("Created a new Annoucement: " . utf8tohtml($announcement));
         self::RebuildAnnouncementPages();
     }
@@ -35,7 +35,7 @@ class Announcements {
 
     static public function edit_announcement($id, $announcement) {
 		global $mod, $config;
-		
+
 		$query = prepare(sprintf("UPDATE ``announcements`` SET `text` = :text WHERE `id` = %d", (int)$id));
         if ($announcement !== '') {
 			$teannouncementxt = escape_markup_modifiers($announcement);
@@ -43,7 +43,7 @@ class Announcements {
 			$query->bindValue(':text', $announcement);
 		} else
 			error(sprintf($config['error']['required'], "Announcement"));
-        
+
 		$query->execute() or error(db_error($query));
 
 
@@ -81,7 +81,7 @@ class Announcements {
             // Generate Page for full list of Announcements
             $announcement_page = Element('page.html', array(
                                 'config' => $config,
-                                'mod' => false,  
+                                'mod' => false,
                                 'hide_dashboard_link' => true,
                                 'boardlist' => createBoardList(false),
                                 'title' => _("Announcements"),
@@ -99,8 +99,8 @@ class Announcements {
 
 
 
-	static public function stream_json($out = false, $filter_staff = false, $date_format = "%m/%d/%Y", $count = false) {
-        $query = query("SELECT ``announcements``.*, `username` FROM ``announcements`` 
+	static public function stream_json($out = false, $filter_staff = false, $date_format = false, $count = false) {
+        $query = query("SELECT ``announcements``.*, `username` FROM ``announcements``
                         LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`
                         ORDER BY `date` DESC" . (($count === false)?"":" LIMIT " . (int)$count)) or error(db_error($query));
         $announcements = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -116,7 +116,10 @@ class Announcements {
             if($filter_staff)
                 $announce['username'] = '?';
 
-            $announce['date_formated'] = strftime($date_format, $announce['date']);
+	    if(!$date_format)
+		    $date_format = 'Y-m-d';
+
+            $announce['date_formated'] = gmdate($date_format, $announce['date']);
 
             $json = json_encode($announce);
 			$out ? fputs($out, $json) : print($json);
@@ -132,7 +135,11 @@ class Announcements {
 
 
     // Returns json content to be written to json file.
-    static public function gen_public_json($date_format = "%m/%d/%Y", $count = false) {
+    static public function gen_public_json($date_format = false, $count = false) {
+
+	if(!$date_format)
+		$date_format = 'Y-m-d';
+
         ob_start();
         self::stream_json(false, true, $date_format, $count);
         $out = ob_get_contents();
