@@ -1300,7 +1300,7 @@ function mod_bans_json() {
 }
 
 function mod_ban_appeals() {
-	global $config, $board, $pdo;
+	global $config, $board;
 
 	if (!hasPermission($config['mod']['view_ban_appeals']))
 		error($config['error']['noaccess']);
@@ -1327,10 +1327,20 @@ function mod_ban_appeals() {
 			Bans::delete($ban['ban_id'], true);
 			query("DELETE FROM ``ban_appeals`` WHERE `id` = " . $ban['id']) or error(db_error());
 		} else {
-			modLog('Denied ban appeal #' . $ban['id'] . ' for ' . $ban['mask']);
-			query("UPDATE ``ban_appeals`` SET `denied` = 1 " .
-				(isset($_POST['deny-reason']) ? ', `denial_reason` = "' . $pdo->quote($_POST['deny-reason']) . '"' : "") .
-				" WHERE `id` = " . $ban['id']) or error(db_error());
+			$checkDenial = isset($_POST['deny-reason']) && !empty($_POST['deny-reason']);
+
+			$query = prepare("UPDATE ``ban_appeals`` SET `denied` = 1 " .
+				(($checkDenial) ? ', `denial_reason` = :denial_reason': "") .
+				" WHERE `id` = :ban_id") or error(db_error());
+
+			if ($checkDenial)
+				$query->bindValue(':denial_reason', $_POST['deny-reason'], PDO::PARAM_STR);
+
+			$query->bindValue(':ban_id', $ban['id'], PDO::PARAM_INT);
+			$query->execute() or error(db_error());
+
+			modLog('Denied ban appeal #' . $ban['id'] . ' for ' . $ban['mask'] .
+				(($checkDenial) ? " and replied with " . utf8tohtml($_POST['deny-reason']) : ''));
 		}
 
 		header('Location: ?/ban-appeals', true, $config['redirect_http']);
