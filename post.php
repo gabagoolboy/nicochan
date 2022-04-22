@@ -498,7 +498,7 @@ function handle_post(){
 	$post['subject'] = $_POST['subject'];
 	$post['email'] = str_replace(' ', '%20', htmlspecialchars($_POST['email']));
 	$post['body'] = $_POST['body'];
-	$post['password'] = $_POST['password'];
+	$post['password'] = sha256Salted($_POST['password']);
 	$post['has_file'] = (!isset($post['embed']) && (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0));
 
 
@@ -655,7 +655,7 @@ function handle_post(){
 			error($config['error']['toolong_body']);
 		if (mb_strlen($post['body']) <= $config['min_body'] && $post['op'])
 			error(sprintf(_('OP must be at least %d chars.'), $config['min_body']));
-		if (mb_strlen($post['password']) > 20)
+		if (mb_strlen($post['password']) > 64)
 			error(sprintf($config['error']['toolong'], 'password'));
 
 	wordfilters($post['body']);

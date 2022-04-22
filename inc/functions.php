@@ -1266,7 +1266,7 @@ function post(array $post) {
 	$query->bindValue(':body', $post['body']);
 	$query->bindValue(':body_nomarkup', $post['body_nomarkup']);
 	$query->bindValue(':time', isset($post['time']) ? $post['time'] : time(), PDO::PARAM_INT);
-	$query->bindValue(':password', sha256Salted($post['password']));
+	$query->bindValue(':password', $post['password']);
 	$query->bindValue(':cookie', get_uuser_cookie());
 
 	if(isset($_POST['ip_change']) && $post['mod'] && hasPermission($config['mod']['ip_change_name']))
