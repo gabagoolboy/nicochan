@@ -161,7 +161,7 @@
 
 				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
 
-				if ($post['embed'] && preg_match('/^https?:\/\/(\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9\-_]{10,11})(&.+)?$/i', $post['embed'], $matches)) {
+				if ($post['embed'] && preg_match('/^https?:\/\/(\w+\.)?(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11}.+|\?t\=)$/i', $post['embed'], $matches)) {
 					$post['youtube'] = $matches[2];
 				}
 
