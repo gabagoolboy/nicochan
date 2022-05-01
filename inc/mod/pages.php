@@ -900,6 +900,17 @@ function mod_page_ip($ip) {
 		return;
 	}
 
+	// change appeal status
+	if(isset($_POST['ban_id'], $_POST['appeal'], $_POST['change_appeal']))
+	{
+		$query = prepare('UPDATE ``bans`` SET `appealable` = :appeal WHERE `id` = :ban_id');
+		$query->bindValue(':ban_id', $_POST['ban_id'], PDO::PARAM_INT);
+		$query->bindValue(':appeal', (bool)$_POST['appeal'] ? false : true, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+
+		header('Location: ?/IP/' . $ip . '#bans', true, $config['redirect_http']);
+		return;
+	}
 
 	if (isset($_POST['note'])) {
 		if (!hasPermission($config['mod']['create_notes']))

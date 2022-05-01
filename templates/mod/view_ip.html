@@ -216,7 +216,9 @@
 					</tr>
 				</table>
 				<input type="hidden" name="ban_id" value="{{ ban.id }}">
+				<input type="hidden" name="appeal" value="{{ ban.appealable }}">
 				<input type="submit" name="ban_cookie" value="Ban Cookie">
+				<input type="submit" name="change_appeal" value="Change appeal">
 				<input type="submit" name="unban" value="{% trans 'Remove ban' %}">
 			</form>
 		{% endfor %}
