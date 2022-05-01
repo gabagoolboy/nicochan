@@ -635,7 +635,7 @@ CREATE TABLE IF NOT EXISTS `whitelist` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `whitelit_region`
+-- Table structure for table `whitelist_region`
 --
 
 CREATE TABLE IF NOT EXISTS `whitelist_region` (
