@@ -1939,6 +1939,8 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 			$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
 			$_POST['message'] = str_replace('%length%', $length_english, $_POST['message']);
 			$_POST['message'] = str_replace('%LENGTH%', strtoupper($length_english), $_POST['message']);
+			$_POST['message'] = str_replace('%reason%', $_POST['reason'], $_POST['message']);
+			$_POST['message'] = str_replace('%REASON%', strtoupper($_POST['reason']), $_POST['message']);
 			$query = prepare(sprintf('UPDATE ``posts_%s`` SET `body_nomarkup` = CONCAT(`body_nomarkup`, :body_nomarkup) WHERE `id` = :id', $board));
 			$query->bindValue(':id', $post);
 			$query->bindValue(':body_nomarkup', sprintf("\n<tinyboard ban message>%s</tinyboard>", utf8tohtml($_POST['message'])));
