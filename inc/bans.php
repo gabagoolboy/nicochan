@@ -238,13 +238,23 @@ class Bans {
 
 
 
-	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false) {
+	static public function stream_json($out = false, $filter_ips = false, $filter_staff = false, $board_access = false, $filter_reason = false) {
 		global $config;
 
 		$query = query("SELECT ``bans``.*, `username` FROM ``bans``
 			LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`
  			ORDER BY `created` DESC") or error(db_error());
-                $bans = $query->fetchAll(PDO::FETCH_ASSOC);
+                $_bans = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		if ($filter_reason) {
+			foreach($_bans as &$ban){
+				if (preg_match($config['banlist_filters'], $ban['reason']))
+					continue;
+				$bans[] = $ban;
+			}
+		}
+
+		$bans = !isset($bans) ? $_bans : $bans;
 
 		if ($board_access && $board_access[0] == '*') $board_access = false;
 
@@ -259,7 +269,7 @@ class Bans {
 				$post = json_decode($ban['post']);
 				$ban['message'] = isset($post->body) ? $post->body : 0;
 			}
-			unset($ban['ipstart'], $ban['ipend'], $ban['post'], $ban['creator']);
+			unset($ban['ipstart'], $ban['ipend'], $ban['post'], $ban['creator'], $ban['appealable'], $ban['cookie'], $ban['cookiebanned']);
 
 			if ($board_access === false || in_array ($ban['board'], $board_access)) {
 				$ban['access'] = true;
@@ -287,10 +297,6 @@ class Bans {
 
 				$ban['masked'] = true;
 			}
-
-			// // If BCrypted IP Hash encode special chars
-			// if($config['bcrypt_ip_addresses'])
-			// 	$ban['mask'] = getURLEncoded_HashIP($ban['mask']);
 
 			// Create human readable version of ip
 			$ban['mask_human_readable'] = getHumanReadableIP($ban['mask']);

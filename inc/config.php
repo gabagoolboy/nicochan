@@ -2282,3 +2282,6 @@
 
 	// Maxmind db path
 	$config['maxmind_db_path'] = '/usr/share/GeoIP/GeoLite2-City.mmdb';
+
+	// banlist filters
+	$config["banlist_filters"] = '/Teste/i';
