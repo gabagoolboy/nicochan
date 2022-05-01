@@ -1345,23 +1345,23 @@
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
-			'<iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" src="https://player.vimeo.com/video/$2?line=0" frameborder="0" allowfullscreen></iframe>'
+			'<div class="video-container"><iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" src="https://player.vimeo.com/video/$2?line=0" frameborder="0" allowfullscreen></iframe></div>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})(_.+)?$/i',
-			'<iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe>'
+			'<div class="video-container"><iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe></div>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.|)(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,15})(&.+)?$/i',
-			'<iframe width="300" height="60" src="https://vocaroo.com/embed/$3?autoplay=0" frameborder="0" allow="autoplay"></iframe>'
+			'<div class="video-container"><iframe width="300" height="60" src="https://vocaroo.com/embed/$3?autoplay=0" frameborder="0" allow="autoplay"></iframe></div>'
 		),
 		array(
 			'/^https?:\/\/(\w+\.)?bitchute\.com\/video\/([^\s?&#\/]+)\/(&.+)?$/i',
-			'<iframe width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe>'
+			'<div class="video-container"><iframe width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe></div>'
 		),
 		array(
 		         '/^https?:\/\/(\w+\.)?soundcloud\.com\/([a-zA-Z0-9\-\_\/]+)(_.+)?$/i',
-		         '<iframe width="520" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https://soundcloud.com/$2?&color=%23ff5500&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/$2" target="_blank" style="color: #cccccc; text-decoration: none;"></a></div>'
+		         '<div class="video-container"><iframe width="520" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https://soundcloud.com/$2?&color=%23ff5500&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/$2" target="_blank" style="color: #cccccc; text-decoration: none;"></a></div></div>'
                          )
 	);
 
