@@ -29,10 +29,12 @@
 		</div>
 
 		<table class="mod" style="width:100%" id="banlist">
+			<tbody>
+			</tbody>
 		</table>
 
 
-		
+
 	</form>
 {% if token_json %}
 	<script>$(function(){ banlist_init("{{ token_json }}", {{ boards }}); });</script>
