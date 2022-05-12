@@ -6,12 +6,12 @@
 
 {% if reasons %}
 <script type="text/javascript">
-$(window).load(function(){
+$(window).on('load', (function(){
 	{% for key, reason in reasons %}
 		$('#ResonSelectorID_{{ key }}').click(function() { populateFormJQuery('#NicenoticeFormID', $.parseJSON(data_{{ key }})); });
 		var data_{{ key }} = '{"reason":"{{ reason|escape('js') }}"}';
 	{% endfor %}
-});
+}));
 </script>
 {% endif %}
 
