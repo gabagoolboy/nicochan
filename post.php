@@ -608,7 +608,7 @@ function handle_post(){
 				// Add all files
 				foreach($tmp_fi_file as $fi_key => $fi_file) {
 					if ($fi_file['size'] && $fi_file['tmp_name']) {
-						$post['files'][] = process_filenames($fi_file, $board['dir'], sizeof($_FILES) > 1, $i);
+						$post['files'][] = process_filenames($fi_file, $board['dir'], sizeof($_FILES) > 1 || sizeof($file['size']) > 1, $i);
 						$i++;
 					}
 				}
