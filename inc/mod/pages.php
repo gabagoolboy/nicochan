@@ -1249,47 +1249,6 @@ function mod_warning_post($board, $delete, $post, $token = false) {
 	mod_page(_('New warning'), 'mod/warning_form.html', $args);
 }
 
-function mod_announcements() {
-	global $config;
-	global $mod;
-
-	if (!hasPermission($config['mod']['announcements']))
-		error($config['error']['noaccess']);
-
-	require_once 'inc/announcements.php';
-
-	// Add, Edit, or Delete Announcement
-	if (isset($_POST['add_announcement'], $_POST['announcement']) && $_POST['announcement'] != '') {
-		Announcements::new_announcement($_POST['announcement']);
-	}
-	else if (isset($_POST['edit_announcement'], $_POST['announcement'], $_POST['id']) && $_POST['announcement'] != '') {
-		Announcements::edit_announcement($_POST['id'], $_POST['announcement']);
-	}
-	else if (isset($_POST['delete_announcement'], $_POST['id'])) {
-		Announcements::delete_announcement($_POST['id']);
-	}
-
-
-	// Display Announcement Page
-	mod_page(_('Announcements list'), 'mod/announcements_list.html', array(
-		'mod' => $mod,
-		'token' => make_secure_link_token('announcements'),
-		'token_json' => make_secure_link_token('announcements.json')
-	));
-}
-
-function mod_announcements_json() {
-	global $config, $mod;
-
-	if (!hasPermission($config['mod']['announcements']))
-			error($config['error']['noaccess']);
-
-	// Compress the json for faster loads
-	if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) ob_start("ob_gzhandler");
-
-	Announcements::stream_json(false, !hasPermission($config['mod']['announcements']), $config['announcements']['date_format']);
-}
-
 function mod_ban() {
 	global $config;
 

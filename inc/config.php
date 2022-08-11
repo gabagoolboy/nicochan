@@ -795,7 +795,7 @@
 	$config['require_ban_view'] = true;
 
 	// Show the post the user was banned for on the "You are banned" page.
-	$config['ban_show_post'] = false;
+	$config['ban_show_post'] = true;
 
 	// Optional HTML to append to "You are banned" pages. For example, you could include instructions and/or
 	// a link to an email address or IRC chat room to appeal the ban.
@@ -1871,9 +1871,6 @@
 
 	// View Site Statistics
 	$config['mod']['view_statistics'] = JANITOR;
-
-	// Create Announcements
-	$config['mod']['announcements'] = ADMIN;
 
 
 	// Send  Threads directly to Archive (need to be greater than or equal to ['mod']['delete'] permission)

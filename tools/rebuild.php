@@ -22,7 +22,6 @@
 require dirname(__FILE__) . '/inc/cli.php';
 
 require_once("inc/bans.php");
-require_once("inc/announcements.php");
 require_once("inc/archive.php");
 
 $start = microtime(true);
