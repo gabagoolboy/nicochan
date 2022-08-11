@@ -372,7 +372,7 @@ function init() {
 
 	{% endverbatim %}
 	{% if config.allow_delete %}
-	if (document.forms.postcontrols.password) {
+	if (document.forms.postcontrols) {
 		document.forms.postcontrols.password.value = localStorage.password;
 	}
 	{% endif %}
