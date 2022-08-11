@@ -171,7 +171,7 @@ function handle_report() {
 	if (empty($report))
 		error($config['error']['noreport']);
 
-	if (mb_strlen($_POST['reason']) > 30)
+	if (mb_strlen($_POST['reason']) > 30 || empty($_POST['reason']))
 		error($config['error']['invalidreport']);
 
 	if (count($report) > $config['report_limit'])
