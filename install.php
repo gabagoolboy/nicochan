@@ -1141,7 +1141,6 @@ if ($step == 0) {
 	$instance_config .= "\n";
 	$instance_config .= $more;
 	$instance_config .= "\n";
-	$instance_config .=
 
 	if (@file_put_contents('inc/instance-config.php', $instance_config)) {
 		// flushes opcache if php >= 5.5.0 or opcache is installed via PECL
