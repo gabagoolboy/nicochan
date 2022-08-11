@@ -694,15 +694,6 @@ function handle_post(){
 		$post['body'] .= insertFlagsBody(strtolower($user_flag), $flag_alt);
 	}
 
-	if ($config['allowed_tags'] && $post['op'] && isset($_POST['tag']) && isset($config['allowed_tags'][$_POST['tag']])) {
-		$post['body'] .= "\n<tinyboard tag>" . $_POST['tag'] . "</tinyboard>";
-	}
-
-        if ($config['proxy_save'] && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		$proxy = preg_replace("/[^0-9a-fA-F.,: ]/", '', $_SERVER['HTTP_X_FORWARDED_FOR']);
-		$post['body'] .= "\n<tinyboard proxy>"."</tinyboard>";
-	}
-
 	$post['body_nomarkup'] = $post['body']; // Assume we're using the utf8mb4 charset
 
 	$post['tracked_cites'] = markup($post['body'], true);

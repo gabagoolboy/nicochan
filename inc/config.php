@@ -419,7 +419,6 @@
 		'json_response',
 		'user_flag',
 		'no_country',
-		'tag',
 		'hideposterid'
 	);
 
@@ -453,9 +452,6 @@
 
 	// If poster's proxy supplies X-Forwarded-For header, check if poster's real IP is banned.
 	$config['proxy_check'] = true;
-
-	// If poster's proxy supplies X-Forwarded-For header, save it for further inspection and/or filtering.
-	$config['proxy_save'] = false;
 
 	/*
 	 * Custom filters detect certain posts and reject/ban accordingly. They are made up of a condition and an
@@ -2028,10 +2024,6 @@
 
 	// File board. Like 4chan /f/
 	$config['file_board'] = false;
-
-	// Thread tags. Set to false to disable
-	// Example: array('A' => 'Chinese cartoons', 'M' => 'Music', 'P' => 'Pornography');
-	$config['allowed_tags'] = false;
 
 
 /*

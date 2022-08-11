@@ -134,18 +134,6 @@
 			</td>
 		</tr>
 		{% endif %}
-		{% if config.allowed_tags and not id %}
-		<tr>
-			<th>{% trans %}Tag{% endtrans %}</th>
-			<td>
-				<select name="tag">
-					{% for id, tag in config.allowed_tags %}
-						<option value="{{ id|e }}">{{ tag|e }}</option>
-					{% endfor %}
-				</select>
-			</td>
-		</tr>
-		{% endif %}
 		<tr id="upload">
 			<th>
 				{% trans %}File{% endtrans %}
@@ -177,7 +165,7 @@
 			</td>
 		</tr>
 		{% endif %}
-		{% if (config.spoiler_images or config.hide_poster_id_thread or config.show_countryballs_single or config.allow_no_country)%}
+		{% if (config.spoiler_images or config.hide_poster_id_thread) %}
 		<tr>
 			<th>
 				{% trans %}Options{% endtrans %}
