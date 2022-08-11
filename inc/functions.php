@@ -2264,7 +2264,6 @@ function buildIndex($global_api = 'yes') {
 	}
 
 
-	Announcements::RebuildAnnouncementPages();
 	Archive::RebuildArchiveIndexes();
 
 	if ($config['try_smarter'])

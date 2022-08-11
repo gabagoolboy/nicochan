@@ -1132,29 +1132,6 @@
 
 /*
  * ====================
- *  Announcements settings
- * ====================
- */
-	// Show Small list of Announcements.
-	$config['announcements']['show'] = true;
-	// Number of announcements to include in small Announcements json file and lists.
-	$config['announcements']['show_count'] = 3;
-
-	// Create Announcements Page.
-	$config['announcements']['page'] = true;
-
-	// Same as above, but used for Global Announcements pages and lists.
-	$config['announcements']['date_format'] = 'Y-m-d';
-
-	// Filenames for json files
-	$config['announcements']['file_json'] = "announcements.json";
-	$config['announcements']['file_json_small'] = "announcements_small.json";
-	// Filename for file to hold complete list of announcements
-	$config['announcements']['page_html'] = "announcements.html";
-
-
-/*
- * ====================
  *  Display settings
  * ====================
  */

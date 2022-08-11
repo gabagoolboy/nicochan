@@ -381,11 +381,6 @@ function init() {
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
 
-
-{% endverbatim %}{% if config.announcements.show %}{% verbatim %}
-    buildAnnouncementList();
-{% endverbatim %} {% endif %} {% verbatim %}
-
 }
 
 
@@ -403,7 +398,6 @@ function ready() {
 {% endverbatim %}
 
 
-var hideAnnouncements = 0;
 var post_date = "{{ config.post_date_js }}";
 var max_images = {{ config.max_images }};
 if (typeof active_page === "undefined") {
@@ -422,78 +416,4 @@ sc.type = 'text/javascript';
 sc.innerHTML = 'var sc_project={{ config.statcounter_project }};var sc_invisible=1;var sc_security="{{ config.statcounter_security }}";var scJsHost=(("https:" == document.location.protocol) ? "https://secure." : "http://www.");document.write("<sc"+"ript type=text/javascript src="+scJsHost+"statcounter.com/counter/counter.js></"+"script>");';
 var s = document.getElementsByTagName('script')[0];
 s.parentNode.insertBefore(sc, s);
-{% endif %}
-
-
-
-
-{% if config.announcements.show %}
-function buildAnnouncementList()
-{
-    $("#announcements").empty();
-
-    var hideAnnouncements = get_cookie("hideAnnouncements");
-
-    if (hideAnnouncements != "1") {
-        $.getJSON("{{ config.root }}{{ config.announcements.file_json_small }}",
-            function (json) {
-
-                var thead;
-                thead = $('<thead/>').append(
-                    $('<tr/>').append('<td colspan="2">&nbsp;</td>')
-                );
-
-                var tfoot;
-                tfoot = $('<tfoot/>').append(
-                    $('<tr/>').append(
-                        $('<td colspan="2"/>').append(
-                            "[",
-                            $('<a id = "toggleAnnouncements" href = "#">Hide</a>').on('click', function () {
-                                var hideAnnouncements = get_cookie("hideAnnouncements");
-                                hideAnnouncements = ((hideAnnouncements != "1") ? "1" : "0");
-                                document.cookie = 'hideAnnouncements=' + hideAnnouncements + ';expires=0;path=/;';
-                                buildAnnouncementList();
-                            }),
-                            "]"
-                            {% if config.announcements.page %} , $('<span>[<a href="{{ config.root }}{{ config.announcements.page_html }}" target="_blank">Show All</a>]</span>') {% endif %}
-                        )));
-
-                var tbody;
-                tbody = $('<tbody/>');
-                var tr;
-                for (var i = 0; i < json.length; i++) {
-                    tr = $("<tr/>");
-                    tr.append('<td class="announcement-date">' + json[i].date_formated + '</td>');
-                    tr.append('<td class="announcement-content">' + json[i].text + '</td>');
-                    tbody.append(tr);
-                }
-
-                $("#announcements").append(thead);
-                $("#announcements").append(tbody);
-                $("#announcements").append(tfoot);
-            });
-    } else {
-        var thead;
-        thead = $('<thead/>').append(
-            $('<tr/>').append('<td colspan="2">&nbsp;</td>')
-        );
-        var tfoot;
-
-        tfoot = $('<tfoot/>').append(
-            $('<tr/>').append(
-                $('<td colspan="2"/>').append(
-                    "[",
-                    $('<a id = "toggleAnnouncements" href = "#">Show</a>').on('click', function () {
-                        var hideAnnouncements = get_cookie("hideAnnouncements");
-                        hideAnnouncements = ((hideAnnouncements != "1") ? "1" : "0");
-                        document.cookie = 'hideAnnouncements=' + hideAnnouncements + ';expires=0;path=/;';
-                        buildAnnouncementList();
-                    }),
-                    "]"
-                )));
-
-        $("#announcements").append(thead);
-        $("#announcements").append(tfoot);
-    }
-}
 {% endif %}

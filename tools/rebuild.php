@@ -105,10 +105,6 @@ foreach($boards as &$board) {
 }
 
 
-// Generate json files for announcements in header of pages
-Announcements::RebuildAnnouncementPages();
-
-
 
 if(!$options['quiet'])
 	printf("Complete! Took %g seconds\n", microtime(true) - $start);

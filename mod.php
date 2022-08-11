@@ -42,11 +42,6 @@ $pages = [
 	'/edit_news/delete/(\d+)'			=> 'secure news_delete',		// delete from news
 	'/banners/(\%b)'				=> 'secure_POST banners',
 
-
-	'/announcements'				=> 'secure_POST announcements',		// announcement list
-	'/announcements.json'				=> 'secure announcements_json',		// announcement list JSON
-
-
 	'/edit_pages(?:/?(\%b)?)'			=> 'secure_POST pages',
 	'/edit_page/(\d+)'				=> 'secure_POST edit_page',
 	'/edit_pages/delete/([a-z0-9]+)'		=> 'secure delete_page',
