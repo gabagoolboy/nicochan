@@ -306,6 +306,13 @@ function handle_post(){
 		message(Element('whitelist.html', array('config' => $config)), 'White list captcha', '');
 
 
+		checkDNSBL();
+
+		// Check if banned, warned or nicenoticed
+		checkBan($board['uri']);
+
+		handle_blocks(); // function to handle region blocks
+
 		// Check for CAPTCHA right after opening the board so the "return" link is in there
 		if ($config['hcaptcha']) {
 			if (!isset($_POST['h-captcha-response']))
@@ -346,13 +353,6 @@ function handle_post(){
 		if ($config['referer_match'] !== false &&
 			(!isset($_SERVER['HTTP_REFERER']) || !preg_match($config['referer_match'], rawurldecode($_SERVER['HTTP_REFERER']))))
 			error($config['error']['referer']);
-
-		checkDNSBL();
-
-		// Check if banned, warned or nicenoticed
-		checkBan($board['uri']);
-
-		handle_blocks(); // function to handle region blocks
 
 
 		if ($post['mod'] = isset($_POST['mod']) && $_POST['mod']) {
