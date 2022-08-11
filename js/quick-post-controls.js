@@ -39,7 +39,7 @@ $(document).ready(function(){
 					' <input type="submit" name="report" value="'+_('Report')+'">' +
 				'</div>' +
 			'</form>');
-		if($('form[name="post"]:first').size()){
+		if($('form[name="post"]:first').length){
 //			post_form
 //				.attr('action', $('form[name="post"]:first').attr('action'))
 //				.append($('input[name=board]:first').clone())
