@@ -601,8 +601,8 @@ class Bans {
 		if ($post) {
 			if (!isset($board['uri']))
 				openBoard($post['board']);
-			else
-				$post['board'] = $board['uri'];
+
+			$post['board'] = $board['uri'];
 		        $match_urls = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
 
 			$matched = array();
