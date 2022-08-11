@@ -123,20 +123,32 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 
-	static public function find($ip, $board = false, $get_mod_info = false, $hashed_ip = false) {
+	static public function find($ip, $board = false, $get_mod_info = false, $hashed_ip = false, $banid = false) {
 		global $config;
+
+		if (!$banid) {
+			if ($config['bcrypt_ip_addresses'])
+				$search = '(`ipstart` = :ip))';
+			else
+				$search = '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))';
+		} else {
+			$search = '(``bans``.`id` = :ip))';
+		}
 
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 			WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-			' . ($config['bcrypt_ip_addresses'] ? '(`ipstart` = :ip))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))') . '
+			' . $search . '
 			ORDER BY `expires` IS NULL, `expires` DESC');
 
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 
-		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip ? $ip :get_ip_hash($ip)) : inet_pton($ip));
+		if (!$banid)
+			$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip ? $ip :get_ip_hash($ip)) : inet_pton($ip));
+		else
+			$query->bindValue(':ip', $ip, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
 		$ban_list = array();
@@ -533,7 +545,7 @@ class Bans {
 
 
 
-	static public function new_ban($mask, $uuser_cookie, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false, $appeal = true) {
+	static public function new_ban($mask, $uuser_cookie, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false, $appeal = true, $edit_mode = false) {
 		global $mod, $pdo, $board, $config;
 
 		if ($mod_id === false) {
@@ -555,7 +567,7 @@ class Bans {
 		$query->bindValue(':mod', $mod_id);
 		$query->bindValue(':time', time());
 
-		if($appeal)
+		if ($appeal)
 			$query->bindValue(':appeal', true, PDO::PARAM_INT);
 		else
 			$query->bindValue(':appeal', false, PDO::PARAM_INT);
@@ -568,8 +580,10 @@ class Bans {
 			$query->bindValue(':reason', null, PDO::PARAM_NULL);
 
 		if ($length) {
-			if (is_int($length) || ctype_digit($length)) {
+			if ((is_int($length) || ctype_digit($length)) && !$edit_mode) {
 				$length = time() + $length;
+			} else if (is_int($length) && $edit_mode) {
+				$length = $length;
 			} else {
 				$length = self::parse_time($length);
 			}
@@ -585,7 +599,10 @@ class Bans {
 
 
 		if ($post) {
-			$post['board'] = $board['uri'];
+			if (!isset($board['uri']))
+				openBoard($post['board']);
+			else
+				$post['board'] = $board['uri'];
 		        $match_urls = '(?xi)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))';
 
 			$matched = array();

@@ -912,6 +912,16 @@ function mod_page_ip($ip) {
 		return;
 	}
 
+	if (isset($_POST['ban_id'], $_POST['edit_ban']))
+	{
+
+		if (!hasPermission($config['mod']['edit_ban']))
+			error($config['error']['noaccess']);
+
+		header('Location: ?/edit_ban/' . $_POST['ban_id'], true, $config['redirect_http']);
+		return;
+	}
+
 	if (isset($_POST['note'])) {
 		if (!hasPermission($config['mod']['create_notes']))
 			error($config['error']['noaccess']);
@@ -1009,6 +1019,57 @@ function mod_page_ip($ip) {
 	$args['security_token'] = make_secure_link_token('IP/' . $ip);
 
 	mod_page(sprintf('%s: %s', _('IP'), getHumanReadableIP($ip)), 'mod/view_ip.html', $args, $args['hostname']);
+}
+
+function mod_edit_ban($ban_id) {
+	global $mod, $config;
+
+	if (!hasPermission($config['mod']['edit_ban']))
+		error($config['error']['noaccess']);
+
+	$args['bans'] = Bans::find($ban_id, false, true, false, true);
+	$args['ban_id'] = $ban_id;
+	$args['boards'] = listBoards();
+	$args['reasons'] = $config['ban_reasons'];
+
+	if (!$args['bans'])
+		error($config['error']['404']);
+
+	if (isset($_POST['new_ban'])) {
+
+		$new_ban['mask'] = $args['bans'][0]['mask'];
+		$new_ban['cookie'] = isset($args['bans'][0]['cookie']) ? $args['bans'][0]['cookie'] : false;
+		$new_ban['post'] = isset($args['bans'][0]['post']) ? $args['bans'][0]['post'] : false;
+
+		if (isset($_POST['reason']))
+			$new_ban['reason'] = $_POST['reason'];
+		else
+			$new_ban['reason'] = $args['bans'][0]['reason'];
+
+		if (isset($_POST['ban_length']) && !empty($_POST['ban_length']))
+			$new_ban['length'] = $_POST['ban_length'];
+		else
+			$new_ban['length'] = (int) $args['bans'][0]['expires'];
+
+		if (isset($_POST['raid']) && $new_ban['post'])
+			$new_ban['noshow'] = true;
+
+		if (isset($_POST['appeal']))
+			$new_ban['appeal'] = false;
+		else
+			$new_ban['appeal'] = true;
+
+		Bans::new_ban($new_ban['mask'], $new_ban['cookie'], $new_ban['reason'], $new_ban['length'], $_POST['board'] == '*' ? false : $_POST['board'], false, !$new_ban['noshow'] ? $new_ban['post'] : false, $new_ban['appeal'], true);
+		Bans::delete($ban_id);
+
+		header('Location: ?/', true, $config['redirect_http']);
+
+	}
+
+	$args['security_token'] = make_secure_link_token('edit_ban/' . $ban_id);
+
+	mod_page(_('Edit ban'), 'mod/edit_ban.html', $args);
+
 }
 
 function mod_bantz_post($board, $post, $token = false) {

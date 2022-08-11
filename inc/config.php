@@ -1789,6 +1789,8 @@
 	$config['mod']['spoilerimage'] = MOD;
 	// Ban cookies for posting
 	$config['mod']['ban_cookie'] = MOD;
+	// Edit bans
+	$config['mod']['edit_ban'] = JANITOR;
 	// Delete file (and keep post)
 	$config['mod']['deletefile'] = MOD;
 	// Delete all posts by IP

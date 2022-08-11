@@ -129,97 +129,14 @@
 		{% for ban in bans %}
 			<form action="" method="post" style="text-align:center">
 				<input type="hidden" name="token" value="{{ security_token }}">
-				<table style="width:400px;margin-bottom:10px;border-bottom:1px solid #ddd;padding:5px">
-					<tr>
-						<th>{% trans 'Status' %}</th>
-						<td>
-							{% if config.mod.view_banexpired and ban.expires != 0 and ban.expires < time() %}
-								{% trans 'Expired' %}
-							{% else %}
-								{% trans 'Active' %}
-							{% endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'IP' %}</th>
-						<td>{{ ban.mask }}</td>
-					</tr>
-					<tr>
-						<th>Cookie</th>
-						<td>
-							{%  if ban.cookiebanned %}
-								<s style="background-color: #F33">{{ ban.cookie }}</s>
-							{%  else %}
-								{{ ban.cookie }}
-							{%  endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Reason' %}</th>
-						<td>
-							{% if ban.reason %}
-								{{ ban.reason }}
-							{% else %}
-								<em>{% trans 'no reason' %}</em>
-							{% endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Board' %}</th>
-						<td>
-							{% if ban.board %}
-								{{ config.board_abbreviation|format(ban.board) }}
-							{% else %}
-								<em>{% trans 'all boards' %}</em>
-							{% endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Set' %}</th>
-						<td>{{ ban.created|strftime }}</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Expires' %}</th>
-						<td>
-							{% if ban.expires %}
-								{{ ban.expires|strftime }}
-							{% else %}
-								<em>{% trans 'never' %}</em>
-							{% endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Seen' %}</th>
-						<td>
-							{%  if ban.seen %}
-								{% trans 'Yes' %}
-							{%  else %}
-								{% trans 'No' %}
-							{%  endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Staff' %}</th>
-						<td>
-							{% if ban.username %}
-								{{ ban.username|e }}
-							{% else %}
-								<em>{% trans 'deleted?' %}</em>
-							{% endif %}
-						</td>
-					</tr>
-					<tr>
-						<th>{% trans 'Appealable' %}</th>
-						<td>
-						{{ ban.appealable ? 'Yes' : 'No' }}
-						</td>
-					</tr>
-				</table>
+
+				{% include 'mod/ban_history.html' %}
 				<input type="hidden" name="ban_id" value="{{ ban.id }}">
 				<input type="hidden" name="appeal" value="{{ ban.appealable }}">
 				<input type="submit" name="ban_cookie" value="Ban Cookie">
 				<input type="submit" name="change_appeal" value="Change appeal">
 				<input type="submit" name="unban" value="{% trans 'Remove ban' %}">
+				<input type="submit" name="edit_ban" value="Edit Ban">
 			</form>
 		{% endfor %}
 	</fieldset>
