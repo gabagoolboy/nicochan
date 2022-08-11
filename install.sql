@@ -24,20 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `announcements`
---
-
-CREATE TABLE IF NOT EXISTS `announcements` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `creator` int(10) NOT NULL,
-  `date` int(10) NOT NULL,
-  `text` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `antispam`
 --
 

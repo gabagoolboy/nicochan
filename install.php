@@ -788,6 +788,7 @@ if (file_exists($config['has_installed'])) {
 			}
 		case '6.0.7':
 			query('DROP TABLE IF EXISTS ``nntp_references``;') or error(db_error());
+			query('DROP TABLE IF EXISTS ``announcements``;') or error(db_error());
 			query('CREATE TABLE IF NOT EXISTS ``whitelist_region`` (
 				`id` int(10) AUTO_INCREMENT,
 				`ip` varchar(39) NOT NULL,
