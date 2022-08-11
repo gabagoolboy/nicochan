@@ -795,7 +795,7 @@
 	$config['require_ban_view'] = true;
 
 	// Show the post the user was banned for on the "You are banned" page.
-	$config['ban_show_post'] = true;
+	$config['ban_show_post'] = false;
 
 	// Optional HTML to append to "You are banned" pages. For example, you could include instructions and/or
 	// a link to an email address or IRC chat room to appeal the ban.
