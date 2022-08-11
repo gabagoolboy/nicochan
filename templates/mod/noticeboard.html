@@ -43,7 +43,7 @@
 			<small class="unimportant">
 				&nbsp;&mdash; {% trans 'by' %}&nbsp;
 				{% if post.username %}
-					{{ post.username|e }}
+					<a href="?/new_PM/{{ post.username|e }}">{{ post.username|e }}</a>
 				{% else %}
 					<em>{% trans 'deleted?' %}</em>
 				{% endif %}
