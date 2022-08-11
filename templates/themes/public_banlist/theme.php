@@ -25,7 +25,7 @@
 
 		public static function gen_json($settings) {
 			ob_start();
-			Bans::stream_json(false, true, true, false, $settings['filter_banlist']);
+			Bans::stream_json(false, true, true, false, isset($settings['filter_banlist']) ? true : false);
 			$out = ob_get_contents();
 			ob_end_clean();
 			return $out;
