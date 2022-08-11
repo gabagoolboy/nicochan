@@ -2241,7 +2241,10 @@
 	$config['mod']['ip_change_name'] = MOD;
 
 	// Apply region block for all posts, reports, and deletetion
-	$config['regionblock'] = true;
+	// this requires setting up maxmind db
+	// either installing geoipupdate or downloading manually
+	// https://dev.maxmind.com/geoip/updating-databases?lang=en#1-install-geoip-update
+	$config['regionblock'] = false;
 	// Error message for region block
 	$config['error']['regionblock'] = 'Posts de outro país não são permitidos.</br></br>Seu IP: (%s)</br>';
 	// Allowed countries
