@@ -1053,6 +1053,8 @@ function mod_edit_ban($ban_id) {
 
 		if (isset($_POST['raid']) && $new_ban['post'])
 			$new_ban['noshow'] = true;
+		else
+			$new_ban['noshow'] = false;
 
 		if (isset($_POST['appeal']))
 			$new_ban['appeal'] = false;
