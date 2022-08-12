@@ -673,6 +673,8 @@ function handle_post(){
 	   ($config['country_flags'] && $config['allow_no_country'] &&
 	    !isset($_POST['no_country']))) {
 
+	    $arr = forcedIPflags($_SERVER['REMOTE_ADDR']);
+
 		if ($arr)
 			$arr['country_name'] = $config['mod']['forcedflag_countries'][$arr['country']];
 		else
