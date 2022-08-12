@@ -1,6 +1,5 @@
 <?php
 require_once('inc/bootstrap.php');
-$expires_in = 120;
 
 function rand_string($length, $charset) {
 	$ret = "";
@@ -11,11 +10,11 @@ function rand_string($length, $charset) {
 }
 
 function cleanup() {
-	global $expires_in;
-	prepare("DELETE FROM `captchas` WHERE `created_at` < ?")->execute([time() - $expires_in]);
+	global $config;
+	prepare("DELETE FROM `captchas` WHERE `created_at` < ?")->execute([time() - $config['captcha']['expires_in']]);
 }
 function generate_captcha($extra) {
-	global $expires_in, $config;
+	global $config;
 
 		$cookie = rand_string(20, "abcdefghijklmnopqrstuvwxyz");
 		$i = new Securimage($config['securimage_options']);
@@ -52,7 +51,7 @@ switch ($mode) {
 				header('Content-Type: image/png');
 				echo $captcha['rawimg'];
 		} else {
-			echo json_encode(["cookie" => $captcha['cookie'], "captchahtml" => $captcha['html'], "expires_in" => $expires_in]);
+			echo json_encode(["cookie" => $captcha['cookie'], "captchahtml" => $captcha['html'], "expires_in" => $config['captcha']['expires_in']]);
 		}
 		break;
 	case 'check':
@@ -66,19 +65,17 @@ switch ($mode) {
 
 		$ary = $query->fetchAll();
 
-		if (!$ary) {
+		if (!$ary) { // captcha expired
 			echo "0";
+			break;
 		} else {
 			$query = prepare("DELETE FROM `captchas` WHERE `cookie` = ? AND `extra` = ?");
 			$query->execute([$_GET['cookie'], $_GET['extra']]);
 		}
 
-		if (array_key_exists(0, $ary)){
-			if (strtolower($ary[0]['text']) !== strtolower($_GET['text']))
-				echo "0";
-			else 
-				echo "1";
-		} else 
+		if (strtolower($ary[0]['text']) !== strtolower($_GET['text']))
 			echo "0";
+		else
+			echo "1";
 		break;
 }
