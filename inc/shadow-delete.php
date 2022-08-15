@@ -87,15 +87,15 @@ class ShadowDelete {
                         // Add file to array of all files
                         $files[] = $f;
                         // Move files to temp storage
-                    	if ($f->file !== 'deleted'){
-				if (file_exists($board['dir'] . $config['dir']['img'] . $f->file))
-					rename($board['dir'] . $config['dir']['img'] . $f->file, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file));
+				if ($f->file !== 'deleted'){
+					if (file_exists($board['dir'] . $config['dir']['img'] . $f->file))
+						rename($board['dir'] . $config['dir']['img'] . $f->file, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file));
 
-				if($f->thumb !== 'spoiler'){
-					if (file_exists($board['dir'] . $config['dir']['thumb'] . $f->thumb))
-						rename($board['dir'] . $config['dir']['thumb'] . $f->thumb, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb));
+					if($f->thumb !== 'spoiler'){
+						if (file_exists($board['dir'] . $config['dir']['thumb'] . $f->thumb))
+							rename($board['dir'] . $config['dir']['thumb'] . $f->thumb, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb));
+					}
 				}
-			}
                 }
             }
 
@@ -239,16 +239,22 @@ class ShadowDelete {
             if ($post['files']) {
                 // Move files from temp storage
                 foreach (json_decode($post['files']) as $i => $f) {
-			if ($f->file !== 'deleted'){
-				if (file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['img'].self::hashShadowDelFilename($f->file)))
-					rename($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file), $board['dir'] . $config['dir']['img'] . $f->file);
+				if ($f->file !== 'deleted'){
+					$tmpHashFile = self::hashShadowDelFilename($f->file);
+					if (file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['img']. $tmpHashFile)) {
+						rename($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . $tmpHashFile, $board['dir'] . $config['dir']['img'] . $f->file);
+						unset($tmpHashFile);
+					}
 
-				if($f->thumb !== 'spoiler'){
-					if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['thumb'].self::hashShadowDelFilename($f->thumb)))
-						rename($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb), $board['dir'] . $config['dir']['thumb'] . $f->thumb);
+					if($f->thumb !== 'spoiler'){
+						$tmpHashThumb = self::hashShadowDelFilename($f->thumb);
+						if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['thumb'].$tmpHashThumb)) {
+							rename($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . $tmpHashThumb, $board['dir'] . $config['dir']['thumb'] . $f->thumb);
+							unset($tmpHashThumb);
+						}
+					}
 				}
-			}
-        	}
+                }
             }
 
             $ids[] = (int)$post['id'];
@@ -368,15 +374,21 @@ class ShadowDelete {
             event('shadow-perm-delete', $post);
             if ($post['files']) {
                 foreach (json_decode($post['files']) as $i => $f) {
-			if($f->file !== 'deleted'){
-				if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['img'].self::hashShadowDelFilename($f->file)))
-					unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file));
+				if($f->file !== 'deleted'){
+					$tmpHashFile = self::hashShadowDelFilename($f->file);
+					if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['img'].$tmpHashFile)) {
+						unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . $tmpHashFile);
+						unset($tmpHashFile);
+					}
 
-				if($f->thumb !== 'spoiler'){
-					if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['thumb'].self::hashShadowDelFilename($f->thumb)))
-						unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb));
+					if($f->thumb !== 'spoiler'){
+						$tmpHashThumb = self::hashShadowDelFilename($f->thumb);
+						if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['thumb'].$tmpHashThumb)) {
+							unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . $tmpHashThumb);
+							unset($tmpHashThumb);
+						}
+					}
 				}
-			}
 		}
         }
 
@@ -436,16 +448,22 @@ class ShadowDelete {
 
             // Delete files from temp storage
             foreach (json_decode($shadow_post['files']) as $i => $f) {
-		if($f->file !== 'deleted'){
-			if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['img'].self::hashShadowDelFilename($f->file)))
-				unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file));
+			if($f->file !== 'deleted'){
+				$tmpHashFile = self::hashShadowDelFilename($f->file);
+				if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['img'].$tmpHashFile)) {
+					unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . $tmpHashFile);
+					unset($tmpHashFile);
+				}
 
 
-			if($f->thumb !== 'spoiler'){
-				if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['thumb'].self::hashShadowDelFilename($f->thumb)))
-					unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb));
+				if($f->thumb !== 'spoiler'){
+					$tmpHashThumb = self::hashShadowDelFilename($f->thumb);
+					if(file_exists($board['dir'].$config['dir']['shadow_del'].$config['dir']['thumb'].$tmpHashThumb)) {
+						unlink($board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . $tmpHashThumb);
+						unset($tmpHashThumb);
+					}
+				}
 			}
-		}
             }
 
             // Delete post table entries
