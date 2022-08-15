@@ -1049,7 +1049,7 @@ function mod_edit_ban($ban_id) {
 		if (isset($_POST['ban_length']) && !empty($_POST['ban_length']))
 			$new_ban['length'] = $_POST['ban_length'];
 		else
-			$new_ban['length'] = (int) $args['bans'][0]['expires'];
+			$new_ban['length'] = false;
 
 		if (isset($_POST['raid']) && $new_ban['post'])
 			$new_ban['noshow'] = true;
@@ -1061,7 +1061,7 @@ function mod_edit_ban($ban_id) {
 		else
 			$new_ban['appeal'] = true;
 
-		Bans::new_ban($new_ban['mask'], $new_ban['cookie'], $new_ban['reason'], $new_ban['length'], $_POST['board'] == '*' ? false : $_POST['board'], false, !$new_ban['noshow'] ? $new_ban['post'] : false, $new_ban['appeal'], true);
+		Bans::new_ban($new_ban['mask'], $new_ban['cookie'], $new_ban['reason'], $new_ban['length'], $_POST['board'] == '*' ? false : $_POST['board'], false, !$new_ban['noshow'] ? $new_ban['post'] : false, $new_ban['appeal']);
 		Bans::delete($ban_id);
 
 		header('Location: ?/', true, $config['redirect_http']);

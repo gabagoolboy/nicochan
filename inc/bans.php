@@ -545,7 +545,7 @@ class Bans {
 
 
 
-	static public function new_ban($mask, $uuser_cookie, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false, $appeal = true, $edit_mode = false) {
+	static public function new_ban($mask, $uuser_cookie, $reason, $length = false, $ban_board = false, $mod_id = false, $post = false, $appeal = true) {
 		global $mod, $pdo, $board, $config;
 
 		if ($mod_id === false) {
@@ -580,10 +580,8 @@ class Bans {
 			$query->bindValue(':reason', null, PDO::PARAM_NULL);
 
 		if ($length) {
-			if ((is_int($length) || ctype_digit($length)) && !$edit_mode) {
+			if ((is_int($length) || ctype_digit($length))) {
 				$length = time() + $length;
-			} else if (is_int($length) && $edit_mode) {
-				$length = $length;
 			} else {
 				$length = self::parse_time($length);
 			}
