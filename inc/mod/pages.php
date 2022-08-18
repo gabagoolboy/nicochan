@@ -745,6 +745,22 @@ function mod_view_board($boardName, $page_no = 1) {
 	echo Element('index.html', $page);
 }
 
+function mod_view_catalog($boardName) {
+	global $config, $mod;
+
+	require_once($config['dir']['themes'].'/catalog/theme.php');
+	$settings = array();
+	$settings['boards'] = $boardName;
+	$settings['update_on_posts'] = true;
+	$settings['title'] = 'Catalog';
+	$settings['use_tooltipster'] = true;
+	$catalog = new Catalog($settings);
+	if ($config['ukko2_enabled'] && $boardName === $config['ukko2_enabled'])
+		echo $catalog->buildUkko2($mod);
+	else
+		echo $catalog->build($settings, $boardName, $mod);
+}
+
 function mod_view_thread($boardName, $thread) {
 	global $config, $mod;
 

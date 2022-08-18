@@ -44,7 +44,7 @@
 			$this->settings = $settings;
 		}
 
-		public function buildUkko2() {
+		public function buildUkko2($mod = false) {
 			global $config;
 			$ukkoSettings = themeSettings('ukko2');
  			$queries = array();
@@ -77,12 +77,11 @@
 				return strcmp($b['bump'], $a['bump']);
 			});
 			// Generate data for the template
-			$recent_posts = $this->generateRecentPosts($threads);
+			$recent_posts = $this->generateRecentPosts($threads, $mod);
 
-			$this->saveForBoard($ukkoSettings['uri'], $recent_posts,
-				$config['root'] . $ukkoSettings['uri'], true);
+			$this->saveForBoard($ukkoSettings, $recent_posts, true, $mod);
 
-			if ($config['api']['enabled']) {
+			if ($config['api']['enabled'] && !$mod) {
 				$api = new Api();
 
 				// Separate the threads into pages
@@ -111,7 +110,7 @@
 		}
 
 
-		public function build($settings, $board_name) {
+		public function build($settings, $board_name, $mod = false) {
 			global $config, $board;
 
 			if (!isset($board) || $board['uri'] != $board_name) {
@@ -131,9 +130,9 @@
 			}
 
 			// Generate data for the template
-			$recent_posts = $this->generateRecentPosts($threads);
+			$recent_posts = $this->generateRecentPosts($threads, $mod);
 
-			$this->saveForBoard($board_name, $recent_posts);
+			$this->saveForBoard($board_name, $recent_posts, false, $mod);
 		}
 
 		private function buildThreadsQuery($board) {
@@ -146,20 +145,30 @@
 			return $sql;
 		}
 
-		private function generateRecentPosts($threads) {
+		private function generateRecentPosts($threads, $mod = false) {
 			global $config, $board;
 
 			$posts = array();
 			foreach ($threads as $post) {
-				if ($board['uri'] !== $post['board']) {
+				if (!isset($board) || $board['uri'] !== $post['board']) {
 					openBoard($post['board']);
 				}
 
-				if($post['reply_count'] >= $config['noko50_min'])
-					$post['noko'] = '<a href="' . $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post, true) . '">' .
-				'['.$config['noko50_count'].']'. '</a>';
+				if($post['reply_count'] >= $config['noko50_min']){
+					if (!$mod) {
+						$post['noko'] = '<a href="' . $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post, true) . '">' .
+						'['.$config['noko50_count'].']'. '</a>';
+					} else {
+						$post['noko'] = '<a href="' . $config['root'] . $config['file_mod'] . '?/' . $board['dir'] . $config['dir']['res'] . link_for($post, true) . '">' .
+						'['.$config['noko50_count'].']'. '</a>';
+					}
+				}
 
-				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
+				if (!$mod)
+					$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
+				else
+					$post['link'] = $config['root'] . $config['file_mod'] . '?/' . $board['dir'] . $config['dir']['res'] . link_for($post);
+
 
 				if ($post['embed'] && preg_match('/^https?:\/\/(\w+\.)?(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11}.+|\?t\=)$/i', $post['embed'], $matches)) {
 					$post['youtube'] = $matches[2];
@@ -200,17 +209,25 @@
 		return $posts;
 	}
 
-	private function saveForBoard($board_name, $recent_posts, $board_link = null, $isOverboard = false) {
+	private function saveForBoard($board_name, $recent_posts, $isOverboard = false, $mod = false) {
 		global $board, $config;
 
-		if ($board_link === null)
-			$board_link = $config['root'] . $board['dir'];
 
-			$required_scripts = array('js/jquery.min.js', 'js/jquery.mixitup.min.js', 'js/catalog.js');
+			if (is_array($board_name) && $isOverboard) {
+				$boards = listBoards();
+				$boardsforukko2 = [];
+				foreach($boards as &$_board){
+					if (isset($board_name['exclude'])){
+						if(in_array($_board['uri'], explode(' ', $board_name['exclude'])))
+							continue;
+					}
+					array_push($boardsforukko2, $_board);
+				}
 
-			foreach($required_scripts as $i => $s) {
-				if (!in_array($s, $config['additional_javascript']))
-					$config['additional_javascript'][] = $s;
+				$board['title'] = $board_name['title'];
+				$board['uri'] = $board_name['uri'];
+				$board['subtitle'] = $board_name['subtitle'];
+				$board_name = $board_name['uri'];
 			}
 
 			// Antibot
@@ -218,24 +235,28 @@
 			$antibot->reset();
 
 
-			file_write($config['dir']['home'] . $board_name . '/catalog.html', Element('themes/catalog/catalog.html', Array(
+			$element = Element('themes/catalog/catalog.html', Array(
 				'settings' => $this->settings,
 				'config' => $config,
-				'boardlist' => createBoardlist(),
-				'recent_images' => array(),
+				'boardlist' => createBoardlist($mod),
 				'recent_posts' => $recent_posts,
-				'stats' => array(),
-				'board_name' => $board_name,
 				'board' => $board,
 				'antibot' => $antibot,
-				'link' => $board_link,
-				'is_overboard' => $isOverboard
-			)));
+				'isukko' => $isOverboard,
+				'boards' => isset($boardsforukko2) ? $boardsforukko2 : '',
+				'mod' => $mod
+			));
+
+
+			if ($mod)
+				echo $element;
+			else {
+			file_write($config['dir']['home'] . $board_name . '/catalog.html', $element);
 
 			file_write($config['dir']['home'] . $board_name . '/index.rss', Element('themes/catalog/index.rss', Array(
 				'config' => $config,
 				'recent_posts' => $recent_posts,
 				'board' => $board
 			)));
-		}
+		}}
 	};

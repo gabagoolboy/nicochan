@@ -7,7 +7,7 @@
 	<atom:link href="{{ config.root }}{{ board.uri }}/index.rss" rel="self" type="application/rss+xml"/>
 	{% for post in recent_posts %}
 	<item>
-		<title>{% if post.subject %}{{ post.subject|e }}{% else %}{{ post.body_nomarkup[:256]|remove_modifiers|e }}{% endif %}</title>
+		<title>{% if post.subject %}{{ post.subject|e }}{% else %}{{ post.body_nomarkup|remove_modifiers|e[:256] }}{% endif %}</title>
 		<link>{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html</link>
 		<guid>{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html</guid>
 		<comments>{{ config.root }}{{ board.uri }}/res/{{ post.id }}.html</comments>

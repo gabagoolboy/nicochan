@@ -12,21 +12,19 @@
 	<script src="{{ config.root }}js/catalog-search.js"></script>
 	<script src="{{ config.root }}js/8chcatalog-updater.js"></script>
 	<script src="{{ config.root }}js/jquery.mixitup.min.js"></script>
-	<title>{{ board_name }} - Catalog</title>
+	<title>{{ board.uri }} - Catalog</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} theme-catalog active-catalog" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
-	<div class="bar top">
 	{{ boardlist.top }}
-	</div>
 	<a name="top"></a>
 	<header>
-		<h1>/<a class="no-decoration" href="./index.html">{{ board_name }}</a>/ - {% if not is_overboard %}{{ board.title|e }}{% else %}{{ board_name|e }}{% endif %}</h1>
-		<div class="subtitle">{{ settings.subtitle }}</div>
+		<h1>/<a class="no-decoration" href="{% if mod %}?/{{ board.uri }}/{% else %}./{% endif %}">{{ board.uri }}</a>/ - {{ board.title|e }}</h1>
+		<div class="subtitle">{{ board.subtitle }}
+		{% if mod %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}</div>
 	</header>
 
-	{% if not is_overboard %}
 	{% include 'post_form.html' %}
-	{% endif %}
+	</br>
 
         <span>{% trans 'Sort by' %}: </span>
         <select id="sort_by" style="display: inline-block">
@@ -43,11 +41,11 @@
                 <option value="large">{% trans 'Large' %}</option>
         </select>
 
-	&nbsp; <a id="unimportant" href="./{{ config.catalog_link }}">[{% trans %}Recarregar{% endtrans %}]</a>
+	&nbsp; <a id="unimportant" href="{% if mod %}?/{{ board.uri }}/{{ config.catalog_link }}{% else %}./{{ config.catalog_link }}{% endif %}">[{% trans %}Reload{% endtrans %}]</a>
 
-	{% if not is_overboard %}
-	{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Arquivo{% endtrans %}]</a>{% endif %}
-	{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
+	{% if not isukko %}
+		{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
+		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
 	{% endif %}
         <div class="threads">
                 <div id="Grid">
@@ -104,7 +102,7 @@
 								{% if post.noko %}
 									{{ post.noko }}<br/>
 								{% endif %}
-								{% if is_overboard %}
+								{% if isukko %}
 									<span><em>Board: /{{ post.board }}/</em></span>
 								{% endif %}
 							</div>

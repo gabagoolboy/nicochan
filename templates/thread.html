@@ -19,7 +19,7 @@
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id }}.html" />
 	{% if thread.files.0.thumb %}<meta property="og:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}" />{% endif %}
-	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|remove_markup|e }}" />
+	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|remove_markup|e[:256] }}" />
 	{% if isnoko50 %}<meta name="robots" content="noindex">{% endif %}
 
 	<title>{{ board.url }} - {{ meta_subject }}</title>
@@ -61,19 +61,19 @@
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 		<input type="hidden" name="board" value="{{ board.uri }}" />
 		{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-		&nbsp; <a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catálogo{% endtrans %}]</a>{% endif %} &nbsp; <a id="unimportant" href="{{ return }}">[{% trans %}Voltar{% endtrans %}]</a>
+		&nbsp; <a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %} &nbsp; <a id="unimportant" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
 
-		{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Arquivo{% endtrans %}]</a>{% endif %}
-		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
+		{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
+		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
 		<hr />
 				{{ body }}
 		<div id="thread-interactions">
 			<span id="thread-links">
 				<a id="thread-top" href="#top">[{% trans %}Go to top{% endtrans %}]</a>
                 		{% if config.catalog_link %}
-					<a id="thread-catalog" href="{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catálogo{% endtrans %}]</a>
+					<a id="thread-catalog" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
 		                {% endif %}
-				<a id="thread-return" href="{{ return }}">[{% trans %}Voltar{% endtrans %}]</a>
+				<a id="thread-return" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
 			</span>
 
 			<span id="thread-quick-reply">
