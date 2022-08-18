@@ -111,7 +111,7 @@
 			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js"></script>';
 
 			 // json api
-	                 if ($config['api']['enabled']) {
+	                 if ($config['api']['enabled'] && !$mod) {
 				$api = new Api();
 				$jsonFilename = $board['dir'] . '0.json';
 				$json = json_encode($api->translatePage($apithreads));

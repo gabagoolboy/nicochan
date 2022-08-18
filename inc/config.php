@@ -2256,3 +2256,7 @@
 
 	// banlist filters
 	$config["banlist_filters"] = '/Teste/i';
+
+	// ukko2 name. set false do disable
+	// this will not install the theme ukko2 for users, only for mod use
+	$config['ukko2_enabled'] = 'overboard';

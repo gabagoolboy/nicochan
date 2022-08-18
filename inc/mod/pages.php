@@ -711,26 +711,16 @@ function mod_board_log($board, $page_no = 1, $hide_names = false, $public = fals
 function mod_view_board($boardName, $page_no = 1) {
 	global $config, $mod;
 
-	$listBoards = listBoards();
-	if(empty(themeSettings('ukko'))){
-		$ukkoSettings = themeSettings('ukko2');
-		$type = "ukko2";
-	}else{
-		$ukkoSettings = themeSettings('ukko');
-		$type = "ukko";
-	}
-
-	$lel = array_merge($ukkoSettings, $listBoards);
 	if (!openBoard($boardName)){
-		if(!in_array($boardName,$lel))
+		if (!$config['ukko2_enabled'] && $boardName !== $config['ukko2_enabled'])
 			error($config['error']['noboard']);
-		require_once("templates/themes/$type/theme.php");
+		require_once($config['dir']['themes']."/ukko2/theme.php");
 		global $mod;
-		$overboard = new $type();
+		$overboard = new ukko2();
 		$overboard->settings = array();
-		$overboard->settings['uri'] = $boardName;
-		$overboard->settings['title'] = $boardName;
-		$overboard->settings['subtitle'] = $boardName;
+		$overboard->settings['uri'] = $config['ukko2_enabled'];
+		$overboard->settings['title'] = $config['ukko2_enabled'];
+		$overboard->settings['subtitle'] = '';
 		$overboard->settings['thread_limit'] = 15;
 		$overboard->settings['exclude'] = '';
 
