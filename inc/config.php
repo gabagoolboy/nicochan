@@ -148,7 +148,7 @@
 	$config['blotter'] = &$config['global_message'];
 
 	// Shows some extra information at the bottom of pages. Good for development/debugging.
-	$config['debug'] = false;
+	$config['debug'] = true;
 	// For development purposes. Displays (and "dies" on) all errors and warnings. Turn on with the above.
 	$config['verbose_errors'] = true;
 	// EXPLAIN all SQL queries (when in debug mode).
@@ -1309,7 +1309,7 @@
 	// This is mess, but it works.
 	$config['embedding'] = array(
 		array(
-			'/^https?:\/\/(?:\w+\.|)(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11})(&.+)?$/i',
+			'/^https?:\/\/(?:\w+\.|)(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11})?$/i',
 			'<div class="video-container" data-video="$1">'.
 			'<span class="unimportant yt-help">YouTube embed. Click thumbnail to play.</span><br>'.
 			'<a href="$0" target="_blank" class="file">'.
@@ -1325,11 +1325,11 @@
 			'<div class="video-container"><iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe></div>'
 		),
 		array(
-			'/^https?:\/\/(\w+\.|)(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,15})(&.+)?$/i',
+			'/^https?:\/\/(\w+\.|)(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,15})?$/i',
 			'<div class="video-container"><iframe width="300" height="60" src="https://vocaroo.com/embed/$3?autoplay=0" frameborder="0" allow="autoplay"></iframe></div>'
 		),
 		array(
-			'/^https?:\/\/(\w+\.)?bitchute\.com\/video\/([^\s?&#\/]+)\/(&.+)?$/i',
+			'/^https?:\/\/(\w+\.)?bitchute\.com\/video\/([^\s?&#\/]+)\/?$/i',
 			'<div class="video-container"><iframe width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe></div>'
 		),
 		array(
