@@ -4,18 +4,23 @@
     "type": "project",
     "config": {
         "platform": {
-            "php": "7.3.0"
+            "php": "8.0"
         }
     },
+    "repositories": [
+	    {
+		"type": "vcs",
+		"url": "https://github.com/alex300/securimage"
+	    }
+    ],
     "require": {
 	"ext-pdo": "*",
 	"ext-gd": "*",
-        "gettext/gettext": "^4.4",
-        "twig/twig": "^2.9",
-        "mrclay/minify": "^3.0",
+	"gettext/gettext": "^5.5",
+    "twig/twig": "^3.1",
+    "mrclay/jsmin-php": "~2",
 	"lifo/ip": "^1.0",
-	"dapphp/securimage": "^4.0",
-        "ezyang/htmlpurifier": "^4.14",
+	"dapphp/securimage": "dev-master",
 	"phpmyadmin/twig-i18n-extension": "^4.0",
 	"geoip2/geoip2": "^2.0"
     },
@@ -54,7 +59,11 @@
         {
             "name": "Daniel Saunders",
             "email": "dsaunders@dansaunders.me"
-        }
+        },
+	    {
+	        "name": "perdedora",
+	        "homepage": "https://github.com/perdedora"
+	    }
     ],
     "suggest": {
         "ext-imagick": "Allows the use of ImageMagick for image handling",
@@ -63,5 +72,11 @@
         "ext-redis": "Allows the use of Redis for cache storage",
         "ext-memcached": "Allows the use of Memcached for cache storage",
         "ext-xcache": "Allows the use of XCache for cache storage"
+    },
+    "scripts": {
+	 "post-update-cmd": [
+            "rm -rf vendor/dapphp/securimage/captcha.html vendor/dapphp/securimage/example_form.php vendor/dapphp/securimage/example_form.ajax.php vendor/dapphp/securimage/securimage_play.swf vendor/dapphp/securimage/examples/ vendor/dapphp/securimage/audio/* vendor/dapphp/securimage/backgrounds/*",
+            "rm -rf vendor/mrclay/jsmin-php/web/*"
+	 ]
     }
 }
