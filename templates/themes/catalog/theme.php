@@ -82,7 +82,7 @@
 			$this->saveForBoard($ukkoSettings, $recent_posts, true, $mod);
 
 			if ($config['api']['enabled'] && !$mod) {
-				$api = new Api();
+				$api = new Api($config);
 
 				// Separate the threads into pages
 				$pages = array(array());

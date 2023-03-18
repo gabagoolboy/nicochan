@@ -9,8 +9,7 @@ defined('TINYBOARD') or exit;
  * Class for generating json API compatible with 4chan API
  */
 class Api {
-	function __construct(){
-		global $config;
+	function __construct(array $config){
 		/**
 		 * Translation from local fields to fields in 4chan-style API
 		 */
@@ -52,8 +51,8 @@ class Api {
 			'size' => 'fsize',
 		);
 
-		if (isset($config['api']['extra_fields']) && gettype($config['api']['extra_fields']) == 'array'){
-			$this->postFields = array_merge($this->postFields, $config['api']['extra_fields']);
+		if (isset($this->config['api']['extra_fields']) && gettype($this->config['api']['extra_fields']) == 'array'){
+			$this->postFields = array_merge($this->postFields, $this->config['api']['extra_fields']);
 		}
 	}
 
@@ -90,10 +89,9 @@ class Api {
 	}
 
 	private function translateFile($file, $post, &$apiPost) {
-		global $config;
 		$this->translateFields($this->fileFields, $file, $apiPost);
 		$dotPos = strrpos($file->file, '.');
-		if($config['show_filename'])
+		if($this->config['show_filename'])
 			$apiPost['filename'] = @substr($file->name, 0, strrpos($file->name, '.'));
 		else
 			$apiPost['filename'] = @substr($file->file, 0, $dotPos);
@@ -115,12 +113,12 @@ class Api {
 	}
 
 	private function translatePost($post, $threadsPage = false, $hideposterid = false) {
-		global $config, $board;
+		global $board;
 		$apiPost = array();
 		$fields = $threadsPage ? $this->threadsPageFields : $this->postFields;
 		$this->translateFields($fields, $post, $apiPost);
 
-		if (!$hideposterid && isset($config['poster_ids']) && $config['poster_ids'])
+		if (!$hideposterid && isset($this->config['poster_ids']) && $this->config['poster_ids'])
 			$apiPost['id'] = poster_id($post->ip, $post->thread, $board['uri']);
 
 		if ($threadsPage) return $apiPost;
@@ -140,7 +138,7 @@ class Api {
 			}
 		}
 
-		if ($config['slugify'] && !$post->thread) {
+		if ($this->config['slugify'] && !$post->thread) {
 			$apiPost['semantic_url'] = $post->slug;
 		}
 

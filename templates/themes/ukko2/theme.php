@@ -112,7 +112,7 @@
 
 			 // json api
 	                 if ($config['api']['enabled'] && !$mod) {
-				$api = new Api();
+				$api = new Api($config);
 				$jsonFilename = $board['dir'] . '0.json';
 				$json = json_encode($api->translatePage($apithreads));
 	                	file_write($jsonFilename, $json);
