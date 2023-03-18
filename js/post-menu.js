@@ -105,7 +105,7 @@ function buildMenu(e) {
 function addButton(post) {
 	var $ele = $(post);
 	$ele.find('input.delete').after(
-		$('<a>', {href: '#', class: 'post-btn', title: 'Post menu'}).text('▶')
+		$('<a>', {href: '#', class: 'post-btn fa fa-bars', title: 'Post menu'})
 	);
 }
 
@@ -163,9 +163,8 @@ cssString =
 	'.post-menu li:hover>ul {display: block; left: 100%; margin-top: -3px;}\n' +
 	'.post-menu-arrow {float: right; margin-left: 10px;}\n' +
 	'.post-menu.hidden, .post-menu .hidden {display: none;}\n' +
-	'.post-btn {transition: transform 0.1s; width: 15px; text-align: center; font-size: 10pt; opacity: 0.8; text-decoration: none; margin: -6px 0px 0px -5px !important; display: inline-block;}\n' +
-	'.post-btn:hover {opacity: 1;}\n' +
-	'.post-btn-open {transform: rotate(90deg);}\n';
+	'.post-btn {width: 15px; text-align: center; font-size: 10pt; text-decoration: none; display: inline-block; margin-right: 10px;}';
+
 
 if (!$('style.generated-css').length) $('<style class="generated-css">').appendTo('head');
 $('style.generated-css').html($('style.generated-css').html() + cssString);

@@ -10,7 +10,7 @@ $(document).ready(function () {
 
 if (window.Options && Options.get_tab('general')) {
 	Options.extend_tab("general",
-	"<fieldset><legend>Image hover</legend>"
+	"<fieldset><legend>"+_('Image hover')+"</legend>"
 	+ ("<label class='image-hover' id='imageHover'><input type='checkbox' /> "+_('Image hover')+"</label>")
 	+ ("<label class='image-hover' id='catalogImageHover'><input type='checkbox' /> "+_('Image hover on catalog')+"</label>")
 	+ ("<label class='image-hover' id='imageHoverFollowCursor'><input type='checkbox' /> "+_('Image hover should follow cursor')+"</label>")
@@ -34,10 +34,10 @@ if (getSetting('catalogImageHover')) $('#catalogImageHover>input').prop('checked
 if (getSetting('imageHoverFollowCursor')) $('#imageHoverFollowCursor>input').prop('checked', 'checked');
 
 function getFileExtension(filename) { //Pashe, WTFPL
-	if (filename == undefined) {return "unknown";} // catalog
-	if (filename.match(/\.([a-z0-9]+)(&loop.*)?$/i) !== null) {
-		return filename.match(/\.([a-z0-9]+)(&loop.*)?$/i)[1];
-	} else if (filename.match(/https?:\/\/(www\.)?youtube.com/)) {
+	if (filename === undefined) {return;} // catalog
+	if (filename.match(/\.([a-z0-9]+)/i)) {
+		return filename.match(/\.([a-z0-9]+)/i)[1];
+	} else if (filename.match(/img\.youtube\.com/)) {
 		return 'Youtube';
 	} else {
 		return "unknown: " + filename;
@@ -49,7 +49,7 @@ function isImage(fileExtension) { //Pashe, WTFPL
 }
 
 function isVideo(fileExtension) { //Pashe, WTFPL
-	return ($.inArray(fileExtension, ["webm", "mp4"]) !== -1);
+	return ($.inArray(fileExtension, ["webm", "mp4", "php"]) !== -1);
 }
 
 function isOnCatalog() {
@@ -138,12 +138,16 @@ function imageHoverStart(e) { //Pashe, anonish, WTFPL
 	var $this = $(this);
 
 	var fullUrl;
-	if ($this.parent().attr("href").match("src")) {
-		fullUrl = $this.parent().attr("href");
-	} else if (isOnCatalog()) {
-		fullUrl = $this.attr("data-fullimage");
-		if (!isImage(getFileExtension(fullUrl))) {fullUrl = $this.attr("src");}
+	if ($this.parent().attr("href") !== undefined) {
+		if ($this.parent().attr("href").match("src")) {
+			fullUrl = $this.parent().attr("href");
+		} else if (isOnCatalog()) {
+			fullUrl = $this.attr("data-fullimage");
+			if (!isImage(getFileExtension(fullUrl))) {fullUrl = $this.attr("src");}
+		}
 	}
+
+	if (fullUrl === undefined) return;
 
 	if (isVideo(getFileExtension(fullUrl))) {return;}
 

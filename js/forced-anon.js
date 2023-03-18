@@ -28,7 +28,7 @@ $(document).ready(function() {
 			
 			old_info[id] = {'name': p.children('span.name').text(), 'trip': p.children('span.trip').text()};
 			
-			p.children('span.name').text('Anonymous');
+			p.children('span.name').text(_('Anonymous'));
 			if (p.children('span.trip').length != 0)
 				p.children('span.trip').text('');
 		}
@@ -75,7 +75,7 @@ $(document).ready(function() {
 	}
 	else {
 		var s1 = '#hide-ids', s2 = '#forced-anon', e = 'click';
-		$('hr:first').before('<div id="hide-ids" style="text-align:right"><a class="unimportant" href="javascript:void(0)">Hide IDs</a></div>');
+		$('hr:first').before('<div id="hide-ids" style="text-align:right"><a class="unimportant" href="javascript:void(0)">'+_('Hide IDs')+'</a></div>');
 		$('hr:first').before('<div id="forced-anon" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
 		$('div#forced-anon a').text(_('Forced anonymity')+' (' + (forced_anon ? _('enabled') : _('disabled')) + ')');
 	}

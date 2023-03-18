@@ -29,7 +29,7 @@ $(document).ready(function(){
         }
 
         // Add an update catalog link
-        $('span.catalog_search').after("&nbsp;<span id='updater_catalog_panel'><a href='#' style='text-decoration:none; cursor:pointer;' id='update_catalog'>[Update]</a><label id='auto_update_catalog_status'><input type='checkbox' id='auto_update_catalog_cb'></label> "+_("Auto")+" (<span id='update_catalog_secs'></span>)</span>");
+        $('span.catalog_search').after("&nbsp;<span id='updater_catalog_panel'><a href='#' style='text-decoration:none; cursor:pointer;' id='update_catalog'>["+_("Update")+"]</a><label id='auto_update_catalog_status'><input type='checkbox' id='auto_update_catalog_cb'></label> "+_("Auto")+" (<span id='update_catalog_secs'></span>)</span>");
 
         // Set the updater checkbox according to user setting
         if (localStorage.auto_catalog_update === 'true' || localStorage.auto_catalog_update === 'undefined') {
@@ -63,7 +63,7 @@ $(document).ready(function(){
                 if(active_page == "catalog"){
                         var body = $(this).parents('#Grid');
                         var url = window.location.href;
-                        $('#update_catalog_secs').text("Updating...");
+                        $('#update_catalog_secs').text(_("Updating..."));
                         $.ajax({
                                 url: url,
                                 context: document.body,

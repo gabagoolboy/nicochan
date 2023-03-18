@@ -127,9 +127,17 @@
 		</style>').appendTo($('head'));
 	};
 
-	var show_quick_reply = function(){
-		if($('div.banner').length == 0)
+	var show_quick_reply = function(target_id){
+		if(active_page == 'ukko')
 			return;
+
+		if($('div.banner').length == 0){
+			$("#PostAreaToggle").prop("checked", true);
+			var thread_id =  $("#reply_" + target_id + ",#op_"+target_id).closest("[id*=thread_").attr("id").replace("thread_", "");
+			var in_index = true;
+		} else
+			var in_index = false;
+
 		if($('#quick-reply').length != 0)
 			return;
 
@@ -267,7 +275,7 @@
 
 					var tr = this;
 					$td.find('input[type="checkbox"]').each(function() {
-						if ($(this).attr('name') == 'spoiler' || $(this).attr('name') == 'no_country' || $(this).attr('name') == 'countryball') {
+						if ($(this).attr('name') == 'spoiler' || $(this).attr('name') == 'no_country' || $(this).attr('name') == 'rmexif') {
 							$(this).parent('label').appendTo($postForm.find('td.post-options'));
 						} else {
 							$(tr).hide();
@@ -296,35 +304,54 @@
 		$postForm.appendTo($('body')).hide();
 		$origPostForm = $('form[name="post"]:first');
 
-		// Synchronise body text with original post form
-		$origPostForm.find('textarea[name="body"]').on('change input propertychange', function() {
-			$postForm.find('textarea[name="body"]').val($(this).val());
-		});
-		$postForm.find('textarea[name="body"]').on('change input propertychange', function() {
-			$origPostForm.find('textarea[name="body"]').val($(this).val()).trigger('input');
-		});
-		$postForm.find('textarea[name="body"]').focus(function() {
-			$origPostForm.find('textarea[name="body"]').removeAttr('id');
-			$(this).attr('id', 'body');
-		});
-		$origPostForm.find('textarea[name="body"]').focus(function() {
-			$postForm.find('textarea[name="body"]').removeAttr('id');
-			$(this).attr('id', 'body');
-		});
-		// Synchronise other inputs
-		$origPostForm.find('input[type="text"],select').on('change input propertychange', function() {
-			$postForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
-		});
-		$postForm.find('input[type="text"],select').on('change input propertychange', function() {
-			$origPostForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
-		});
+		if(in_index){
+			let board=$('#thread_'+thread_id).attr("data-board");	
+			$("#quick-reply textarea").attr("id", "body");
+			$("<input type='hidden' name='thread' value='" + thread_id + "'></input>").appendTo($("#quick-reply"));
+			$("#quick-reply .handle").append(document.createTextNode("(" + thread_id + ")"));
+			$("#quick-reply .form_submit").attr("value", button_reply);
+			// TODO: fix quotes between boards. eg: start quick reply on thread 7 on b and quote post 3 from an. the inserted quote behave as if the post 3 is from b aswell
+			if ($("#quick-reply #boardsUkko").length) {
+					$('#quick-reply #boardsUkko').remove();
+					$("<input type='hidden' name='board' value='" + board + "'></input>").appendTo($("#quick-reply"));	
 
-		$origPostForm.find('input[type="checkbox"]').on('change input propertychange', function() {
-			$postForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
-		});
-		$postForm.find('input[type="checkbox"]').on('change input propertychange', function() {
-			$origPostForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
-		});
+			}
+
+			if(post_captcha == 'false')
+				$("#quick-reply .captcha").remove();
+
+		}else if(!in_index){
+
+			// Synchronise body text with original post form
+			$origPostForm.find('textarea[name="body"]').on('change input propertychange', function() {
+				$postForm.find('textarea[name="body"]').val($(this).val());
+			});
+			$postForm.find('textarea[name="body"]').on('change input propertychange', function() {
+				$origPostForm.find('textarea[name="body"]').val($(this).val()).trigger('input');
+			});
+			$postForm.find('textarea[name="body"]').focus(function() {
+				$origPostForm.find('textarea[name="body"]').removeAttr('id');
+				$(this).attr('id', 'body');
+			});
+			$origPostForm.find('textarea[name="body"]').focus(function() {
+				$postForm.find('textarea[name="body"]').removeAttr('id');
+				$(this).attr('id', 'body');
+			});
+			// Synchronise other inputs
+			$origPostForm.find('input[type="text"],select').on('change input propertychange', function() {
+				$postForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
+			});
+			$postForm.find('input[type="text"],select').on('change input propertychange', function() {
+				$origPostForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
+			});
+
+			$origPostForm.find('input[type="checkbox"]').on('change input propertychange', function() {
+				$postForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
+			});
+			$postForm.find('input[type="checkbox"]').on('change input propertychange', function() {
+				$origPostForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
+			});
+		}
 
 		if (typeof $postForm.draggable != 'undefined') {
 			if (localStorage.quickReplyPosition) {
@@ -394,7 +421,8 @@
 	$(window).on('cite', function(e, id, with_link) {
 		if ($(this).width() <= 400)
 			return;
-		show_quick_reply();
+		var origin_id = id;
+		show_quick_reply(origin_id);
 		if (with_link) {
 			$(document).ready(function() {
 				if ($('#' + id).length) {

@@ -226,7 +226,7 @@ function get_cookie(cookie_name) {
 		return null;
 }
 
-function highlightReply(id) {
+function highlightReply(id, evt) {
 	if (typeof window.event != "undefined" && event.which == 2) {
 		// don't highlight on middle click
 		return true;
@@ -244,6 +244,15 @@ function highlightReply(id) {
 			post.className += ' highlighted';
 			window.location.hash = id;
 	}
+	if (evt == undefined)
+             return true;
+        else{
+            left = evt.target.href.split("/");
+            left.pop();
+            right = window.location.href.split("/");
+            right.pop();
+            return true //JSON.stringify(left) != JSON.stringify(right); // evt.target.href.split("/").pop().split(".").pop() == window.location.href.split("/").pop().split(".").pop();
+        }
 	return true;
 }
 
@@ -270,6 +279,9 @@ function dopost(form) {
 	if (form.elements['no_country']) {
 		localStorage.no_country = form.elements['no_country'].checked;
 	}
+	if (form.elements['cbsingle']) {
+		localStorage.cbsingle = form.elements['cbsingle'].checked;
+	}
 
 	saved[document.location] = form.elements['body'].value;
 	sessionStorage.body = JSON.stringify(saved);
@@ -278,7 +290,11 @@ function dopost(form) {
 }
 
 function citeReply(id, with_link) {
-	var textarea = document.getElementById('body');
+	var textarea;
+	if(document.getElementById('index-body') != undefined)
+		textarea = document.getElementById('index-body');
+	else
+        	textarea = document.getElementById('body');
 
 	if (!textarea) return false;
 
@@ -356,6 +372,12 @@ function rememberStuff() {
 	}
 }
 
+function populateFormJQuery(frm, data) {
+	$.each(data, function(key, value){
+		$('[name='+key+']', frm).val(value);
+	});
+}
+
 var script_settings = function(script_name) {
 	this.script_name = script_name;
 	this.get = function(var_name, default_val) {
@@ -381,6 +403,7 @@ function init() {
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
 
+
 }
 
 
@@ -397,9 +420,12 @@ function ready() {
 
 {% endverbatim %}
 
-
-var post_date = "{{ config.post_date_js }}";
+var file_post = "{{ config.file_post }}";
 var max_images = {{ config.max_images }};
+var button_reply = "{{ config.button_reply }}";
+var post_captcha = "{{ config.captcha.post_captcha ? 'true' : 'false' }}";
+var post_date = "{{ config.post_date_js }}"
+
 if (typeof active_page === "undefined") {
 	active_page = "page";
 }

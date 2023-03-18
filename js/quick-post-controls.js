@@ -46,7 +46,7 @@ $(document).ready(function(){
 //		} else {
 			var board=$(this).parent().parent().parent().attr("data-board");
 				if(board){
-					post_form.attr('action', '/post.php'); //doesn't respect $config["root"] but...
+					post_form.attr('action', '/post.php'); 
 					post_form.append('<input type="hidden" value="'+board+'" name="board" />');
 				}else{
 					return;//better not to show a form if it isn't going to work

@@ -93,7 +93,7 @@ watchlist.add = function(sel) {
 		threadInfo = [board_name, threadName, postCount, threadLink];
 
 	} else {
-		alert('Functionality not yet implemented for this type of page.');
+		alert(_('Functionality not yet implemented for this type of page.'));
 		return this;
 	}
 
@@ -149,9 +149,9 @@ $(document).ready(function(){
 	}
 
 	//Append the watchlist toggle button.
-	$('.boardlist').append('<span>[ <a class="watchlist-toggle" href="#">'+_('watchlist')+'</a> ]</span>');
+	$('.boardlist').append('<a class="watchlist-toggle" style="float:right;" href="#">['+_('watchlist')+']</a>&nbsp;');
     	//Append a watch thread button after every OP post number.
-    	$('.op>.intro>.post_no:odd').after('<a class="watchThread" href="#">['+_('Watch Thread')+']</a>');
+	$('.op>.intro>.post_no:odd').after('<a class="watchThread" href="#">['+_('Watch Thread')+']</a>');	
 
 	//Draw the watchlist, hidden.
 	watchlist.render();

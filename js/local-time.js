@@ -51,15 +51,15 @@ $(document).ready(function(){
 		if (elapsed < msPerMinute) {
 			return 'Just now';
 		} else if (elapsed < msPerHour) {
-			return Math.round(elapsed/msPerMinute) + (Math.round(elapsed/msPerMinute)<=1 ? ' minute ago':' minutes ago');
+			return Math.round(elapsed/msPerMinute) + (Math.round(elapsed/msPerMinute)<=1 ? _(' minute ago'):_(' minutes ago'));
 		} else if (elapsed < msPerDay ) {
-			return Math.round(elapsed/msPerHour ) + (Math.round(elapsed/msPerHour)<=1 ? ' hour ago':' hours ago');
+			return Math.round(elapsed/msPerHour ) + (Math.round(elapsed/msPerHour)<=1 ? _(' hour ago'):_(' hours ago'));
 		} else if (elapsed < msPerMonth) {
-			return Math.round(elapsed/msPerDay) + (Math.round(elapsed/msPerDay)<=1 ? ' day ago':' days ago');
+			return Math.round(elapsed/msPerDay) + (Math.round(elapsed/msPerDay)<=1 ? _(' day ago'):_(' days ago'));
 		} else if (elapsed < msPerYear) {
-			return Math.round(elapsed/msPerMonth) + (Math.round(elapsed/msPerMonth)<=1 ? ' month ago':' months ago');
+			return Math.round(elapsed/msPerMonth) + (Math.round(elapsed/msPerMonth)<=1 ? _(' month ago'):_(' months ago'));
 		} else {
-			return Math.round(elapsed/msPerYear ) + (Math.round(elapsed/msPerYear)<=1 ? ' year ago':' years ago');
+			return Math.round(elapsed/msPerYear ) + (Math.round(elapsed/msPerYear)<=1 ? _(' year ago'):_(' years ago'));
 		}
 	}
 
@@ -69,15 +69,15 @@ $(document).ready(function(){
 
 		for(var i = 0; i < times.length; i++) {
 			var t = times[i].getAttribute('datetime');
+			var ol = times[i].innerHTML;
 			var postTime = new Date(t);
 
 			times[i].setAttribute('data-local', 'true');
 
 			if (!localStorage.show_relative_time || localStorage.show_relative_time === 'false') {
-			//	times[i].innerHTML = dateformat(iso8601(t));
-				times[i].setAttribute('title', timeDifference(currentTime, postTime.getTime()));
+				times[i].setAttribute('title', timeDifference(currentTime, postTime));
 			} else {
-				times[i].innerHTML = timeDifference(currentTime, postTime.getTime());
+				times[i].innerHTML = timeDifference(currentTime, postTime);
 				times[i].setAttribute('title', dateformat(iso8601(t)));
 			}
 

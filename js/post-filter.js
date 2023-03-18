@@ -346,7 +346,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 				$('.hide-thread-link').remove();*/
 
 			if ($(ele).hasClass('op') && !$(ele).find('.hide-thread-link').length) {
-				$('<a class="hide-thread-link" style="float:left;margin-right:5px" href="javascript:void(0)">' + ($(ele).data('hidden') ? '<i class="fa fa-plus-square" style="color: #9e0059 !important"></i>' : '<i class="fa fa-minus-square" style="color: #9e0059 !important"></i>') + '</a>')
+				$('<a class="hide-thread-link" style="float:left;margin-right:5px" href="javascript:void(0)">' + ($(ele).data('hidden') ? '<i class="fa fa-plus-square"></i>' : '<i class="fa fa-minus-square"></i>') + '</a>')
 					.insertBefore($(ele).find(':not(h2,h2 *):first'))
 					.click(function() {
 						var postId = $(ele).find('.post_no').not('[id]').text();

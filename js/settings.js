@@ -41,7 +41,7 @@ tb_settings['quick-reply'] = {
 // ajax.js
 tb_settings['ajax'] = {
 	// Always act as if "noko" was typed when posting replies with the ajax script
-	always_noko_replies: false	
+	always_noko_replies: true	
 };
 
 // wpaint.js

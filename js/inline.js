@@ -94,7 +94,7 @@ $(document).ready(function() {
         return add(link, $target)
     }
 
-    var $loading = $('<div class="inline post">loading...</div>')
+    var $loading = $('<div class="inline post">'+_('loading...')+'</div>')
       .attr('id', link.id)
       .insertAfter(link.node)
 

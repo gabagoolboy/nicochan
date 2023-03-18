@@ -38,19 +38,19 @@ if (active_page == 'catalog') {
 
 			if (!button.data('expanded')) {
 				button.data('expanded', '1');
-				button.text('Fechar');
+				button.text(_('Close'));
 				$('.catalog_search').append(' <input id="search_field" style="border: inset 1px;">');
 				$('#search_field').focus();
 			} else {
 				button.removeData('expanded');
-				button.text('Pesquisar');
+				button.text(_('Search'));
 				$('.catalog_search').children().last().remove();
 				$('div[id="Grid"]>.mix').each(function () { $(this).css('display', 'inline-block'); });
 			}
 		}
 
 		$('.threads').before('<span class="catalog_search">[<a id="catalog_search_button" style="text-decoration:none; cursor:pointer;"></a>]</span>');
-		$('#catalog_search_button').text('Search');
+		$('#catalog_search_button').text(_('Search'));
 
 		$('#catalog_search_button').on('click', searchToggle);
 		$('.catalog_search').on('keyup', 'input#search_field', function (e) {

@@ -22,7 +22,7 @@ $(function(){
     $("#upload").hide();
     $("[id^=upload_file]").hide();
     $(".file_separator").hide();
-    $(".upload_url").hide();
+    $("#upload_url").hide();
     $(".file_separator_url").hide();
     $("#upload_embed").hide();
     $(".add_image").hide();
@@ -51,7 +51,7 @@ $(function(){
   enable_url = function() {
     disable_all();
     $("#upload").show();
-    $(".upload_url").show();
+    $("#upload_url").show();
     $(".file_separator_url").show();
     
     $('label[for="file_url"]').html(_("URL"));

@@ -191,7 +191,7 @@ if (active_page == 'thread' || active_page == 'index') {
 		
 		self.add_rule = function(rule, index){
 			if (rule === undefined) rule = {
-				text: 'New Rule',
+				text: _('New Rule'),
 				key: '',
 				multiline:false, 
 				exclusiveline:false, 

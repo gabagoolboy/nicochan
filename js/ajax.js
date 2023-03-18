@@ -18,7 +18,7 @@ $(window).ready(function() {
 
 	// Enable submit button if disabled (cache problem)
 	$('input[type="submit"]').removeAttr('disabled');
-	
+
 	var setup_form = function($form) {
 		$form.submit(function() {
 			if (do_not_ajax)
@@ -27,7 +27,7 @@ $(window).ready(function() {
 			var submit_txt = $(this).find('input[type="submit"]').val();
 			if (window.FormData === undefined)
 				return true;
-			
+
 			var formData = new FormData(this);
 			formData.append('json_response', '1');
 			formData.append('post', submit_txt);
@@ -79,27 +79,46 @@ $(window).ready(function() {
 							|| (!settings.get('always_noko_replies', true) && !post_response.noko)) {
 							document.location = post_response.redirect;
 						} else {
+							// FIXME: the last thing to do to enable quick reply on ukko is this redirect
 							$.ajax({
 								url: document.location,
 								success: function(data) {
-									$(data).find('div.post.reply').each(function() {
-										var id = $(this).attr('id');
-										if($('#' + id).length == 0) {
-											$(this).insertAfter($('div.post:last').next()).after('<br class="clear">');
-											$(document).trigger('new_post', this);
-											// watch.js & auto-reload.js retrigger
+									var in_index = $(data).find('div.thread').length > 1;
+
+									$(data).find('div.thread').each(function(){
+										var tr_id = $(this).attr('id');
+										$(this).find('div.post.reply').each(function() {
+											var id = $(this).attr('id');
+											if($('#' + id).length == 0) {
+												$(this).insertAfter($('#' + tr_id + ' div.post:last').next());
+												$(document).trigger('new_post', this);
+												// watch.js & auto-reload.js retrigger
 											setTimeout(function() { $(window).trigger("scroll"); }, 100);
-										}
+											}
+										})
 									});
-									
+
 									highlightReply(post_response.id);
 									window.location.hash = post_response.id;
-									$(window).scrollTop($('div.post#reply_' + post_response.id).offset().top);
-									
-									$(form).find('input[type="submit"]').val(submit_txt);
-									$(form).find('input[type="submit"]').removeAttr('disabled');
-									$(form).find('input[name="subject"],input[name="file_url"],\
+									if(!in_index){
+										if($(window).scrollTop($('div.post#reply_' + post_response.id))){
+											$(window).scrollTop($('div.post#reply_' + post_response.id).offset().top);
+										} else {
+											window.scrollTo(0,document.body.offsetHeight);
+										}
+									}
+									$("form").each(function(){
+										$(this).find('input[type="submit"]').val(submit_txt)
+										$(this).find('input[type="submit"]').removeAttr('disabled');
+										$(this).find('input[name="subject"],input[name="file_url"],\
 										textarea[name="body"],input[type="file"]').val('').change();
+									});
+								},
+								error: function(xhr, status, er){
+									$("form").each(function(){
+										// issue was reported here  $(this).find('input[type="submit"]').val("(Error)");
+										$(this).find('input[type="submit"]').removeAttr('disabled');
+									});
 								},
 								cache: false,
 								contentType: false,
@@ -125,10 +144,10 @@ $(window).ready(function() {
 				contentType: false,
 				processData: false
 			}, 'json');
-			
+
 			$(form).find('input[type="submit"]').val(_('Posting...'));
 			$(form).find('input[type="submit"]').attr('disabled', true);
-			
+
 			return false;
 		});
 	};
