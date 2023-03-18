@@ -79,7 +79,7 @@ var banlist_init = function(token, my_boards, inMod) {
       id: {
          name: (inMod)?"Edit":"&nbsp;", width: (inMod)?"35px":"0px", fmt: function(f) {
 	 if (!inMod) return '';
-         return "<a href=?/edit_ban/"+f.id+">Edit</a>";
+         return "<a href='?/edit_ban/"+f.id+"'>Edit</a>";
        } }
 
     }, {}, t);

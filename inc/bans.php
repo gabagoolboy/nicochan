@@ -123,32 +123,22 @@ class Bans {
 		return array($ipstart, $ipend);
 	}
 
-	static public function find($ip, $board = false, $get_mod_info = false, $hashed_ip = false, $banid = false) {
+	static public function find($ip, $board = false, $get_mod_info = false, $hashed_ip = false, $banid = null) {
 		global $config;
 
-		if (!$banid) {
-			if ($config['bcrypt_ip_addresses'])
-				$search = '(`ipstart` = :ip))';
-			else
-				$search = '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)))';
-		} else {
-			$search = '(``bans``.`id` = :ip))';
-		}
 
 		$query = prepare('SELECT ``bans``.*' . ($get_mod_info ? ', `username`' : '') . ' FROM ``bans``
 			' . ($get_mod_info ? 'LEFT JOIN ``mods`` ON ``mods``.`id` = `creator`' : '') . '
 			WHERE
 			(' . ($board !== false ? '(`board` IS NULL OR `board` = :board) AND' : '') . '
-			' . $search . '
+			' . ($config['bcrypt_ip_addresses'] ? '(`ipstart` = :ip) OR (``bans``.id = :id))' : '(`ipstart` = :ip OR (:ip >= `ipstart` AND :ip <= `ipend`)) OR (``bans``.id = :id))') . '
 			ORDER BY `expires` IS NULL, `expires` DESC');
 
 		if ($board !== false)
 			$query->bindValue(':board', $board, PDO::PARAM_STR);
 
-		if (!$banid)
-			$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip ? $ip :get_ip_hash($ip)) : inet_pton($ip));
-		else
-			$query->bindValue(':ip', $ip, PDO::PARAM_INT);
+		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip ? $ip :get_ip_hash($ip)) : inet_pton($ip));
+		$query->bindValue(':id', $banid);
 		$query->execute() or error(db_error($query));
 
 		$ban_list = array();
