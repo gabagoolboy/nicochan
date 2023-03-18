@@ -28,41 +28,6 @@
 
 /*
  * ====================
- *  Deny GET settings
- * ====================
- */
-
-	// Set to true if you want to automatically shadow delete all GETS globaly (this overrides disabling of gets) (can also be set for each board in it's config)
-	$config['post_get']['shadowdelete_post_gets'] = false;
-
-	// Set to true if you want to dissable all GETS globaly (can also be set for each board in it's config)
-	$config['post_get']['dissable_post_gets'] = false;
-
-	// Set to true if poster need a posting history to get GETS globaly (can also be set for each board in it's config)
-	$config['post_get']['post_gets_need_history'] = false;
-	// Give skippet GET to someone with post history if it was skipped
-	$config['post_get']['post_gets_need_history_give_retrospect'] = false;
-	// Needs to have posted 7 days ago
-	$config['post_get']['post_gets_need_history_time'] = 60*60*24*7;
-	// Needs to have posted at least 10 posts prior to time
-	$config['post_get']['post_gets_need_history_count'] = 10;
-
-	// Allow MODS to get the GET if they manage to post at the right time
-	$config['post_get']['not_dissabled_for_mods'] = false;
-
-	// Minimum length of number to be conscidered a get number
-	$config['post_get']['minimum_length'] = 5;
-
-	// Post ID that ends in a sequense of repeating number that has "repeating_digits_count" of the same number.
-	$config['post_get']['repeating_digits'] = true;
-	$config['post_get']['repeating_digits_count'] = 4;
-
-	// Post ID that is made up of consecutive digits starting with 1 ex. 12345, 123456 ... 1234567890.
-	$config['post_get']['sequential_digits'] = true;
-
-
-/*
- * ====================
  *  Public Statistics settings
  * ====================
  */

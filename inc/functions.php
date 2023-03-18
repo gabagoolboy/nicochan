@@ -1182,66 +1182,7 @@ function insertFloodPost(array $post) {
 function post(array $post) {
 	global $pdo, $board, $config, $mod;
 
-	$given_spesific_get = false;
 	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :hideposterid, :embed, :slug)", $board['uri']));
-
-	// Check if we should use saved get.
-	if($config['post_get']['post_gets_need_history_give_retrospect'] && $config['post_get']['dissable_post_gets'] && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
-		if(file_exists($board['dir'] . "get_denies.txt") && file_exists($board['dir'] . "get_denies.txt.lock")) {
-
-			$has_history = false;
-			if($config['post_get']['post_gets_need_history']) {
-				// Get post history for IP
-				$post_count_query = prepare(sprintf("SELECT COUNT(*) AS count FROM ``posts_%s`` WHERE `ip` = :ip AND `time` < :timeoffset", $board['uri']));
-				$post_count_query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : get_ip_hash($_SERVER['REMOTE_ADDR'], PDO::PARAM_STR));
-				$post_count_query->bindValue(':timeoffset', time() - $config['post_get']['post_gets_need_history_time'], PDO::PARAM_INT);
-
-
-				$post_count_query->execute() or error(db_error($post_count_query));
-				$post_count_hist = $post_count_query->fetch()['count'];
-				if($post_count_hist >= $config['post_get']['post_gets_need_history_count'])
-				{
-					$has_history = true;
-				}
-			}
-
-			// If no history needed or poster has needed history get the get num needed.
-			if(!$config['post_get']['post_gets_need_history'] || $has_history) {
-
-				$file_get_num = NULL;
-
-				// create file to make samephoric check
-				$fp = fopen($board['dir'] . "get_denies.txt.lock", "r");
-				if (flock($fp, LOCK_EX)) {  // acquire an exclusive lock
-					if(file_exists($board['dir'] . "get_denies.txt")) {
-						$file_content = file_get_contents($board['dir'] . "get_denies.txt");
-
-						$file_content = explode("\n", $file_content);
-						$file_get_num = array_shift($file_content);
-
-						if(sizeof($file_content) == 0) {
-							unlink($board['dir'] . "get_denies.txt");
-						} else {
-							file_put_contents($board['dir'] . "get_denies.txt", implode("\n", $file_content));
-						}
-
-						flock($fp, LOCK_UN);    // release the lock
-
-						// Set spesific post num
-						if(is_numeric($file_get_num)) {
-							$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( :post_num, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, 0, :embed, :slug)", $board['uri']));
-							$query->bindValue(':post_num', $file_get_num, PDO::PARAM_INT);
-							$given_spesific_get = true;
-						}
-					} else {
-						error("Couldn't get the lock!");
-					}
-				}
-				fclose($fp);
-			}
-		}
-	}
-
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1343,50 +1284,6 @@ function post(array $post) {
 	// Save Post ID
 	$postID = $pdo->lastInsertId();
 
-	// Skip GETS
-	if(!$given_spesific_get && ($config['post_get']['shadowdelete_post_gets'] || $config['post_get']['dissable_post_gets']) && !($config['post_get']['not_dissabled_for_mods'] && $mod && $mod['type'] >= MOD)) {
-		if(postID_GetCheck($postID)){
-			if($config['post_get']['shadowdelete_post_gets']) {
-				ShadowDelete::deletePost($postID);
-				error("Something .... Sometimes ....");
-			} else if($config['post_get']['post_gets_need_history']) {
-				// Get post history for IP
-				$post_count_query = prepare(sprintf("SELECT COUNT(*) AS count FROM ``posts_%s`` WHERE `ip` = :ip AND `time` < UNIX_TIMESTAMP() - :timeoffset", $board['uri']));
-				$query->bindValue(':ip', isset($post['ip']) ? $post['ip'] : get_ip_hash($_SERVER['REMOTE_ADDR']));
-				$query->bindValue(':timeoffset', $config['post_get']['post_gets_need_history_time']);
-
-				$post_count_hist = $post_count_query->fetch()['count'];
-				if($post_count_hist < $config['post_get']['post_gets_need_history_count']) {
-					// Delete current get post entry
-					$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
-					$query->bindValue(':id', $postID, PDO::PARAM_INT);
-					$query->execute() or error(db_error($query));
-
-					if($config['post_get']['post_gets_need_history_give_retrospect']){
-						// Create or append post id to file
-						if(file_exists($board['dir'] . "get_denies.txt"))
-							$file_content = file_get_contents($board['dir'] . "get_denies.txt") . "\n" . $postID;
-						else
-							$file_content = $postID;
-						file_put_contents($board['dir'] . "get_denies.txt", $file_content);
-						file_put_contents($board['dir'] . "get_denies.txt.lock", "");
-					}
-
-					// Create a new post entry and return new ID
-					return post($post);
-				}
-			} else {
-				// Delete current get post entry
-				$query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
-				$query->bindValue(':id', $postID, PDO::PARAM_INT);
-				$query->execute() or error(db_error($query));
-
-				// Create a new post entry and return new ID
-				return post($post);
-			}
-		}
-	}
-
 
 	// Add file-hashes to database
 	if($post['has_file'])
@@ -1411,47 +1308,6 @@ function post(array $post) {
 
 	// Return Post ID
 	return $postID;
-}
-
-function postID_GetCheck($postID)
-{
-	global $config;
-
-	//
-	// Post ID that ends in a sequense of repeating number that has "repeating_digits_count" of the same number.
-	//
-	// \b[0-9]+([0-9])\1{4,}\b
-	//
-	// Explanation:
-	// ^(?=.{4,}$)	# Number must be of five or more digits
-	// \b      		# match word boundary
-	// [1-9]* 		# match zero or more instances of digit 1-9
-	// ([0-9]){3,}	# match three more instances of same number at the end (four or more total)
-	// \b      		# match word boundary
-	//
-	if($config['post_get']['repeating_digits']) {
-		// if(preg_match('/^(?=.{4,}$)\b[1-9]*([0-9])\1{3,}\b/', $postID))
-		if(preg_match('/^(?=.{' . ($config['post_get']['minimum_length'] - 1) . ',10}$)\b[0-9]+([0-9])\1{' . ($config['post_get']['repeating_digits_count'] - 1) . ',}\b/', $postID))
-			return true;
-	}
-
-	//
-	// Post ID that is made up of consecutive digits starting with 1 ex. 12345, 123456 ... 1234567890.
-	//
-	// \b(123|1234|12345|123456|123457|12345678|123456789|1234567890)\b
-	//
-	// Explanation:
-	// ^(?=.{5,}$)		# Number must be of five or more digits
-	// \b(123|1234|..	# Match 1234, or, 12345, or ...
-	//
-	if($config['post_get']['sequential_digits']) {
-		// if(preg_match('/^(?=.{5,10}$)\b(123|1234|12345|123456|1234567|12345678|123456789|1234567890){1}\b/', $postID))
-		if(preg_match('/^(?=.{' . ($config['post_get']['minimum_length'] - 1) . ',10}$)\b(123|1234|12345|123456|1234567|12345678|123456789|1234567890){1}\b/', $postID))
-			return true;
-	}
-
-	// If post ID was not a get number retrn false
-	return false;
 }
 
 function bumpThread($id) {
