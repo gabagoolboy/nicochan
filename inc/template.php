@@ -56,7 +56,7 @@ function Element($templateFile, array $options) {
 	}
 
 	// Read the template file
-	if (@file_get_contents("{$config['dir']['template']}/${templateFile}")) {
+	if (@file_get_contents("{$config['dir']['template']}/{$templateFile}")) {
 		$body = $twig->render($templateFile, $options);
 
 		if ($config['minify_html'] && preg_match('/\.html$/', $templateFile)) {
@@ -65,7 +65,7 @@ function Element($templateFile, array $options) {
 
 		return $body;
 	} else {
-		throw new Exception("Template file '${templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
+		throw new Exception("Template file '{$templateFile}' does not exist or is empty in '{$config['dir']['template']}'!");
 	}
 }
 
@@ -167,12 +167,9 @@ function twig_strftime_filter($date, $format = false) {
 		return gmdate($format, $date);
 
 	$fmt = new IntlDateFormatter(
-		$config['locale'],
-		null,
-		null,
-		$config['timezone'],
-		null,
-		$config['post_date']
+		locale: $config['locale'],
+		timezone: $config['timezone'],
+		pattern: $config['post_date']
 	);
 
 	$dt = new DateTime("@$date");

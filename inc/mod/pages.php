@@ -91,7 +91,7 @@ function mod_dashboard() {
 		}
 	}
 
-	if (!$config['cache']['enabled'] || ($args['unread_pms'] = cache::get('pm_unreadcount_' . $mod['id'])) === false) {
+	if (!$config['cache']['enabled'] || !$args['unread_pms'] = cache::get('pm_unreadcount_' . $mod['id'])) {
 		$query = prepare('SELECT COUNT(*) FROM ``pms`` WHERE `to` = :id AND `unread` = 1');
 		$query->bindValue(':id', $mod['id']);
 		$query->execute() or error(db_error($query));
@@ -1637,7 +1637,7 @@ function mod_move_reply($originBoard, $postID) {
 		// trigger themes
 		rebuildThemes('post', $targetBoard);
 		// mod log
-		modLog("Moved post #${postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#${newID})", $originBoard);
+		modLog("Moved post #{$postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#{$newID})", $originBoard);
 
 		// return to original board
 		openBoard($originBoard);
@@ -1849,7 +1849,7 @@ function mod_move($originBoard, $postID) {
 			}
 		}
 
-		modLog("Moved thread #${postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#${newID})", $originBoard);
+		modLog("Moved thread #{$postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#{$newID})", $originBoard);
 
 		// build new thread
 		buildThread($newID);
@@ -3443,13 +3443,12 @@ function mod_edit_page($id) {
 		if (!in_array($method, array('html', 'infinity')))
 			error(_('Unrecognized page markup method.'));
 
+		if ($method == 'html' && !hasPermission($config['mod']['rawhtml']))
+			$method = 'infinity';
+
 		switch ($method) {
 			case 'html':
-				if (hasPermission($config['mod']['rawhtml'])) {
 					$write = $content;
-				} else {
-					$write = purify_html($content);
-				}
 				break;
 			case 'infinity':
 				$c = $content;
@@ -3948,7 +3947,7 @@ function mod_merge($originBoard, $postID) {
 
 		// trigger themes
 		rebuildThemes('post', $targetBoard);
-		modLog("Merged thread with  #${sourceOp} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#${targetOp})", $originBoard);
+		modLog("Merged thread with  #{$sourceOp} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#{$targetOp})", $originBoard);
 
 		// redirect
 		header('Location: ?/' . sprintf($config['board_path'], $board['uri']) . $config['dir']['res'] . link_for($newpost) . '#' . $targetOp, true, $config['redirect_http']);
@@ -4085,7 +4084,7 @@ function mod_merge($originBoard, $postID) {
 			}
 		}
 
-		modLog("Moved thread #${postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#${newID})", $originBoard);
+		modLog("Moved thread #{$postID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#{$newID})", $originBoard);
 
 		// build new thread
 		buildThread($newID);
@@ -4119,7 +4118,7 @@ function mod_merge($originBoard, $postID) {
 
 		// trigger themes
 		rebuildThemes('post', $targetBoard);
-		modLog("Merged thread with  #${newID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#${targetOp})", $targetBoard);
+		modLog("Merged thread with  #{$newID} to " . sprintf($config['board_abbreviation'], $targetBoard) . " (#{$targetOp})", $targetBoard);
 
 		// redirect
 		header('Location: ?/' . sprintf($config['board_path'], $board['uri']) . $config['dir']['res'] . link_for($newpost) . '#' . $targetOp, true, $config['redirect_http']);

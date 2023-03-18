@@ -767,7 +767,7 @@ function handle_post(){
 		if ($file['is_an_image']) {
 			if ($config['ie_mime_type_detection'] !== false) {
 				// Check IE MIME type detection XSS exploit
-				$buffer = file_get_contents($upload, null, null, null, 255);
+				$buffer = file_get_contents(filename: $upload, length: 255);
 				if (preg_match($config['ie_mime_type_detection'], $buffer)) {
 					undoImage($post);
 					error($config['error']['mime_exploit']);
@@ -1068,7 +1068,14 @@ function handle_post(){
 		// Tell it to delete the cached post for referer
 		$js->{$_SERVER['HTTP_REFERER']} = true;
 		// Encode and set cookie
-		setcookie($config['cookies']['js'], json_encode($js), 0, $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, false, false);
+		setcookie($config['cookies']['js'], json_encode($js), array(
+			'expires' => 0,
+			'path' => $config['cookies']['jail'] ? $config['cookies']['path'] : '/',
+			'domain' => null,
+			'secure' => false,
+			'httponly' => false,
+			'samesite' => 'Lax'
+		));
 	}
 
 	$root = $post['mod'] ? $config['root'] . $config['file_mod'] . '?/' : $config['root'];

@@ -11,10 +11,6 @@ if (realpath($_SERVER['SCRIPT_FILENAME']) == str_replace('\\', '/', __FILE__)) {
 
 $microtime_start = microtime(true);
 
-
-// for IPv6 in DNSBL
-use Lifo\IP\IP;
-
 // the user is not currently logged in as a moderator
 $mod = false;
 
@@ -1927,7 +1923,7 @@ function checkMute() {
 
 	if ($config['cache']['enabled']) {
 		// Cached mute?
-		if (($mute = cache::get("mute_${_SERVER['REMOTE_ADDR']}")) && ($mutetime = cache::get("mutetime_${_SERVER['REMOTE_ADDR']}"))) {
+		if (($mute = cache::get("mute_{$_SERVER['REMOTE_ADDR']}")) && ($mutetime = cache::get("mutetime_{$_SERVER['REMOTE_ADDR']}"))) {
 			error(sprintf($config['error']['youaremuted'], $mute['time'] + $mutetime - time()));
 		}
 	}
@@ -1946,8 +1942,8 @@ function checkMute() {
 
 		if ($mute['time'] + $mutetime > time()) {
 			if ($config['cache']['enabled']) {
-				cache::set("mute_${_SERVER['REMOTE_ADDR']}", $mute, $mute['time'] + $mutetime - time());
-				cache::set("mutetime_${_SERVER['REMOTE_ADDR']}", $mutetime, $mute['time'] + $mutetime - time());
+				cache::set("mute_\{$_SERVER['REMOTE_ADDR']}", $mute, $mute['time'] + $mutetime - time());
+				cache::set("mutetime_\{$_SERVER['REMOTE_ADDR']}", $mutetime, $mute['time'] + $mutetime - time());
 			}
 			// Not expired yet
 			error(sprintf($config['error']['youaremuted'], $mute['time'] + $mutetime - time()));
@@ -2221,7 +2217,7 @@ function ReverseIPv4Octets($ip) {
 }
 
 function ReverseIPv6Octets($ip) {
-	return strrev(implode(".", str_split(str_replace(':', '', IP::inet_expand($ip)))));
+	return strrev(implode(".", str_split(str_replace(':', '', Lifo\IP\IP::inet_expand($ip)))));
 }
 
 function wordfilters(&$body) {
@@ -2650,8 +2646,27 @@ function escape_markup_modifiers($string) {
 	return preg_replace('@<(tinyboard) ([\w\s]+)>@mi', '<$1 escape $2>', $string);
 }
 
+function defined_flags_accumulate($desired_flags) {
+	global $config;
+
+	$output_flags = 0x0;
+	foreach ($desired_flags as $flagname) {
+		if (defined($flagname)) {
+			$flag = constant($flagname);
+			if (gettype($flag) != 'integer')
+				error(sprintf($config['error']['flag_wrongtype'], $flagname));
+			$output_flags |= $flag;
+		} else {
+			if ($config['deprecation_errors'])
+				error(sprintf($config['error']['flag_undefined'], $flagname));
+		}
+	}
+	return $output_flags;
+}
+
 function utf8tohtml($utf8) {
-	return htmlspecialchars($utf8, ENT_NOQUOTES, 'UTF-8');
+	$flags = defined_flags_accumulate(['ENT_QUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
+	return htmlspecialchars((string)$utf8, $flags, 'UTF-8');
 }
 
 function ordutf8($string, &$offset) {
@@ -3459,17 +3474,6 @@ function prettify_textarea($s){
 	return str_replace("\t", '&#09;', str_replace("\n", '&#13;&#10;', htmlentities($s)));
 }
 
-function purify_html($s) {
-	global $config;
-
-	$c = HTMLPurifier_Config::createDefault();
-	$c->set('HTML.Allowed', $config['allowed_html']);
-	$uri = $c->getDefinition('URI');
-	$uri->addFilter(new HTMLPurifier_URIFilter_DisableExternal(), $c);
-	$purifier = new HTMLPurifier($c);
-	$clean_html = $purifier->purify($s);
-	return $clean_html;
-}
 
 // Get Unique User Cookie
 function get_uuser_cookie() {
