@@ -221,7 +221,7 @@ function handle_report() {
 				' for "' . $reason . '"'
 			);
 		$ip = get_ip_hash($_SERVER['REMOTE_ADDR']);
-		$query = prepare("INSERT INTO ``reports`` VALUES (NULL, :time, :ip, :board, :post, :reason)");
+		$query = prepare("INSERT INTO ``reports`` (`time`, `ip`, `board`, `post`, `reason`) VALUES (:time, :ip, :board, :post, :reason)");
 		$query->bindValue(':time', time(), PDO::PARAM_INT);
 		$query->bindValue(':ip', $ip, PDO::PARAM_STR);
 		$query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
@@ -1052,7 +1052,7 @@ function handle_post(){
 				$pdo->quote($board['uri']) . ', ' . (int)$id . ', ' .
 				$pdo->quote($cite[0]) . ', ' . (int)$cite[1] . ')';
 		}
-		query('INSERT INTO ``cites`` VALUES ' . implode(', ', $insert_rows)) or error(db_error());
+		query('INSERT INTO ``cites`` (`board`, `post`, `target_board`, `target`) VALUES ' . implode(', ', $insert_rows)) or error(db_error());
 	}
 
 	if (!$post['op'] && strtolower($post['email']) != 'sage' && !$thread['sage'] && ($config['reply_limit'] == 0 || $numposts['replies']+1 < $config['reply_limit']))
@@ -1177,7 +1177,7 @@ function handle_appeal(){
 			error(_("There is already a pending appeal for this ban."));
 	}
 
-	$query = prepare("INSERT INTO ``ban_appeals`` VALUES (NULL, :ban_id, :time, :message, 0, NULL)");
+	$query = prepare("INSERT INTO ``ban_appeals`` (`ban_id`, `time`, `message`) VALUES (:ban_id, :time, :message)");
 	$query->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
 	$query->bindValue(':message', substr($_POST['appeal'], 0, $config['ban_appeals_max_appeal_text_len']));

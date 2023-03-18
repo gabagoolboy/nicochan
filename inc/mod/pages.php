@@ -446,7 +446,7 @@ function mod_new_board() {
 			}
 		}
 
-		$query = prepare('INSERT INTO ``boards`` VALUES (:uri, :title, :subtitle)');
+		$query = prepare('INSERT INTO ``boards`` (`uri`, `title`, `subtitle`) VALUES (:uri, :title, :subtitle)');
 		$query->bindValue(':uri', $_POST['uri']);
 		$query->bindValue(':title', $_POST['title']);
 		$query->bindValue(':subtitle', $_POST['subtitle']);
@@ -501,7 +501,7 @@ function mod_noticeboard($page_no = 1) {
 		$_POST['body'] = escape_markup_modifiers($_POST['body']);
 		markup($_POST['body']);
 
-		$query = prepare('INSERT INTO ``noticeboard`` VALUES (NULL, :mod, :time, :subject, :body)');
+		$query = prepare('INSERT INTO ``noticeboard`` (`mod`, `time`, `subject`, `body`) VALUES (:mod, :time, :subject, :body)');
 		$query->bindValue(':mod', $mod['id']);
 		$query->bindvalue(':time', time());
 		$query->bindValue(':subject', $_POST['subject']);
@@ -571,7 +571,7 @@ function mod_news($page_no = 1) {
 		$_POST['body'] = escape_markup_modifiers($_POST['body']);
 		markup($_POST['body']);
 
-		$query = prepare('INSERT INTO ``news`` VALUES (NULL, :name, :time, :subject, :body)');
+		$query = prepare('INSERT INTO ``news`` (`name`, `time`, `subject`, `body`) VALUES (:name, :time, :subject, :body)');
 		$query->bindValue(':name', isset($_POST['name']) && hasPermission($config['mod']['news_custom']) ? $_POST['name'] : $mod['username']);
 		$query->bindvalue(':time', time());
 		$query->bindValue(':subject', $_POST['subject']);
@@ -799,7 +799,7 @@ function mod_ip_set_forcedflag($ip, $country) {
 	if(!isset($countryCode))
 		error($config['error']['bad_forcedflag']);
 
-	$query = prepare('INSERT INTO ``custom_geoip`` VALUES(:ip, :country)');
+	$query = prepare('INSERT INTO ``custom_geoip`` (`ip`, `country`) VALUES (:ip, :country)');
 	$query->bindValue(':ip', $ip);
 	$query->bindValue(':country', $country);
 	$query->execute() or error(db_error($query));
@@ -934,7 +934,7 @@ function mod_page_ip($ip) {
 
 		$_POST['note'] = escape_markup_modifiers($_POST['note']);
 		markup($_POST['note']);
-		$query = prepare('INSERT INTO ``ip_notes`` VALUES (NULL, :ip, :mod, :time, :body)');
+		$query = prepare('INSERT INTO ``ip_notes`` (`ip`, `mod`, `time`, `body`) VALUES (:ip, :mod, :time, :body)');
 		$query->bindValue(':ip', $ip);
 		$query->bindValue(':mod', $mod['id']);
 		$query->bindValue(':time', time());
@@ -1845,7 +1845,7 @@ function mod_move($originBoard, $postID) {
 						$pdo->quote($board['uri']) . ', ' . $newPostID . ', ' .
 						$pdo->quote($cite[0]) . ', ' . (int)$cite[1] . ')';
 				}
-				query('INSERT INTO ``cites`` VALUES ' . implode(', ', $insert_rows)) or error(db_error());
+				query('INSERT INTO ``cites`` (`board`, `post`, `target_board`, `target`) VALUES ' . implode(', ', $insert_rows)) or error(db_error());
 			}
 		}
 
@@ -2630,7 +2630,7 @@ function mod_user_new() {
 
 		list($version, $password) = crypt_password($_POST['password']);
 
-		$query = prepare('INSERT INTO ``mods`` VALUES (NULL, :username, :password, :version, :type, :boards)');
+		$query = prepare('INSERT INTO ``mods`` (`username`, `password`, `version`, `type`, `boards`) VALUES (:username, :password, :version, :type, :boards)');
 		$query->bindValue(':username', $_POST['username']);
 		$query->bindValue(':password', $password);
 		$query->bindValue(':version', $version);
@@ -2815,7 +2815,7 @@ function mod_new_pm($username) {
 		$_POST['message'] = escape_markup_modifiers($_POST['message']);
 		markup($_POST['message']);
 
-		$query = prepare("INSERT INTO ``pms`` VALUES (NULL, :me, :id, :message, :time, 1)");
+		$query = prepare("INSERT INTO ``pms`` (`sender`, `to`, `message`, `time`) VALUES (:me, :id, :message, :time)");
 		$query->bindValue(':me', $mod['id']);
 		$query->bindValue(':id', $id);
 		$query->bindValue(':message', $_POST['message']);
@@ -3290,7 +3290,7 @@ function mod_theme_configure($theme_name) {
 		$query->execute() or error(db_error($query));
 
 		foreach ($theme['config'] as &$conf) {
-			$query = prepare("INSERT INTO ``theme_settings`` VALUES(:theme, :name, :value)");
+			$query = prepare("INSERT INTO ``theme_settings`` (`theme`, `name`, `value`) VALUES (:theme, :name, :value)");
 			$query->bindValue(':theme', $theme_name);
 			$query->bindValue(':name', $conf['name']);
 			if ($conf['type'] == 'checkbox')
@@ -3300,7 +3300,7 @@ function mod_theme_configure($theme_name) {
 			$query->execute() or error(db_error($query));
 		}
 
-		$query = prepare("INSERT INTO ``theme_settings`` VALUES(:theme, NULL, NULL)");
+		$query = prepare("INSERT INTO ``theme_settings`` (`theme`, `name`, `value`) VALUES (:theme, NULL, NULL)");
 		$query->bindValue(':theme', $theme_name);
 		$query->execute() or error(db_error($query));
 
@@ -3526,7 +3526,7 @@ function mod_pages($board = false) {
 
 		$title = ($_POST['title'] ? $_POST['title'] : NULL);
 
-		$query = prepare('INSERT INTO ``pages``(board, title, name) VALUES(:board, :title, :name)');
+		$query = prepare('INSERT INTO ``pages`` (`board`, `title`, `name`) VALUES (:board, :title, :name)');
 		$query->bindValue(':board', ($board ? $board : NULL));
 		$query->bindValue(':title', $title);
 		$query->bindValue(':name', $_POST['page']);
@@ -4081,7 +4081,7 @@ function mod_merge($originBoard, $postID) {
 					$pdo->quote($board['uri']) . ', ' . $newPostID . ', ' .
 					$pdo->quote($cite[0]) . ', ' . (int)$cite[1] . ')';
 				}
-				query('INSERT INTO ``cites`` VALUES ' . implode(', ', $insert_rows)) or error(db_error());
+				query('INSERT INTO ``cites`` (`board`, `post`, `target_board`, `target`) VALUES ' . implode(', ', $insert_rows)) or error(db_error());
 			}
 		}
 

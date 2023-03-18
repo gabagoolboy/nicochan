@@ -443,7 +443,7 @@ class Bans {
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
 
-		$query = prepare("INSERT INTO ``warnings`` VALUES (NULL, :ip, :time, :board, :mod, :reason, 0, :post)");
+		$query = prepare("INSERT INTO ``warnings`` (`ip`, `created`, `board`, `creator`, `reason`, `post`) VALUES (:ip, :time, :board, :mod, :reason, :post)");
 
 		$query->bindValue(':ip', $range[0]);
 		$query->bindValue(':mod', $mod_id);
@@ -494,7 +494,7 @@ class Bans {
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
 
-		$query = prepare("INSERT INTO ``nicenotices`` VALUES (NULL, :ip, :time, :board, :mod, :reason, 0, :post)");
+		$query = prepare("INSERT INTO ``nicenotices`` (`ip`, `created`, `board`, `creator`, `reason`, `post`) VALUES (:ip, :time, :board, :mod, :reason, :post)");
 
 		$query->bindValue(':ip', $range[0]);
 		$query->bindValue(':mod', $mod_id);
@@ -545,7 +545,8 @@ class Bans {
 		$range = self::parse_range($mask);
 		$mask = self::range_to_string($range);
 
-		$query = prepare("INSERT INTO ``bans`` VALUES (NULL, :ipstart, :ipend, :cookie, 0, :time, :expires, :board, :mod, :reason, 0, :post, :appeal)");
+		$query = prepare("INSERT INTO ``bans`` (`ipstart`, `ipend`, `cookie`, `created`, `expires`, `board`, `creator`, `reason`, `post`, `appealable`) 
+				VALUES (:ipstart, :ipend, :cookie, :time, :expires, :board, :mod, :reason, :post, :appeal)");
 
 		$query->bindValue(':ipstart', $range[0]);
 		if ($range[1] !== false && $range[1] != $range[0])
@@ -645,7 +646,7 @@ class Bans {
 		// If we find a result we return true
 		if ($post = $queryGet->fetch(PDO::FETCH_ASSOC)){
 			// Add cookie to ban
-			$query = prepare('INSERT INTO ``bans_cookie`` VALUES (NULL, :cookie, :expires, :mod)');
+			$query = prepare('INSERT INTO ``bans_cookie`` (`cookie`, `expires`, `creator`) VALUES (:cookie, :expires, :mod)');
 
 			$query->bindValue(':cookie', $post['cookie'], PDO::PARAM_STR);
 			$query->bindValue(':mod', $mod_id);

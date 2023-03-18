@@ -21,7 +21,7 @@ class Whitelist {
 
 		$expiration_time = time() + 60 * 60 * 24 * $config['whitelist']['expires_in'];
 
-		$query = prepare("INSERT INTO ``whitelist`` VALUES (NULL, :expiration_time, :ip, :cookie)");
+		$query = prepare("INSERT INTO ``whitelist`` (`expiration_time`, `ip`, `cookie`) VALUES (:expiration_time, :ip, :cookie)");
 		$query->bindValue(':expiration_time', $expiration_time, PDO::PARAM_INT);
 		$query->bindValue(':ip', $ip);
 		$query->bindValue(':cookie', $cookie);

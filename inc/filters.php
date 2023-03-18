@@ -140,7 +140,7 @@ class Filter {
 
 		$this->add_note = isset($this->add_note) ? $this->add_note : false;
 		if ($this->add_note) {
-			$query = prepare('INSERT INTO ``ip_notes`` VALUES (NULL, :ip, :mod, :time, :body)');
+			$query = prepare('INSERT INTO ``ip_notes`` (`ip`, `mod`, `time`, `body`) VALUES (:ip, :mod, :time, :body)');
 			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 			$query->bindValue(':mod', -1);
 			$query->bindValue(':time', time());

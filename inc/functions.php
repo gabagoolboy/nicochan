@@ -1166,7 +1166,7 @@ function checkNicenotice($board = false) {
 function insertFloodPost(array $post) {
 	global $board, $config;
 
-	$query = prepare("INSERT INTO ``flood`` VALUES (NULL, :ip, :board, :time, :posthash, :filehash, :isreply)");
+	$query = prepare("INSERT INTO ``flood`` (`ip`, `board`, `time`, `posthash`, `filehash`, `isreply`) VALUES (:ip, :board, :time, :posthash, :filehash, :isreply)");
 	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->bindValue(':board', $board['uri']);
 	$query->bindValue(':time', time());
@@ -1182,7 +1182,12 @@ function insertFloodPost(array $post) {
 function post(array $post) {
 	global $pdo, $board, $config, $mod;
 
-	$query = prepare(sprintf("INSERT INTO ``posts_%s`` VALUES ( NULL, :thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, 0, :hideposterid, :embed, :slug)", $board['uri']));
+	$query = prepare(sprintf("INSERT INTO ``posts_%s`` 
+		(`thread`, `subject`, `email`, `name`, `trip`, `capcode`, `body`, `body_nomarkup`, `time`, `bump`, `files`, `num_files`, `filehash`, `password`, `ip`, `cookie`, `sticky`, `locked`, `cycle`, `hideid`, `embed`, `slug`) 
+		VALUES 
+		(:thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, :hideposterid, :embed, :slug)"
+	, $board['uri']));
+
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1297,7 +1302,7 @@ function post(array $post) {
 		for($i=0; $i<$hc;$i++)
 		{
 			// Build entry for database
-			$query = prepare(sprintf("INSERT INTO ``filehashes`` VALUES ( NULL, '%s', :thread, :postid, :filehash)", $board['uri']));
+			$query = prepare(sprintf("INSERT INTO ``filehashes`` (`board`, `thread`, `post`, `filehash`) VALUES ('%s', :thread, :postid, :filehash)", $board['uri']));
 			$query->bindValue(':thread', $threadID, PDO::PARAM_INT);
 			$query->bindValue(':postid', $postID, PDO::PARAM_INT);
 			$query->bindValue(':filehash', $hashes[$i]);
@@ -1871,7 +1876,7 @@ function checkRobot($body) {
 	}
 
 	// Insert new hash
-	$query = prepare("INSERT INTO ``robot`` VALUES (:hash)");
+	$query = prepare("INSERT INTO ``robot`` (`hash`) VALUES (:hash)");
 	$query->bindValue(':hash', $body);
 	$query->execute() or error(db_error($query));
 
@@ -1909,7 +1914,7 @@ function mute() {
 	global $config;
 
 	// Insert mute
-	$query = prepare("INSERT INTO ``mutes`` VALUES (:ip, :time)");
+	$query = prepare("INSERT INTO ``mutes`` (`ip`, `time`) VALUES (:ip, :time)");
 	$query->bindValue(':time', time(), PDO::PARAM_INT);
 	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->execute() or error(db_error($query));
@@ -1974,7 +1979,7 @@ function _create_antibot($board, $thread) {
 	$query->bindValue(':expires', $config['spam']['hidden_inputs_expire']);
 	$query->execute() or error(db_error($query));
 
-	$query = prepare('INSERT INTO ``antispam`` VALUES (:board, :thread, :hash, UNIX_TIMESTAMP(), NULL, 0)');
+	$query = prepare('INSERT INTO ``antispam`` (`board`, `thread`, `hash`, `created`) VALUES (:board, :thread, :hash, UNIX_TIMESTAMP())');
 	$query->bindValue(':board', $board);
 	$query->bindValue(':thread', $thread);
 	$query->bindValue(':hash', $antibot->hash());

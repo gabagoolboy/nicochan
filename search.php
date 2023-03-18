@@ -47,7 +47,7 @@
 			error(_('Wait a while before searching again, please.'));
 
 
-		$query = prepare("INSERT INTO ``search_queries`` VALUES (:ip, :time, :query)");
+		$query = prepare("INSERT INTO ``search_queries`` (`ip`, `time`, `query`) VALUES (:ip, :time, :query)");
 		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 		$query->bindValue(':time', time());
 		$query->bindValue(':query', $phrase);
