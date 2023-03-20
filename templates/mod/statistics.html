@@ -1,43 +1,33 @@
-{% if mod %}
   <script src='main.js'></script>
   <script src='js/jquery.min.js'></script>
   <script src='js/mobile-style.js'></script>
 
   <script src="js/mod/chartist.min.js"></script>
   <link rel='stylesheet' href='stylesheets/mod/chartist.min.css'>
-{% else %}
-  <script src='{{ config.root }}/main.js'></script>
-  <script src='{{ config.root }}/js/jquery.min.js'></script>
-  <script src='{{ config.root }}/js/mobile-style.js'></script>
-
-  <script src="{{ config.root }}/js/mod/chartist.min.js"></script>
-  <link rel='stylesheet' href='{{ config.root }}/stylesheets/mod/chartist.min.css'>
-{% endif %}
-
 {% if (mod) or (public_hourly) %}
-<h2>Hourly Statistic</h2>
+<h2>{% trans %}Hourly Statistic{% endtrans %}</h2>
 <section>
 <div class="ct-chart" id="hourly"></div>
 </section>
 {% endif %}
 
-<h2>Weekly Statistics for this (and prev) week</h2>
+<h2>{% trans %}Weekly Statistics for this (and prev) week{% endtrans %}</h2>
 <section>
 <div class="ct-chart" id="week"></div>
 </section>
 
 
-<h2>View Board Spesific Stats</h2>
+<h2>{% trans %}View Board Specific Stats{% endtrans %}</h2>
 <section>
     {% if mod %}
-      <a href="?/statistics">[Full Statistics]</a>
+      <a href="?/statistics">[{% trans %}Full Statistics{% endtrans %}]</a>
       {% for board in boards %}
-        <a href="?/{{board.uri}}/statistics">[{{board.uri}}]</a>
+        <a href="?/{{board.uri}}/statistics">[{{ board.uri }}]</a>
       {% endfor %}
     {% else %}
-      <a href="{{ config.root }}/{{ stat_filename }}">[Full Statistics]</a>
+      <a href="{{ config.root }}/{{ stat_filename }}">[{% trans %}Full Statistics{% endtrans %}]</a>
       {% for board in boards %}
-        <a href="{{ config.root }}/{{ board.uri }}/{{ stat_filename }}">[{{board.uri}}]</a>
+        <a href="{{ config.root }}/{{ board.uri }}/{{ stat_filename }}">[{{ board.uri }}]</a>
       {% endfor %}
     {% endif %}
 </section>

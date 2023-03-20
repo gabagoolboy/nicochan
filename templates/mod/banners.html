@@ -2,16 +2,17 @@
 <div style="text-align:center">
 <form action="{{ action }}" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="token" value="{{ token }}">
-	<h2>Upload banner</h2>
+	<h2>{% trans %}Upload banner{% endtrans %}</h2>
 	<p><input type="file" name="file"></p>
+	{% set banner_size = config.banner_size|filesize %}
+	{% set banner_width = config.banner_width %}
+	{% set banner_height = config.banner_height %}
+	<p><small>{% trans %}Banners must be &lt; {{ banner_size }} and have image dimensions {{ banner_width }}px x {{ banner_height }}px.{% endtrans %}<br/></small></p>
 
-	<p><small>Banners must be &lt; {{ config.banner_size|filesize }} and have image dimensions {{ config.banner_width }}px x {{ config.banner_height}}px.<br/></small></p>
-
-	<p><input type="submit" value="Upload"></p>
+	<p><input type="submit" value="{% trans %}Upload{% endtrans %}"></p>
 </form>
 <hr>
-
-<h2>Banners already in use</h2>
+<h2>{% trans %}Banners already in use{% endtrans %}</h2>
 <form action="{{ action }}" method="post">
 <input type="hidden" name="token" value="{{ token }}">
 <table>
@@ -19,14 +20,14 @@
 {% for banner in banners %}
 	<tr>
 	{% if board.uri != '' %}
-	<td><input name="delete[]" type="checkbox" value="{{banner}}"></td><td><img src="static/banners/{{board.uri}}/{{banner}}"></td>
+		<td><input name="delete[]" type="checkbox" value="{{ banner }}"></td><td><img src="static/banners/{{ board.uri }}/{{ banner }}"></td>
 	{% else %}
-	<td><input name="delete[]" type="checkbox" value="{{banner}}"></td><td><img src="static/banners_priority/{{banner}}"></td>
+		<td><input name="delete[]" type="checkbox" value="{{ banner }}"></td><td><img src="static/banners_priority/{{ banner }}"></td>
 	{% endif %}
 	</tr>
 {% endfor %}
 </tbody>
 </table>
-<p><input type="submit" value="Delete selected"></p>
+<p><input type="submit" value="{% trans %}Delete selected{% endtrans %}"></p>
 </form>
 </div>

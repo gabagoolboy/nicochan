@@ -11,7 +11,7 @@
 		</p>
 	{% endif %}
 	<p>
-		{% trans %}Your warning was filed on{% endtrans %}
+		{% trans %}Your warning was filed on{% endtrans %}&nbsp;
 			<strong>{{ warning.created|strftime(config.ban_date) }}</strong>
 			{% if config.show_modname %}
 				{% if warning.username %}

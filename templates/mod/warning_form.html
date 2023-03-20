@@ -72,17 +72,16 @@ $(window).on('load', (function(){
 
 {% if reasons %}
 <h3>Predefined Warning Reasons:</h3>
-
-<table class="ReasonTableForm">
+<form>
+<table class="ReasonTableForm" style="margin-left: unset">
 	<tr>
-		<td></td>
-		<td>Reason</td>
+		<th>Reason</th>
 	</tr>
 	{% for key, reason in reasons %}
 		<tr id="ResonSelectorID_{{ key }}">
-			<td></td>
 			<td>{{ reason|e }}</td>
 		</tr>
 	{% endfor %}
 </table>
+</form>
 {% endif %}

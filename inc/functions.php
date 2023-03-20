@@ -273,7 +273,7 @@ function loadConfig() {
 
 	if ($config['verbose_errors']) {
 		set_error_handler('verbose_error_handler');
-		error_reporting(E_ALL);
+		error_reporting($config['deprecation_errors'] ? E_ALL : E_ALL & ~E_DEPRECATED);
 		ini_set('display_errors', true);
 		ini_set('html_errors', false);
 	} else {
@@ -373,6 +373,8 @@ function _syslog($priority, $message) {
 function verbose_error_handler($errno, $errstr, $errfile, $errline) {
 	if (error_reporting() == 0)
 		return false; // Looks like this warning was suppressed by the @ operator.
+	if ($errno == E_DEPRECATED && !$config['deprecation_errors'])
+		return false;
 	error(utf8tohtml($errstr), true, array(
 		'file' => $errfile . ':' . $errline,
 		'errno' => $errno,
@@ -905,16 +907,16 @@ function displayBan($ban) {
 
 	if ($ban['post'] && isset($ban['post']['board'], $ban['post']['id'])) {
 		if (openBoard($ban['post']['board'])) {
-			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `id` = " .
+			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `shadow` = 0 AND `id` = " .
 				(int)$ban['post']['id'], $board['uri']));
 			if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
 				$ban['post'] = array_merge($ban['post'], $_post);
 			}
 		}
 		if ($ban['post']['thread']) {
-			$post = new Post($ban['post']);
+			$post = new Post($config, $ban['post']);
 		} else {
-			$post = new Thread($ban['post'], null, false, false);
+			$post = new Thread($config, $ban['post'], null, false, false);
 		}
 	}
 
@@ -1032,23 +1034,23 @@ function displayWarning($warning) {
 
 	if ($warning['post'] && isset($warning['post']['board'], $warning['post']['id'])) {
 		if (openBoard($warning['post']['board'])) {
-			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `id` = " .
+			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `shadow` = 0 AND `id` = " .
 				(int)$warning['post']['id'], $board['uri']));
 			if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
 				$warning['post'] = array_merge($warning['post'], $_post);
 			}
 		}
 		if ($warning['post']['thread']) {
-			$post = new Post($warning['post']);
+			$post = new Post($config, $warning['post']);
 		} else {
-			$post = new Thread($warning['post'], null, false, false);
+			$post = new Thread($config, $warning['post'], null, false, false);
 		}
 	}
 
 	// Show warning page and exit
 	die(
 		Element('page.html', array(
-			'title' => _('Aviso!'),
+			'title' => _('Warning!'),
 			'config' => $config,
 			'boardlist' => createBoardlist(isset($mod) ? $mod : false),
 			'body' => Element('warning.html', array(
@@ -1080,9 +1082,8 @@ function checkWarning($board = false) {
 		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
 	}
 
-
 	foreach ($ips as $ip) {
-		$warnings = Bans::findWarning($_SERVER['REMOTE_ADDR'], $config['show_modname']);
+		$warnings = Bans::findWarning($ip, $config['show_modname']);
 
 		foreach ($warnings as &$warning) {
 			if (!isset($_POST['json_response'])) {
@@ -1107,16 +1108,16 @@ function displayNicenotice($nicenotice) {
 
 	if ($nicenotice['post'] && isset($nicenotice['post']['board'], $nicenotice['post']['id'])) {
 		if (openBoard($nicenotice['post']['board'])) {
-			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `id` = " .
+			$query = query(sprintf("SELECT `files` FROM ``posts_%s`` WHERE `shadow` = 0 AND `id` = " .
 				(int)$nicenotice['post']['id'], $board['uri']));
 			if ($_post = $query->fetch(PDO::FETCH_ASSOC)) {
 				$nicenotice['post'] = array_merge($nicenotice['post'], $_post);
 			}
 		}
 		if ($nicenotice['post']['thread']) {
-			$post = new Post($nicenotice['post']);
+			$post = new Post($config, $nicenotice['post']);
 		} else {
-			$post = new Thread($nicenotice['post'], null, false, false);
+			$post = new Thread($config, $nicenotice['post'], null, false, false);
 		}
 	}
 
@@ -1149,9 +1150,8 @@ function checkNicenotice($board = false) {
 		$ips = array_merge($ips, explode(", ", $_SERVER['HTTP_X_FORWARDED_FOR']));
 	}
 
-
 	foreach ($ips as $ip) {
-		$nicenotices = Bans::findNicenotice($_SERVER['REMOTE_ADDR'], $config['show_modname']);
+		$nicenotices = Bans::findNicenotice($ip, $config['show_modname']);
 
 		foreach ($nicenotices as &$nicenotice) {
 			displayNicenotice($nicenotice);
@@ -1176,14 +1176,12 @@ function insertFloodPost(array $post) {
 }
 
 function post(array $post) {
-	global $pdo, $board, $config, $mod;
+	global $pdo, $board, $config;
 
 	$query = prepare(sprintf("INSERT INTO ``posts_%s`` 
-		(`thread`, `subject`, `email`, `name`, `trip`, `capcode`, `body`, `body_nomarkup`, `time`, `bump`, `files`, `num_files`, `filehash`, `password`, `ip`, `cookie`, `sticky`, `locked`, `cycle`, `hideid`, `embed`, `slug`) 
-		VALUES 
-		(:thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, :hideposterid, :embed, :slug)"
-	, $board['uri']));
-
+	(`thread`, `subject`, `email`, `name`, `trip`, `capcode`, `body`, `body_nomarkup`, `time`, `bump`, `files`, `num_files`, `filehash`, `password`, `ip`, `cookie`, `sticky`, `locked`, `cycle`, `hideid`, `shadow`, `embed`, `slug`) 
+	VALUES 
+	(:thread, :subject, :email, :name, :trip, :capcode, :body, :body_nomarkup, :time, :time, :files, :num_files, :filehash, :password, :ip, :cookie, :sticky, :locked, :cycle, :hideposterid, :shadow, :embed, :slug)", $board['uri']));
 
 	// Basic stuff
 	if (!empty($post['subject'])) {
@@ -1253,6 +1251,8 @@ function post(array $post) {
 		$query->bindValue(':embed', null, PDO::PARAM_NULL);
 	}
 
+	$query->bindValue(':shadow', (bool) $post['shadow'], PDO::PARAM_INT);
+
 	if ($post['op']) {
 		// No parent thread, image
 		$query->bindValue(':thread', null, PDO::PARAM_NULL);
@@ -1284,7 +1284,6 @@ function post(array $post) {
 
 	// Save Post ID
 	$postID = $pdo->lastInsertId();
-
 
 	// Add file-hashes to database
 	if($post['has_file'])
@@ -1375,6 +1374,10 @@ function deleteFile($id, $remove_entirely_if_already=true, $file=null) {
 				// Delete file
 				file_unlink($board['dir'] . $config['dir']['img'] . $f->file);
 				$files[$i]->file = 'deleted';
+				$files[$i]->thumb = 'deleted';
+				$size_delete_image = @getimagesize($config['image_deleted']);
+				$files[$i]->thumbwidth = $size_delete_image[0];
+				$files[$i]->thumbheight = $size_delete_image[1];
 			}
 		}
 	}
@@ -1668,7 +1671,7 @@ function index($page, $mod=false) {
 	$body = '';
 	$offset = round($page*$config['threads_per_page']-$config['threads_per_page']);
 
-	$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` IS NULL ORDER BY `sticky` DESC, `bump` DESC LIMIT :offset, :threads_per_page", $board['uri']));
+	$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` IS NULL ". ($mod && hasPermission($config['mod']['view_shadow_posts'], $board['uri']) ? '' : 'AND `shadow` = 0') ." ORDER BY `sticky` DESC, `bump` DESC LIMIT :offset, :threads_per_page", $board['uri']));
 	$query->bindValue(':offset', $offset, PDO::PARAM_INT);
 	$query->bindValue(':threads_per_page', $config['threads_per_page'], PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
@@ -1682,7 +1685,10 @@ function index($page, $mod=false) {
 	$threads = array();
 
 	while ($th = $query->fetch(PDO::FETCH_ASSOC)) {
-		$thread = new Thread($th, $mod ? '?/' : $config['root'], $mod);
+		if($th['shadow'] && $th['files'])
+			$th['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($th['files']);
+
+		$thread = new Thread($config, $th, $mod ? '?/' : $config['root'], $mod);
 
 		if ($config['cache']['enabled']) {
 			$cached = cache::get("thread_index_{$board['uri']}_{$th['id']}");
@@ -1695,7 +1701,7 @@ function index($page, $mod=false) {
 		}
 
 		if (!isset($cached)) {
-			$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ORDER BY `id` DESC LIMIT :limit", $board['uri']));
+			$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ". ($mod && hasPermission($config['mod']['view_shadow_posts'], $board['uri']) ? '' : 'AND `shadow` = 0') ." ORDER BY `id` DESC LIMIT :limit", $board['uri']));
 			$posts->bindValue(':id', $th['id']);
 			$posts->bindValue(':limit', ($th['sticky'] ? $config['threads_preview_sticky'] : $config['threads_preview']), PDO::PARAM_INT);
 			$posts->execute() or error(db_error($posts));
@@ -1720,8 +1726,10 @@ function index($page, $mod=false) {
 		foreach ($replies as $po) {
 			if ($po['num_files'])
 				$num_images+=$po['num_files'];
+			if($po['shadow'] && $po['files'])
+				$po['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($po['files']);
 
-			$thread->add(new Post($po, $mod ? '?/' : $config['root'], $mod));
+			$thread->add(new Post($config, $po, $mod ? '?/' : $config['root'], $mod));
 		}
 
 		$thread->images = $num_images;
@@ -1805,7 +1813,7 @@ function getPages($mod=false) {
 		$count = $board['thread_count'];
 	} else {
 		// Count threads
-		$query = query(sprintf("SELECT COUNT(*) FROM ``posts_%s`` WHERE `thread` IS NULL", $board['uri'])) or error(db_error());
+		$query = query(sprintf("SELECT COUNT(1) FROM ``posts_%s`` WHERE `thread` IS NULL AND `shadow` = 0", $board['uri'])) or error(db_error());
 		$count = $query->fetchColumn();
 	}
 	$count = floor(($config['threads_per_page'] + $count - 1) / $config['threads_per_page']);
@@ -1882,7 +1890,7 @@ function checkRobot($body) {
 // Returns an associative array with 'replies' and 'images' keys
 function numPosts($id) {
 	global $board;
-	$query = prepare(sprintf("SELECT COUNT(*) AS `replies`, SUM(`num_files`) AS `images` FROM ``posts_%s`` WHERE `thread` = :thread", $board['uri'], $board['uri']));
+	$query = prepare(sprintf("SELECT COUNT(1) AS `replies`, SUM(`num_files`) AS `images` FROM ``posts_%s`` WHERE `thread` = :thread AND `shadow` = 0", $board['uri'], $board['uri']));
 	$query->bindValue(':thread', $id, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 
@@ -1896,7 +1904,7 @@ function muteTime() {
 		return $time;
 
 	// Find number of mutes in the past X hours
-	$query = prepare("SELECT COUNT(*) FROM ``mutes`` WHERE `time` >= :time AND `ip` = :ip");
+	$query = prepare("SELECT COUNT(1) FROM ``mutes`` WHERE `time` >= :time AND `ip` = :ip");
 	$query->bindValue(':time', time()-($config['robot_mute_hour']*3600), PDO::PARAM_INT);
 	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 	$query->execute() or error(db_error($query));
@@ -1942,8 +1950,8 @@ function checkMute() {
 
 		if ($mute['time'] + $mutetime > time()) {
 			if ($config['cache']['enabled']) {
-				cache::set("mute_\{$_SERVER['REMOTE_ADDR']}", $mute, $mute['time'] + $mutetime - time());
-				cache::set("mutetime_\{$_SERVER['REMOTE_ADDR']}", $mutetime, $mute['time'] + $mutetime - time());
+				cache::set("mute_{$_SERVER['REMOTE_ADDR']}", $mute, $mute['time'] + $mutetime - time());
+				cache::set("mutetime_{$_SERVER['REMOTE_ADDR']}", $mutetime, $mute['time'] + $mutetime - time());
 			}
 			// Not expired yet
 			error(sprintf($config['error']['youaremuted'], $mute['time'] + $mutetime - time()));
@@ -2068,6 +2076,22 @@ function buildIndex($global_api = 'yes') {
 		$content = index($page);
 		if (!$content)
 			break;
+
+		// Tries to avoid rebuilding if the body is the same as the one in cache.
+			if ($config['cache']['enabled']) {
+				$contentHash = md5(json_encode($content['body']));
+				$contentHashKey = '_index_hashed_'. $board['uri'] . '_' . $page;
+				$cachedHash = cache::get($contentHashKey);
+				if ($cachedHash == $contentHash){
+					if ($config['api']['enabled']) {
+						// this is needed for the thread.json and catalog.json rebuilding below, which includes all pages.
+						$catalog[$page-1] = $content['threads'];
+					}
+					continue;
+				}
+				cache::set($contentHashKey, $contentHash, 3600);
+			}
+
 
 		// json api
 		if ($config['api']['enabled']) {
@@ -2252,29 +2276,37 @@ function quote($body, $quote=true) {
 	return $body;
 }
 
-function getVideoTitle($link, $youtube = false, $soundcloud = false, $vimeo = false)
+function getVideoTitle($link, $provider)
 {
-	if(isset($link) && $youtube){
-		$link = preg_replace('/\bshorts\b\//i', 'watch?v=', $link);
-		$json_str = @file_get_contents("https://www.youtube.com/oembed?url={$link}&format=json");
-		if(!$json_str)
-			return $link;
-		$json = json_decode($json_str);
-		return substr_replace($json->title, '(Youtube) ', 0, 0);
-	}
-	if(isset($link) && $soundcloud){
-		$json_str = @file_get_contents("https://soundcloud.com/oembed?url={$link}&format=json");
-		if(!$json_str)
-			return $link;
-		$json = json_decode($json_str);
-		return substr_replace($json->title, '(Soundcloud) ', 0, 0);
-	}
-	if(isset($link) && $vimeo){
-		$json_str = @file_get_contents("https://vimeo.com/api/oembed.json?url={$link}");
-		if(!$json_str)
-			return $link;
-		$json = json_decode($json_str);
-		return substr_replace($json->title, '(Vimeo) ', 0, 0);
+	switch($provider){
+		case 'youtube':
+			$link = preg_replace('/\bshorts\b\//i', 'watch?v=', $link);
+			$json_str = @file_get_contents("https://www.youtube.com/oembed?url={$link}&format=json");
+			if(!$json_str) {
+				return $link;
+				break;
+			}
+			$json = json_decode($json_str);
+			return substr_replace($json->title, '(Youtube) ', 0, 0);
+			break;
+		case 'soundcloud':
+			$json_str = @file_get_contents("https://soundcloud.com/oembed?url={$link}&format=json");
+			if(!$json_str){
+				return $link;
+				break;
+			}
+			$json = json_decode($json_str);
+			return substr_replace($json->title, '(Soundcloud) ', 0, 0);
+			break;
+		case 'vimeo':
+			$json_str = @file_get_contents("https://vimeo.com/api/oembed.json?url={$link}");
+			if(!$json_str){
+				return $link;
+				break;
+			}
+			$json = json_decode($json_str);
+			return substr_replace($json->title, '(Vimeo) ', 0, 0);
+			break;
 	}
 }
 
@@ -2295,13 +2327,13 @@ function markup_url($matches) {
 	event('markup-url', (object)$link);
 
 	if($config['youtube_show_title'] && preg_match($config['embed_url_regex']['youtube'], $url))
-		$link['text'] = getVideoTitle($url, true);
+		$link['text'] = getVideoTitle($url, 'youtube');
 
 	if($config['vimeo_show_title'] && preg_match($config['embed_url_regex']['vimeo'], $url))
-		$link['text'] = getVideoTitle($url, false, false, true);
+		$link['text'] = getVideoTitle($url, 'vimeo');
 
 	if($config['soundcloud_show_title'] && preg_match($config['embed_url_regex']['soundcloud'], $url))
-		$link['text'] = getVideoTitle($url, false, true);
+		$link['text'] = getVideoTitle($url, 'soundcloud');
 
 
 	if (strlen($config['link_prefix']) > 0 && strncasecmp($link['href'], 'http', 4) === 0)
@@ -2436,7 +2468,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 	$tracked_cites = array();
 
 	// Cites
-	if (isset($board) && preg_match_all('/(^|[\s(])&gt;&gt;(\d+?)(?=$|[\s,.?)])/m', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+	if (isset($board) && preg_match_all('/(^|[\s(])&gt;&gt;(\d+?)(?=$|[\s,.?!)])/m', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
 		if (count($cites[0]) > $config['max_cites']) {
 			error($config['error']['toomanycites']);
 		}
@@ -2450,7 +2482,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 		}
 		$search_cites = array_unique($search_cites);
 
-		$query = query(sprintf('SELECT `thread`, `id` FROM ``posts_%s`` WHERE ' .
+		$query = query(sprintf('SELECT `thread`, `id` FROM ``posts_%s`` WHERE `shadow` = 0 AND' .
 			implode(' OR ', $search_cites), $board['uri'])) or error(db_error());
 
 		$cited_posts = array();
@@ -2467,7 +2499,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 			}
 
 			if (isset($cited_posts[$cite])) {
-				$replacement = $matches[1][0] . '<a onclick="highlightReply(\''.$cite.'\', event);" href="' .
+				$replacement = $matches[1][0] . '<a onclick="return highlightReply(\''.$cite.'\', event);" href="' .
 					$config['root'] . $board['dir'] . $config['dir']['res'] .
 					link_for(array('id' => $cite, 'thread' => $cited_posts[$cite])) . '#' . $cite . '">' .
 					'&gt;&gt;' . $cite .
@@ -2483,7 +2515,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 	}
 
 	// Cross-board linking
-	if (preg_match_all('/(^|[\s(])&gt;&gt;&gt;\/(' . $config['board_regex'] . ')\/(?:(\d+)\/?)?(?=$|[\s,.?)])/um', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+	if (preg_match_all('/(^|[\s(])&gt;&gt;&gt;\/(' . $config['board_regex'] . ')\/(?:(\d+)\/?)?(?=$|[\s,.?!)])/um', $body, $cites, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
 		if (count($cites[0]) > $config['max_cites']) {
 			error($config['error']['toomanycross']);
 		}
@@ -2535,12 +2567,12 @@ function markup(&$body, $track_cites = false, $op = false) {
 			if (!empty($clauses)) {
 				$cited_posts[$_board] = array();
 
-				$query = query(sprintf('SELECT `thread`, `id`, `slug` FROM ``posts_%s`` WHERE ' .
+				$query = query(sprintf('SELECT `thread`, `id`, `slug` FROM ``posts_%s`` WHERE `shadow` = 0 AND' .
 					implode(' OR ', $clauses), $board['uri'])) or error(db_error());
 
 				while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
 					$cited_posts[$_board][$cite['id']] = $config['root'] . $board['dir'] . $config['dir']['res'] .
-						link_for($cite) . '#' . $cite['id'];
+					link_for($cite) . '#' . $cite['id'];
 				}
 			}
 
@@ -2566,7 +2598,7 @@ function markup(&$body, $track_cites = false, $op = false) {
 
 					$replacement = $matches[1][0] . '<a ' .
 						($_board == $board['uri'] ?
-							'onclick="highlightReply(\''.$cite.'\', event);" '
+							'onclick="return highlightReply(\''.$cite.'\', event);" '
 						: '') . 'href="' . $link . '">' .
 						'&gt;&gt;&gt;/' . $_board . '/' . $cite .
 						'</a>';
@@ -2666,7 +2698,7 @@ function defined_flags_accumulate($desired_flags) {
 
 function utf8tohtml($utf8) {
 	$flags = defined_flags_accumulate(['ENT_QUOTES', 'ENT_SUBSTITUTE', 'ENT_DISALLOWED']);
-	return htmlspecialchars((string)$utf8, $flags, 'UTF-8');
+	return htmlspecialchars($utf8, $flags, 'UTF-8');
 }
 
 function ordutf8($string, &$offset) {
@@ -2743,11 +2775,7 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 		cache::delete("thread_{$board['uri']}_{$id}");
 	}
 
-		$query = prepare(
-			sprintf("SELECT ``posts_%s``.*, 0 AS `shadow` FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']) .
-			($shadow?" UNION ALL " . sprintf("SELECT ``shadow_posts_%s``.*, 1 AS `shadow` FROM ``shadow_posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id", $board['uri'], $board['uri']):"") .
-			// " ORDER BY `thread`,`id`");
-			" ORDER BY `thread`,`time`,`id`");
+		$query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE '. (!$shadow ? "shadow = 0 AND " : '' ) . '((`thread` IS NULL AND `id` = :id) OR `thread` = :id) ORDER BY `thread`, `id`', $board['uri']));
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
@@ -2757,10 +2785,10 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 				$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
 
 			if (!isset($thread)) {
-				$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
+				$thread = new Thread($config, $post, $mod ? '?/' : $config['root'], $mod);
 			} else {
 				$post['no_shadow_restore'] = false;
-				$thread->add(new Post($post, $mod ? '?/' : $config['root'], $mod));
+				$thread->add(new Post($config, $post, $mod ? '?/' : $config['root'], $mod));
 			}
 		}
 
@@ -2772,9 +2800,10 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 		$antibot = $mod || $return ? false : create_antibot($board['uri'], $id);
 
 		if ($mod){
-			$queryReports = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
+			$queryReports = query('SELECT COUNT(1) FROM ``reports``') or error(db_error($query));
 			$reports = $queryReports->fetchColumn();
 		}
+
 		if (!$thread->hideid && isset($id)){
 			$ips = array($thread->ip);
 				foreach ($thread->posts as $p) {
@@ -2786,8 +2815,8 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 		$body = Element('thread.html', array(
 			'board' => $board,
 			'thread' => $thread,
-			'hideposterid' => $thread->hideid,
 			'postcount' => isset($postcount) ? $postcount : '',
+			'hideposterid' => $thread->hideid,
 			'body' => $thread->build(),
 			'config' => $config,
 			'id' => $id,
@@ -2832,21 +2861,22 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 		$antibot->reset();
 
 	if (!$thread) {
-		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`, `time` DESC,`id` DESC LIMIT :limit", $board['uri']));
-		// $query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE (`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`,`id` DESC LIMIT :limit", $board['uri']));
+		$query = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE ".($mod && hasPermission($config['mod']['view_shadow_posts'], $board['uri']) ? '' : '`shadow` = 0 AND '). "(`thread` IS NULL AND `id` = :id) OR `thread` = :id ORDER BY `thread`, `time` DESC,`id` DESC LIMIT :limit", $board['uri']));
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->bindValue(':limit', $config['noko50_count']+1, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
 		$num_images = 0;
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			if($post['shadow'] && $post['files'])
+				$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
 			if (!isset($thread)) {
-				$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
+				$thread = new Thread($config, $post, $mod ? '?/' : $config['root'], $mod);
 			} else {
 				if ($post['files'])
 					$num_images += $post['num_files'];
 
-				$thread->add(new Post($post, $mod ? '?/' : $config['root'], $mod));
+				$thread->add(new Post($config, $post, $mod ? '?/' : $config['root'], $mod));
 			}
 		}
 
@@ -2998,7 +3028,7 @@ function fraction($numerator, $denominator, $sep) {
 
 function getPostByHash($hash) {
 	global $board;
-	$query = prepare(sprintf("SELECT `id`,`thread` FROM ``posts_%s`` WHERE `filehash` = :hash", $board['uri']));
+	$query = prepare(sprintf("SELECT `id`,`thread` FROM ``posts_%s`` WHERE `filehash` = :hash AND `shadow` = 0", $board['uri']));
 	$query->bindValue(':hash', $hash, PDO::PARAM_STR);
 	$query->execute() or error(db_error($query));
 
@@ -3011,7 +3041,7 @@ function getPostByHash($hash) {
 
 function getPostByHashInThread($hash, $thread) {
 	global $board;
-	$query = prepare(sprintf("SELECT `id`,`thread` FROM ``posts_%s`` WHERE `filehash` = :hash AND ( `thread` = :thread OR `id` = :thread )", $board['uri']));
+	$query = prepare(sprintf("SELECT `id`,`thread` FROM ``posts_%s`` WHERE `filehash` = :hash AND `shadow` = 0 AND ( `thread` = :thread OR `id` = :thread )", $board['uri']));
 	$query->bindValue(':hash', $hash, PDO::PARAM_STR);
 	$query->bindValue(':thread', $thread, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
@@ -3031,7 +3061,7 @@ function getPostByAllHash($allhashes)
 	foreach($hashes as $key => $hash)
 	{
 		// Search for filehash
-		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( `board` = '%s' OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND `shadow` = 0 AND ( `board` = '%s' OR `board` = '%s' )", $board['uri'], "permaban"));
 		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
 		$query->execute() or error(db_error($query));
 
@@ -3052,7 +3082,7 @@ function getPostByAllHashInThread($allhashes, $thread)
 	$hashes = explode(":", $allhashes);
 	foreach($hashes as $key => $hash)
 	{
-		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( ( `board` = '%s' AND `thread` = :thread ) OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND `shadow` = 0 AND ( ( `board` = '%s' AND `thread` = :thread ) OR `board` = '%s' )", $board['uri'], "permaban"));
 		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
 		$query->bindValue(':thread', $thread, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
@@ -3075,7 +3105,7 @@ function getPostByAllHashInOP($allhashes)
 	foreach($hashes as $key => $hash)
 	{
 		// Search for filehash amongst OP images
-		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND ( ( `board` = '%s' AND `thread` = `post` ) OR `board` = '%s' )", $board['uri'], "permaban"));
+		$query = prepare(sprintf("SELECT `post` AS `id`,`thread` FROM `filehashes` WHERE `filehash` = :hash AND `shadow` = 0 AND ( ( `board` = '%s' AND `thread` = `post` ) OR `board` = '%s' )", $board['uri'], "permaban"));
 		$query->bindValue(':hash', $hash, PDO::PARAM_STR);
 		$query->execute() or error(db_error($query));
 
@@ -3357,7 +3387,7 @@ function check_post_limit($post) {
 	global $config, $board;
 	if (!isset($config['post_limit']) || !$config['post_limit'] || !isset($config['post_limit_interval'])) return false;
 
-	$query = prepare(sprintf('SELECT COUNT(*) AS `count` FROM ``posts_%s`` WHERE FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL :time_limit MINUTE);', $board['uri']));
+	$query = prepare(sprintf('SELECT COUNT(1) AS `count` FROM ``posts_%s`` WHERE FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL :time_limit MINUTE);', $board['uri']));
 	$query->bindValue(':time_limit', $config['post_limit_interval'], PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 	$r = $query->fetch(PDO::FETCH_ASSOC);
@@ -3370,7 +3400,7 @@ function check_thread_limit($post) {
 	if (!isset($config['max_threads_per_hour']) || !$config['max_threads_per_hour']) return false;
 
 	if ($post['op']) {
-		$query = prepare(sprintf('SELECT COUNT(*) AS `count` FROM ``posts_%s`` WHERE `thread` IS NULL AND FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL 1 HOUR);', $board['uri']));
+		$query = prepare(sprintf('SELECT COUNT(1) AS `count` FROM ``posts_%s`` WHERE `thread` IS NULL AND FROM_UNIXTIME(`time`) > DATE_SUB(NOW(), INTERVAL 1 HOUR);', $board['uri']));
 		$query->execute() or error(db_error($query));
 		$r = $query->fetch(PDO::FETCH_ASSOC);
 
@@ -3464,16 +3494,9 @@ function link_for($post, $page50 = false, $foreignlink = false, $thread = false)
 	return sprintf($tpl, $id, $slug);
 }
 
-function link_for_threadid($threadID) {
-	global $config;
-
-	return sprintf($config['file_page'], $threadID, false);
-}
-
 function prettify_textarea($s){
 	return str_replace("\t", '&#09;', str_replace("\n", '&#13;&#10;', htmlentities($s)));
 }
-
 
 // Get Unique User Cookie
 function get_uuser_cookie() {
@@ -3503,17 +3526,14 @@ function valid_uuser_cookie($cookie) {
 function get_ip_hash($ip)
 {
 	global $config;
-	static $ip_hash;
 
-	if (!$config['bcrypt_ip_addresses'])
-		return $ip;
-	if (isset($ip_hash[$ip]))
-		return $ip_hash[$ip];
+	if (!$config['cache']['enabled'] || !$hash = Cache::get("hash_{$ip}")){
+		$hash = crypt($ip, "$2y$" . $config['bcrypt_ip_cost'] . "$" . $config['bcrypt_ip_salt'] . "$");
+		$hash = str_replace("/", "_", substr($hash, 29));
 
-	// Generate BCrypt Hash and remove $2a$[cost]$[salt_22_char]$ header info - leaving 31 char hash
-	$hash = crypt($ip, "$2y$" . $config['bcrypt_ip_cost'] . "$" . $config['bcrypt_ip_salt'] . "$");
-	$hash = str_replace("/", "_", substr($hash, 29));
-	$ip_hash[$ip] = $hash;
+		if ($config['cache']['enabled'])
+			Cache::set("hash_{$ip}", $hash, 10800);
+	}
 
 	return $hash;
 }
@@ -3529,7 +3549,7 @@ function validate_ip_string($ip)
 	if (!$config['bcrypt_ip_addresses'] && filter_var($ip, FILTER_VALIDATE_IP) === false)
 		return false;
 	// else if ($config['bcrypt_ip_addresses'] && !ctype_alnum($ip) && strlen($ip) != 53)
-	else if ($config['bcrypt_ip_addresses'] && preg_match("/[._0-9A-Za-z]{31}/", $ip) != 1)
+	else if ($config['bcrypt_ip_addresses'] && preg_match("/^[._0-9A-Za-z]{31}$/", $ip) != 1)
 		return false;
 
 	return true;
@@ -3561,8 +3581,6 @@ function getHumanReadableIP($ip)
 // Returns Masked Human Readable version of IP
 function getHumanReadableIP_masked($ip)
 {
-	global $config;
-
 	return wordwrap(substr($ip,0,8), 4, ":", true) . ":xxxx:xxxx";
 }
 
@@ -3595,6 +3613,8 @@ function process_filenames($_file, $board, $multiple, $i){
 
 function returnIPAddr()
 {
+	if (preg_match("/^(::(ffff:)?)?(127\.|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|0\.|255\.)|::1/", $_SERVER['REMOTE_ADDR']))
+		return; // It's pointless to check for local IP addresses, isn't it? also it throws an error
 
 	if(!empty($_SERVER['HTTP_CLIENT_IP']))
 		$ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -3619,19 +3639,24 @@ function checkGEOIP()
     		$bool_countries = in_array(strtoupper($arr['country']), $config['regionblock_countries']);
 
 
-	return ['country_allowed' => $bool_countries, 'ip' => $ip];
+	return [
+			'country_allowed' => $bool_countries,
+			'ip' => $ip,
+			'token' => isset($_COOKIE['token']) ? $_COOKIE['token'] : false
+		];
 }
 
 function handle_blocks()
 {
 	global $config;
 
-	if($config['regionblock']){
-		$check = checkGEOIP();
-		$ismod = (isset($_POST['mod']) && $_POST['mod']);
+	$check = checkGEOIP();
+	$is_notmod = (!isset($_POST['mod']) || !$_POST['mod']);
 
-		$whitelist = Regionblock::validateIP($check['ip']);
-		if(!$check['country_allowed'] && !$whitelist && !$ismod)
+	if($config['regionblock']){
+		$re = new Regionblock(token: $check['token']);
+		$whitelist = $re->validateToken();
+		if(!$check['country'] && !$whitelist && $is_notmod)
 			error(sprintf($config['error']['regionblock'], $_SERVER['REMOTE_ADDR']));
 	}
 }
@@ -3663,7 +3688,7 @@ function get_maxmind($ip)
 {
 	global $config;
 	try {
-	$reader = new GeoIp2\Database\Reader($config['maxmind_db_path']);
+	$reader = new GeoIp2\Database\Reader($config['maxmind_db_path'], [$config['locale'], 'en']);
 	$record = $reader->city($ip);
 	$countryIso = strtolower($record->country->isoCode);
 	}catch(Exception $e){
@@ -3671,9 +3696,21 @@ function get_maxmind($ip)
 		$stateName = 'Índia';
 		return ['country' => $stateCode, 'country_name' => $stateName];
 	}
+	if($countryIso === 'br' && ($config['countryballs'] || $config['show_countryballs_single'])){
+		$stateName = $record->mostSpecificSubdivision->name;
+		$stateCode = strtolower($record->mostSpecificSubdivision->isoCode);
 
-	$stateName = $record->country->name;
-	$stateCode = &$countryIso;
+		// lol
+		if (empty($stateName)) {
+			$stateName = 'Índia';
+			$stateCode = '55';
+		}
+
+		$stateCode .= '-BR';
+	} else {
+		$stateName = $record->country->name;
+		$stateCode = &$countryIso;
+	}
 
 	return ['country' => $stateCode, 'country_name' => $stateName];
 }
@@ -3702,4 +3739,11 @@ function insertFlagsBody($statecode, $statealt)
 {
 	return "\n<tinyboard flag>".$statecode."</tinyboard>".
 		"\n<tinyboard flag alt>" .$statealt."</tinyboard>";
+}
+
+function unlink_tmp_file($file)
+{
+	if(file_exists($file))
+		unlink($file);
+	fatal_error_handler();
 }

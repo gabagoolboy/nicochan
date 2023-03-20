@@ -5,15 +5,16 @@
 	{% if not index %}<a id="{{ post.id }}" class="post_anchor"></a>{% endif %}
 	{% if not post.shadow %}<input type="checkbox" class="delete" name="delete_{{ post.id }}" id="delete_{{ post.id }}" />{% endif %}
 	<label for="delete_{{ post.id }}">
-		{% include 'post/subject.html' %}&nbsp;
-		{% include 'post/name.html' %}&nbsp;
+		{% include 'post/subject.html' %}
+		{% include 'post/name.html' %}
 		{% include 'post/ip.html' %}
 		{% include 'post/flag.html' %}&nbsp;
 		{% include 'post/time.html' %}&nbsp;
 	</label>
 	{% include 'post/poster_id.html' %}&nbsp;
-	<a class="post_no" id="post_no_{{ post.id }}" onclick="highlightReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('', '50') }}{% else %}{{ post.link }}{% endif %}">No.</a>
-	<a class="post_no" onclick="citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', '50') }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
+	<a class="post_no" id="post_no_{{ post.id }}" onclick="return highlightReply({{ post.id }}, event)" href="{% if isnoko50 %}{{ post.link('', '50') }}{% else %}{{ post.link }}{% endif %}">No.</a>
+	<a class="post_no" onclick="return citeReply({{ post.id }})" href="{% if isnoko50 %}{{ post.link('q', '50') }}{% else %}{{ post.link('q') }}{% endif %}">{{ post.id }}</a>
+	</p>
 	</p>
     {% include 'post/fileinfo.html' %}
     {% include 'post/post_controls.html' %}

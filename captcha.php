@@ -1,23 +1,34 @@
 <?php
 require_once('inc/bootstrap.php');
 
-function rand_string($length, $charset) {
-	$ret = "";
-	while ($length--) {
-		$ret .= mb_substr($charset, rand(0, mb_strlen($charset, 'utf-8')-1), 1, 'utf-8');
+class Captcha {
+	private $config;
+	public function __construct(array $config) {
+		$this->config = $config;
 	}
-	return $ret;
-}
 
-function cleanup() {
-	global $config;
-	prepare("DELETE FROM `captchas` WHERE `created_at` < ?")->execute([time() - $config['captcha']['expires_in']]);
-}
-function generate_captcha($extra) {
-	global $config;
+	private function rand_string(int $length, string $charset): string {
+		$ret = "";
+		while ($length--) {
+			$ret .= mb_substr($charset, rand(0, mb_strlen($charset, 'utf-8')-1), 1, 'utf-8');
+		}
+		return $ret;
+	}
 
-		$cookie = rand_string(20, "abcdefghijklmnopqrstuvwxyz");
-		$i = new Securimage($config['securimage_options']);
+	public function cleanup(string $cookie): void {
+		Cache::delete("cookie_{$cookie}");
+	}
+
+	public function select_captcha(string $cookie): bool | string {
+		if (!$answer = Cache::get("cookie_{$cookie}"))
+			return false;
+		else
+			return $answer;
+	}
+
+	public function generate_captcha(): array {
+		$cookie = self::rand_string(20, "abcdefghijklmnopqrstuvwxyz");
+		$i = new Securimage($this->config['securimage_options']);
 		$i->createCode();
 		ob_start();
 		$i->show();
@@ -26,56 +37,52 @@ function generate_captcha($extra) {
 		$html = '<img src="'.$b64img.'">';
 		ob_end_clean();
 		$cdata = $i->getCode();
-		$query = prepare("INSERT INTO `captchas` (`cookie`, `extra`, `text`, `created_at`) VALUES (?, ?, ?, ?)");
-		$query->execute([$cookie, $extra, $cdata->code_display, $cdata->creationTime]);
-		return ['cookie' => $cookie, 'html' => $html, 'rawimg' => $rawimg];
+		Cache::set("cookie_{$cookie}", $cdata, $this->config['captcha']['expires_in']);
+		return ['cookie' => $cookie, 'html' => $html, 'rawimg' => $rawimg, 'expires_in' => $this->config['captcha']['expires_in']];
+	}
 }
 
-$mode = isset($_GET['mode']) ? $_GET['mode'] : null;
+$mode = isset($_GET['mode']) ? (string) $_GET['mode'] : null;
 
-if(is_null($mode))
+if (is_null($mode))
 	header('location: /') and exit;
 
 switch ($mode) {
 	case 'get':
-		if (!isset ($_GET['extra'])) {
-			$_GET['extra'] = $config['captcha']['extra'];
-		}
+		$captcha = new Captcha($config);
+		$gen = $captcha->generate_captcha();
 
-		$captcha = generate_captcha($_GET['extra']);
-
-		header("Content-type: application/json");
-		$extra = $_GET['extra'];
-			if (isset($_GET['raw'])) {
-				$_SESSION['captcha_cookie'] = $captcha['cookie'];
-				header('Content-Type: image/png');
-				echo $captcha['rawimg'];
+		if (isset($_GET['raw'])) {
+			$_SESSION['captcha_cookie'] = $gen['cookie'];
+			header('Content-Type: image/png');
+			echo $gen['rawimg'];
 		} else {
-			echo json_encode(["cookie" => $captcha['cookie'], "captchahtml" => $captcha['html'], "expires_in" => $config['captcha']['expires_in']]);
+			unset($gen['rawimg']);
+			header("Content-type: application/json");
+			echo json_encode($gen);
 		}
 		break;
 	case 'check':
-		cleanup();
-		if (!isset ($_GET['mode']) || !isset ($_GET['cookie']) || !isset ($_GET['extra']) || !isset ($_GET['text'])) {
+		if (!isset($_GET['mode']) || !isset($_GET['cookie']) || !isset($_GET['text'])) {
 			die();
 		}
+		$captcha = new Captcha($config);
+		$check = $captcha->select_captcha($_GET['cookie']);
 
-		$query = prepare("SELECT * FROM `captchas` WHERE `cookie` = ? AND `extra` = ?");
-		$query->execute([$_GET['cookie'], $_GET['extra']]);
+		header("Content-type: application/json");
 
-		$ary = $query->fetchAll();
-
-		if (!$ary) { // captcha expired
-			echo "0";
+		if (!$check) { // captcha expired
+			echo json_encode(['success' => false]);
 			break;
 		} else {
-			$query = prepare("DELETE FROM `captchas` WHERE `cookie` = ? AND `extra` = ?");
-			$query->execute([$_GET['cookie'], $_GET['extra']]);
+			$captcha->cleanup($_GET['cookie']); // remove used captcha
 		}
 
-		if (strtolower($ary[0]['text']) !== strtolower($_GET['text']))
-			echo "0";
-		else
-			echo "1";
+		if (strtolower($check) !== strtolower($_GET['text'])) {
+			echo json_encode(['success' => false]);
+		} else {
+			echo json_encode(['success' => true]);
+		}
+
 		break;
 }

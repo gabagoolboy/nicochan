@@ -33,7 +33,6 @@ class Api {
 			'locked' => 'locked',
 			'cycle' => 'cyclical',
 			'bump' => 'last_modified',
-			'embed' => 'embed',
 			'board' => 'board'
 		);
 
@@ -123,12 +122,19 @@ class Api {
 
 		if ($threadsPage) return $apiPost;
 
-		// Handle country field
-		if (isset($post->body_nomarkup) && $this->config['country_flags']) {
+		if (isset($post->embed)) {
+			$apiPost['embed'] = $post->embed_url;
+			$apiPost['embed_title'] = $post->embed_title;
+		}
+
+		// Handle country field and ban/warning messages
+		if (isset($post->body_nomarkup)) {
 			$modifiers = extract_modifiers($post->body_nomarkup);
-			if (isset($modifiers['flag']) && isset($modifiers['flag alt']) && preg_match('/^\w+/', $modifiers['flag'])) {
-					$apiPost['country'] = $modifiers['flag'];
-					$apiPost['country_name'] = $modifiers['flag alt'];
+			if ($this->config['show_countryballs_single']) {
+				if (isset($modifiers['flag']) && isset($modifiers['flag alt']) && preg_match('/^\w+/i', $modifiers['flag'])) {
+						$apiPost['country'] = $modifiers['flag'];
+						$apiPost['country_name'] = $modifiers['flag alt'];
+				}
 			}
 			if (isset($modifiers['warning message'])) {
 				$apiPost['warning_msg'] = $modifiers['warning message'];

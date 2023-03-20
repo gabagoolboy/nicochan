@@ -1,5 +1,5 @@
 <?php
-
+// this file needs massive rework
 class ShadowDelete {
 
     static public function hashShadowDelFilename($filename)
@@ -36,13 +36,12 @@ class ShadowDelete {
         return json_encode($files_new);
     }
 
-
     // Delete a post (reply or thread)
     static public function deletePost($id, $error_if_doesnt_exist=true, $rebuild_after=true) {
         global $board, $config;
 
         // Select post and replies (if thread) in one query
-        $query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+        $query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``posts_%s`` WHERE `shadow` = 0 AND (`id` = :id OR `thread` = :id)", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
@@ -66,14 +65,8 @@ class ShadowDelete {
                 file_unlink($board['dir'] . $config['dir']['res'] . link_for($post, true) ); // noko50
                 file_unlink($board['dir'] . $config['dir']['res'] . sprintf('%d.json', $post['id']));
 
-                // Insert antispam to temp table
-                $antispam_query = prepare("INSERT INTO ``shadow_antispam`` SELECT * FROM ``antispam`` WHERE `board` = :board AND `thread` = :thread");
-                $antispam_query->bindValue(':board', $board['uri']);
-                $antispam_query->bindValue(':thread', $post['id']);
-                $antispam_query->execute() or error(db_error($antispam_query));
-
-                // Delete Antispam entry
-                $antispam_query = prepare('DELETE FROM ``antispam`` WHERE `board` = :board AND `thread` = :thread');
+                // Update Antispam entry
+                $antispam_query = prepare('UPDATE ``antispam`` SET `shadow` = 1 WHERE `board` = :board AND `thread` = :thread');
                 $antispam_query->bindValue(':board', $board['uri']);
                 $antispam_query->bindValue(':thread', $post['id']);
                 $antispam_query->execute() or error(db_error($antispam_query));
@@ -87,15 +80,15 @@ class ShadowDelete {
                         // Add file to array of all files
                         $files[] = $f;
                         // Move files to temp storage
-				if ($f->file !== 'deleted'){
-					if (file_exists($board['dir'] . $config['dir']['img'] . $f->file))
-						rename($board['dir'] . $config['dir']['img'] . $f->file, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file));
+                    	if ($f->file !== 'deleted'){
+					        if (file_exists($board['dir'] . $config['dir']['img'] . $f->file))
+						        rename($board['dir'] . $config['dir']['img'] . $f->file, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file));
 
-					if($f->thumb !== 'spoiler'){
-						if (file_exists($board['dir'] . $config['dir']['thumb'] . $f->thumb))
-							rename($board['dir'] . $config['dir']['thumb'] . $f->thumb, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb));
-					}
-				}
+					        if($f->thumb !== 'spoiler'){
+						        if (file_exists($board['dir'] . $config['dir']['thumb'] . $f->thumb))
+							        rename($board['dir'] . $config['dir']['thumb'] . $f->thumb, $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb));
+					        }
+				        }
                 }
             }
 
@@ -110,7 +103,7 @@ class ShadowDelete {
 
 
         // Insert data into temp table
-        $insert_query = prepare("INSERT INTO ``shadow_deleted`` VALUES(NULL, :board, :post_id, :del_time, :files, :cite_ids)");
+        $insert_query = prepare("INSERT INTO ``shadow_deleted`` (`board`, `post_id`, `del_time`, `files`, `cite_ids`) VALUES (:board, :post_id, :del_time, :files, :cite_ids)");
         $insert_query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
         $insert_query->bindValue(':post_id', $id, PDO::PARAM_INT);
         $insert_query->bindValue(':del_time', time(), PDO::PARAM_INT);
@@ -119,22 +112,14 @@ class ShadowDelete {
         $insert_query->execute() or error(db_error($insert_query));
 
 
-        // Insert post table into temp post table
-        $insert_query = prepare(sprintf("INSERT INTO ``shadow_posts_%s`` SELECT * FROM ``posts_%s`` WHERE `id` = " . implode(' OR `id` = ', $ids), $board['uri'], $board['uri']));
-        $insert_query->execute() or error(db_error($insert_query));
-
-        // Delete post table entries
-        $query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+        // Update post table entries
+        $query = prepare(sprintf("UPDATE ``posts_%s`` SET `shadow` = 1 WHERE `id` = :id OR `thread` = :id", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
-        // Insert filehash table into temp filehash table
-        $insert_query = prepare("INSERT INTO ``shadow_filehashes`` SELECT * FROM ``filehashes`` WHERE `board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . ")");
-        $insert_query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
-        $insert_query->execute() or error(db_error($insert_query));
 
-        // Delete filehash entries for thread from filehash table
-        $query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
+        // Update filehash entries for thread from filehash table
+        $query = prepare(sprintf("UPDATE ``filehashes`` SET `shadow` = 1 WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
@@ -142,7 +127,7 @@ class ShadowDelete {
         // Update bump order
         if (isset($thread_id))
         {
-            $query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM `posts_%s` WHERE (`thread` = :thread AND NOT email <=> "sage") OR `id` = :thread', $board['uri']));
+            $query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM `posts_%s` WHERE `shadow` = 0 AND (`thread` = :thread AND NOT email <=> "sage") OR `id` = :thread', $board['uri']));
             $query->bindValue(':thread', $thread_id, PDO::PARAM_INT);
             $query->execute() or error(db_error($query));
             $correct_bump = $query->fetch(PDO::FETCH_ASSOC)['correct_bump'];
@@ -169,13 +154,9 @@ class ShadowDelete {
         if (isset($tmp_board))
             openBoard($tmp_board);
 
-        // Insert Cited to temp table
-        $query = prepare("INSERT INTO ``shadow_cites`` SELECT * FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
-        $query->bindValue(':board', $board['uri']);
-        $query->execute() or error(db_error($query));
 
-        // Delete Cites
-        $query = prepare("DELETE FROM ``cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
+        // Update Cites
+        $query = prepare("UPDATE ``cites`` SET `shadow` = 1 WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
         $query->bindValue(':board', $board['uri']);
         $query->execute() or error(db_error($query));
 
@@ -204,7 +185,7 @@ class ShadowDelete {
         global $board, $config;
 
         // Select post and replies (if thread) in one query
-        $query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``shadow_posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+        $query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``posts_%s`` WHERE `id` = :id OR `thread` = :id AND `shadow` = 1", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
@@ -222,14 +203,7 @@ class ShadowDelete {
 
             // If thread
             if (!$post['thread']) {
-                // Insert temp antispam to table
-                $antispam_query = prepare("INSERT INTO ``antispam`` SELECT * FROM ``shadow_antispam`` WHERE `board` = :board AND `thread` = :thread");
-                $antispam_query->bindValue(':board', $board['uri']);
-                $antispam_query->bindValue(':thread', $post['id']);
-                $antispam_query->execute() or error(db_error($antispam_query));
-
-                // Delete Temp Antispam entry
-                $antispam_query = prepare('DELETE FROM ``shadow_antispam`` WHERE `board` = :board AND `thread` = :thread');
+                $antispam_query = prepare('UPDATE ``antispam`` SET `shadow` = 0 WHERE `board` = :board AND `thread` = :thread');
                 $antispam_query->bindValue(':board', $board['uri']);
                 $antispam_query->bindValue(':thread', $post['id']);
                 $antispam_query->execute() or error(db_error($antispam_query));
@@ -263,41 +237,32 @@ class ShadowDelete {
         // Delete data from temp table
         $insert_query = prepare("DELETE FROM ``shadow_deleted`` WHERE `board` = :board AND `post_id` = :id");
         $insert_query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
-        $insert_query->bindValue(':id', isset($post['id']) ? $post['id'] : null, PDO::PARAM_INT);
+        $insert_query->bindValue(':id', isset($post['id']) ? $post['id'] : $ids[0], PDO::PARAM_INT);
         $insert_query->execute() or error(db_error($insert_query));
 
 
         // Determin if it is an thread or just post we are restoring
-        $query = prepare(sprintf("SELECT `thread` FROM ``shadow_posts_%s`` WHERE `id` = :id", $board['uri']));
+        $query = prepare(sprintf("SELECT `thread` FROM ``posts_%s`` WHERE `id` = :id AND `shadow` = 1", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
         $thread_id = $query->fetch(PDO::FETCH_ASSOC)['thread'];
 
 
-        // Insert temp post table into post table
-        $insert_query = prepare(sprintf("INSERT INTO ``posts_%s`` SELECT * FROM ``shadow_posts_%s`` WHERE `id` = " . implode(' OR `id` = ', $ids), $board['uri'], $board['uri']));
+        // Update temp post table into post table
+        $insert_query = prepare(sprintf("UPDATE ``posts_%s`` SET `shadow` = 0 WHERE `id` = " . implode(' OR `id` = ', $ids), $board['uri'], $board['uri']));
         $insert_query->execute() or error(db_error($insert_query));
 
-        // Delete post table entries
-        $query = prepare(sprintf("DELETE FROM ``shadow_posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
-        $query->bindValue(':id', $id, PDO::PARAM_INT);
-        $query->execute() or error(db_error($query));
 
-        // Insert filehash table into temp filehash table
-        $insert_query = prepare("INSERT INTO ``filehashes`` SELECT * FROM ``shadow_filehashes`` WHERE `board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . ")");
+        // Update filehash table into temp filehash table
+        $insert_query = prepare("UPDATE ``filehashes`` SET `shadow` = 0 WHERE `board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . ")");
         $insert_query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
         $insert_query->execute() or error(db_error($insert_query));
-
-        // Delete filehash entries for thread from filehash table
-        $query = prepare(sprintf("DELETE FROM ``shadow_filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
-        $query->bindValue(':id', $id, PDO::PARAM_INT);
-        $query->execute() or error(db_error($query));
 
 
         // Update bump order
         if (isset($thread_id))
         {
-            $query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM `posts_%s` WHERE (`thread` = :thread AND NOT email <=> "sage") OR `id` = :thread', $board['uri']));
+            $query = prepare(sprintf('SELECT MAX(`time`) AS `correct_bump` FROM `posts_%s` WHERE `shadow` = 0 AND (`thread` = :thread AND NOT email <=> "sage") OR `id` = :thread', $board['uri']));
             $query->bindValue(':thread', $thread_id, PDO::PARAM_INT);
             $query->execute() or error(db_error($query));
             $correct_bump = $query->fetch(PDO::FETCH_ASSOC)['correct_bump'];
@@ -308,7 +273,7 @@ class ShadowDelete {
             $query->execute() or error(db_error($query));
         }
 
-        $query = prepare("SELECT `board`, `post` FROM ``shadow_cites`` WHERE `target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
+        $query = prepare("SELECT `board`, `post` FROM ``cites`` WHERE `target_board` = :board AND `shadow` = 1 AND (`target` = " . implode(' OR `target` = ', $ids) . ") ORDER BY `board`");
         $query->bindValue(':board', $board['uri']);
         $query->execute() or error(db_error($query));
         while ($cite = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -323,13 +288,8 @@ class ShadowDelete {
         if (isset($tmp_board))
             openBoard($tmp_board);
 
-        // Insert Temp Cited to Cited Table
-        $query = prepare("INSERT INTO ``cites`` SELECT * FROM ``shadow_cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
-        $query->bindValue(':board', $board['uri']);
-        $query->execute() or error(db_error($query));
-
-        // Delete Temp Cites
-        $query = prepare("DELETE FROM ``shadow_cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
+        // Update Temp Cited to Cited Table
+        $query = prepare("UPDATE ``cites`` SET `shadow` = 0 WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
         $query->bindValue(':board', $board['uri']);
         $query->execute() or error(db_error($query));
 
@@ -357,7 +317,7 @@ class ShadowDelete {
         global $board, $config;
 
         // Select post and replies (if thread) in one query
-        $query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``shadow_posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+        $query = prepare(sprintf("SELECT `id`,`thread`,`files`,`slug` FROM ``posts_%s`` WHERE `shadow` = 1 AND (`id` = :id OR `thread` = :id)", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
@@ -398,30 +358,34 @@ class ShadowDelete {
         // Delete data from temp table
         $insert_query = prepare("DELETE FROM ``shadow_deleted`` WHERE `board` = :board AND `post_id` = :id");
         $insert_query->bindValue(':board', $board['uri'], PDO::PARAM_STR);
-	$insert_query->bindValue(':id', isset($post['id']) ? $post['id'] : null, PDO::PARAM_INT);
+	$insert_query->bindValue(':id', isset($post['id']) ? $post['id'] : $ids[0], PDO::PARAM_INT);
 
         $insert_query->execute() or error(db_error($insert_query));
 
+
         // Determin if it is an thread or just post we are restoring
-        $query = prepare(sprintf("SELECT `thread` FROM ``shadow_posts_%s`` WHERE `id` = :id", $board['uri']));
+        $query = prepare(sprintf("SELECT `thread` FROM ``posts_%s`` WHERE `shadow` = 1 AND `id` = :id", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
         $thread_id = $query->fetch(PDO::FETCH_ASSOC)['thread'];
 
         // Delete post table entries
-        $query = prepare(sprintf("DELETE FROM ``shadow_posts_%s`` WHERE `id` = :id OR `thread` = :id", $board['uri']));
+        $query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `shadow` = 1 AND (`id` = :id OR `thread` = :id)", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
+	 
 
         // Delete filehash entries for thread from filehash table
-        $query = prepare(sprintf("DELETE FROM ``shadow_filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
+        $query = prepare(sprintf("DELETE FROM ``filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = '%s'", $board['uri']));
         $query->bindValue(':id', $id, PDO::PARAM_INT);
         $query->execute() or error(db_error($query));
 
-        // Delete Temp Cites
-        $query = prepare("DELETE FROM ``shadow_cites`` WHERE (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
+
+	// Delete Cites
+        $query = prepare("DELETE FROM ``cites`` WHERE `shadow` = 1 AND (`target_board` = :board AND (`target` = " . implode(' OR `target` = ', $ids) . ")) OR (`board` = :board AND (`post` = " . implode(' OR `post` = ', $ids) . "))");
         $query->bindValue(':board', $board['uri']);
         $query->execute() or error(db_error($query));
+
 
         // If Thread ID is set return it (deleted post within thread) this will pe a positive number and thus viewed as true for legacy purposes
         if(isset($thread_id))
@@ -467,18 +431,18 @@ class ShadowDelete {
             }
 
             // Delete post table entries
-            $delete_query = prepare(sprintf("DELETE FROM ``shadow_posts_%s`` WHERE `id` = :id OR `thread` = :id", $shadow_post['board']));
+            $delete_query = prepare(sprintf("DELETE FROM ``posts_%s`` WHERE `shadow` = 1 AND (`id` = :id OR `thread` = :id)", $shadow_post['board']));
             $delete_query->bindValue(':id', $shadow_post['post_id'], PDO::PARAM_INT);
             $delete_query->execute() or error(db_error($delete_query));
 
             // Delete filehash entries for thread from filehash table
-            $delete_query = prepare("DELETE FROM ``shadow_filehashes`` WHERE ( `thread` = :id OR `post` = :id ) AND `board` = :board");
+            $delete_query = prepare("DELETE FROM ``filehashes`` WHERE `shadow` = 1 AND ( `thread` = :id OR `post` = :id ) AND `board` = :board");
             $delete_query->bindValue(':id', $shadow_post['post_id'], PDO::PARAM_INT);
             $delete_query->bindValue(':board', $shadow_post['board'], PDO::PARAM_STR);
             $delete_query->execute() or error(db_error($delete_query));
 
             // Delete Temp Antispam entry
-            $delete_query = prepare('DELETE FROM ``shadow_antispam`` WHERE `board` = :board AND `thread` = :thread');
+            $delete_query = prepare('DELETE FROM ``antispam`` WHERE `shadow` = 1 AND `board` = :board AND `thread` = :thread');
             $delete_query->bindValue(':board', $shadow_post['board']);
             $delete_query->bindValue(':thread', $shadow_post['post_id']);
             $delete_query->execute() or error(db_error($delete_query));

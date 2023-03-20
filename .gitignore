@@ -11,13 +11,8 @@ inc/instance-config.php
 
 # minify
 /inc/lib/minify
-
-# static pages
 403.html
 404.html
-
-# instance-config
-/inc/instance-config.php
 
 # .installed
 /.installed
@@ -42,6 +37,7 @@ inc/instance-config.php
 
 # templates cache
 /templates/cache
+compiled_templates/
 
 # other stuff
 .DS_Store
@@ -71,8 +67,8 @@ favicon.ico
 /static/spoiler.png
 
 # Banners
-!/static/banners/*
-!/static/banners_priority/*
+/static/banners/*
+/static/banners_priority/*
 
 # Images from twemoji
 js/twemoji/16x16/

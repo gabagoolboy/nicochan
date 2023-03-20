@@ -9,9 +9,12 @@
 	<title>{{ title }}</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-page" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
+	<div class="bar top">
         {{ boardlist.top }}
+	</div>
 
-	{% if pm %}<div class="top_notice">You have <a href="?/PM/{{ pm.id }}">an unread PM</a>{% if pm.waiting > 0 %}, plus {{ pm.waiting }} more waiting{% endif %}.</div><hr>{% endif %}
+	{% if pm %}<div class="top_notice">{% trans %}You have{% endtrans %}&nbsp;<a href="?/PM/{{ pm.id }}">{% trans %}an unread PM{% endtrans %}</a>{% if pm.waiting > 0 %}, {% trans %}plus{% endtrans %} {{ pm.waiting }} {% trans %}more waiting{% endtrans %}{% endif %}.</div><hr />{% endif %}
+
 	<header>
 		<h1>{{ title }}</h1>
 		<div class="subtitle">

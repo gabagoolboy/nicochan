@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # anaodev <xmas@yopmail.com>, 2014
 # hitmonkey <sac@55ch.org>, 2014
@@ -11,840 +11,1280 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vichan\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-18 13:47+0200\n"
-"PO-Revision-Date: 2014-10-18 11:48+0000\n"
-"Last-Translator: Marcin Łabanowski <marcin@6irc.net>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/tinyboard-vichan-devel/language/pt_BR/)\n"
+"POT-Creation-Date: 2023-01-18 20:52-0300\n"
+"PO-Revision-Date: 2023-03-11 18:55-0400\n"
+"Last-Translator: weav <magalichan@insiberia.net>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
+"tinyboard-vichan-devel/language/pt_BR/)\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt_BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
-#: ../../../../js/style-select.js:40 ../../../../js/style-select.js:41
-msgid "Style: "
-msgstr "Estilo: "
-
-#: ../../../../js/hide-images.js:50 ../../../../js/upload-selection.js:51
-#: ../../../../js/quick-post-controls.js:30 ../../../../js/hide-images.js:51
-#: ../../../../js/quick-post-controls.js:32
-#: ../../../../js/upload-selection.js:61 ../../../../js/upload-selection.js:69
-msgid "File"
-msgstr "Arquivo"
-
-#: ../../../../js/hide-images.js:50 ../../../../js/hide-images.js:51
-msgid "hide"
-msgstr "esconder"
-
-#: ../../../../js/hide-images.js:56 ../../../../js/hide-images.js:57
-#: ../../../../js/hide-images.js:63
-msgid "show"
-msgstr "mostrar"
-
-#: ../../../../js/toggle-locked-threads.js:39
-#: ../../../../js/toggle-locked-threads.js:54
-#: ../../../../js/toggle-locked-threads.js:40
-#: ../../../../js/toggle-locked-threads.js:55
-#: ../../../../js/toggle-locked-threads.js:41
-#: ../../../../js/toggle-locked-threads.js:56
-#: ../../../../js/toggle-locked-threads.js:53
-#: ../../../../js/toggle-locked-threads.js:70
-msgid "Show locked threads"
-msgstr "Mostrar threads trancadas"
-
-#: ../../../../js/toggle-locked-threads.js:39
-#: ../../../../js/toggle-locked-threads.js:54
-#: ../../../../js/toggle-locked-threads.js:40
-#: ../../../../js/toggle-locked-threads.js:55
-#: ../../../../js/toggle-locked-threads.js:41
-#: ../../../../js/toggle-locked-threads.js:56
-#: ../../../../js/toggle-locked-threads.js:44
-#: ../../../../js/toggle-locked-threads.js:53
-#: ../../../../js/toggle-locked-threads.js:70
-msgid "Hide locked threads"
-msgstr "Esconder threads trancadas"
-
-#: ../../../../js/upload-selection.js:32 ../../../../js/upload-selection.js:45
-#: ../../../../js/upload-selection.js:53
-msgid "URL"
-msgstr "URL"
-
-#: ../../../../js/upload-selection.js:50 ../../../../js/upload-selection.js:60
-#: ../../../../js/upload-selection.js:68
-msgid "Select"
-msgstr "Selecionar"
-
-#: ../../../../js/upload-selection.js:53 ../../../../js/upload-selection.js:63
-#: ../../../../js/upload-selection.js:71
-msgid "Remote"
-msgstr "Remoto"
-
-#: ../../../../js/upload-selection.js:56 ../../../../js/upload-selection.js:66
-#: ../../../../js/upload-selection.js:74
-msgid "Embed"
-msgstr "Embutir"
-
-#: ../../../../js/upload-selection.js:59 ../../../../js/upload-selection.js:69
-#: ../../../../js/upload-selection.js:77
-msgid "Oekaki"
-msgstr "Oekaki"
-
-#: ../../../../js/toggle-images.js:41 ../../../../js/toggle-images.js:42
-#: ../../../../js/toggle-images.js:45
-msgid "hidden"
-msgstr "escondido"
-
-#: ../../../../js/toggle-images.js:57 ../../../../js/toggle-images.js:70
-#: ../../../../js/toggle-images.js:58 ../../../../js/toggle-images.js:71
-#: ../../../../js/toggle-images.js:86
-msgid "Show images"
-msgstr "Mostrar imagens"
-
-#: ../../../../js/toggle-images.js:57 ../../../../js/toggle-images.js:70
-#: ../../../../js/toggle-images.js:58 ../../../../js/toggle-images.js:71
-#: ../../../../js/toggle-images.js:63 ../../../../js/toggle-images.js:86
-msgid "Hide images"
-msgstr "Esconder imagens"
-
-#: ../../../../js/quick-post-controls.js:27
-#: ../../../../js/quick-post-controls.js:29
-msgid "Password"
-msgstr "Senha"
-
-#: ../../../../js/quick-post-controls.js:29
-#: ../../../../js/quick-post-controls.js:31
-msgid "Delete file only"
-msgstr "Deletar somente o arquivo"
-
-#: ../../../../js/quick-post-controls.js:31
-#: ../../../../js/quick-post-controls.js:33
-msgid "Delete"
-msgstr "Deletar"
-
-#: ../../../../js/quick-post-controls.js:35
-#: ../../../../js/quick-post-controls.js:37 ../../../../js/mod/ban-list.js:40
-msgid "Reason"
-msgstr "Motivo"
-
-#: ../../../../js/quick-post-controls.js:37
-#: ../../../../js/quick-post-controls.js:39
-msgid "Report"
-msgstr "Denunciar"
-
-#: ../../../../js/expand.js:20 ../../../../js/expand.js:22
-msgid "Click reply to view."
-msgstr "Clique em responder para ver a resposta."
-
-#: ../../../../js/expand.js:20 ../../../../js/expand.js:22
-#: ../../../../js/live-index.js:72 ../../../../js/live-index.js:83
-msgid "Click to expand"
-msgstr "Clique para expandir"
-
-#: ../../../../js/expand.js:44 ../../../../js/expand.js:46
-#: ../../../../js/expand.js:50
-msgid "Hide expanded replies"
-msgstr "Ocultar respostas expandidas"
-
-#: ../../../../js/oekaki.js:10
-msgid "Brush size"
-msgstr "Tamanho do pincel"
-
-#: ../../../../js/oekaki.js:10
-msgid "Set text"
-msgstr "Definir texto"
-
-#: ../../../../js/oekaki.js:10
-msgid "Clear"
-msgstr "Limpar"
-
-#: ../../../../js/oekaki.js:10
-msgid "Save"
-msgstr "Salvar"
-
-#: ../../../../js/oekaki.js:10
-msgid "Load"
-msgstr "Carregar"
-
-#: ../../../../js/oekaki.js:11
-msgid "Toggle eraser"
-msgstr "Alternar borracha."
-
-#: ../../../../js/oekaki.js:11
-msgid "Get color"
-msgstr "Obter cor"
-
-#: ../../../../js/oekaki.js:11
-msgid "Fill"
-msgstr "Preencher"
-
-#: ../../../../js/oekaki.js:12
-msgid "Use oekaki instead of file?"
-msgstr "Use oekaki em vez de arquivo?"
-
-#: ../../../../js/oekaki.js:21
-msgid "Edit in oekaki"
-msgstr "Editar no oekaki"
-
-#: ../../../../js/oekaki.js:152
-msgid "Enter some text"
-msgstr "Digite algum texto"
-
-#: ../../../../js/oekaki.js:153
-msgid "Enter font or leave empty"
-msgstr "Digite o tipo de letra ou deixe em branco"
-
-#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:65
-#: ../../../../js/forced-anon.js:69 ../../../../js/forced-anon.js:60
-#: ../../../../js/forced-anon.js:66 ../../../../js/forced-anon.js:70
-#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:67
-#: ../../../../js/forced-anon.js:71 ../../../../js/forced-anon.js:73
-#: ../../../../js/forced-anon.js:81 ../../../../js/forced-anon.js:85
-msgid "Forced anonymity"
-msgstr "Anonimato forçado"
-
-#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:65
-#: ../../../../js/forced-anon.js:60 ../../../../js/forced-anon.js:66
-#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:67
-#: ../../../../js/forced-anon.js:73 ../../../../js/forced-anon.js:81
-msgid "enabled"
-msgstr "habilitado"
-
-#: ../../../../js/forced-anon.js:59 ../../../../js/forced-anon.js:69
-#: ../../../../js/forced-anon.js:60 ../../../../js/forced-anon.js:70
-#: ../../../../js/forced-anon.js:61 ../../../../js/forced-anon.js:71
-#: ../../../../js/forced-anon.js:73 ../../../../js/forced-anon.js:85
-msgid "disabled"
-msgstr "desabilitado"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Sun"
-msgstr "Dom"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Mon"
-msgstr "Seg"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Tue"
-msgstr "Ter"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Wed"
-msgstr "Qua"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Thu"
-msgstr "Qui"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Fri"
-msgstr "Sex"
-
-#: ../../../../js/local-time.js:40 ../../../../js/local-time.js:41
-#: ../../../../js/local-time.js:30 ../../../../templates/main.js:63
-msgid "Sat"
-msgstr "Sab"
-
-#: ../../../../js/catalog-link.js:21 ../../../../js/catalog-link.js:32
-#: ../../../../js/catalog-link.js:40 ../../../../js/catalog-link.js:33
-#: ../../../../js/catalog-link.js:44 ../../../../js/catalog-link.js:52
-#: ../../../../js/catalog-link.js:28 ../../../../js/catalog-link.js:39
-#: ../../../../js/catalog-link.js:47
-msgid "Catalog"
-msgstr "Catálogo"
-
-#: ../../../../js/quick-reply.js:21 ../../../../js/quick-reply-old.js:21
-#: ../../../../js/quick-reply-old.js:23
-msgid "Submit"
-msgstr "Enviar"
-
-#: ../../../../js/quick-reply.js:31 ../../../../js/quick-reply-old.js:31
-#: ../../../../js/quick-reply-old.js:33
-msgid "Quick reply"
-msgstr "Resposta rápida"
-
-#: ../../../../js/quick-reply.js:33 ../../../../js/quick-reply-old.js:33
-#: ../../../../js/quick-reply-old.js:35
-#, python-brace-format
-msgid "Posting mode: Replying to <small>&gt;&gt;{0}</small>"
-msgstr "Modo de resposta: Respondendo a <small>&gt;&gt;{0}</small>"
-
-#: ../../../../js/quick-reply.js:33 ../../../../js/quick-reply-old.js:33
-#: ../../../../js/quick-reply-old.js:35
-msgid "Return"
-msgstr "Voltar"
-
-#: ../../../../js/expand-all-images.js:20
-#: ../../../../js/expand-all-images.js:21
-#: ../../../../js/expand-all-images.js:22
-#: ../../../../js/expand-all-images.js:23
-msgid "Expand all images"
-msgstr "Expandir todas as imagens"
-
-#: ../../../../templates/main.js:6
-msgid "Hello!"
-msgstr "Olá!"
-
-#: ../../../../templates/main.js:18
-#, python-brace-format
-msgid "{0} users"
-msgstr "{0} usuários"
-
-#: ../../../../templates/themes/ukko/ukko.js:28
-#: ../../../../templates/themes/ukko/ukko.js:39
-#: ../../../../templates/themes/ukko/ukko.js:29
-#: ../../../../templates/themes/ukko/ukko.js:40
-#: ../../../../templates/themes/ukko/ukko.js:52
-#: ../../../../templates/themes/ukko/ukko.js:63
-msgid "(hide threads from this board)"
-msgstr "(esconder threads desta board)"
-
-#: ../../../../templates/themes/ukko/ukko.js:32
-#: ../../../../templates/themes/ukko/ukko.js:44
-#: ../../../../templates/themes/ukko/ukko.js:33
-#: ../../../../templates/themes/ukko/ukko.js:45
-#: ../../../../templates/themes/ukko/ukko.js:56
-#: ../../../../templates/themes/ukko/ukko.js:68
-msgid "(show threads from this board)"
-msgstr "(mostrar threads desta board)"
-
-#: ../../../../templates/themes/ukko/ukko.js:57
-#: ../../../../templates/themes/ukko/ukko.js:58
-#: ../../../../templates/themes/ukko/ukko.js:81
-msgid "No more threads to display"
-msgstr "Sem mais threads para mostrar"
-
-#: ../../../../templates/themes/ukko/ukko.js:79
-#: ../../../../templates/themes/ukko/ukko.js:80
-#: ../../../../templates/themes/ukko/ukko.js:103
-#: ../../../../js/infinite-scroll.js:48
-msgid "Loading..."
-msgstr "Carregando..."
-
-#: ../../../../js/download-original.js:32
-#: ../../../../js/download-original.js:33
-msgid "Save as original filename"
-msgstr "Salvar com nome de arquivo original"
-
-#: ../../../../js/ajax-post-controls.js:43
-msgid "Reported post(s)."
-msgstr "Post(s) denunciado(s)."
-
-#: ../../../../js/ajax-post-controls.js:53
-msgid "An unknown error occured!"
-msgstr "Ocorreu um erro desconhecido!"
-
-#: ../../../../js/ajax-post-controls.js:60
-msgid "Something went wrong... An unknown error occured!"
-msgstr "Algo deu errado ... Ocorreu um erro desconhecido!"
-
-#: ../../../../js/ajax-post-controls.js:68
-msgid "Working..."
-msgstr "Trabalhando..."
-
-#: ../../../../js/ajax.js:42 ../../../../js/ajax.js:45
-msgid "Posting... (#%)"
-msgstr "Enviando... (#%)"
-
-#: ../../../../js/ajax.js:104 ../../../../js/ajax.js:109
-msgid "Posted..."
-msgstr "Enviado..."
-
-#: ../../../../js/ajax.js:106 ../../../../js/ajax.js:111
-msgid "An unknown error occured when posting!"
-msgstr "Ocorreu um erro desconhecido ao postar!"
-
-#: ../../../../js/ajax.js:130 ../../../../js/ajax.js:135
-msgid "Posting..."
-msgstr "Postando..."
-
-#: ../../../../js/quick-reply.js:223 ../../../../js/quick-reply.js:224
-#: ../../../../js/quick-reply.js:225
-msgid "Upload URL"
-msgstr "URL de upload"
-
-#: ../../../../js/quick-reply.js:266 ../../../../js/quick-reply.js:267
-#: ../../../../js/quick-reply.js:268
-msgid "Spoiler Image"
-msgstr "Imagem Spoiler"
-
-#: ../../../../js/quick-reply.js:277 ../../../../js/quick-reply.js:278
-#: ../../../../js/quick-reply.js:279 ../../../../js/quick-reply.js:281
-msgid "Comment"
-msgstr "Comentário"
-
-#: ../../../../js/quick-reply.js:285 ../../../../js/quick-reply.js:406
-#: ../../../../js/quick-reply.js:286 ../../../../js/quick-reply.js:407
-#: ../../../../js/quick-reply.js:287 ../../../../js/quick-reply.js:408
-#: ../../../../js/quick-reply.js:289 ../../../../js/quick-reply.js:410
-msgid "Quick Reply"
-msgstr "Resposta rápida"
-
-#: ../../../../js/watch.js:249 ../../../../js/watch.js:250
-#: ../../../../js/watch.js:288 ../../../../js/watch.js:289
-#: ../../../../js/watch.js:330 ../../../../js/watch.js:331
-#: ../../../../js/watch.js:361 ../../../../js/watch.js:362
-msgid "Stop watching this thread"
-msgstr "Parar de assistir esta thread"
-
-#: ../../../../js/watch.js:249 ../../../../js/watch.js:250
-#: ../../../../js/watch.js:288 ../../../../js/watch.js:289
-#: ../../../../js/watch.js:330 ../../../../js/watch.js:331
-#: ../../../../js/watch.js:361 ../../../../js/watch.js:362
-msgid "Watch this thread"
-msgstr "Assistir esta thread"
-
-#: ../../../../js/watch.js:260 ../../../../js/watch.js:261
-#: ../../../../js/watch.js:269 ../../../../js/watch.js:299
-#: ../../../../js/watch.js:300 ../../../../js/watch.js:308
-#: ../../../../js/watch.js:341 ../../../../js/watch.js:342
-#: ../../../../js/watch.js:350 ../../../../js/watch.js:372
-#: ../../../../js/watch.js:373 ../../../../js/watch.js:381
-msgid "Unpin this board"
-msgstr "Desafixar esta board"
-
-#: ../../../../js/watch.js:260 ../../../../js/watch.js:261
-#: ../../../../js/watch.js:269 ../../../../js/watch.js:299
-#: ../../../../js/watch.js:300 ../../../../js/watch.js:308
-#: ../../../../js/watch.js:341 ../../../../js/watch.js:342
-#: ../../../../js/watch.js:350 ../../../../js/watch.js:372
-#: ../../../../js/watch.js:373 ../../../../js/watch.js:381
-msgid "Pin this board"
-msgstr "Fixar esta board"
-
-#: ../../../../js/watch.js:262 ../../../../js/watch.js:267
-#: ../../../../js/watch.js:268 ../../../../js/watch.js:301
-#: ../../../../js/watch.js:306 ../../../../js/watch.js:307
-#: ../../../../js/watch.js:343 ../../../../js/watch.js:348
-#: ../../../../js/watch.js:349 ../../../../js/watch.js:374
-#: ../../../../js/watch.js:379 ../../../../js/watch.js:380
-msgid "Stop watching this board"
-msgstr "Parar de assistir esta board"
-
-#: ../../../../js/watch.js:262 ../../../../js/watch.js:267
-#: ../../../../js/watch.js:268 ../../../../js/watch.js:301
-#: ../../../../js/watch.js:306 ../../../../js/watch.js:307
-#: ../../../../js/watch.js:343 ../../../../js/watch.js:348
-#: ../../../../js/watch.js:349 ../../../../js/watch.js:374
-#: ../../../../js/watch.js:379 ../../../../js/watch.js:380
-msgid "Watch this board"
-msgstr "Assistir esta board"
-
-#: ../../../../js/wpaint.js:113
-msgid "Click on any image on this site to load it into oekaki applet"
-msgstr "Clique em qualquer imagem neste site para carregá-lo no miniaplicativo oekaki"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Sunday"
-msgstr "Domingo"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Monday"
-msgstr "Segunda"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Tuesday"
-msgstr "Terça"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Wednesday"
-msgstr "Quarta"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Thursday"
-msgstr "Quinta"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Friday"
-msgstr "Sexta"
-
-#: ../../../../js/local-time.js:29 ../../../../templates/main.js:62
-msgid "Saturday"
-msgstr "Sabado"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "January"
-msgstr "Janeiro"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "February"
-msgstr "Fevereiro"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "March"
-msgstr "Março"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "April"
-msgstr "Abril"
-
-#: ../../../../js/local-time.js:31 ../../../../js/local-time.js:32
-#: ../../../../templates/main.js:64 ../../../../templates/main.js:65
-msgid "May"
-msgstr "Maio"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "June"
-msgstr "Junho"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "July"
-msgstr "Julho"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "August"
-msgstr "Agosto"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "September"
-msgstr "Setembro"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "October"
-msgstr "Outubro"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "November"
-msgstr "Novembro"
-
-#: ../../../../js/local-time.js:31 ../../../../templates/main.js:64
-msgid "December"
-msgstr "Dezembro"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Jan"
-msgstr "Jan"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Feb"
-msgstr "Fev"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Mar"
-msgstr "Mar"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Apr"
-msgstr "Abr"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Jun"
-msgstr "Jun"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Jul"
-msgstr "Jul"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Aug"
-msgstr "Ago"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Sep"
-msgstr "Set"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Oct"
-msgstr "Out"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Nov"
-msgstr "Nov"
-
-#: ../../../../js/local-time.js:32 ../../../../templates/main.js:65
-msgid "Dec"
-msgstr "Dez"
-
-#: ../../../../js/local-time.js:33 ../../../../templates/main.js:66
-msgid "AM"
-msgstr "AM"
-
-#: ../../../../js/local-time.js:34 ../../../../templates/main.js:67
-msgid "PM"
-msgstr "PM"
-
-#: ../../../../js/local-time.js:35 ../../../../templates/main.js:68
-msgid "am"
-msgstr "am"
-
-#: ../../../../js/local-time.js:36 ../../../../templates/main.js:69
-msgid "pm"
-msgstr "pm"
-
-#: ../../../../js/expand-video.js:45 ../../../../js/expand-video.js:48
-msgid "Your browser does not support HTML5 video."
-msgstr "Seu browser não suporta videos em HTML5."
-
-#: ../../../../js/expand-video.js:189 ../../../../js/expand-video.js:192
-#: ../../../../js/expand-video.js:193
-msgid "[play once]"
-msgstr "[ver uma vez]"
-
-#: ../../../../js/expand-video.js:190 ../../../../js/expand-video.js:193
-#: ../../../../js/expand-video.js:194
-msgid "[loop]"
-msgstr "[vez repetidamente]"
-
-#: ../../../../js/webm-settings.js:42 ../../../../js/webm-settings.js:45
-msgid "WebM Settings"
-msgstr "Configurações WebM"
-
-#: ../../../../js/webm-settings.js:44 ../../../../js/webm-settings.js:54
-msgid "Expand videos inline"
-msgstr "Expandir vídeos no lugar da miniatura"
-
-#: ../../../../js/webm-settings.js:45 ../../../../js/webm-settings.js:55
-msgid "Play videos on hover"
-msgstr "Reproduz vídeos em foco"
-
-#: ../../../../js/webm-settings.js:46 ../../../../js/webm-settings.js:56
-msgid "Default volume"
-msgstr "Volume padrão"
-
-#: ../../../../js/treeview.js:18
-msgid "Tree view"
-msgstr "Lista em árvore"
-
-#: ../../../../js/expand-all-images.js:32
-#: ../../../../js/expand-all-images.js:35
-msgid "Shrink all images"
-msgstr "Encolher todas as imagens"
-
-#: ../../../../js/no-animated-gif.js:33 ../../../../js/no-animated-gif.js:37
-#: ../../../../js/no-animated-gif.js:40
-msgid "Animate GIFs"
-msgstr "Animar GIFs"
-
-#: ../../../../js/no-animated-gif.js:42 ../../../../js/no-animated-gif.js:48
-#: ../../../../js/no-animated-gif.js:47 ../../../../js/no-animated-gif.js:57
-#: ../../../../js/no-animated-gif.js:62 ../../../../js/no-animated-gif.js:50
-#: ../../../../js/no-animated-gif.js:60 ../../../../js/no-animated-gif.js:65
-msgid "Unanimate GIFs"
-msgstr "Desanimar GIFs"
-
-#: ../../../../js/webm-settings.js:41
-msgid "WebM"
-msgstr "WebM"
-
-#: ../../../../js/live-index.js:25 ../../../../js/live-index.js:84
-msgid "No new posts."
-msgstr "Sem novas mensagens."
-
-#: ../../../../js/live-index.js:30 ../../../../js/live-index.js:73
-msgid "No new threads."
-msgstr "Sem novos tópicos."
-
-#: ../../../../js/live-index.js:72
-#, python-brace-format
-msgid "There are {0} new threads."
-msgstr "Existem {0} novos tópicos."
-
-#: ../../../../js/live-index.js:83
-#, python-brace-format
-msgid "There are {0} new posts in this thread."
-msgstr "Existem {0} novas mensagens neste tópico."
-
-#: ../../../../js/options.js:106
-msgid "Options"
-msgstr "Opções"
-
-#: ../../../../js/options/general.js:15
-msgid "General"
-msgstr "Geral"
-
-#: ../../../../js/options/general.js:18
-msgid "Storage: "
-msgstr "Armazenamento:"
-
-#: ../../../../js/options/general.js:21
-msgid "Export"
-msgstr "Exportar"
-
-#: ../../../../js/options/general.js:27
-msgid "Import"
-msgstr "Importar"
-
-#: ../../../../js/options/general.js:28
-msgid "Paste your storage data"
-msgstr "Colar seus dados de armazenamento"
-
-#: ../../../../js/options/general.js:40
-msgid "Erase"
-msgstr "Apagar"
-
-#: ../../../../js/options/general.js:41
-msgid ""
-"Are you sure you want to erase your storage? This involves your hidden "
-"threads, watched threads, post password and many more."
-msgstr "Tem certeza que você deseja apagar seu armazenamento? Isso envolve seus tópicos escondidos, tópicos monitorados, senhas e muito mais."
-
-#: ../../../../js/options/user-css.js:14
-msgid "User CSS"
-msgstr "CSS de usuário"
-
-#: ../../../../js/options/user-css.js:23
-msgid "Update custom CSS"
-msgstr "Atualizar CSS personalizado"
-
-#: ../../../../js/options/user-css.js:45
-msgid "Enter here your own CSS rules..."
-msgstr "Coloque aqui suas próprias regras de CSS..."
-
-#: ../../../../js/options/user-css.js:46
-msgid ""
-"If you want to make a redistributable style, be sure to\n"
-"   have a Yotsuba B theme selected."
-msgstr "Se você quer fazer um estilo para distribuir, certifique-se\nde ter um tema Yotsuba B selecionado."
-
-#: ../../../../js/options/user-css.js:47
-msgid "You can include CSS files from remote servers, for example:"
-msgstr "Você pode incluir CSS de servidores remotos, por exemplo:"
-
-#: ../../../../js/options/user-js.js:14
-msgid "User JS"
-msgstr "JS de usuário"
-
-#: ../../../../js/options/user-js.js:23
-msgid "Update custom Javascript"
-msgstr "Atualizar Javascript personalizado"
-
-#: ../../../../js/options/user-js.js:54
-msgid "Enter here your own Javascript code..."
-msgstr "Insira aqui o seu próprio código Javascript..."
-
-#: ../../../../js/options/user-js.js:55
-msgid ""
-"Have a backup of your storage somewhere, as messing here\n"
-"   may render you this website unusable."
-msgstr "Tenha um \"backup\" do seu armazenamento em algum outro lugar,\njá que bagunçar aqui pode inutilizar o website."
-
-#: ../../../../js/options/user-js.js:56
-msgid "You can include JS files from remote servers, for example:"
-msgstr "Você pode incluir arquivos JS de servidores remotos, por exemplo:"
-
-#: ../../../../js/id_colors.js:6 ../../../../js/id_colors.js:12
-msgid "Color IDs"
-msgstr ""
-
-#: ../../../../js/auto-reload.js:33
+"X-Generator: Poedit 3.2.2\n"
+"X-Poedit-Basepath: ../../../..\n"
+"X-Poedit-SearchPath-0: js\n"
+"X-Poedit-SearchPath-1: templates/main.js\n"
+"X-Poedit-SearchPath-2: templates/themes/ukko2/ukko.js\n"
+"X-Poedit-SearchPathExcluded-0: js/code_tags\n"
+"X-Poedit-SearchPathExcluded-1: js/twemoji\n"
+"X-Poedit-SearchPathExcluded-2: js/longtable\n"
+
+#: js/8chcatalog-updater.js:32 js/auto-reload.js:107
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
-#: ../../../../js/mod/ban-list.js:29
-msgid "IP address"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:42
-msgid "Seen"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:44
-msgid "Message for which user was banned is included"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:45
-msgid "Message:"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:53
-msgid "Board"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:55
-msgid "all"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:57
-msgid "Set"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:58
-msgid " ago"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:61
-msgid "Expires"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:62
-msgid "never"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:64
-msgid "in "
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:66
-msgid "Staff"
-msgstr ""
-
-#: ../../../../js/mod/ban-list.js:73
-msgid "system"
-msgstr ""
-
-#: ../../../../js/auto-reload.js:33
+#: js/8chcatalog-updater.js:32 js/auto-reload.js:107
 msgid "Auto"
 msgstr ""
 
-#: ../../../../js/auto-reload.js:141
+#: js/8chcatalog-updater.js:66 js/auto-reload.js:222
 msgid "Updating..."
-msgstr ""
+msgstr "Atualizando..."
 
-#: ../../../../js/auto-reload.js:183
-#, python-brace-format
+#: js/ajax-post-controls.js:43
+msgid "Reported post(s)."
+msgstr "Post(s) denunciado(s)."
+
+#: js/ajax-post-controls.js:53
+msgid "An unknown error occured!"
+msgstr "Ocorreu um erro desconhecido!"
+
+#: js/ajax-post-controls.js:60
+msgid "Something went wrong... An unknown error occured!"
+msgstr "Algo deu errado... Ocorreu um erro desconhecido!"
+
+#: js/ajax-post-controls.js:68
+msgid "Working..."
+msgstr "Trabalhando..."
+
+#: js/ajax.js:45
+msgid "Posting... (#%)"
+msgstr "Enviando... (#%)"
+
+#: js/ajax.js:130
+msgid "Posted..."
+msgstr "Enviado..."
+
+#: js/ajax.js:133
+msgid "An unknown error occured when posting!"
+msgstr "Ocorreu um erro desconhecido ao postar!"
+
+#: js/ajax.js:140
+msgid ""
+"The server took too long to submit your post. Your post was probably still "
+"submitted. If it wasn't, we might be experiencing issues right now -- please "
+"try your post again later. Error information: "
+msgstr ""
+"O servidor demorou demais para enviar seu post. O post provavelmente foi "
+"enviado. Se não foi, estamos tendo problemas agora — teste novamente mais "
+"tarde. Informação do erro: "
+
+#: js/ajax.js:150
+msgid "Posting..."
+msgstr "Enviando..."
+
+#: js/auto-reload.js:52
+msgid "Auto update"
+msgstr "Atualização automática"
+
+#: js/auto-reload.js:53
+msgid "Auto update thread"
+msgstr "Atualização automática do tópico"
+
+#: js/auto-reload.js:54
+msgid "Show desktop notifications when users quote me"
+msgstr "Mostrar notificações de desktop quando me mencionarem"
+
+#: js/auto-reload.js:55
+msgid "Show desktop notifications on all replies"
+msgstr "Mostrar notificações de desktop de todas as repostas"
+
+#: js/auto-reload.js:236
+msgid "New reply to "
+msgstr "Nova resposta para "
+
+#: js/auto-reload.js:269
 msgid "Thread updated with {0} new post(s)"
-msgstr ""
+msgstr "Tópico atualizado com {0} novos post(s)"
 
-#: ../../../../js/auto-reload.js:185
+#: js/auto-reload.js:271
 msgid "No new posts found"
-msgstr ""
+msgstr "Nenhum post novo foi encontrado"
 
-#: ../../../../js/auto-reload.js:191
+#: js/auto-reload.js:277
 msgid "Thread deleted or pruned"
-msgstr ""
+msgstr "Tópico deletado ou expirado"
 
-#: ../../../../js/auto-reload.js:199
+#: js/auto-reload.js:282 js/auto-reload.js:285
 msgid "Error: "
-msgstr ""
+msgstr "Erro: "
 
-#: ../../../../js/auto-reload.js:201
+#: js/auto-reload.js:287
 msgid "Unknown error"
+msgstr "Erro desconhecido"
+
+#: js/auto-scroll.js:4
+msgid " Scroll to new posts"
+msgstr " Ir para novos posts"
+
+#: js/auto-scroll.js:18
+msgid "Scroll to new posts"
 msgstr ""
 
-#: ../../../../js/infinite-scroll.js:47
+#: js/boardlist-catalog-links.js:19
+msgid "Use catalog links for the board list"
+msgstr "Usar links do catálogo na boardlist"
+
+#: js/captcha.js:30
+msgid "Verification"
+msgstr "Verificação"
+
+#: js/catalog-link.js:28 js/catalog-link.js:39 js/catalog-link.js:47
+msgid "Catalog"
+msgstr "Catálogo"
+
+#: js/catalog-search.js:41
+msgid "Close"
+msgstr "Fechar"
+
+#: js/catalog-search.js:46
+msgid "Search"
+msgstr "Pesquisar"
+
+#: js/comment-toolbar.js:16
+msgid "Spoiler"
+msgstr "Spoiler"
+
+#: js/comment-toolbar.js:24
+msgid "Italics"
+msgstr "Itálico"
+
+#: js/comment-toolbar.js:32 js/wPaint/2ch.js:2580 js/wPaint/8ch.js:2561
+#: js/wPaint/lib/plugins.js:356 js/wPaint/oekaki.js:2
+#: js/wPaint/plugins/text/src/wPaint.menu.text.js:9
+#: js/wPaint/plugins/text/text.js:9
+msgid "Bold"
+msgstr "Negrito"
+
+#: js/comment-toolbar.js:40
+msgid "Underline"
+msgstr "Sublinhado"
+
+#: js/comment-toolbar.js:48
+msgid "Code"
+msgstr "Código"
+
+#: js/comment-toolbar.js:56
+msgid "Strike"
+msgstr "Riscado"
+
+#: js/comment-toolbar.js:64
+msgid "Orange"
+msgstr "Laranja"
+
+#: js/comment-toolbar.js:72
+msgid "Ponk Pink"
+msgstr "Rosa"
+
+#: js/comment-toolbar.js:194
+msgid "New Rule"
+msgstr "Nova Regra"
+
+#: js/comment-toolbar.js:270 js/comment-toolbar.js:276
+msgid "Enable formatting keybinds"
+msgstr "Habilitar atalhos de formatação"
+
+#: js/comment-toolbar.js:271 js/comment-toolbar.js:277
+msgid "Show formatting toolbar"
+msgstr "Mostrar barra de ferramentas de formatação"
+
+#: js/comment-toolbar.js:282
+msgid "Customize Formatting"
+msgstr "Formatação customizada"
+
+#: js/comment-toolbar.js:306
+msgid "Add Rule"
+msgstr "Adicionar Regra"
+
+#: js/comment-toolbar.js:307
+msgid "Save Rules"
+msgstr "Salvar Regras"
+
+#: js/comment-toolbar.js:308
+msgid "Revert"
+msgstr "Reverter"
+
+#: js/comment-toolbar.js:309
+msgid "Reset to Default"
+msgstr "Redefinir para o padrão"
+
+#: js/download-original.js:33
+msgid "Save as original filename"
+msgstr "Salvar como filename original"
+
+#: js/embed-button.js:15
+msgid "Disable link embeds"
+msgstr "Desabilitar embed em links"
+
+#: js/expand-all-images.js:23
+msgid "Expand all images"
+msgstr "Expandir todas as imagens"
+
+#: js/expand-all-images.js:43
+msgid "Shrink all images"
+msgstr "Diminuir todas as imagens"
+
+#: js/expand-video.js:48
+msgid "Your browser does not support HTML5 video."
+msgstr "Seu navegador não suporta video HTML5."
+
+#: js/expand-video.js:193
+msgid "[play once]"
+msgstr "[ver uma vez]"
+
+#: js/expand-video.js:194
+msgid "[loop]"
+msgstr "[vez repetidamente]"
+
+#: js/expand.js:22 js/own-board.js:97
+msgid "Click reply to view."
+msgstr "Clique em responder para vistualizar."
+
+#: js/expand.js:22 js/live-index.js:72 js/live-index.js:83
+msgid "Click to expand"
+msgstr "Clique para expandir"
+
+#: js/expand.js:50
+msgid "Hide expanded replies"
+msgstr "Ocultar respostas expandidas"
+
+#: js/file-selector.js:14
+msgid "Drag and drop file selection"
+msgstr "Seleção de arquivos de arrastar e soltar"
+
+#: js/file-selector.js:40
+msgid "Select/drop/paste files here"
+msgstr "Selecionar/arrastar/colar os arquivos aqui"
+
+#: js/fix-report-delete-submit.js:17
+msgid "Delete post"
+msgstr "Deletar post"
+
+#: js/fix-report-delete-submit.js:18
+msgid "Delete file(s)"
+msgstr "Deletar arquivo(s)"
+
+#: js/fix-report-delete-submit.js:90 js/quick-post-controls.js:39
+msgid "Report"
+msgstr "Denunciar"
+
+#: js/forced-anon.js:31
+msgid "Anonymous"
+msgstr "Anônimo"
+
+#: js/forced-anon.js:73 js/forced-anon.js:78
+msgid "Hide IDs"
+msgstr "Esconder IDs"
+
+#: js/forced-anon.js:74 js/forced-anon.js:80 js/forced-anon.js:97
+#: js/forced-anon.js:101
+msgid "Forced anonymity"
+msgstr "Forçar anonimato"
+
+#: js/forced-anon.js:80 js/forced-anon.js:97
+msgid "enabled"
+msgstr "habilitado"
+
+#: js/forced-anon.js:80 js/forced-anon.js:101
+msgid "disabled"
+msgstr "desabilitado"
+
+#: js/gallery-view.js:7 js/gallery-view.js:9
+msgid "Disable gallery mode"
+msgstr "Desabilitar modo galeria"
+
+#: js/gallery-view.js:7 js/gallery-view.js:9
+msgid "Enable gallery mode"
+msgstr "Habilitar modo galeria"
+
+#: js/hide-images.js:51 js/quick-post-controls.js:32 js/upload-selection.js:73
+msgid "File"
+msgstr "Arquivo"
+
+#: js/hide-images.js:51
+msgid "hide"
+msgstr "ocultar"
+
+#: js/hide-images.js:63
+msgid "show"
+msgstr "mostrar"
+
+#: js/id_colors.js:6 js/id_colors.js:12
+msgid "Color IDs"
+msgstr "IDs coloridas"
+
+#: js/image-hover.js:13 js/image-hover.js:14
+msgid "Image hover"
+msgstr "Imagem Flutuante"
+
+#: js/image-hover.js:15
+msgid "Image hover on catalog"
+msgstr "Imagem flutuante no catálogo"
+
+#: js/image-hover.js:16
+msgid "Image hover should follow cursor"
+msgstr "Imagem flutuante deve seguir o cursor"
+
+#: js/infinite-scroll.js:47 js/thread-stats.js:20
 msgid "Page"
-msgstr ""
+msgstr "Página"
 
-#: ../../../../js/infinite-scroll.js:82
+#: js/infinite-scroll.js:48 js/mod/recent-posts.js:69 js/post-fade.js:237
+#: templates/themes/ukko2/ukko.js:80
+msgid "Loading..."
+msgstr "Carregando..."
+
+#: js/infinite-scroll.js:83
 msgid "All"
+msgstr "Tudo"
+
+#: js/inline-expanding.js:193
+msgid "Number of simultaneous image downloads (0 to disable): "
+msgstr "Número de downloads simultâneos de imagens (0 para desabilitar): "
+
+#: js/inline.js:97
+msgid "loading..."
+msgstr "carregando..."
+
+#: js/inline.js:126
+msgid "Enable inlining"
 msgstr ""
 
-#: ../../../../templates/main.js:29 ../../../../templates/main.js:47
+#: js/inline.js:127
+msgid "Hide inlined backlinked posts"
+msgstr ""
+
+#: js/live-index.js:30 js/live-index.js:73
+msgid "No new threads."
+msgstr "Sem novos fios."
+
+#: js/live-index.js:72
+msgid "There are {0} new threads."
+msgstr "Tem {0} novos fios."
+
+#: js/live-index.js:83
+msgid "There are {0} new posts in this thread."
+msgstr "Tem {0} novas respostas nesse tópico."
+
+#: js/live-index.js:84
+msgid "No new posts."
+msgstr "Sem novos posts."
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Sun"
+msgstr "Dom"
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Mon"
+msgstr "Seg"
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Tue"
+msgstr "Ter"
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Wed"
+msgstr "Qua"
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Thu"
+msgstr "Qui"
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Fri"
+msgstr "Sex"
+
+#: js/local-time.js:28 templates/main.js:69
+msgid "Sat"
+msgstr "Sáb"
+
+#: js/local-time.js:49
+msgid " minute ago"
+msgstr " minuto atrás"
+
+#: js/local-time.js:49
+msgid " minutes ago"
+msgstr " minutos atrás"
+
+#: js/local-time.js:51
+msgid " hour ago"
+msgstr " hora atrás"
+
+#: js/local-time.js:51
+msgid " hours ago"
+msgstr " horas atrás"
+
+#: js/local-time.js:53
+msgid " day ago"
+msgstr " dia atrás"
+
+#: js/local-time.js:53
+msgid " days ago"
+msgstr " dias atrás"
+
+#: js/local-time.js:55
+msgid " month ago"
+msgstr " mês atrás"
+
+#: js/local-time.js:55
+msgid " months ago"
+msgstr " meses atrás"
+
+#: js/local-time.js:57
+msgid " year ago"
+msgstr " ano atrás"
+
+#: js/local-time.js:57
+msgid " years ago"
+msgstr " anos atrás"
+
+#: js/local-time.js:85
+msgid "Show relative time"
+msgstr "Mostrar tempo relativo"
+
+#: js/mod/ban-list.js:29
+msgid "IP address"
+msgstr "Endereço de IP"
+
+#: js/mod/ban-list.js:42 js/quick-post-controls.js:37
+msgid "Reason"
+msgstr "Motivo"
+
+#: js/mod/ban-list.js:44
+msgid "Seen"
+msgstr "Visto"
+
+#: js/mod/ban-list.js:46
+msgid "Message for which user was banned is included"
+msgstr "Mensagem pela qual o usuário foi banido é incluída"
+
+#: js/mod/ban-list.js:47
+msgid "Message:"
+msgstr "Mensagem:"
+
+#: js/mod/ban-list.js:55
+msgid "Board"
+msgstr "Board"
+
+#: js/mod/ban-list.js:57
+msgid "all"
+msgstr "tudo"
+
+#: js/mod/ban-list.js:59
+msgid "Set"
+msgstr "Criado"
+
+#: js/mod/ban-list.js:60
+msgid " ago"
+msgstr " atrás"
+
+#: js/mod/ban-list.js:63
+msgid "Expires"
+msgstr "Expira"
+
+#: js/mod/ban-list.js:64
+msgid "never"
+msgstr "nunca"
+
+#: js/mod/ban-list.js:66
+msgid "in "
+msgstr "em "
+
+#: js/mod/ban-list.js:68
+msgid "Staff"
+msgstr ""
+
+#: js/mod/ban-list.js:75
+msgid "system"
+msgstr "sistema"
+
+#: js/mod/ban-list.js:80
+msgid "Edit"
+msgstr "Editar"
+
+#: js/mod/recent-posts.js:51
+msgid "Dismiss"
+msgstr "Descartar"
+
+#: js/no-animated-gif.js:45
+msgid "Animate GIFs"
+msgstr "Animar GIFs"
+
+#: js/no-animated-gif.js:57 js/no-animated-gif.js:74 js/no-animated-gif.js:79
+msgid "Unanimate GIFs"
+msgstr "Desanimar GIFs"
+
+#: js/options.js:106
+msgid "Options"
+msgstr "Opções"
+
+#: js/options/fav.js:27
+msgid "Favorites"
+msgstr "Favoritos"
+
+#: js/options/fav.js:42
+msgid "Drag the boards to sort them."
+msgstr "Arraste as boards para ordenar."
+
+#: js/options/general.js:15
+msgid "General"
+msgstr "Geral"
+
+#: js/options/general.js:18
+msgid "Storage: "
+msgstr "Armazenamento: "
+
+#: js/options/general.js:21
+msgid "Export"
+msgstr "Exportar"
+
+#: js/options/general.js:27
+msgid "Import"
+msgstr "Importar"
+
+#: js/options/general.js:28
+msgid "Paste your storage data"
+msgstr "Colar seus dados do armazenamento"
+
+#: js/options/general.js:40
+msgid "Erase"
+msgstr "Apagar"
+
+#: js/options/general.js:41
+msgid ""
+"Are you sure you want to erase your storage? This involves your hidden "
+"threads, watched threads, post password and many more."
+msgstr ""
+"Você tem certeza que quer apagar o seu armazenamento? Isso incluí seus fios "
+"ocultados, fios acompanhados, sua senha e muito mais."
+
+#: js/options/user-css.js:14
+msgid "User CSS"
+msgstr "CSS de usuário"
+
+#: js/options/user-css.js:23
+msgid "Update custom CSS"
+msgstr "Atualizar CSS customizado"
+
+#: js/options/user-css.js:45
+msgid "Enter here your own CSS rules..."
+msgstr "Digite aqui suas regras de CSS..."
+
+#: js/options/user-css.js:46
+msgid ""
+"If you want to make a redistributable style, be sure to\n"
+"have a Yotsuba B theme selected."
+msgstr ""
+"Se você quiser distribuir seu CSS, tenha certeza que\n"
+"o tema Yotsuba B está selecionado."
+
+#: js/options/user-js.js:14
+msgid "User JS"
+msgstr "JS de usuário"
+
+#: js/options/user-js.js:23
+msgid "Update custom Javascript"
+msgstr "Atualizar JS customizado"
+
+#: js/options/user-js.js:54
+msgid "Enter here your own Javascript code..."
+msgstr "Digite aqui seu código Javascript...."
+
+#: js/options/user-js.js:55
+msgid ""
+"Have a backup of your storage somewhere, as messing here\n"
+"may render you this website unusable."
+msgstr ""
+"Tenha um backup do seu armazenamento em algum lugar, porque mexer aqui\n"
+"pode deixar o site instável."
+
+#: js/orange-colored-quotes.js:13
+msgid "Orange colored quotes"
+msgstr "Citações em laranja"
+
+#: js/own-board.js:97
+msgid "{0} posts and {1} images omitted."
+msgstr "{0} posts e {1} imagens ocultadas."
+
+#: js/own-board.js:103
+msgid "Reply"
+msgstr "Resposta"
+
+#: js/pepe-colored-quotes.js:13
+msgid "Pepe colored quotes"
+msgstr ""
+
+#: js/post-fade.js:21
+msgid "Post Hover"
+msgstr "Post Flutuante"
+
+#: js/post-fade.js:22
+msgid "Delay until the message preview is shown:"
+msgstr "Atraso até que a pré-visualização do post seja mostrada:"
+
+#: js/post-fade.js:24
+msgid "Not"
+msgstr "Não"
+
+#: js/post-fade.js:32
+msgid "Delay until the view of the message is closed:"
+msgstr "Atraso até que a visualização do post feche:"
+
+#: js/post-fade.js:43
+msgid "Use the old message preview method"
+msgstr "Usar o modo antigo de visualização de posts"
+
+#: js/post-fade.js:219
+msgid "The theme does not exist ;_;"
+msgstr "Este tema não existe ;_;"
+
+#: js/post-fade.js:222
+msgid "Something went wrong ;_;"
+msgstr "Algo deu errado ;_;"
+
+#: js/post-filter.js:207
+msgid "Hide post"
+msgstr "Ocultar post"
+
+#: js/post-filter.js:208
+msgid "Unhide post"
+msgstr "Desocultar post"
+
+#: js/post-filter.js:210
+msgid "Add filter"
+msgstr "Adicionar filtro"
+
+#: js/post-filter.js:211
+msgid "Post +"
+msgstr ""
+
+#: js/post-filter.js:211
+msgid "Hide post and all replies"
+msgstr "Ocultar post e todas as respostas"
+
+#: js/post-filter.js:212 js/post-filter.js:218
+msgid "ID"
+msgstr ""
+
+#: js/post-filter.js:213
+msgid "ID +"
+msgstr ""
+
+#: js/post-filter.js:213
+msgid "Hide ID and all replies"
+msgstr "Ocultar ID e todas as repostas"
+
+#: js/post-filter.js:214 js/post-filter.js:219 js/post-filter.js:659
+msgid "Name"
+msgstr "Nome"
+
+#: js/post-filter.js:215 js/post-filter.js:220 js/post-filter.js:660
+msgid "Tripcode"
+msgstr "Tripcode"
+
+#: js/post-filter.js:217
+msgid "Remove filter"
+msgstr "Remover filtro"
+
+#: js/post-filter.js:655
+msgid "Filters"
+msgstr "Filtros"
+
+#: js/post-filter.js:661
+msgid "Subject"
+msgstr "Assunto"
+
+#: js/post-filter.js:662 js/quick-reply.js:290
+msgid "Comment"
+msgstr "Comentário"
+
+#: js/post-filter.js:667
+msgid "Add"
+msgstr "Adicionar"
+
+#: js/post-filter.js:668
+msgid "Clear all filters"
+msgstr "Limpar filtros"
+
+#: js/post-filter.js:670
+msgid "This will clear all filtering rules including hidden posts."
+msgstr "Isso vai limpar todas as regras de filtro, incluindo posts ocultados."
+
+#: js/post-filter.js:670
+msgid "yes"
+msgstr "sim"
+
+#: js/post-filter.js:670
+msgid "no"
+msgstr "não"
+
+#: js/quick-post-controls.js:29
+msgid "Password"
+msgstr "Senha"
+
+#: js/quick-post-controls.js:31
+msgid "Delete file only"
+msgstr "Deletar apenas o arquivo"
+
+#: js/quick-post-controls.js:33
+msgid "Delete"
+msgstr "Deletar"
+
+#: js/quick-reply.js:237
+msgid "Upload URL"
+msgstr "URL de upload"
+
+#: js/quick-reply.js:298 js/quick-reply.js:439
+msgid "Quick Reply"
+msgstr "Resposta rápida"
+
+#: js/show-own-posts.js:36 js/show-own-posts.js:49
+msgid "(You)"
+msgstr ""
+
+#: js/style-select.js:41
+msgid "Style: "
+msgstr "Estilo: "
+
+#: js/thread-stats.js:24
+msgid "images"
+msgstr "imagens"
+
+#: js/thread-stats.js:25
+msgid "replies"
+msgstr "respostas"
+
+#: js/thread-watcher.js:32
+msgid "Thread #"
+msgstr "Tópico #"
+
+#: js/thread-watcher.js:47
+msgid "Clear List"
+msgstr "Limpar Lista"
+
+#: js/thread-watcher.js:48
+msgid "Clear Ghosts"
+msgstr "Limpar Fantasmas"
+
+#: js/thread-watcher.js:96
+msgid "Functionality not yet implemented for this type of page."
+msgstr "Funcionalidade ainda não foi implementada para esse tipo de página."
+
+#: js/thread-watcher.js:152
+msgid "watchlist"
+msgstr "lista de tópicos acompanhados"
+
+#: js/thread-watcher.js:154
+msgid "Watch Thread"
+msgstr "Acompanhar Tópico"
+
+#: js/toggle-images.js:45
+msgid "hidden"
+msgstr "ocultado"
+
+#: js/toggle-images.js:63 js/toggle-images.js:70 js/toggle-images.js:86
+msgid "Hide images"
+msgstr "Ocultar imagens"
+
+#: js/toggle-images.js:70 js/toggle-images.js:86
+msgid "Show images"
+msgstr "Mostrar imagens"
+
+#: js/toggle-locked-threads.js:44 js/toggle-locked-threads.js:53
+#: js/toggle-locked-threads.js:70
+msgid "Hide locked threads"
+msgstr "Ocultar fios trancados"
+
+#: js/toggle-locked-threads.js:53 js/toggle-locked-threads.js:70
+msgid "Show locked threads"
+msgstr "Mostrar fios trancados"
+
+#: js/token_for.js:19
+msgid "Token"
+msgstr ""
+
+#: js/token_for.js:20
+msgid "Token:"
+msgstr ""
+
+#: js/token_for.js:21
+msgid "Set Token"
+msgstr "Definir Token"
+
+#: js/token_for.js:22
+msgid "Remove Token"
+msgstr "Remover Token"
+
+#: js/treeview.js:18
+msgid "Use tree view by default"
+msgstr "Usar lista em árvore por padrão"
+
+#: js/treeview.js:68
+msgid "Tree view"
+msgstr "Lista em árvore"
+
+#: js/update_boards.js:6
+msgid "Show top boards"
+msgstr "Mostras top boards"
+
+#: js/upload-selection.js:57
+msgid "URL"
+msgstr ""
+
+#: js/upload-selection.js:72
+msgid "Select"
+msgstr "Selecionar"
+
+#: js/upload-selection.js:75
+msgid "Remote"
+msgstr "Remoto"
+
+#: js/upload-selection.js:78
+msgid "Embed"
+msgstr ""
+
+#: js/upload-selection.js:81
+msgid "Oekaki"
+msgstr ""
+
+#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
+#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
+msgid "R"
+msgstr ""
+
+#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
+#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
+msgid "G"
+msgstr ""
+
+#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
+#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
+msgid "B"
+msgstr ""
+
+#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
+#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
+msgid "Both"
+msgstr "Ambos"
+
+#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
+#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
+msgid "Flip"
+msgstr "Virar"
+
+#: js/wPaint/2ch.js:2233 js/wPaint/8ch.js:2214 js/wPaint/lib/plugins.js:9
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:9
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:9
+msgid "Undo"
+msgstr "Desfazer"
+
+#: js/wPaint/2ch.js:2240 js/wPaint/8ch.js:2221 js/wPaint/lib/plugins.js:16
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:16
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:16
+msgid "Redo"
+msgstr "Refazer"
+
+#: js/wPaint/2ch.js:2247 js/wPaint/8ch.js:2228 js/wPaint/lib/plugins.js:23
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:23
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:23
+msgid "Clear"
+msgstr "Limpar"
+
+#: js/wPaint/2ch.js:2254 js/wPaint/8ch.js:2235 js/wPaint/lib/plugins.js:30
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:30
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:30
+msgid "Rectangle"
+msgstr "Retângulo"
+
+#: js/wPaint/2ch.js:2260 js/wPaint/8ch.js:2241 js/wPaint/lib/plugins.js:36
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:36
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:36
+msgid "Ellipse"
+msgstr ""
+
+#: js/wPaint/2ch.js:2266 js/wPaint/8ch.js:2247 js/wPaint/lib/plugins.js:42
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:42
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:42
+msgid "Line"
+msgstr "Linha"
+
+#: js/wPaint/2ch.js:2273 js/wPaint/8ch.js:2254 js/wPaint/lib/plugins.js:49
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:49
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:49
+msgid "Pencil"
+msgstr "Lápis"
+
+#: js/wPaint/2ch.js:2280 js/wPaint/8ch.js:2261 js/wPaint/lib/plugins.js:56
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:56
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:56
+msgid "Eraser"
+msgstr "Borracha"
+
+#: js/wPaint/2ch.js:2287 js/wPaint/8ch.js:2268 js/wPaint/lib/plugins.js:63
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:63
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:63
+msgid "Bucket"
+msgstr "Balde"
+
+#: js/wPaint/2ch.js:2293 js/wPaint/8ch.js:2274 js/wPaint/lib/plugins.js:69
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:69
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:69
+msgid "Fill Color"
+msgstr "Preencher cor"
+
+#: js/wPaint/2ch.js:2299 js/wPaint/8ch.js:2280 js/wPaint/lib/plugins.js:75
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:75
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:75
+msgid "Stroke Width"
+msgstr ""
+
+#: js/wPaint/2ch.js:2306 js/wPaint/8ch.js:2287 js/wPaint/lib/plugins.js:82
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:82
+#: js/wPaint/plugins/main/src/wPaint.menu.main.js:82
+msgid "Stroke Color"
+msgstr ""
+
+#: js/wPaint/2ch.js:2586 js/wPaint/8ch.js:2567 js/wPaint/lib/plugins.js:362
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/text/src/wPaint.menu.text.js:15
+#: js/wPaint/plugins/text/text.js:15
+msgid "Italic"
+msgstr "Itálico"
+
+#: js/wPaint/2ch.js:2597 js/wPaint/8ch.js:2578 js/wPaint/lib/plugins.js:373
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/text/src/wPaint.menu.text.js:26
+#: js/wPaint/plugins/text/text.js:26
+msgid "Font Size"
+msgstr "Tamanho da Fonte"
+
+#: js/wPaint/2ch.js:2605 js/wPaint/8ch.js:2586 js/wPaint/lib/plugins.js:381
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/text/src/wPaint.menu.text.js:34
+#: js/wPaint/plugins/text/text.js:34
+msgid "Font Family"
+msgstr "Nome da Fonte"
+
+#: js/wPaint/2ch.js:2811 js/wPaint/8ch.js:2792 js/wPaint/lib/plugins.js:587
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:12
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:12
+msgid "Rounded Rectangle"
+msgstr "Retângulo arredondado"
+
+#: js/wPaint/2ch.js:2819 js/wPaint/8ch.js:2800 js/wPaint/lib/plugins.js:595
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:20
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:20
+msgid "Square"
+msgstr "Quadrado"
+
+#: js/wPaint/2ch.js:2827 js/wPaint/8ch.js:2808 js/wPaint/lib/plugins.js:603
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:28
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:28
+msgid "Rounded Square"
+msgstr "Quadrado arredondado"
+
+#: js/wPaint/2ch.js:2835 js/wPaint/8ch.js:2816 js/wPaint/lib/plugins.js:611
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:36
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:36
+msgid "Diamond"
+msgstr "Diamante"
+
+#: js/wPaint/2ch.js:2847 js/wPaint/8ch.js:2828 js/wPaint/lib/plugins.js:623
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:48
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:48
+msgid "Circle"
+msgstr "Círculo"
+
+#: js/wPaint/2ch.js:2855 js/wPaint/8ch.js:2836 js/wPaint/lib/plugins.js:631
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:56
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:56
+msgid "Pentagon"
+msgstr "Pentágono"
+
+#: js/wPaint/2ch.js:2863 js/wPaint/8ch.js:2844 js/wPaint/lib/plugins.js:639
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:64
+#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:64
+msgid "Hexagon"
+msgstr "Hexágono"
+
+#: js/wPaint/2ch.js:3016 js/wPaint/8ch.js:2997 js/wPaint/lib/plugins.js:792
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/file/file.js:8
+#: js/wPaint/plugins/file/src/wPaint.menu.main.file.js:8
+msgid "Save Image"
+msgstr "Salvar Imagem"
+
+#: js/wPaint/2ch.js:3026 js/wPaint/8ch.js:3007 js/wPaint/lib/plugins.js:802
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/file/file.js:18
+#: js/wPaint/plugins/file/src/wPaint.menu.main.file.js:18
+msgid "Load Image to Foreground"
+msgstr "Carregar imagem para primeiro plano"
+
+#: js/wPaint/2ch.js:3036 js/wPaint/8ch.js:3017 js/wPaint/lib/plugins.js:812
+#: js/wPaint/oekaki.js:2 js/wPaint/plugins/file/file.js:28
+#: js/wPaint/plugins/file/src/wPaint.menu.main.file.js:28
+msgid "Load Image to Background"
+msgstr "Carregar imagem para o fundo"
+
+#: js/wPaint/2ch.js:3101 js/wPaint/src/oekaki8.js:17
+msgid "Post my oekaki"
+msgstr "Postar meu oekaki"
+
+#: js/wPaint/2ch.js:3101 js/wPaint/src/oekaki8.js:17
+msgid "Check image size"
+msgstr "Verificar tamanho da imagem"
+
+#: js/wPaint/2ch.js:3134 js/wPaint/src/oekaki8.js:50
+msgid "Your image size is %size%/%maxsize%."
+msgstr "O tamanho da sua imagem é %size%/%maxsize%."
+
+#: js/wPaint/2ch.js:3141 js/wPaint/src/oekaki8.js:57
+msgid "Image must be 500x250 to be uploaded. Please resize it."
+msgstr "A imagem deve ter 500x250 para ser enviada. Por favor, redimensione."
+
+#: js/wPaint/2ch.js:3145 js/wPaint/src/oekaki8.js:61
+msgid "Your image is too large, it needs to be 128KB or less."
+msgstr "Sua imagem é muito grande, ela precisa ter 128KB ou menos."
+
+#: js/wPaint/2ch.js:3161 js/wPaint/src/oekaki8.js:77
+msgid "Click on any image on this site to load it into oekaki applet."
+msgstr ""
+"Clique em qualquer imagem neste site para carregá-la no mini aplicativo "
+"oekaki."
+
+#: js/watch.js:364 js/watch.js:365
+msgid "Stop watching this thread"
+msgstr "Parar de acompanhar esse tópico"
+
+#: js/watch.js:364 js/watch.js:365
+msgid "Watch this thread"
+msgstr "Acompanhar esse tópico"
+
+#: js/watch.js:375 js/watch.js:376 js/watch.js:384
+msgid "Unpin this board"
+msgstr "Desfixar esssa board"
+
+#: js/watch.js:375 js/watch.js:376 js/watch.js:384
+msgid "Pin this board"
+msgstr "Fixar essa board"
+
+#: js/watch.js:377 js/watch.js:382 js/watch.js:383
+msgid "Stop watching this board"
+msgstr "Parar de acomapanhar essa board"
+
+#: js/watch.js:377 js/watch.js:382 js/watch.js:383
+msgid "Watch this board"
+msgstr "Acompanhar essa board"
+
+#: js/webm-settings.js:41
+msgid "WebM"
+msgstr ""
+
+#: js/webm-settings.js:45
+msgid "WebM Settings"
+msgstr "Configurações do webM"
+
+#: js/webm-settings.js:54
+msgid "Expand videos inline"
+msgstr "Expandir vídeos no lugar da miniatura"
+
+#: js/webm-settings.js:55
+msgid "Play videos on hover"
+msgstr "Reproduz vídeos em foco"
+
+#: js/webm-settings.js:56
+msgid "Default volume"
+msgstr "Volume padrão"
+
+#: js/wpaint.js:108
+msgid "Click on any image on this site to load it into oekaki applet"
+msgstr ""
+"Clique em qualquer imagem neste site para carregá-la no mini aplicativo "
+"oekaki"
+
+#: templates/main.js:35 templates/main.js:53
 msgid "second(s)"
-msgstr ""
+msgstr "segundo(s)"
 
-#: ../../../../templates/main.js:31 ../../../../templates/main.js:49
+#: templates/main.js:37 templates/main.js:55
 msgid "minute(s)"
-msgstr ""
+msgstr "minutos(s)"
 
-#: ../../../../templates/main.js:33 ../../../../templates/main.js:51
+#: templates/main.js:39 templates/main.js:57
 msgid "hour(s)"
-msgstr ""
+msgstr "hora(s)"
 
-#: ../../../../templates/main.js:35 ../../../../templates/main.js:53
+#: templates/main.js:41 templates/main.js:59
 msgid "day(s)"
-msgstr ""
+msgstr "dia(s)"
 
-#: ../../../../templates/main.js:37 ../../../../templates/main.js:55
+#: templates/main.js:43 templates/main.js:61
 msgid "week(s)"
+msgstr "semana(s)"
+
+#: templates/main.js:45 templates/main.js:63
+msgid "year(s)"
+msgstr "ano(s)"
+
+#: templates/main.js:68
+msgid "Sunday"
+msgstr "Domingo"
+
+#: templates/main.js:68
+msgid "Monday"
+msgstr "Segunda-feira"
+
+#: templates/main.js:68
+msgid "Tuesday"
+msgstr "Terça-feira"
+
+#: templates/main.js:68
+msgid "Wednesday"
+msgstr "Quarta-feira"
+
+#: templates/main.js:68
+msgid "Thursday"
+msgstr "Quinta-feira"
+
+#: templates/main.js:68
+msgid "Friday"
+msgstr "Sexta-feira"
+
+#: templates/main.js:68
+msgid "Saturday"
+msgstr "Sabádo"
+
+#: templates/main.js:70
+msgid "January"
+msgstr "Janeiro"
+
+#: templates/main.js:70
+msgid "February"
+msgstr "Fevereiro"
+
+#: templates/main.js:70
+msgid "March"
+msgstr "Março"
+
+#: templates/main.js:70
+msgid "April"
+msgstr "Abril"
+
+#: templates/main.js:70 templates/main.js:71
+msgid "May"
+msgstr "Maio"
+
+#: templates/main.js:70
+msgid "June"
+msgstr "Junho"
+
+#: templates/main.js:70
+msgid "July"
+msgstr "Julho"
+
+#: templates/main.js:70
+msgid "August"
+msgstr "Agosto"
+
+#: templates/main.js:70
+msgid "September"
+msgstr "Setembro"
+
+#: templates/main.js:70
+msgid "October"
+msgstr "Outrubro"
+
+#: templates/main.js:70
+msgid "November"
+msgstr "Novembro"
+
+#: templates/main.js:70
+msgid "December"
+msgstr "Dezembro"
+
+#: templates/main.js:71
+msgid "Jan"
+msgstr "Jan"
+
+#: templates/main.js:71
+msgid "Feb"
+msgstr "Fev"
+
+#: templates/main.js:71
+msgid "Mar"
+msgstr "Mar"
+
+#: templates/main.js:71
+msgid "Apr"
+msgstr "Abr"
+
+#: templates/main.js:71
+msgid "Jun"
+msgstr "Jun"
+
+#: templates/main.js:71
+msgid "Jul"
+msgstr "Jul"
+
+#: templates/main.js:71
+msgid "Aug"
+msgstr "Ago"
+
+#: templates/main.js:71
+msgid "Sep"
+msgstr "Set"
+
+#: templates/main.js:71
+msgid "Oct"
+msgstr "Out"
+
+#: templates/main.js:71
+msgid "Nov"
+msgstr "Nov"
+
+#: templates/main.js:71
+msgid "Dec"
+msgstr "Dez"
+
+#: templates/main.js:72
+msgid "AM"
 msgstr ""
 
-#: ../../../../templates/main.js:39 ../../../../templates/main.js:57
-msgid "year(s)"
+#: templates/main.js:73
+msgid "PM"
 msgstr ""
+
+#: templates/main.js:74
+msgid "am"
+msgstr ""
+
+#: templates/main.js:75
+msgid "pm"
+msgstr ""
+
+#: templates/main.js:96
+msgid "OK"
+msgstr ""
+
+#: templates/main.js:102
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: templates/themes/ukko2/ukko.js:29 templates/themes/ukko2/ukko.js:40
+msgid "(hide threads from this board)"
+msgstr "(ocultar tópicos desta board)"
+
+#: templates/themes/ukko2/ukko.js:33 templates/themes/ukko2/ukko.js:45
+msgid "(show threads from this board)"
+msgstr "(mostrar tópicos desta board)"
+
+#: templates/themes/ukko2/ukko.js:58
+msgid "No more threads to display"
+msgstr "Não há mais fios para mostrar"

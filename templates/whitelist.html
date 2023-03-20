@@ -1,6 +1,6 @@
 
-Solve this captcha in order to proceed.
-<form id="whitelist_form" enctype="multipart/form-data" action="/post.php" method="post" style="margin-bottom: 0em; padding-top: 15px;">
+{% trans %}Solve this captcha in order to proceed.{% endtrans %}
+<form id="whitelist_form" enctype="multipart/form-data" action="{{ config.file_post }}" method="post" style="margin-bottom: 0em; padding-top: 15px;">
 	<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 	<script src="/js/whitelist-dialog.js" async defer></script>
 	<style>
@@ -13,5 +13,5 @@ Solve this captcha in order to proceed.
 	</style>
 
 	<div class="h-captcha" data-sitekey="{{ config.hcaptcha_public }}"></div>
-	<input id="whitelist_submit" name="whitelist" value="Continue" type="submit" style="margin-top: 15px;">
+	<input id="whitelist_submit" name="whitelist" value="{% trans %}Continue{% endtrans %}" type="submit" style="margin-top: 15px;">
 </form>

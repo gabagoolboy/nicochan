@@ -10,7 +10,7 @@
 		</tr>
 		{% if to != mod.id %}
 			<tr>
-				<th>To</th>
+				<th>{% trans %}To{% endtrans %}</th>
 				{% if to_username %}
 					<td><a href="?/new_PM/{{ to_username|e }}">{{ to_username|e }}</a></td>
 				{% else %}
@@ -20,7 +20,7 @@
 		{% endif %}
 		<tr>
 			<th>{% trans 'Date' %}</th>
-			<td>{{ time|strftime }} <small>({{ time|ago }} ago)</small></td>
+			<td>{{ time|strftime }} <small>({{ time|ago }} {% trans %}ago{% endtrans %})</small></td>
 
 		</tr>
 		<tr>

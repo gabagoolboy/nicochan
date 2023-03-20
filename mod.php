@@ -46,8 +46,8 @@ $pages = [
 	'/edit_page/(\d+)'				=> 'secure_POST edit_page',
 	'/edit_pages/delete/([a-z0-9]+)'		=> 'secure delete_page',
 	'/edit_pages/delete/([a-z0-9]+)/(\%b)'		=> 'secure delete_page_board',
-	'/wl-region'					=> 'whitelist_region',			// view whitelist
-	'/alter-wl'					=> 'secure_POST alter_whitelist',	// modify whitelist
+	'/wl_region'					=> 'whitelist_region',			// view whitelist
+	'/change_wl(/([\w.:]+))?'                        => 'secure_POST change_whitelist',       // modify whitelist
 
 
 	'/noticeboard'					=> 'secure_POST noticeboard',		// view noticeboard
@@ -59,7 +59,7 @@ $pages = [
 
 	'/rebuild'					=> 'secure_POST rebuild',		// rebuild static files
 	'/reports'					=> 'reports',				// report queue
-	'/reports/(\d+)/dismiss(all)?'			=> 'secure report_dismiss',		// dismiss a report
+	'/reports/(\d+)/dismiss(&all|&post)?'		=> 'secure report_dismiss',		// dismiss a report
 
 	'/IP/([\w.:]+)'					=> 'secure_POST ip',			// view ip address
 
@@ -78,7 +78,7 @@ $pages = [
 	'/edit_ban/(\d+)'				=> 'secure_POST edit_ban',
 	'/ban-appeals'					=> 'secure_POST ban_appeals',		// view ban appeals
 
-	'/recent/(\d+)'					=> 'recent_posts',			// view recent posts
+	'/recent(_shadow)?/(\d+)'			=> 'recent_posts',			// view recent posts
 
 	'/search'					=> 'search_redirect',			// search
 	'/search/(posts|IP_notes|bans|log)/(.+)/(\d+)'	=> 'search',				// search
@@ -106,8 +106,8 @@ $pages = [
 	'/(\%b)/edit(_raw)?/(\d+)'			=> 'secure_POST edit_post',	// edit post
 	'/(\%b)/delete(_shadow)?/(\d+)'			=> 'secure delete',		// delete post
 	'/(\%b)/deletefile/(\d+)/(\d+)'			=> 'secure deletefile',		// delete file from post
-	'/(\%b+)/spoiler/(\d+)/(\d+)'			=> 'secure spoiler_image',	// spoiler file
-	'/(\%b)/deletebyip/(\d+)(/global)?'		=> 'secure deletebyip',		// delete all posts by IP address
+	'/(\%b+)/(un)?spoiler/(\d+)/(\d+)'		=> 'secure spoiler_image',	// spoiler file
+	'/(\%b)/deletebyip(&global)?/(\d+)'		=> 'secure deletebyip',		// delete all posts by IP address
 	'/(\%b)/(un)?lock/(\d+)'			=> 'secure lock',		// lock thread
 	'/(\%b)/(un)?sticky/(\d+)'			=> 'secure sticky',		// sticky thread
 	'/(\%b)/(un)?cycle/(\d+)'			=> 'secure cycle',		// cycle thread
@@ -139,7 +139,6 @@ $pages = [
 			str_replace(array('%d','%s'), array('(\d+)', '[a-z0-9-]+'), preg_quote($config['file_page50_slug'], '!'))	=> 'view_thread50',
 	'/(\%b)/' . preg_quote($config['dir']['res'], '!') .
 			str_replace(array('%d','%s'), array('(\d+)', '[a-z0-9-]+'), preg_quote($config['file_page_slug'], '!'))	=> 'view_thread',
-
 ];
 
 // these pages aren't listed in the dashboard without $config['debug']
@@ -191,7 +190,6 @@ foreach ($pages as $uri => $handler) {
 			if (!$secure_post_only || $_SERVER['REQUEST_METHOD'] == 'POST') {
 				if (isset($matches['token'])) {
 					$token = $matches['token'];
-					unset($matches['token']);
 				} elseif (isset($_POST['token'])) {
 					$token = $_POST['token'];
 				} else {
@@ -221,6 +219,11 @@ foreach ($pages as $uri => $handler) {
 			$debug['time']['parse_mod_req'] = '~' . round((microtime(true) - $parse_start_time) * 1000, 2) . 'ms';
 		}
 
+		if (is_array($matches)) {
+			// we don't want to call named parameters (PHP 8)
+			$matches = array_values($matches);
+		}
+
 		if (is_string($handler)) {
 			if ($handler[0] == ':') {
 				header('Location: ' . substr($handler, 1),  true, $config['redirect_http']);
@@ -240,5 +243,4 @@ foreach ($pages as $uri => $handler) {
 		exit;
 	}
 }
-
 error($config['error']['404']);

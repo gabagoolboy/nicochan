@@ -518,3 +518,71 @@ class ImageWEBP extends ImageBase
 		$this->GD_copyresampled();
 	}
 }
+
+// code from kissu.moe
+class ImageProcessing {
+	public function __construct(array $config) {
+		$this->config = $config;
+	}
+
+	public function createThumbnail($file, $op) {
+		global $board;
+
+		if (!$size = @getimagesize($file->file_path)) {
+			error($this->config['error']['invalidimg']);
+		}
+		if (!in_array($size[2], array(IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_BMP, IMAGETYPE_WEBP))) {
+			error($this->config['error']['invalidimg']);
+		}
+		if ($size[0] > $this->config['max_width'] || $size[1] > $this->config['max_height']) {
+			error($this->config['error']['maxsize']);
+		}
+
+		$image = new Image($file->file_path, $file->extension, $size);
+		if ($image->size->width > $this->config['max_width'] || $image->size->height > $this->config['max_height']) {
+			$image->delete();
+			error($this->config['error']['maxsize']);
+		}
+
+		$file->thumb_path = $board['dir'] . $this->config['dir']['thumb'] . $file->file_id . '.' . ($this->config['thumb_ext'] ? $this->config['thumb_ext'] : $file->extension);
+		$file->thumb = $file->file_id . '.' . ($this->config['thumb_ext'] ? $this->config['thumb_ext'] : $file->extension);
+
+		if ($this->config['minimum_copy_resize'] &&
+			$image->size->width <= $this->config['thumb_width'] &&
+			$image->size->height <= $this->config['thumb_height'] &&
+			$file->extension == ($this->config['thumb_ext'] ? $this->config['thumb_ext'] : $file->extension)) {
+
+			copy($file->file_path, $file->thumb);
+
+			$file->thumbwidth = $image->size->width;
+			$file->thumbheight = $image->size->height;
+		} else {
+			$thumb = $image->resize(
+				$this->config['thumb_ext'] ? $this->config['thumb_ext'] : $file->extension,
+				$op ? $this->config['thumb_op_width'] : $this->config['thumb_width'],
+				$op ? $this->config['thumb_op_height'] : $this->config['thumb_height']
+			);
+			$thumb->to($file->thumb_path);
+
+			$file->thumbwidth = $thumb->width;
+			$file->thumbheight = $thumb->height;
+
+			$thumb->_destroy();
+		}
+		return $file;
+
+	}
+
+	public function createWebmThumbnail($file, $op){
+		global $board;
+		require_once 'inc/lib/webm/ffmpeg.php';
+		require_once 'inc/lib/webm/posthandler.php';
+		$file->thumb_path = $board['dir'] . $this->config['dir']['thumb'] . $file->file_id . '.png';
+
+		$file = set_thumbnail_dimensions((object) array('op' => $op), $file);
+		$webminfo = get_webm_info($file->file_path);
+		make_webm_thumbnail($file->file_path, $file->thumb_path, $file->thumbwidth, $file->thumbheight, $webminfo['duration']);
+		return $file;
+	}
+
+}

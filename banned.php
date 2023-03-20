@@ -4,13 +4,13 @@
 
  die(
     Element('page.html', array(
-      'title' => _('Não está banida!'),
+      'title' => _('You are not banned!'),
       'config' => $config,
       'nojavascript' => true,
       'boardlist' => createBoardlist(FALSE),
       'body' => Element('notbanned.html', array(
-	      'text_body' => 'Parabéns por ser uma boa anã!',
-	      'text_h2' => 'Você não está banida!',
+	      'text_body' => _('Congratulations for not being terrible!'),
+	      'text_h2' => _('You are not banned!'),
 		)
 	))
 	));

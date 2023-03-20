@@ -12,17 +12,26 @@
 		<td>
 			<select name="method">
 				{% for markup in ['html', 'infinity'] %}
-				<option value="{{ markup }}" {% if page.type == markup %}selected{% endif %}>{{ markup }}</option>
+					<option value="{{ markup }}" {% if page.type == markup %}selected{% endif %}>{{ markup }}</option>
 				{% endfor %}
 			</select>
-		</td></tr>
-		<tr><th>{% trans %}Page content{% endtrans %}
+		</td>
+		</tr>
+		<th>
+			{% trans %}Page content{% endtrans %}
 		<br/>
-		<span class="unimportant">{% trans %}Page will appear at:{% endtrans %}
-		{% if board %} <a href="/{{ board.uri }}/{{ page.name }}.html">{{ config.domain }}/{{ board.uri }}/{{ page.name }}.html</a>
-		{% else %} <a href="/{{ page.name }}.html">{{ config.site }}/{{ page.name }}.html</a>
-		{% endif %}</span></th><td><textarea name="content" style="height:500px;width:500px">{% if content|length == 0 %}<div class="ban"></div>{% else %}{{content}}{% endif %}</textarea></td><tr>
+			<span class="unimportant">{% trans %}Page will appear at:{% endtrans %}
+			{% if board %}
+				<a href="/{{ board.uri }}/{{ page.name }}.html">{{ config.domain }}/{{ board.uri }}/{{ page.name }}.html</a>
+			{% else %}
+				<a href="/{{ page.name }}.html">{{ config.site }}/{{ page.name }}.html</a>
+			{% endif %}
+			</span>
+		</th>
+		<td>
+			<textarea name="content" style="height:500px;width:500px">{% if content|length == 0 %}<div class="ban"></div>{% else %}{{ content }}{% endif %}</textarea>
+		</td>
 	</table>
-	<input type="submit" value="Save page">
+	<input type="submit" value="{% trans %}Save page{% endtrans %}">
 </form>
 </div>

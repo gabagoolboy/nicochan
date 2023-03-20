@@ -1,6 +1,6 @@
 <div class="report">
 	<hr>
-	{% trans 'Board' %}: <a href="?/{{ report.board }}/{{ config.file_index }}">{{ config.board_abbreviation|format(report.board) }}</a>
+	{% trans 'Board' %}: <a href="?/{{ report.board }}/">{{ config.board_abbreviation|format(report.board) }}</a>
 	<br>
 	{% trans 'Reason' %}: {{ report.reason }}
 	<br>
@@ -13,13 +13,19 @@
 	{% if mod|hasPermission(config.mod.report_dismiss, report.board) or mod|hasPermission(config.mod.report_dismiss_ip, report.board) %}
 		<hr>
 		{% if mod|hasPermission(config.mod.report_dismiss, report.board) %}
-			<a title="{% trans 'Discard abuse report' %}" href="?/reports/{{ report.id }}/dismiss/{{ token }}">Dismiss</a>
+			<a title="{% trans 'Discard abuse report' %}" href="?/reports/{{ report.id }}/dismiss/{{ token }}">{% trans %}Dismiss{% endtrans %}</a>
 		{% endif %}
 		{% if mod|hasPermission(config.mod.report_dismiss_ip, report.board) %}
 			{% if mod|hasPermission(config.mod.report_dismiss, report.board) %}
 			 |&nbsp;
 			{% endif %}
-			<a title="{% trans 'Discard all abuse reports by this IP address' %}" href="?/reports/{{ report.id }}/dismissall/{{ token_all }}">Dismiss+</a>
+			<a title="{% trans 'Discard all abuse reports by this IP address' %}" href="?/reports/{{ report.id }}/dismiss&amp;all/{{ token_all }}">{% trans %}Dismiss{% endtrans %}+</a>
+		{% endif %}
+		{% if mod|hasPermission(config.mod.report_dismiss_post, report.board) %}
+			{% if mod|hasPermission(config.mod.report_dismiss, report.board) %}
+			 |&nbsp;
+			{% endif %}
+			<a title="{% trans 'Discard all reports for this post' %}" href="?/reports/{{ report.id }}/dismiss&amp;post/{{ token_post }}">{% trans %}Dismiss Post{% endtrans %}</a>
 		{% endif %}
 	{% endif %}
 </div>

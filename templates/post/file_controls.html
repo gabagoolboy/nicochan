@@ -6,8 +6,12 @@
 		{% endif %}
 
 		{% if file.file and file.file != 'deleted' and file.thumb != 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
-			{{ secure_link_confirm(config.mod.link_spoilerimage, 'Spoiler file'|trans, 'Are you sure you want to spoiler this file?'|trans, board.dir ~ 'spoiler/' ~ post.id ~ '/' ~ loop.index0 ) }}
-		{% endif %}&nbsp;
+			{{ secure_link_confirm(config.mod.link_spoilerimage, 'Spoiler file'|trans, 'Are you sure you want to spoiler this file?'|trans, board.dir ~ 'spoiler/' ~ post.id ~ '/' ~ loop.index0 ) }}&nbsp;
+		{% endif %}
+
+		{% if file.file and file.file != 'deleted' and file.thumb == 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
+			{{ secure_link_confirm(config.mod.link_unspoilerimage, 'Spoiler file'|trans, 'Are you sure you want to remove spoilers on this file?'|trans, board.dir ~ 'unspoiler/' ~ post.id ~ '/' ~ loop.index0 ) }}&nbsp;
+		{% endif %}
 
 	</span>
 	{% endif %}

@@ -275,7 +275,7 @@
 
 					var tr = this;
 					$td.find('input[type="checkbox"]').each(function() {
-						if ($(this).attr('name') == 'spoiler' || $(this).attr('name') == 'no_country' || $(this).attr('name') == 'rmexif') {
+						if ($(this).attr('name') == 'spoiler' || $(this).attr('name') == 'no_country' || $(this).attr('name') == 'cbsingle' || $(this).attr('name') == 'rmexif') {
 							$(this).parent('label').appendTo($postForm.find('td.post-options'));
 						} else {
 							$(tr).hide();

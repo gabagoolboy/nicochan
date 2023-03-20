@@ -19,7 +19,7 @@
 		<legend>{{ settings.title }}</legend>
 		<ul>
 			<li>
-				<a class="system" href="{{ settings.file_news }}">[News]</a>
+				<a class="system" href="{{ settings.file_news }}">[{% trans 'News' %}]</a>
 			</li>
 		</ul>
 	</fieldset>
@@ -29,7 +29,7 @@
 		<ul>
 			{% for board in boards %}
 				<li>
-					<a href="{{ config.board_path|sprintf(board.uri) }}">
+					<a href="{{ config.board_path|format(board.uri) }}">
 						{{ board.title|e }}
 					</a>
 				</li>

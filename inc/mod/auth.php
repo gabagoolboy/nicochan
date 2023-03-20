@@ -12,7 +12,7 @@ function mkhash($username, $password, $salt = false) {
 
 	if (!$salt) {
 		// create some sort of salt for the hash
-		$salt = substr(base64_encode(sha1(rand() . time(), true) . $config['cookies']['salt']), 0, 15);
+		$salt = substr(base64_encode(sha1(mt_rand() . time(), true) . $config['cookies']['salt']), 0, 15);
 
 		$generated_salt = true;
 	}
@@ -72,8 +72,55 @@ function generate_salt() {
 	return strtr(base64_encode(random_bytes(16)), '+', '.');
 }
 
+// from kissu
+function insert_into_modlogins($username, $sucess = false) {
+
+	$query = prepare('INSERT INTO ``modlogins`` (`username`, `ip`, `ip_hash`, `time`, `success`) VALUES (:name, :ip, :ip_hash, :time, :success)');
+	$query->bindValue(':name', $username, PDO::PARAM_STR);
+	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	$query->bindValue(':ip_hash', get_ip_hash($_SERVER['REMOTE_ADDR']));
+	$query->bindValue(':time', time());
+	if ($sucess)
+		$query->bindValue(':success', true, PDO::PARAM_INT);
+	else
+		$query->bindValue(':success', false, PDO::PARAM_INT);
+	$query->execute() or error(db_error($query));
+}
+
 function login($username, $password) {
 	global $mod, $config;
+
+	$query = prepare('SELECT * FROM ``modlogins`` WHERE `ip` = :ip');
+	$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+	$query->execute() or error(db_error($query));
+	$attempts = $query->fetchAll(PDO::FETCH_ASSOC);
+	$attempt_count = 0;
+
+	foreach($attempts as $attempt){
+		if($attempt['success'] && $attempt['time'] + $config['true_login_refresh_time'] < time()){
+			$query = prepare('DELETE FROM ``modlogins`` WHERE `username` = :name AND `time` = :time AND `ip` = :ip');
+			$query->bindValue(':name', $username);
+			$query->bindValue(':time', $attempt['time']);
+			$query->bindValue(':ip', $_SERVER['REMOTE_ADDR']);
+			$query->execute() or error(db_error($query));
+		}
+		else if($attempt['time'] + $config['max_login_attempts_refresh_time'] < time()){
+			$query = prepare('DELETE FROM ``modlogins`` WHERE `username` = :name AND `time` = :time');
+			$query->bindValue(':name', $username);
+			$query->bindValue(':time', $attempt['time']);
+			$query->execute() or error(db_error($query));
+		}
+		else if($attempt['success'] && $attempt['ip'] == $_SERVER['REMOTE_ADDR']){
+			$attempt_count = 0;
+			break;
+		} else {
+			$attempt_count++;
+		}
+	}
+
+	if($attempt_count >= $config['max_login_attempts']){
+		error($config['error']['max_logins_reached']);
+	}
 
 	$query = prepare("SELECT `id`, `type`, `boards`, `password`, `version` FROM ``mods`` WHERE BINARY `username` = :username");
 	$query->bindValue(':username', $username);
@@ -117,19 +164,33 @@ function setCookies() {
 			$mod['hash'][0] . // password
 			':' .
 			$mod['hash'][1], // salt
-		time() + $config['cookies']['expire'], $config['cookies']['jail'] ? $config['cookies']['path'] : '/', null, !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off', $config['cookies']['httponly']);
+			array(
+				'expires' => time() + $config['cookies']['expire'],
+				'path' => $config['cookies']['jail'] ? $config['cookies']['path'] : '/',
+				'domain' => null,
+				'secure' => true,
+				'httponly' => true,
+				'samesite' => 'Strict'
+			)
+	);
 }
 
 function destroyCookies() {
 	global $config;
 	// Delete the cookies
-	setcookie($config['cookies']['mod'], 'deleted', time() - $config['cookies']['expire'], $config['cookies']['jail']?$config['cookies']['path'] : '/', null, !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off', true);
+	setcookie($config['cookies']['mod'], 'deleted', array(
+		'expires' => time() - $config['cookies']['expire'],
+		'path' => $config['cookies']['jail'] ? $config['cookies']['path'] : '/',
+		'domain' => null,
+		'secure' => true,
+		'httponly' => true,
+		'samesite' => 'Strict'
+	));
 }
 
 function modLog($action, $_board=null) {
-	global $config;
-
 	global $mod, $board, $config;
+
 	$query = prepare("INSERT INTO ``modlogs`` (`mod`, `ip`, `board`, `time`, `text`) VALUES (:id, :ip, :board, :time, :text)");
 	$query->bindValue(':id', (isset($mod['id']) ? $mod['id'] : -1), PDO::PARAM_INT);
 	$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
@@ -137,7 +198,7 @@ function modLog($action, $_board=null) {
 	$query->bindValue(':text', $action);
 	if (isset($_board))
 		$query->bindValue(':board', $_board);
-	elseif (isset($board))
+	elseif (isset($board, $board['uri']))
 		$query->bindValue(':board', $board['uri']);
 	else
 		$query->bindValue(':board', null, PDO::PARAM_NULL);

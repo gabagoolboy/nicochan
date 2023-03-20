@@ -139,6 +139,7 @@ class Bans {
 
 		$query->bindValue(':ip', $config['bcrypt_ip_addresses'] ? ($hashed_ip ? $ip :get_ip_hash($ip)) : inet_pton($ip));
 		$query->bindValue(':id', $banid);
+
 		$query->execute() or error(db_error($query));
 
 		$ban_list = array();
@@ -248,6 +249,8 @@ class Bans {
  			ORDER BY `created` DESC") or error(db_error());
                 $_bans = $query->fetchAll(PDO::FETCH_ASSOC);
 
+		if ($board_access && $board_access[0] == '*') $board_access = false;
+
 		if ($filter_reason) {
 			foreach($_bans as &$ban){
 				if (preg_match($config['banlist_filters'], $ban['reason']))
@@ -257,8 +260,6 @@ class Bans {
 		}
 
 		$bans = !isset($bans) ? $_bans : $bans;
-
-		if ($board_access && $board_access[0] == '*') $board_access = false;
 
 		$out ? fputs($out, "[") : print("[");
 
@@ -283,7 +284,7 @@ class Bans {
 			if ($filter_staff || ($board_access !== false && !in_array($ban['board'], $board_access))) {
 				$ban['username'] = '?';
 			}
-			if ($filter_ips || (($board_access !== false && !in_array($ban['board'], $board_access)) && !hasPermission($config['mod']['sitewide_post_info']))) {
+			if ($filter_ips || ($board_access !== false && !in_array($ban['board'], $board_access))) {
 				if($config['bcrypt_ip_addresses']) {
 					$ban['mask'] = getHumanReadableIP_masked($ban['mask']);
 				} else {

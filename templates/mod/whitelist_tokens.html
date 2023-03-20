@@ -1,18 +1,33 @@
 <fieldset>
-  <legend>All Tokens</legend>
-  <table class="modlog">
-    <thead>
-      <th>ID</th>
-      <th>IP</th>
-      <th>IP Hash</th>
-    </thead>
-    <tbody>
-		{% for token in wl_tokens %}
-    <tr>
-	    <th>{{ token.id }}</th><td>{{ token.ip }}</td><td><a href="?/IP/{{ token.ip_hash }}">{{ token.ip_hash}}</a></td>
-    </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+	<legend>{% trans %}All Tokens{% endtrans %}</legend>
+	<table class="modlog">
+		<thead>
+			<th>{% trans %}ID{% endtrans %}</th>
+			<th>IP</th>
+			<th>IP Hash</th>
+			<th>Token</th>
+			<th>Actions</th>
+		</thead>
+		<tbody>
+			{% for token in wl_tokens %}
+				<tr>
+					<th>{{ token.id }}</th>
+					<td>{{ token.ip }}</td>
+					<td><a href="?/IP/{{ token.ip_hash }}">{{ token.ip_hash }}</a></td>
+					<td>{{ token.token}}</th>
+					<td class="minimal">
+					    <a href="?/change_wl/{{ token.ip|url_encode(true) }}"><small>[{% trans 'remove' %}]</small></a>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 </fieldset>
-{% include 'mod/whitelist_token_gen.html' %}
+<fieldset>
+	<legend>{% trans %}Actions{% endtrans %}</legend>
+	<form action="?/change_wl" method="POST">
+		<input type="hidden" name="token" value="{{ security_token }}">
+		<input type="text" placeholder="IP" name="ip"/> <input type="text" placeholder="{% trans %}Token (leave empty to generate){% endtrans %}" name="tokenu" size="25" maxlength="12" autocomplete="off"/>
+		<input type="submit" value="{% trans %}Create New Whitelist{% endtrans %}" name="create" />
+	</form>
+</fieldset>

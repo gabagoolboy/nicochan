@@ -51,7 +51,7 @@
 
 				if($count < $this->settings['thread_limit']) {
 					openBoard($post['board']);
-					$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
+					$thread = new Thread($config, $post, $mod ? '?/' : $config['root'], $mod);
 
 					$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ORDER BY `id` DESC LIMIT :limit", $post['board']));
 					$posts->bindValue(':id', $post['id']);
@@ -63,7 +63,7 @@
 						if ($po['files'])
 							$num_images++;
 
-						$thread->add(new Post($po, $mod ? '?/' : $config['root'], $mod));
+						$thread->add(new Post($config, $po, $mod ? '?/' : $config['root'], $mod));
 
 					}
 					if ($posts->rowCount() == ($post['sticky'] ? $config['threads_preview_sticky'] : $config['threads_preview'])) {

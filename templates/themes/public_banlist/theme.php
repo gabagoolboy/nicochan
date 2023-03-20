@@ -16,12 +16,14 @@
 		public static function build($action, $settings) {
 			global $config;
 
+
 			if ($action == 'all')
 				file_write($config['dir']['home'] . $settings['file_bans'], PBanlist::homepage($settings));
 
 			if ($action == 'all' || $action == 'bans')
 				file_write($config['dir']['home'] . $settings['file_json'], PBanlist::gen_json($settings));
 		}
+
 
 		public static function gen_json($settings) {
 			ob_start();
@@ -41,6 +43,7 @@
         		        'hide_dashboard_link' => true,
         		        'title' => _("Ban list"),
         		        'subtitle' => "",
+						'boardlist' => createBoardlist(false),
 		                'nojavascript' => true,
 		                'body' => Element('mod/ban_list.html', array(
 			                'mod' => false,

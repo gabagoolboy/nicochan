@@ -35,7 +35,7 @@ function handle_delete() {
 	handle_blocks(); // function to handle region blocks
 
 	if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked'])
-    		error("Board is locked");
+		error(_("Board is locked"));
 
 	// Check if deletion enabled
 	if (!$config['allow_delete'])
@@ -45,14 +45,16 @@ function handle_delete() {
 		error($config['error']['nodelete']);
 
 	foreach ($delete as &$id) {
-		$query = prepare(sprintf("SELECT `id`,`thread`,`time`,`password` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
+		$query = prepare(sprintf("SELECT `id`,`thread`,`time`,`password`, `num_files` FROM ``posts_%s`` WHERE `id` = :id", $board['uri']));
 		$query->bindValue(':id', $id, PDO::PARAM_INT);
 		$query->execute() or error(db_error($query));
 
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 
 		if(!$post)
-			error('Post não encontrado');
+			continue;
+
+
 
 		$thread = false;
 			if ($config['user_moderation'] && $post['thread']) {
@@ -84,7 +86,7 @@ function handle_delete() {
 				if(isset($_POST['file_single']) && !empty($_POST['file_single'])){
 					// Delete spesific file
 					if(is_numeric($_POST['file_single'])) {
-						deleteFile($id, TRUE, (int)$_POST['file_single'] - 1);
+						deleteFile($id, false, (int)$_POST['file_single'] - 1);
 						modLog("User deleted spesific file from his own post #$id");
 					} else {
 						error(_('Uknown file specified.'));
@@ -98,7 +100,7 @@ function handle_delete() {
 
 				// Check if thread and that the delete cutoff post count haven't been reached
 				if($config['allow_delete_cutoff'] && $post['thread'] === NULL) {
-					$count_query = query(sprintf("SELECT COUNT(*) FROM ``posts_%s`` WHERE `thread` = %d", $board['uri'], (int)$id));
+					$count_query = query(sprintf("SELECT COUNT(1) FROM ``posts_%s`` WHERE `thread` = %d", $board['uri'], (int)$id));
 					if($count_query->fetchColumn(0) >= $config['allow_delete_cutoff'])
 						error(_('Deletion of this thread is not allowed!'));
 				}
@@ -165,8 +167,7 @@ function handle_report() {
 
 
 	if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked'])
-    		error("Board is locked");
-
+		error(_("Board is locked"));
 
 	if (empty($report))
 		error($config['error']['noreport']);
@@ -177,22 +178,21 @@ function handle_report() {
 	if (count($report) > $config['report_limit'])
 		error($config['error']['toomanyreports']);
 
-	if ($config['report_captcha'] && !isset($_POST['captcha_text'], $_POST['captcha_cookie']))
+	if ($config['captcha']['report_captcha'] && !isset($_POST['captcha_text'], $_POST['captcha_cookie']))
 		error($config['error']['bot']);
 
 
-	if ($config['report_captcha']) {
+	if ($config['captcha']['report_captcha']) {
 		$ch = curl_init($config['captcha']['provider_check'] . "?" . http_build_query([
 			'mode' => 'check',
 			'text' => $_POST['captcha_text'],
-			'extra' => $config['captcha']['extra'],
 			'cookie' => $_POST['captcha_cookie']
 		]));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		$resp = curl_exec($ch);
+		$resp = json_decode(curl_exec($ch), true);
 
-		if ($resp !== '1')
-                        error($config['error']['captcha']);
+		if (!$resp['success'])
+			error($config['error']['captcha']);
 
 	}
 
@@ -207,7 +207,7 @@ function handle_report() {
 		$post = $query->fetch(PDO::FETCH_ASSOC);
 
 		if(!$post)
-			error('Post não encontrado');
+			error(_('Post not found'));
 
 	        $error = event('report', array('ip' => $_SERVER['REMOTE_ADDR'], 'board' => $board['uri'], 'post' => $post, 'reason' => $reason, 'link' => link_for($post)));
 
@@ -254,7 +254,7 @@ function handle_report() {
 	if (!isset($_POST['json_response'])) {
 		$index = $root . $board['dir'] . $config['file_index'];
 		$reported = $root . $board['dir'] . $config['dir']['res'] . link_for($post) . ($post['thread'] ? '#' . $id : '');
-		echo Element('page.html', array('config' => $config, 'body' => '<div style="text-align:center; padding-left:"><a href="javascript:window.close()">[ ' . _('Close window') ." ]</a>&nbsp;&nbsp;<a href='$index'>[ " . _('Index') . " ]</a>&nbsp;&nbsp;<a href='$reported'>[ " . _('Ir para o fio ') . ']</a> </div>', 'title' => _('Report submitted!')));
+		echo Element('page.html', array('config' => $config, 'body' => '<div style="text-align:center; padding-left:"><a href="javascript:window.close()">[ ' . _('Close window') ." ]</a>&nbsp;&nbsp;<a href='$index'>[ " . _('Index') . " ]</a>&nbsp;&nbsp;<a href='$reported'>[ " . _('Go to thread') . ']</a> </div>', 'title' => _('Report submitted!')));
 
 	} else {
 		header('Content-Type: text/json');
@@ -275,7 +275,7 @@ function handle_post(){
 		error($config['error']['noboard']);
 
 	if ((!isset($_POST['mod']) || !$_POST['mod']) && $config['board_locked'])
-    		error("Board is locked");
+		error(_("Board is locked"));
 
 
 	if (!isset($_POST['name']))
@@ -305,7 +305,6 @@ function handle_post(){
 	if (!$config['hcaptcha'] && !Whitelist::check($post['ip'], $cookie))
 		message(Element('whitelist.html', array('config' => $config)), 'White list captcha', '');
 
-
 		checkDNSBL();
 
 		// Check if banned, warned or nicenoticed
@@ -333,15 +332,14 @@ function handle_post(){
 			$ch = curl_init($config['captcha']['provider_check'] . "?" . http_build_query([
 				'mode' => 'check',
 				'text' => $_POST['captcha_text'],
-				'extra' => $config['captcha']['extra'],
 				'cookie' => $_POST['captcha_cookie']
 			]));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$resp = curl_exec($ch);
+			$resp = json_decode(curl_exec($ch), true);
 
-			if ($resp !== '1') {
+			if (!$resp['success']) {
 				error($config['error']['captcha'] .
-	'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'", "'.$config['captcha']['extra'].'");</script>');
+	'<script>if (actually_load_captcha !== undefined) actually_load_captcha("'.$config['captcha']['provider_get'].'");</script>');
 			}
 		}
 
@@ -406,12 +404,27 @@ function handle_post(){
 	if ($config['enable_embedding'] && isset($_POST['embed']) && !empty($_POST['embed'])) {
 		// yep; validate it
 		$value = $_POST['embed'];
-		foreach ($config['embedding'] as &$embed) {
-			if (preg_match($embed[0], $value)) {
+		foreach ($config['embeds'] as &$embed) {
+			if (preg_match($embed['regex'], trim($value))) {
 				// Valid link
 				$post['embed'] = $value;
 				// This is bad, lol.
 				$post['no_longer_require_an_image_for_op'] = true;
+
+				if ($embed['service'] == 'youtube')
+					$post['embed'] = preg_replace('/\bshorts\b\//i', 'watch?v=', $post['embed']);
+
+				if (isset($embed['oembed']) && !empty($embed['oembed'])) {
+					$json_str = @file_get_contents(sprintf($embed['oembed'], $post['embed']));
+					if (!$json_str) {
+						unset($post['embed']); // invalid link
+						break;
+					}
+					$_json = json_decode($json_str);
+					$post['embed'] = json_encode(['title' => $_json->title, 'url' => $post['embed']], JSON_UNESCAPED_UNICODE);
+				} else {
+					$post['embed'] = json_encode(['title' => '', 'url' => $post['embed']]);
+				}
 				break;
 			}
 		}
@@ -435,61 +448,60 @@ function handle_post(){
 	}
 
 
-	if ($config['allow_upload_by_url'] && isset($_POST['file_url']) && !empty($_POST['file_url'])) {
-		$post['file_url'] = $_POST['file_url'];
-		if (!preg_match('@^https?://@', $post['file_url']))
-			error($config['error']['invalidimg']);
+	if ($config['url_upload']['enabled']){
+		for ($ui = 0; $ui <= $config['max_images']; $ui++) {
+			if (isset($_POST['file_url'][$ui]) && !empty($_POST['file_url'][$ui])) {
 
-		if (mb_strpos($post['file_url'], '?') !== false)
-			$url_without_params = mb_substr($post['file_url'], 0, mb_strpos($post['file_url'], '?'));
-		else
-			$url_without_params = $post['file_url'];
+				$post['file_url'] = $_POST['file_url'][$ui];
+				if (!preg_match('@^https?://@', $post['file_url']))
+					error($config['error']['invalidimg']);
 
-		$post['extension'] = strtolower(mb_substr($url_without_params, mb_strrpos($url_without_params, '.') + 1));
+				if (mb_strpos($post['file_url'], '?') !== false)
+					$url_without_params = mb_substr($post['file_url'], 0, mb_strpos($post['file_url'], '?'));
+				else
+					$url_without_params = $post['file_url'];
 
-		if ($post['op'] && $config['allowed_ext_op']) {
-			if (!in_array($post['extension'], $config['allowed_ext_op']))
-				error($config['error']['unknownext']);
+				$post['extension'] = strtolower(mb_substr($url_without_params, mb_strrpos($url_without_params, '.') + 1));
+
+				if ($post['op'] && $config['allowed_ext_op']) {
+					if (!in_array($post['extension'], $config['allowed_ext_op']) && !in_array($post['extension'], $config['url_upload']['curl_extensions']))
+						error($config['error']['unknownext']);
+				}
+				else if (!in_array($post['extension'], $config['allowed_ext']) && !in_array($post['extension'], $config['allowed_ext_files']) && !in_array($post['extension'], $config['url_upload']['curl_extensions']))
+					error($config['error']['unknownext']);
+
+
+				$post['file_tmp' . $ui] = @tempnam($config['tmp'] . $ui, 'url');
+				register_shutdown_function('unlink_tmp_file', $post['file_tmp' . $ui]);
+				$fp = fopen($post['file_tmp' . $ui], 'w');
+
+				$post['file_url'] = preg_replace('/^https?:\/\/(?:\w+\.|)/i', '', $post['file_url']);
+				$post['file_url'] = str_replace('%%url%%', urlencode($post['file_url' . $ui]), $config['url_upload']['curl_proxy']);
+				$curl = curl_init();
+				curl_setopt($curl, CURLOPT_URL, $post['file_url']);
+				curl_setopt($curl, CURLOPT_FAILONERROR, true);
+				curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
+				curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
+				curl_setopt($curl, CURLOPT_TIMEOUT, $config['url_upload']['timeout']);
+				curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0');
+				curl_setopt($curl, CURLOPT_FILE, $fp);
+				curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+				if (curl_exec($curl) === false)
+					error($config['error']['nomove'] . '<br/>Curl says: ' . curl_error($curl));
+				curl_close($curl);
+				$_FILES[] = array(
+					'name' => basename($url_without_params),
+					'tmp_name' => $post['file_tmp' . $ui],
+					'file_tmp' => true,
+					'error' => 0,
+					'size' => filesize($post['file_tmp' . $ui])
+				);
+			}
 		}
-		else if (!in_array($post['extension'], $config['allowed_ext']) && !in_array($post['extension'], $config['allowed_ext_files']))
-			error($config['error']['unknownext']);
-
-		$post['file_tmp'] = tempnam($config['tmp'], 'url');
-		function unlink_tmp_file($file) {
-			if(file_exists($file))
-				unlink($file);
-			fatal_error_handler();
-		}
-		register_shutdown_function('unlink_tmp_file', $post['file_tmp']);
-
-		$fp = fopen($post['file_tmp'], 'w');
-
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $post['file_url']);
-		curl_setopt($curl, CURLOPT_FAILONERROR, true);
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
-		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
-		curl_setopt($curl, CURLOPT_TIMEOUT, $config['upload_by_url_timeout']);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Tinyboard');
-		curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
-		curl_setopt($curl, CURLOPT_FILE, $fp);
-		curl_setopt($curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-
-		if (curl_exec($curl) === false)
-			error($config['error']['nomove'] . '<br/>Curl says: ' . curl_error($curl));
-
-		curl_close($curl);
-
-		fclose($fp);
-
-		$_FILES['file'] = array(
-			'name' => basename($url_without_params),
-			'tmp_name' => $post['file_tmp'],
-			'file_tmp' => true,
-			'error' => 0,
-			'size' => filesize($post['file_tmp'])
-		);
 	}
+
+	if($config['show_countryballs_single'] && isset($_POST['cbsingle']))
+		$post['showcountryball'] = true;
 
 	if($config['hide_poster_id_thread'] && $post['op'])
 		$post['hideposterid'] = isset($_POST['hideposterid']);
@@ -500,10 +512,14 @@ function handle_post(){
 	$post['body'] = $_POST['body'];
 	$post['password'] = sha256Salted($_POST['password']);
 	$post['has_file'] = (!isset($post['embed']) && (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0));
+	$post['shadow'] = 0;
+
+	if (isset($_POST['rmexif']) && $post['has_file'] && $config['strip_exif_single'])
+		$config['strip_exif'] = true;
 
 
 		if (!($post['has_file'] || isset($post['embed'])) || (($post['op'] && $config['force_body_op']) || (!$post['op'] && $config['force_body']))) {
-			$stripped_whitespace = preg_replace('/[\s]/u', '', $post['body']);
+			$stripped_whitespace = preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $post['body']);
 			if (empty($stripped_whitespace))
 				error($config['error']['tooshort_body']);
 
@@ -669,12 +685,11 @@ function handle_post(){
 		$post['body'] .= "\n<tinyboard raw html>1</tinyboard>";
 	}
 
-	if (($config['country_flags'] && !$config['allow_no_country']) ||
-	   ($config['country_flags'] && $config['allow_no_country'] &&
-	    !isset($_POST['no_country']))) {
+	if (($config['countryballs'] && !$config['allow_no_country']) ||
+		($config['countryballs'] && $config['allow_no_country'] &&
+		!isset($_POST['no_country'])) || isset($post['showcountryball'])){
 
-	    $arr = forcedIPflags($_SERVER['REMOTE_ADDR']);
-
+		$arr = forcedIPflags($_SERVER['REMOTE_ADDR']);
 		if ($arr)
 			$arr['country_name'] = $config['mod']['forcedflag_countries'][$arr['country']];
 		else
@@ -1242,9 +1257,11 @@ function handle_whitelist(){
 
 }
 
-session_start();
-if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie']))
-	$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
+if ($config['captcha']['post_captcha'] || $config['captcha']['thread_captcha'] || $config['captcha']['report_captcha']) {
+	session_start();
+	if (!isset($_POST['captcha_cookie']) && isset($_SESSION['captcha_cookie']))
+		$_POST['captcha_cookie'] = $_SESSION['captcha_cookie'];
+}
 
 
 if (isset($_POST['delete']))

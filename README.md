@@ -4,9 +4,12 @@ Nicochan
 There is a handful of themes I didn't tested bc we don't use them.
 This includes: categories, index, js_frameset, recent, basic, frameset
 
+## Info regardings existing installations
+You'll need to run the script `tools/update_embed.php` and `tools/update_password` to update current embeds and hashing passwords.
+
 Requirements
 ------------
-1.	PHP >= 7.3 (PHP 8.0 is working quite well)
+1.	PHP >= 8.0 (PHP 8.1+ is in beta, but working so far)
 2.	MySQL/MariaDB
 3.	[mbstring](https://www.php.net/manual/en/mbstring.installation.php)
 4.	[PHP GD](https://www.php.net/manual/en/intro.image.php)
@@ -23,7 +26,7 @@ We try to make sure vichan is compatible with all major web servers. vichan does
 1.	MariaDB server >= 10.3.22
 2.	ImageMagick (command-line ImageMagick or GraphicsMagick preferred).
 3.	[APCU (Alternative PHP Cache)](https://php.net/manual/en/book.apcu.php),
-	[XCache](https://xcache.lighttpd.net/) or
+	[XCache](https://xcache.lighttpd.net/),
 	[Memcached](https://www.php.net/manual/en/intro.memcached.php) or
 	[Redis](https://redis.io/)
 

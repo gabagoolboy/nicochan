@@ -1,22 +1,22 @@
 <p style="text-align:center">
-	Flood prevention cache:
+	{% trans %}Flood prevention cache:{% endtrans %}
 </p>
 <table class="modlog" style="width:1%;">
 	<tr>
 		<th>#</th>
-		<th>Time</th>
-		<th>Board</th>
-		<th>Post hash</th>
-		<th>File hash</th>
+		<th>{% trans %}Time{% endtrans %}</th>
+		<th>{% trans %}Board{% endtrans %}</th>
+		<th>{% trans %}Post hash{% endtrans %}</th>
+		<th>{% trans %}File hash{% endtrans %}</th>
 	</tr>
 	{% for post in flood_posts %}
 		<tr>
 			<td class="minimal">{{ post.id }}</td>
-			<td class="minimal"{% if post.in_flood_table %} style="color:red" title="Still in flood prevention cache."{% endif %}>
-				<small>{{ post.time | ago }} ago</small>
+			<td class="minimal"{% if post.in_flood_table %} style="color:red" title="{% trans %}Still in flood prevention cache.{% endtrans %}"{% endif %}>
+				<small>{{ post.time | ago }} {% trans %}ago{% endtrans %}</small>
 			</td>
 			<td class="minimal">
-				<a href="?/{{ config.board_path|format(post.board) }}{{ config.file_index }}">
+				<a href="?/{{ config.board_path|format(post.board) }}">
 					{{ config.board_abbreviation|format(post.board) }}
 				</a>
 			</td>
@@ -25,7 +25,7 @@
 				{% if post.filehash %}
 					<code>{{ post.filehash }}</code>
 				{% else %}
-					<em>No file</em>
+					<em>{% trans %}No file{% endtrans %}</em>
 				{% endif %}
 			</td>
 		</tr>
@@ -33,27 +33,27 @@
 </table>
 
 <p style="text-align:center">
-	Most recent {{ posts|length }} posts:
+	{% trans %}Most recent{% endtrans %} {{ posts|length }} {% trans %}posts{% endtrans %}:
 </p>
 <table class="modlog" style="word-wrap: break-word;">
 	<tr>
-		<th>Time</th>
-		<th>Board</th>
-		<th>ID</th>
-		<th>Thread</th>
-		<th>IP</th>
-		<th>Name</th>
-		<th>Subject</th>
-		<th>File</th>
-		<th>Body (snippet)</th>
+		<th>{% trans %}Time{% endtrans %}</th>
+		<th>{% trans %}Board{% endtrans %}</th>
+		<th>{% trans %}ID{% endtrans %}</th>
+		<th>{% trans %}Thread{% endtrans %}</th>
+		<th>{% trans %}IP{% endtrans %}</th>
+		<th>{% trans %}Name{% endtrans %}</th>
+		<th>{% trans %}Subject{% endtrans %}</th>
+		<th>{% trans %}File{% endtrans %}</th>
+		<th>{% trans %}Body (snippet){% endtrans %}</th>
 	</tr>
 	{% for post in posts %}
 		<tr>
-			<td class="minimal"{% if post.in_flood_table %} style="color:red" title="Still in flood prevention cache."{% endif %}>
-				<small>{{ post.time | ago }} ago</small>
+			<td class="minimal"{% if post.in_flood_table %} style="color:red" title="{% trans %}Still in flood prevention cache.{% endtrans %}"{% endif %}>
+				<small>{{ post.time | ago }} {% trans %}ago{% endtrans %}</small>
 			</td>
 			<td class="minimal">
-				<a href="?/{{ config.board_path|format(post.board) }}{{ config.file_index }}">
+				<a href="?/{{ config.board_path|format(post.board) }}">
 					{{ config.board_abbreviation|format(post.board) }}
 				</a>
 			</td>
@@ -82,7 +82,7 @@
 						{{ post.ip }}
 					</a>
 				{% else %}
-					<em>hidden</em>
+					<em>{% trans %}hidden{% endtrans %}</em>
 				{% endif %}
 			</td>
 			<td class="minimal" >

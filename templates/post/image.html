@@ -1,6 +1,6 @@
 <a href="
-	{% if post.file|extension == 'webm' or post.file|extension == 'mp4' %}
-		{{ config.root }}player.php?v={% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}{% if config.show_filename %}&amp;t={{ post.filename|e('url') }}{% endif %}
+	{% if post.file|extension == 'webm' or post.file|extension == 'mp4' or post.file|extension == 'mp3' or post.file|extension == 'ogg' %}
+	{{ config.root }}player.php?v={% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}{% if config.show_filename %}&amp;t={{ post.filename|e('url') }}{% endif %}
 	{% else %}
 		{% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}
 	{% endif %}
@@ -20,7 +20,7 @@
 					{{ config.file_thumb|format(config.file_icons.default) }}
 				{% endif %}
 			"
-			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" {% if config.content_loading_lazy %} loading="lazy" {% endif %}
 		>
 		</video>
 	{% else %}
@@ -39,7 +39,8 @@
 					{% if shadow %}{{ config.uri_shadow_thumb }}{% else %}{{ config.uri_thumb }}{% endif %}{{ post.thumb }}
 				{% endif %}
 			"
-			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" alt=""
+			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" {% if config.content_loading_lazy %} loading="lazy" {% endif %}
 		/>
 	{% endif %}
+
 </a>

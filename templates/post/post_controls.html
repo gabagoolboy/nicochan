@@ -22,7 +22,7 @@
 		{{ secure_link_confirm(config.mod.link_deletebyip_global, 'Delete all posts by IP across all boards'|trans, 'Are you sure you want to delete all posts by this IP address, across all boards?'|trans, board.dir ~ 'deletebyip/' ~ post.id ~ '/global') }}&nbsp;
 	{% endif %}
 	{% if mod|hasPermission(config.mod.bantz, board.uri) %}
-		<a title="{% trans %}Addd Bantz{% endtrans %}" href="?/{{ board.dir }}bantz/{{ post.id }}">{{ config.mod.link_bantz }}</a>&nbsp;
+		<a title="{% trans %}Add Bantz{% endtrans %}" href="?/{{ board.dir }}bantz/{{ post.id }}">{{ config.mod.link_bantz }}</a>&nbsp;
 	{% endif %}
 	{% if mod|hasPermission(config.mod.nicenotice, board.uri) %}
 		<a title="{% trans %}Issue Nicenotice / Notice of Concern{% endtrans %}" href="?/{{ board.dir }}nicenotice/{{ post.id }}">{{ config.mod.link_nicenotice }}</a>&nbsp;
@@ -90,7 +90,7 @@
 	{% endif %}
 	{% if mod|hasPermission(config.mod.merge, board.uri) %}
 		{% if not post.thread %}
-			<a title="{% trans %}Merge thread with another thread {% endtrans %}" href="?/{{ board.dir }}merge/{{ post.id }}">{{ config.mod.link_merge }}</a>&nbsp;
+			<a title="{% trans %}Merge thread with another thread{% endtrans %}" href="?/{{ board.dir }}merge/{{ post.id }}">{{ config.mod.link_merge }}</a>&nbsp;
 		{% endif %}
 	{% endif %}
 	{% if mod|hasPermission(config.mod.hideid, board.uri) %}

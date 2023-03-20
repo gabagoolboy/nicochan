@@ -1,27 +1,27 @@
 <script src='/js/jquery.tablesorter.min.js'></script>
 
 {% if config.mod_archive.threads and mod and mod|hasPermission(config.view_mod_archive) %}
-<p style="text-align: center">
-	<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.mod_archive }}">[{% trans %}View Mod Archive{% endtrans %}]</a>
-</p>
+	<p style="text-align: center">
+		<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.mod_archive }}">[{% trans %}View Mod Archive{% endtrans %}]</a>
+	</p>
 {% endif %}
 {% if config.feature.threads %}
-<p style="text-align: center">
-	<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured Thread Archive{% endtrans %}]</a>
-</p>
+	<p style="text-align: center">
+		<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured Thread Archive{% endtrans %}]</a>
+	</p>
 {% endif %}
 <p style="text-align: center">
 	<b>{% trans 'Displaying' %} {{ thread_count }} {% trans 'expired threads' %}{% if config.archive.lifetime %} {% trans 'from the past' %} {{  config.archive.lifetime }}{% endif %}</b><br/>
-	<small>Vote for a thread to be added to the featured archive</small>
+	<small>{% trans %}Vote for a thread to be added to the featured archive{% endtrans %}</small>
 </p>
 
 <table id="archive-list" class="archive-list modlog tablesorter">
 	<thead>
 		<tr>
-			<th width='80px'>Post #</th>
-			<th>Snippet</th>
+			<th width='80px'>{% trans %}Post #{% endtrans %}</th>
+			<th>{% trans %}Snippet{% endtrans %}</th>
 			<th width='50px'>&nbsp;</th>
-			<th width='50px'>Votes</th>
+			<th width='50px'>{% trans %}Votes{% endtrans %}</th>
 			{% if mod and mod|hasPermission(config.mod.feature_archived_threads, board.uri) %}
 				<th width='80px'>&nbsp;</th>
 			{% endif %}
@@ -43,10 +43,10 @@
 								<input type="hidden" name="board" value="{{ board.uri }}" />
 								<input type="hidden" name="thread_id" value="{{ thread.id }}">
 								<input type="hidden" name="archive_vote" value="1">
-								<a href="#" onclick="confirm('Press OK to vote for this thread to be added to featured archive.')?this.parentNode.submit():false;">[+]</a>
+								<a href="#" onclick="confirm('{% trans %}Press OK to vote for this thread to be added to featured archive.{% endtrans %}')?this.parentNode.submit():false;">[+]</a>
 							</form>
 						{% else %}
-							<strong>Featured</strong>
+							<strong>{% trans %}Featured{% endtrans %}</strong>
 						{% endif %}
 					{% else %}
 						{{ thread.votes }}
@@ -59,7 +59,7 @@
 								<input type="hidden" name="token" value="{{ token }}">
 								<input type="hidden" name="id" value="{{ thread.id }}">
 								<input type="hidden" name="feature" value="1">
-								<a href="#" onclick="confirm('Are you sure you want to add thread to featured archive?')?this.parentNode.submit():false;">[{% trans 'Feature' %}]</a>
+								<a href="#" onclick="confirm('{% trans %}Are you sure you want to add thread to featured archive?{% endtrans %}')?this.parentNode.submit():false;">[{% trans 'Feature' %}]</a>
 							</form>
 						{% else %}
 							<b>{% trans 'Featured' %}</b>
@@ -73,7 +73,7 @@
 								<input type="hidden" name="token" value="{{ token }}">
 								<input type="hidden" name="id" value="{{ thread.id }}">
 								<input type="hidden" name="mod_archive" value="1">
-								<a href="#" onclick="confirm('Are you sure you want to add thread to mod archive?')?this.parentNode.submit():false;">[{% trans 'Mod Archive' %}]</a>
+								<a href="#" onclick="confirm('{% trans %}Are you sure you want to add thread to mod archive?{% endtrans %}')?this.parentNode.submit():false;">[{% trans 'Mod Archive' %}]</a>
 							</form>
 						{% else %}
 							<b>{% trans 'Mod Archived' %}</b>

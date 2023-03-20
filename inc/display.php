@@ -35,7 +35,7 @@ function doBoardListPart($list, $root, &$boards) {
 					$title = ' title="'.$boards[$board].'"';
 				}
 
-				$body .= ' <a href="' . $root . $board . '/' . $config['file_index'] . '"'.$title.'>' . $board . '</a> /';
+				$body .= ' <a href="' . $root . $board . '/' . '"'.$title.'>' . $board . '</a> /';
 			}
 		}
 	}
@@ -92,6 +92,7 @@ function error($message, $priority = true, $debug_stuff = []) {
 
 	if ($config['debug']) {
 		$debug_stuff['backtrace'] = debug_backtrace();
+		ini_set('memory_limit', '160M'); // i know but it works
 	}
 
 	if (isset($_POST['json_response'])) {
@@ -341,11 +342,14 @@ function secure_link($href) {
 function embed_html($link) {
 	global $config;
 
-	foreach ($config['embedding'] as $embed) {
-		if ($html = preg_replace($embed[0], $embed[1], $link)) {
-				if ($html == $link)
+	$link = json_decode($link);
+	foreach ($config['embeds'] as $embed) {
+		if ($html = preg_replace($embed['regex'], $embed['html'], $link->url)) {
+				if ($html == $link->url)
 					continue; // Nope
 
+			$html = str_replace('%%VIDEO_NAME%%', htmlspecialchars(mb_substr($link->title, 0, 60, 'UTF-8')), $html);
+			$html = str_replace('%%VIDEO_FULLNAME%%', htmlspecialchars($link->title), $html);
 			$html = str_replace('%%tb_width%%', $config['embed_width'], $html);
 			$html = str_replace('%%tb_height%%', $config['embed_height'], $html);
 
@@ -362,10 +366,12 @@ function embed_html($link) {
 }
 
 class Post {
-	public function __construct($post, $root=null, $mod=false) {
-		global $config;
+	public function __construct($config, $post, $root=null, $mod=false) {
+
+		$this->config = $config;
+
 		if (!isset($root))
-			$root = &$config['root'];
+			$root = &$this->config['root'];
 
 		foreach ($post as $key => $value) {
 			$this->{$key} = $value;
@@ -382,12 +388,17 @@ class Post {
 		$this->mod = $mod;
 		$this->root = $root;
 
-		if ($this->embed)
+		if ($this->embed) {
+			// this is just for the api
+			$url = json_decode($this->embed);
+			$this->embed_url = $url->url;
+			$this->embed_title = $url->title;
 			$this->embed = embed_html($this->embed);
+		}
 
 		$this->modifiers = extract_modifiers($this->body_nomarkup);
 
-		if ($config['always_regenerate_markup']) {
+		if ($this->config['always_regenerate_markup']) {
 			$this->body = $this->body_nomarkup;
 			markup($this->body);
 		}
@@ -396,7 +407,7 @@ class Post {
 			// Fix internal links
 			// Very complicated regex
 			$this->body = preg_replace(
-				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($config['root'], '/') . '(' . sprintf(preg_quote($config['board_path'], '/'), $config['board_regex']) . ')/u',
+				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($this->config['root'], '/') . '(' . sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex']) . ')/u',
 				'<a $1href="?/$4',
 				$this->body
 			);
@@ -408,17 +419,19 @@ class Post {
 	}
 
 	public function build($index=false) {
-		global $board, $config;
+		global $board;
 
-		return Element('post_reply.html', array('config' => $config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
+		return Element('post_reply.html', array('config' => $this->config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
 	}
 };
 
 class Thread {
-	public function __construct($post, $root = null, $mod = false, $hr = true) {
-		global $config;
+	public function __construct($config, $post, $root = null, $mod = false, $hr = true) {
+
+		$this->config = $config;
+
 		if (!isset($root))
-			$root = &$config['root'];
+			$root = &$this->config['root'];
 
 		foreach ($post as $key => $value) {
 			$this->{$key} = $value;
@@ -440,12 +453,17 @@ class Thread {
 		$this->omitted = 0;
 		$this->omitted_images = 0;
 
-		if ($this->embed)
+		if ($this->embed) {
+			// this is just for the api
+			$url = json_decode($this->embed);
+			$this->embed_url = $url->url;
+			$this->embed_title = $url->title;
 			$this->embed = embed_html($this->embed);
+		}
 
 		$this->modifiers = extract_modifiers($this->body_nomarkup);
 
-		if ($config['always_regenerate_markup']) {
+		if ($this->config['always_regenerate_markup']) {
 			$this->body = $this->body_nomarkup;
 			markup($this->body);
 		}
@@ -454,7 +472,7 @@ class Thread {
 			// Fix internal links
 			// Very complicated regex
 			$this->body = preg_replace(
-				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($config['root'], '/') . '(' . sprintf(preg_quote($config['board_path'], '/'), $config['board_regex']) . ')/u',
+				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($this->config['root'], '/') . '(' . sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex']) . ')/u',
 				'<a $1href="?/$4',
 				$this->body
 			);
@@ -464,6 +482,7 @@ class Thread {
 
 		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
 	}
+
 	public function add(Post $post) {
 		$this->posts[] = $post;
 	}
@@ -471,9 +490,9 @@ class Thread {
 		   return count($this->posts) + $this->omitted;
 	}
 	public function build($index=false, $isnoko50=false) {
-		global $board, $config, $debug;
+		global $board, $debug;
 
-		$hasnoko50 = $this->postCount() >= $config['noko50_min'];
+		$hasnoko50 = $this->postCount() >= $this->config['noko50_min'];
 
 		event('show-thread', $this);
 
@@ -502,7 +521,7 @@ class Thread {
                     if(($num >= $min_post_num) || ($num == $thread_num))
                     {
                         $patterns[] = '/' . str_replace('/', '\/', preg_quote($results[0][$key])) . '/';
-                        $changes[] = $results[1][$key] . sprintf($config['file_page50'], $results[2][$key]) . "#" . $results[4][$key] . '"';
+                        $changes[] = $results[1][$key] . sprintf($this->config['file_page50'], $results[2][$key]) . "#" . $results[4][$key] . '"';
                     }
                 }
 
@@ -511,8 +530,8 @@ class Thread {
             }
         }
 
-		$file = ($index && $config['file_board']) ? 'post_thread_fileboard.html' : 'post_thread.html';
-		$built = Element($file, array('config' => $config, 'hideposterid' => $hideposterid, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
+		$file = ($index && $this->config['file_board']) ? 'post_thread_fileboard.html' : 'post_thread.html';
+		$built = Element($file, array('config' => $this->config, 'hideposterid' => $hideposterid, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
 
 		return $built;
 	}

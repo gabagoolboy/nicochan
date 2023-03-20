@@ -1,7 +1,7 @@
 <form action="" method="post">
 	<input type="hidden" name="token" value="{{ token }}">
 	{% if not config %}
-		<p style="text-align:center" class="unimportant">(No configuration required.)</p>
+	<p style="text-align:center" class="unimportant">{% trans %}(No configuration required.){% endtrans %}</p>
 	{% else %}
 		<table>
 			{% for conf in theme.config %}

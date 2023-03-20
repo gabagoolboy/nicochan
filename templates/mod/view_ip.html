@@ -3,26 +3,28 @@
 </script>
 <script src="js/id_colors.js"></script>
 
-{% for board_posts in posts %}
-	<fieldset>
-		<legend>
-			<a href="?/{{ config.board_path|format(board_posts.board.uri) }}{{ config.file_index }}">
-				{{ config.board_abbreviation|format(board_posts.board.uri) }}
-				 -
-				 {{ board_posts.board.title|e }}
-			</a>
-		</legend>
-		{{ board_posts.posts|join('<hr>') }}
-	</fieldset>
-{% endfor %}
-
-
+{% if not posts|length %}
+	<p style="text-align:center">({% trans 'There are none posts.' %})</p>
+{% else %}
+	{% for board_posts in posts %}
+		<fieldset>
+			<legend>
+				<a href="?/{{ config.board_path|format(board_posts.board.uri) }}">
+					{{ config.board_abbreviation|format(board_posts.board.uri) }}
+					 -
+					 {{ board_posts.board.title|e }}
+				</a>
+			</legend>
+			{{ board_posts.posts|join('<hr>') }}
+		</fieldset>
+	{% endfor %}
+{% endif %}
 
 {% if mod|hasPermission(config.mod.view_notes) %}
 	<fieldset id="notes">
 		<legend>
-			{% set notes_on_record = 'note' ~ (notes|length > 1 ? 's' : '') ~ ' on record' %}
-			<legend>{{ notes|length }} {% trans %} {{notes_on_record}}{% endtrans %}</legend>
+			{% set notes_length = notes|length %}
+			<legend>{{ notes_length }} {% trans %}note on record{% plural notes_length %}notes on record{% endtrans %}</legend>
 		</legend>
 
 		{% if notes|length > 0 %}
@@ -123,20 +125,19 @@
 
 {% if bans|length > 0 and mod|hasPermission(config.mod.view_ban) %}
 	<fieldset id="bans">
-		{% set bans_on_record = 'ban' ~ (bans|length > 1 ? 's' : '') ~ ' on record' %}
-		<legend>{{ bans|length }} {% trans %} {{bans_on_record}} {% endtrans %}</legend>
+		{% set bans_length = bans|length %}
+		<legend>{{ bans_length }} {% trans %}ban on record{% plural bans_length %}bans on record{% endtrans %}</legend>
 
 		{% for ban in bans %}
 			<form action="" method="post" style="text-align:center">
 				<input type="hidden" name="token" value="{{ security_token }}">
-
 				{% include 'mod/ban_history.html' %}
 				<input type="hidden" name="ban_id" value="{{ ban.id }}">
 				<input type="hidden" name="appeal" value="{{ ban.appealable }}">
-				<input type="submit" name="ban_cookie" value="Ban Cookie">
-				<input type="submit" name="change_appeal" value="Change appeal">
+				<input type="submit" name="ban_cookie" value="{% trans %}Ban Cookie{% endtrans %}">
+				<input type="submit" name="change_appeal" value="{% trans %}Change appeal status{% endtrans %}">
 				<input type="submit" name="unban" value="{% trans 'Remove ban' %}">
-				<input type="submit" name="edit_ban" value="Edit Ban">
+				<input type="submit" name="edit_ban" value="{% trans %}Edit Ban{% endtrans %}">
 			</form>
 		{% endfor %}
 	</fieldset>
@@ -152,7 +153,7 @@
 
 {% if logs|length > 0  %}
 	<fieldset id="history">
-		<legend>History</legend>
+		<legend>{% trans 'History' %}</legend>
 		<table class="modlog" style="width:100%">
 			<tr>
 				<th>{% trans 'Staff' %}</th>
@@ -166,13 +167,13 @@
 						{% if log.username %}
 							<a href="?/log:{{ log.username|e }}">{{ log.username|e }}</a>
 						{% elseif log.mod == -1 %}
-							<em>system</em>
+							<em>{% trans %}system{% endtrans %}</em>
 						{% else %}
 							<em>{% trans 'deleted?' %}</em>
 						{% endif %}
 					</td>
 					<td class="minimal">
-						<span title="{{ log.time|strftime }}">{{ log.time|ago }}</span>
+						<span title="{{ log.time|strftime(config.post_date) }}">{{ log.time|ago }}</span>
 					</td>
 					<td class="minimal">
 						{% if log.board %}

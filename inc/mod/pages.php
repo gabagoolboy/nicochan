@@ -39,8 +39,13 @@ function mod_login($redirect = false) {
 			if ($config['syslog'])
 				_syslog(LOG_WARNING, 'Unauthorized login attempt!');
 
+			insert_into_modlogins($_POST['username']);
+			
 			$args['error'] = $config['error']['invalid'];
 		} else {
+
+			insert_into_modlogins($_POST['username'], true);
+			
 			modLog('Logged in');
 
 			// Login successful
@@ -92,7 +97,7 @@ function mod_dashboard() {
 	}
 
 	if (!$config['cache']['enabled'] || !$args['unread_pms'] = cache::get('pm_unreadcount_' . $mod['id'])) {
-		$query = prepare('SELECT COUNT(*) FROM ``pms`` WHERE `to` = :id AND `unread` = 1');
+		$query = prepare('SELECT COUNT(1) FROM ``pms`` WHERE `to` = :id AND `unread` = 1');
 		$query->bindValue(':id', $mod['id']);
 		$query->execute() or error(db_error($query));
 		$args['unread_pms'] = $query->fetchColumn();
@@ -101,11 +106,11 @@ function mod_dashboard() {
 			cache::set('pm_unreadcount_' . $mod['id'], $args['unread_pms']);
 	}
 
-	$query = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
+	$query = query('SELECT COUNT(1) FROM ``reports``') or error(db_error($query));
 	$args['reports'] = $query->fetchColumn();
 
 	// Counter for number of appeals
-	$query = query('SELECT COUNT(*) FROM ``ban_appeals`` WHERE ``denied`` = 0') or error(db_error($query));
+	$query = query('SELECT COUNT(1) FROM ``ban_appeals`` WHERE ``denied`` = 0') or error(db_error($query));
 	$args['appealcount'] = $query->fetchColumn();
 
 	$args['logout_token'] = make_secure_link_token('logout');
@@ -259,10 +264,10 @@ function mod_search($type, $search_query_escaped, $page_no = 1) {
 
 	// Get total result count
 	if ($type == 'posts') {
-		$q = query("SELECT COUNT(*) FROM ($query) AS `tmp_table`") or error(db_error());
+		$q = query("SELECT COUNT(1) FROM ($query) AS `tmp_table`") or error(db_error());
 		$result_count = $q->fetchColumn();
 	} else {
-		$q = query('SELECT COUNT(*) FROM `' . $sql_table . '` WHERE ' . $sql_like) or error(db_error());
+		$q = query('SELECT COUNT(1) FROM `' . $sql_table . '` WHERE ' . $sql_like) or error(db_error());
 		$result_count = $q->fetchColumn();
 	}
 
@@ -321,9 +326,6 @@ function mod_edit_board($boardName) {
 
 			// Delete archive table
 			$query = query(sprintf('DROP TABLE IF EXISTS ``archive_%s``', $board['uri'])) or error(db_error());
-
-			// Delete shadow delete table
-			$query = query(sprintf('DROP TABLE IF EXISTS ``shadow_posts_%s``', $board['uri'])) or error(db_error());
 
 			// Clear reports
 			$query = prepare('DELETE FROM ``reports`` WHERE `board` = :id');
@@ -462,10 +464,6 @@ function mod_new_board() {
 
 		query($query) or error(db_error());
 
-		// Create Shaddow Copy Table
-		$query = str_replace('posts_%s', "shadow_posts_{$board['uri']}", file_get_contents($config['dir']['template'].'/posts.sql'));
-		query($query) or error(db_error());
-
 		// Create Archive Table in DB
 		$query = str_replace('%s', $board['uri'], file_get_contents($config['dir']['template'].'/archive.sql'));
 		query($query) or error(db_error());
@@ -529,7 +527,7 @@ function mod_noticeboard($page_no = 1) {
 		$entry['delete_token'] = make_secure_link_token('noticeboard/delete/' . $entry['id']);
 	}
 
-	$query = prepare("SELECT COUNT(*) FROM ``noticeboard``");
+	$query = prepare("SELECT COUNT(1) FROM ``noticeboard``");
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 
@@ -638,7 +636,7 @@ function mod_log($page_no = 1) {
 	if (empty($logs) && $page_no > 1)
 		error($config['error']['404']);
 
-	$query = prepare("SELECT COUNT(*) FROM ``modlogs``");
+	$query = prepare("SELECT COUNT(1) FROM ``modlogs``");
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
 
@@ -664,7 +662,7 @@ function mod_user_log($username, $page_no = 1) {
 	if (empty($logs) && $page_no > 1)
 		error($config['error']['404']);
 
-	$query = prepare("SELECT COUNT(*) FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `username` = :username");
+	$query = prepare("SELECT COUNT(1) FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `username` = :username");
 	$query->bindValue(':username', $username);
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
@@ -700,7 +698,7 @@ function mod_board_log($board, $page_no = 1, $hide_names = false, $public = fals
 		}
 	}
 
-	$query = prepare("SELECT COUNT(*) FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `board` = :board");
+	$query = prepare("SELECT COUNT(1) FROM ``modlogs`` LEFT JOIN ``mods`` ON `mod` = ``mods``.`id` WHERE `board` = :board");
 	$query->bindValue(':board', $board);
 	$query->execute() or error(db_error($query));
 	$count = $query->fetchColumn();
@@ -732,7 +730,7 @@ function mod_view_board($boardName, $page_no = 1) {
 		error($config['error']['404']);
 	}
 
-	$queryReports = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($query));
+	$queryReports = query('SELECT COUNT(1) FROM ``reports``') or error(db_error($query));
 	$reports = $queryReports->fetchColumn();
 
 	$page['reports'] = $reports;
@@ -771,7 +769,7 @@ function mod_view_thread($boardName, $thread) {
 	if($config['shadow_del']['use'])
 		ShadowDelete::purge();
 
-	$page = buildThread($thread, true, $mod, hasPermission($config['mod']['view_shadow_posts']));
+	$page = buildThread($thread, true, $mod, hasPermission($config['mod']['view_shadow_posts'], $boardName));
 	echo $page;
 }
 
@@ -792,7 +790,7 @@ function mod_ip_set_forcedflag($ip, $country) {
 			error($config['error']['noaccess']);
 
 	if (!validate_ip_string($ip))
-		error("Invalid IP address.");
+		error(_("Invalid IP address."));
 
 	$countryCode = $config['mod']['forcedflag_countries'][$country];
 
@@ -816,7 +814,7 @@ function mod_ip_remove_forcedflag($ip) {
 			error($config['error']['noaccess']);
 
 	if (!validate_ip_string($ip))
-		error("Invalid IP address.");
+		error(_("Invalid IP address."));
 
 	$query = prepare('SELECT `country` FROM ``custom_geoip`` WHERE `ip` = :ip');
 	$query->bindValue(':ip', $ip);
@@ -844,7 +842,7 @@ function mod_ip_remove_note($ip, $id) {
 			error($config['error']['noaccess']);
 
 	if (!validate_ip_string($ip))
-		error("Invalid IP address.");
+		error(_("Invalid IP address."));
 
 	$query = prepare('DELETE FROM ``ip_notes`` WHERE `ip` = :ip AND `id` = :id');
 	$query->bindValue(':ip', $ip);
@@ -859,12 +857,8 @@ function mod_ip_remove_note($ip, $id) {
 function mod_page_ip($ip) {
 	global $config, $mod;
 
-	// // If BCrypted IP Hash decode special chars
-	// if($config['bcrypt_ip_addresses'])
-	// 	$ip = getURLDecoded_HashIP($ip);
-
 	if (!validate_ip_string($ip))
-		error("Invalid IP address." . $ip);
+		error(_("Invalid IP address."));
 
 	if (isset($_POST['ban_id'], $_POST['unban'])) {
 		if (!hasPermission($config['mod']['unban']))
@@ -955,7 +949,7 @@ function mod_page_ip($ip) {
 	$boards = listBoards();
 	foreach ($boards as $board) {
 		openBoard($board['uri']);
-		if (!hasPermission($config['mod']['show_ip'], $board['uri']) && !hasPermission($config['mod']['sitewide_post_info']))
+		if (!hasPermission($config['mod']['show_ip'], $board['uri']))
 			continue;
 		$query = prepare(sprintf('SELECT * FROM ``posts_%s`` WHERE `ip` = :ip ORDER BY `sticky` DESC, `id` DESC LIMIT :limit', $board['uri']));
 		$query->bindValue(':ip', $ip);
@@ -963,10 +957,12 @@ function mod_page_ip($ip) {
 		$query->execute() or error(db_error($query));
 
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
+			if($post['shadow'] && $post['files'])
+				$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
 			if (!$post['thread']) {
-				$po = new Thread($post, '?/', $mod, false);
+				$po = new Thread($config, $post, '?/', $mod, false);
 			} else {
-				$po = new Post($post, '?/', $mod);
+				$po = new Post($config, $post, '?/', $mod);
 			}
 
 			if (!isset($args['posts'][$board['uri']]))
@@ -1033,10 +1029,11 @@ function mod_edit_ban($ban_id) {
 	if (!hasPermission($config['mod']['edit_ban']))
 		error($config['error']['noaccess']);
 
-	$args['bans'] = Bans::find($null, false, true, false, $ban_id);
+	$args['bans'] = Bans::find(null, false, true, false, $ban_id);
 	$args['ban_id'] = $ban_id;
 	$args['boards'] = listBoards();
 	$args['reasons'] = $config['ban_reasons'];
+	$args['current_board'] = isset($args['bans'][0]['board']) ? $args['bans'][0]['board'] : false;
 
 	if (!$args['bans'])
 		error($config['error']['404']);
@@ -1057,6 +1054,13 @@ function mod_edit_ban($ban_id) {
 		else
 			$new_ban['length'] = false;
 
+		if (isset($_POST['board'])) {
+			if ($_POST['board'] == '*')
+				$new_ban['board'] = false;
+			else
+				$new_ban['board'] = $_POST['board'];
+		}
+
 		if (isset($_POST['raid']) && $new_ban['post'])
 			$new_ban['noshow'] = true;
 		else
@@ -1067,14 +1071,14 @@ function mod_edit_ban($ban_id) {
 		else
 			$new_ban['appeal'] = true;
 
-		Bans::new_ban($new_ban['mask'], $new_ban['cookie'], $new_ban['reason'], $new_ban['length'], $_POST['board'] == '*' ? false : $_POST['board'], false, !$new_ban['noshow'] ? $new_ban['post'] : false, $new_ban['appeal']);
+		Bans::new_ban($new_ban['mask'], $new_ban['cookie'], $new_ban['reason'], $new_ban['length'], $new_ban['board'], false, !$new_ban['noshow'] ? $new_ban['post'] : false, $new_ban['appeal'], true);
 		Bans::delete($ban_id);
 
 		header('Location: ?/', true, $config['redirect_http']);
 
 	}
 
-	$args['security_token'] = make_secure_link_token('edit_ban/' . $ban_id);
+	$args['token'] = make_secure_link_token('edit_ban/' . $ban_id);
 
 	mod_page(_('Edit ban'), 'mod/edit_ban.html', $args);
 
@@ -1278,8 +1282,7 @@ function mod_ban() {
 }
 
 function mod_bans() {
-	global $config;
-	global $mod;
+	global $config, $mod;
 
 	if (!hasPermission($config['mod']['view_banlist']))
 		error($config['error']['noaccess']);
@@ -1413,9 +1416,9 @@ function mod_ban_appeals() {
 			}
 
 			if ($ban['post']['thread']) {
-				$ban['post'] = new Post($ban['post']);
+				$ban['post'] = new Post($config, $ban['post']);
 			} else {
-				$ban['post'] = new Thread($ban['post'], null, false, false);
+				$ban['post'] = new Thread($config, $ban['post'], null, false, false);
 			}
 		}
 	}
@@ -1596,27 +1599,30 @@ function mod_move_reply($originBoard, $postID) {
 			error($config['error']['noboard']);
 
 
-		// Get all filhashes associated wiht post
 		$post['allhashes'] = '';
-		$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
-		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
-		$hashquery->execute() or error(db_error($hashquery));
-		while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
-			$post['allhashes'] .= $hash['filehash'] . ":";
+		if ($post['has_file']) {
+			// Get all filhashes associated wiht post
+			$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+			while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+				$post['allhashes'] .= $hash['filehash'] . ":";
+			}
+			$post['allhashes'] = substr($post['allhashes'], 0, -1);
 		}
-		$post['allhashes'] = substr($post['allhashes'], 0, -1);
 
 
 		// create the new post
 		$newID = post($post);
 
-		// Delete old file hash list.
-		$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
-		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
-		$hashquery->execute() or error(db_error($hashquery));
-
+		if ($post['has_file']) {
+			// Delete old file hash list.
+			$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+		}
 
 		// bool indicator if it is a move from one board to another
 		$board_move = !($originBoard == $targetBoard);
@@ -1718,27 +1724,30 @@ function mod_move($originBoard, $postID) {
 			error($config['error']['noboard']);
 
 
-		// Get all filhashes associated wiht post
 		$post['allhashes'] = '';
-		$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
-		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
-		$hashquery->execute() or error(db_error($hashquery));
-		while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
-			$post['allhashes'] .= $hash['filehash'] . ":";
+		if ($post['has_file']) {
+			// Get all filhashes associated wiht post
+			$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+			while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+				$post['allhashes'] .= $hash['filehash'] . ":";
+			}
+			$post['allhashes'] = substr($post['allhashes'], 0, -1);
 		}
-		$post['allhashes'] = substr($post['allhashes'], 0, -1);
 
 		// create the new thread
 		$newID = post($post);
 
 
-		// Delete old file hash list.
-		$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
-		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
-		$hashquery->execute() or error(db_error($hashquery));
-
+		if ($post['has_file']) {
+			// Delete old file hash list.
+			$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+		}
 
 		$op = $post;
 		$op['id'] = $newID;
@@ -1813,29 +1822,30 @@ function mod_move($originBoard, $postID) {
 					}
 				}
 
-
-
-			// Get all filhashes associated wiht post
 			$post['allhashes'] = '';
-			$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post ORDER BY `id`');
-			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-			$hashquery->bindValue(':post', $post['id'], PDO::PARAM_INT);
-			$hashquery->execute() or error(db_error($hashquery));
-			while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
-				$post['allhashes'] .= $hash['filehash'] . ":";
+			if ($post['has_file']) {
+				// Get all filhashes associated wiht post
+				$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post ORDER BY `id`');
+				$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+				$hashquery->bindValue(':post', $post['id'], PDO::PARAM_INT);
+				$hashquery->execute() or error(db_error($hashquery));
+				while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+					$post['allhashes'] .= $hash['filehash'] . ":";
+				}
+				$post['allhashes'] = substr($post['allhashes'], 0, -1);
 			}
-			$post['allhashes'] = substr($post['allhashes'], 0, -1);
-
 
 			// insert reply
 			$newIDs[$post['id']] = $newPostID = post($post);
 
 
-			// Delete old file hash list.
-			$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
-			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-			$hashquery->bindValue(':post', $post['id'], PDO::PARAM_INT);
-			$hashquery->execute() or error(db_error($hashquery));
+			if ($post['has_file']) {
+				// Delete old file hash list.
+				$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+				$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+				$hashquery->bindValue(':post', $post['id'], PDO::PARAM_INT);
+				$hashquery->execute() or error(db_error($hashquery));
+			}
 
 
 			if (!empty($post['tracked_cites'])) {
@@ -1944,6 +1954,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		error($config['error']['404']);
 
 	$thread = $_post['thread'];
+	$locked = (bool)$_post['locked'];
 	$ip = $_post['ip'];
 
 	// Get Unique User Cookie
@@ -1957,13 +1968,20 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		if (isset($_POST['raid']))
 			$config['ban_show_post'] = false;
 
+		if (isset($_POST['lock']) && !$thread && !$locked){
+			if (!hasPermission($config['mod']['lock']))
+				error($config['error']['noaccess']);
+			else
+				mod_lock($board, false, $post);
+		}
+
 
 		Bans::new_ban($_POST['ip'],  $_POST['uuser_cookie'], $_POST['reason'], $_POST['ban_length'], $_POST['board'] == '*' ? false : $_POST['board'],
 			false, $config['ban_show_post'] ? $_post : false, isset($_POST['appeal']) ? false : true);
 
 		if (isset($_POST['public_message'], $_POST['message'])) {
 			// public ban message
-			$length_english = Bans::parse_time($_POST['ban_length']) ? 'for ' . until(Bans::parse_time($_POST['ban_length'])) : 'permanently';
+			$length_english = Bans::parse_time($_POST['ban_length']) ? until(Bans::parse_time($_POST['ban_length'])) : _('permanently');
 			$_POST['message'] = preg_replace('/[\r\n]/', '', $_POST['message']);
 			$_POST['message'] = str_replace('%length%', $length_english, $_POST['message']);
 			$_POST['message'] = str_replace('%LENGTH%', strtoupper($length_english), $_POST['message']);
@@ -2007,6 +2025,8 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 		'uusercookie' => $cookie,
 		'post' => $post,
 		'board' => $board,
+		'thread' => $thread,
+		'locked' => $locked,
 		'delete_str' => "" . $delete,
 		'delete' => (bool)$delete,
 		'boards' => listBoards(),
@@ -2063,16 +2083,18 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 		$query->bindValue(':name', $_POST['name']);
 		$query->bindValue(':email', $_POST['email']);
 		$query->bindValue(':subject', $_POST['subject']);
-		$query->bindValue(':body', $_POST['body']);
 		if ($edit_raw_html) {
 			$body_nomarkup = $_POST['body'] . "\n<tinyboard raw html>1</tinyboard>";
 			$query->bindValue(':body_nomarkup', $body_nomarkup);
 		}
+
 		if (isset($embed_link)) {
 			$query->bindValue(':embed', $embed_link);
 		} else {
 			$query->bindValue(':embed', NULL, PDO::PARAM_NULL);
 		}
+
+		$query->bindValue(':body', $_POST['body']);
 		$query->execute() or error(db_error($query));
 
 		if ($edit_raw_html) {
@@ -2106,7 +2128,7 @@ function mod_edit_post($board, $edit_raw_html, $postID) {
 	}
 }
 
-function mod_recent_shadow_posts($lim) {
+function mod_recent_posts(?bool $shadow, $lim) {
 	global $config, $mod, $pdo;
 
 	if (!hasPermission($config['mod']['view_shadow_posts']))
@@ -2131,10 +2153,10 @@ function mod_recent_shadow_posts($lim) {
 	// Manually build an SQL query
 	$query = 'SELECT * FROM (';
 	foreach ($mod_boards as $board) {
-		$query .= sprintf('SELECT *, %s AS `board`, 1 AS `shadow` FROM ``shadow_posts_%s`` UNION ALL ', $pdo->quote($board['uri']), $board['uri']);
+		$query .= sprintf('SELECT *, %s AS `board` FROM ``posts_%s`` UNION ALL ', $pdo->quote($board['uri']), $board['uri']);
 	}
 	// Remove the last "UNION ALL" seperator and complete the query
-	$query = preg_replace('/UNION ALL $/', ') AS `all_posts` WHERE (`time` < :last_time OR NOT :last_time) ORDER BY `thread` IS NULL DESC, `time` DESC LIMIT ' . $limit, $query);
+	$query = preg_replace('/UNION ALL $/', ') AS `all_posts` WHERE (`time` < :last_time OR NOT :last_time) AND `shadow` = '. (!$shadow ? 0 : 1) .' ORDER BY `time` DESC LIMIT ' . $limit, $query);
 	$query = prepare($query);
 	$query->bindValue(':last_time', $last_time);
 	$query->execute() or error(db_error($query));
@@ -2148,36 +2170,48 @@ function mod_recent_shadow_posts($lim) {
 	foreach ($posts as $key => &$post) {
 		openBoard($post['board']);
 
-		// Fix Filenames if shadow copy
-		if($post['shadow'] && $post['files'])
-			$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
+		if ($shadow) {
+			// Fix Filenames if shadow copy
+			if($post['shadow'] && $post['files'])
+				$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files']);
+		}
 
 		if (!$post['thread']) {
 			// Still need to fix this:
-			$po = new Thread($post, '?/', $mod, false);
+			$po = new Thread($config, $post, '?/', $mod, false);
 			$post['built'] = $po->build(true);
 
 			// Add to list of threads
 			$thread_ids[] = $post['id'];
 		} else {
 			// If post belong to deleted thread don't list it
-			if(in_array($post['thread'], $thread_ids)) {
-				$posts_in_thread_ids[] = $key;
+			if ($shadow) {
+				if(in_array($post['thread'], $thread_ids)) {
+					$posts_in_thread_ids[] = $key;
+					foreach($posts_in_thread_ids as $id)
+						unset($posts[$id]);
+				} else {
+					$po = new Post($config, $post, '?/', $mod);
+					$post['built'] = $po->build(true);
+				}
 			} else {
-				$po = new Post($post, '?/', $mod);
+				$po = new Post($config, $post, '?/', $mod);
 				$post['built'] = $po->build(true);
 			}
 		}
 		$last_time = $post['time'];
 	}
 
-	foreach($posts_in_thread_ids as $id)
-		unset($posts[$id]);
+	if ($shadow)
+		$title = _('Shadow Deleted Posts');
+	else
+		$title = _('Recent posts');
 
-	echo mod_page(_('Shadow Deleted Posts'), 'mod/shadow_recent_posts.html',  array(
+	echo mod_page(($title), 'mod/recent_posts.html',  array(
 			'posts' => $posts,
 			'limit' => $limit,
-			'last_time' => $last_time
+			'last_time' => $last_time,
+			'shadow' => $shadow
 		)
 	);
 
@@ -2339,7 +2373,7 @@ function mod_deletefile($board, $post, $file) {
 	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
-function mod_spoiler_image($board, $post, $file) {
+function mod_spoiler_image($board, $unspoiler, $post, $file) {
 	global $config, $mod;
 
 	if (!openBoard($board))
@@ -2348,28 +2382,39 @@ function mod_spoiler_image($board, $post, $file) {
 	if (!hasPermission($config['mod']['spoilerimage'], $board))
 		error($config['error']['noaccess']);
 
-	// Delete file thumbnail
+
 	$query = prepare(sprintf("SELECT `files`, `thread` FROM ``posts_%s`` WHERE id = :id", $board));
 	$query->bindValue(':id', $post, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
 	$result = $query->fetch(PDO::FETCH_ASSOC);
 	$files = json_decode($result['files']);
 
+	if (!$unspoiler) {
+		$size_spoiler_image = @getimagesize($config['spoiler_image']);
+		file_unlink($board . '/' . $config['dir']['thumb'] . $files[$file]->thumb);
+		$files[$file]->thumb = 'spoiler';
+		$files[$file]->thumbwidth = $size_spoiler_image[0];
+		$files[$file]->thumbheight = $size_spoiler_image[1];
 
-	$size_spoiler_image = @getimagesize($config['spoiler_image']);
-	file_unlink($board . '/' . $config['dir']['thumb'] . $files[$file]->thumb);
-	$files[$file]->thumb = 'spoiler';
-	$files[$file]->thumbwidth = $size_spoiler_image[0];
-	$files[$file]->thumbheight = $size_spoiler_image[1];
+		modLog("Spoilered file from post #{$post}");
+	} else {
+		require_once 'inc/image.php';
+		$img = new ImageProcessing($config);
+		if($files[$file]->extension === 'mp4' || $files[$file]->extension === 'webm') {
+			$files[$file] = $img->createWebmThumbnail($files[$file], !$result['thread']);
+			$files[$file]->thumb = $files[$file]->file_id . '.jpg';
 
-	// Make thumbnail spoiler
+		} else {
+			$files[$file] = $img->createThumbnail($files[$file], !$result['thread']);
+		}
+
+		modLog("Removed spoiler file from post #{$post}");
+	}
+
 	$query = prepare(sprintf("UPDATE ``posts_%s`` SET `files` = :files WHERE `id` = :id", $board));
 	$query->bindValue(':files', json_encode($files));
 	$query->bindValue(':id', $post, PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
-
-	// Record the action
-	modLog("Spoilered file from post #{$post}");
 
 	// Rebuild thread
 	buildThread($result['thread'] ? $result['thread'] : $post);
@@ -2381,8 +2426,7 @@ function mod_spoiler_image($board, $post, $file) {
 	rebuildThemes('post-delete', $board);
 
 	// Redirect
-	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['dir']['res'] . link_for_threadid($result['thread']) . '#' . $post, true, $config['redirect_http']);
-	// header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+	header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
 }
 
 function mod_deletebyip($boardName, $post, $global = false) {
@@ -2522,7 +2566,7 @@ function mod_user($uid) {
 
 		if (!empty($_POST['password'])) {
 			if(strlen($_POST['password']) >= 256)
-				error('Password too long');
+				error(_('Password too long'));
 
 			list($version, $password) = crypt_password($_POST['password']);
 			$query = prepare('UPDATE ``mods`` SET `password` = :password, `version` = :version WHERE `id` = :id');
@@ -2776,7 +2820,7 @@ function mod_inbox() {
 	$query->execute() or error(db_error($query));
 	$messages = $query->fetchAll(PDO::FETCH_ASSOC);
 
-	$query = prepare('SELECT COUNT(*) FROM ``pms`` WHERE `to` = :mod AND `unread` = 1');
+	$query = prepare('SELECT COUNT(1) FROM ``pms`` WHERE `to` = :mod AND `unread` = 1');
 	$query->bindValue(':mod', $mod['id']);
 	$query->execute() or error(db_error($query));
 	$unread = $query->fetchColumn();
@@ -2854,22 +2898,22 @@ function mod_rebuild() {
 
 		if (isset($_POST['rebuild_cache'])) {
 			if ($config['cache']['enabled']) {
-				$log[] = 'Flushing cache';
+				$log[] = _('Flushing cache');
 				Cache::flush();
 			}
 
-			$log[] = 'Clearing template cache';
+			$log[] = _('Clearing template cache');
 			load_twig();
 			$twig->getCache()->clear();
 		}
 
 		if (isset($_POST['rebuild_themes'])) {
-			$log[] = 'Regenerating theme files';
+			$log[] = _('Regenerating theme files');
 			rebuildThemes('all');
 		}
 
 		if (isset($_POST['rebuild_javascript'])) {
-			$log[] = 'Rebuilding <strong>' . $config['file_script'] . '</strong>';
+			$log[] = _('Rebuilding').' <strong>' . $config['file_script'] . '</strong>';
 			buildJavascript();
 			$rebuilt_scripts[] = $config['file_script'];
 		}
@@ -2884,19 +2928,19 @@ function mod_rebuild() {
 			if (isset($_POST['rebuild_index'])) {
 				clean("Rebuild");
 				buildIndex();
-				$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: Creating index pages';
+				$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: '. _('Creating index pages');
 			}
 
 			if (isset($_POST['rebuild_javascript']) && !in_array($config['file_script'], $rebuilt_scripts)) {
-				$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: Rebuilding <strong>' . $config['file_script'] . '</strong>';
+				$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: '. _('Rebuilding').' <strong>' . $config['file_script'] . '</strong>';
 				buildJavascript();
 				$rebuilt_scripts[] = $config['file_script'];
 			}
 
 			if (isset($_POST['rebuild_thread'])) {
-				$query = query(sprintf("SELECT `id` FROM ``posts_%s`` WHERE `thread` IS NULL", $board['uri'])) or error(db_error());
+				$query = query(sprintf("SELECT `id` FROM ``posts_%s`` WHERE `thread` IS NULL AND `shadow` = 0", $board['uri'])) or error(db_error());
 				while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-					$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: Rebuilding thread #' . $post['id'];
+					$log[] = '<strong>' . sprintf($config['board_abbreviation'], $board['uri']) . '</strong>: '. _('Rebuilding thread').' #' . $post['id'];
 					buildThread($post['id']);
 				}
 			}
@@ -2934,7 +2978,7 @@ function mod_reports() {
 	foreach ($report_queries as $board => $posts) {
 		$report_posts[$board] = array();
 
-		$query = query(sprintf('SELECT * FROM ``posts_%s`` WHERE `id` = ' . implode(' OR `id` = ', $posts), $board)) or error(db_error());
+		$query = query(sprintf('SELECT * FROM ``posts_%s`` WHERE `shadow` = 0 AND `id` = ' . implode(' OR `id` = ', $posts), $board)) or error(db_error());
 		while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
 			$report_posts[$board][$post['id']] = $post;
 		}
@@ -2958,9 +3002,9 @@ function mod_reports() {
 
 		if (!$post['thread']) {
 			// Still need to fix this:
-			$po = new Thread($post, '?/', $mod, false);
+			$po = new Thread($config, $post, '?/', $mod, false);
 		} else {
-			$po = new Post($post, '?/', $mod);
+			$po = new Post($config, $post, '?/', $mod);
 		}
 
 		// a little messy and inefficient
@@ -2969,7 +3013,8 @@ function mod_reports() {
 			'config' => $config,
 			'mod' => $mod,
 			'token' => make_secure_link_token('reports/' . $report['id'] . '/dismiss'),
-			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismissall')
+			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismiss&all'),
+			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post')
 		));
 
 		// Bug fix for https://github.com/savetheinternet/Tinyboard/issues/21
@@ -2994,7 +3039,7 @@ function mod_reports() {
 	mod_page(sprintf('%s (%d)', _('Report queue'), $count), 'mod/reports.html', array('reports' => $body, 'count' => $count));
 }
 
-function mod_report_dismiss($id, $all = false) {
+function mod_report_dismiss($id, $action) {
 	global $config;
 
 	$query = prepare("SELECT `post`, `board`, `ip` FROM ``reports`` WHERE `id` = :id");
@@ -3007,84 +3052,35 @@ function mod_report_dismiss($id, $all = false) {
 	} else
 		error($config['error']['404']);
 
-	if (!$all && !hasPermission($config['mod']['report_dismiss'], $board))
-		error($config['error']['noaccess']);
+	switch ($action) {
+	case '&post':
+		if (!hasPermission($config['mod']['report_dismiss_post'], $board))
+			error($config['error']['noaccess']);
 
-	if ($all && !hasPermission($config['mod']['report_dismiss_ip'], $board))
-		error($config['error']['noaccess']);
+		$query = prepare("DELETE FROM ``reports`` WHERE `post` = :post");
+		$query->bindValue(':post', $post);
+		modLog("Dismissed all reports for post #{$id}", $board);
+		break;
+	case '&all':
+		if (!hasPermission($config['mod']['report_dismiss_ip'], $board))
+			error($config['error']['noaccess']);
 
-	if ($all) {
 		$query = prepare("DELETE FROM ``reports`` WHERE `ip` = :ip");
 		$query->bindValue(':ip', $ip);
-	} else {
+		modLog("Dismissed all reports by <a href=\"?/IP/$ip\">$ip</a>");
+		break;
+	default:
+		if (!hasPermission($config['mod']['report_dismiss'], $board))
+			error($config['error']['noaccess']);
+
 		$query = prepare("DELETE FROM ``reports`` WHERE `id` = :id");
 		$query->bindValue(':id', $id);
+		modLog("Dismissed a report for post #{$post}", $board);
+		break;
 	}
 	$query->execute() or error(db_error($query));
-
-
-	if ($all)
-		modLog("Dismissed all reports by <a href=\"?/IP/$ip\">$ip</a>");
-	else
-		modLog("Dismissed a report for post #{$id}", $board);
 
 	header('Location: ?/reports', true, $config['redirect_http']);
-}
-
-function mod_recent_posts($lim) {
-	global $config, $mod, $pdo;
-
-	if (!hasPermission($config['mod']['recent']))
-		error($config['error']['noaccess']);
-
-	$limit = (is_numeric($lim))? $lim : 25;
-	$last_time = (isset($_GET['last']) && is_numeric($_GET['last'])) ? $_GET['last'] : 0;
-
-	$mod_boards = array();
-	$boards = listBoards();
-
-	//if not all boards
-	if ($mod['boards'][0]!='*') {
-		foreach ($boards as $board) {
-			if (in_array($board['uri'], $mod['boards']))
-				$mod_boards[] = $board;
-		}
-	} else {
-		$mod_boards = $boards;
-	}
-
-	// Manually build an SQL query
-	$query = 'SELECT * FROM (';
-	foreach ($mod_boards as $board) {
-		$query .= sprintf('SELECT *, %s AS `board` FROM ``posts_%s`` UNION ALL ', $pdo->quote($board['uri']), $board['uri']);
-	}
-	// Remove the last "UNION ALL" seperator and complete the query
-	$query = preg_replace('/UNION ALL $/', ') AS `all_posts` WHERE (`time` < :last_time OR NOT :last_time) ORDER BY `time` DESC LIMIT ' . $limit, $query);
-	$query = prepare($query);
-	$query->bindValue(':last_time', $last_time);
-	$query->execute() or error(db_error($query));
-	$posts = $query->fetchAll(PDO::FETCH_ASSOC);
-
-	foreach ($posts as &$post) {
-		openBoard($post['board']);
-		if (!$post['thread']) {
-			// Still need to fix this:
-			$po = new Thread($post, '?/', $mod, false);
-			$post['built'] = $po->build(true);
-		} else {
-			$po = new Post($post, '?/', $mod);
-			$post['built'] = $po->build(true);
-		}
-		$last_time = $post['time'];
-	}
-
-	echo mod_page(_('Recent posts'), 'mod/recent_posts.html',  array(
-			'posts' => $posts,
-			'limit' => $limit,
-			'last_time' => $last_time
-		)
-	);
-
 }
 
 function mod_config($board_config = false) {
@@ -3448,7 +3444,7 @@ function mod_edit_page($id) {
 
 		switch ($method) {
 			case 'html':
-					$write = $content;
+				$write = $content;
 				break;
 			case 'infinity':
 				$c = $content;
@@ -3563,10 +3559,10 @@ function mod_debug_antispam() {
 		$where = '';
 	}
 
-	$query = query('SELECT COUNT(*) FROM ``antispam``' . ($where ? " WHERE $where" : '')) or error(db_error());
+	$query = query('SELECT COUNT(1) FROM ``antispam``' . ($where ? " WHERE $where" : '')) or error(db_error());
 	$args['total'] = number_format($query->fetchColumn());
 
-	$query = query('SELECT COUNT(*) FROM ``antispam`` WHERE `expires` IS NOT NULL' . ($where ? " AND $where" : '')) or error(db_error());
+	$query = query('SELECT COUNT(1) FROM ``antispam`` WHERE `expires` IS NOT NULL' . ($where ? " AND $where" : '')) or error(db_error());
 	$args['expiring'] = number_format($query->fetchColumn());
 
 	$query = query('SELECT * FROM ``antispam`` ' . ($where ? "WHERE $where" : '') . ' ORDER BY `passed` DESC LIMIT 40') or error(db_error());
@@ -3643,7 +3639,7 @@ function mod_debug_apcu() {
 		error($config['error']['noaccess']);
 
 	if ($config['cache']['enabled'] !== 'apcu')
-		error('APCU is not enabled.');
+		error(_('APCU is not enabled.'));
 
 	$cache_info = apcu_cache_info(false);
 
@@ -3796,7 +3792,6 @@ function mod_view_board_statistics($boardName) {
 
 	mod_page(_('Statistics for ') . $boardName, 'mod/statistics.html', array(
 		'boards' => $boards,
-		'statistics_table' => Statistic::getPostStatistics($boards),
 		'statistics_24h' => $statistics_hour,
 		'statistics_week_labels' => Statistic::get_stat_week_labels($this_week),
 		'statistics_week' => Statistic::get_stat_week_jsdata($this_week),
@@ -3863,7 +3858,7 @@ function mod_banners($b) {
 		}
 
 		if ($size[0] !== $config['banner_width'] or $size[1] !== $config['banner_height']){
-			error('Wrong image size!');
+			error(_('Wrong image size!'));
 		}
 
 		copy($upload, "$dir/$id.$extension");
@@ -3872,7 +3867,7 @@ function mod_banners($b) {
 	if (isset($_POST['delete'])){
 		foreach ($_POST['delete'] as $i => $d){
 			if (!preg_match('/^[0-9]+\.(png|jpeg|jpg|gif)$/', $d)){
-				error('Nice try.');
+				error(_('Nice try.'));
 			}
 			unlink("$dir/$d");
 		}
@@ -3979,23 +3974,27 @@ function mod_merge($originBoard, $postID) {
 			error($config['error']['noboard']);
 
 	    	$post['allhashes'] = '';
-		$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
-		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
-		$hashquery->execute() or error(db_error($hashquery));
-		while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
-			$post['allhashes'] .= $hash['filehash'] . ":";
+		if ($post['has_file']) {
+			$hashquery = prepare('SELECT `filehash` FROM ``filehashes`` WHERE `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+			while ($hash = $hashquery->fetch(PDO::FETCH_ASSOC)) {
+				$post['allhashes'] .= $hash['filehash'] . ":";
+			}
+			$post['allhashes'] = substr($post['allhashes'], 0, -1);
 		}
-		$post['allhashes'] = substr($post['allhashes'], 0, -1);
 
             	// create the new thread
 		$newID = post($post);
 
-		// Delete old file hash list.
-		$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
-		$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
-		$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
-		$hashquery->execute() or error(db_error($hashquery));
+		if ($post['has_file']) {
+			// Delete old file hash list.
+			$hashquery = prepare('DELETE FROM ``filehashes`` WHERE  `board` = :board AND `post` = :post');
+			$hashquery->bindValue(':board', $originBoard, PDO::PARAM_STR);
+			$hashquery->bindValue(':post', $postID, PDO::PARAM_INT);
+			$hashquery->execute() or error(db_error($hashquery));
+		}
 
 		$op = $post;
 		$op['id'] = $newID;
@@ -4136,19 +4135,26 @@ function mod_whitelist_region(){
 	$query->execute() or error(db_error());
 	$token_list = $query->fetchAll(PDO::FETCH_CLASS);
 	mod_page(_('Whitelist'), 'mod/whitelist_tokens.html', array(
-		'token' => make_secure_link_token('alter-wl'),
+		'security_token' => make_secure_link_token('change_wl'),
 		'wl_tokens' => $token_list
 	));
 }
 
-function mod_alter_whitelist(){
+function mod_change_whitelist($ip = false){
 	global $config;
-	if(isset($_POST['ip']) && isset($_POST['create']))
-		Regionblock::userAdd(trim($_POST['ip']));
-	else if(isset($_POST['revoke-code']) && isset($_POST['revoke']))
-		Regionblock::revokeWhitelist(trim($_POST['revoke-code']));
-	else
-		error('Fields not set');
 
-	header('Location: ?/wl-region', true, $config['redirect_http']);
+	if(isset($_POST['ip']) && isset($_POST['create'])) {
+
+		$re = new Regionblock($_POST['ip'], (isset($_POST['tokenu']) && !empty($_POST['tokenu'])) ? $_POST['tokenu'] : 'create');
+		$re->userAdd();
+
+	} else if(isset($ip) && $ip) {
+
+		$re = new Regionblock($ip);
+		$re->revokeWhitelist();
+	}
+	else
+		error(_('Fields are not set'));
+
+	header('Location: ?/wl_region', true, $config['redirect_http']);
 }

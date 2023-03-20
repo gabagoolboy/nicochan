@@ -33,14 +33,14 @@
 		$phrase = $_GET['search'];
 		$_body = '';
 
-		$query = prepare("SELECT COUNT(*) FROM ``search_queries`` WHERE `ip` = :ip AND `time` > :time");
+		$query = prepare("SELECT COUNT(1) FROM ``search_queries`` WHERE `ip` = :ip AND `time` > :time");
 		$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
 		$query->bindValue(':time', time() - ($queries_per_minutes[1] * 60));
 		$query->execute() or error(db_error($query));
 		if($query->fetchColumn() > $queries_per_minutes[0])
 			error(_('Wait a while before searching again, please.'));
 
-		$query = prepare("SELECT COUNT(*) FROM ``search_queries`` WHERE `time` > :time");
+		$query = prepare("SELECT COUNT(1) FROM ``search_queries`` WHERE `time` > :time");
 		$query->bindValue(':time', time() - ($queries_per_minutes_all[1] * 60));
 		$query->execute() or error(db_error($query));
 		if($query->fetchColumn() > $queries_per_minutes_all[0])
@@ -156,9 +156,9 @@
 		$temp = '';
 		while($post = $query->fetch()) {
 			if(!$post['thread']) {
-				$po = new Thread($post);
+				$po = new Thread($config, $post);
 			} else {
-				$po = new Post($post);
+				$po = new Post($config, $post);
 			}
 			$temp .= $po->build(true) . '<hr/>';
 		}

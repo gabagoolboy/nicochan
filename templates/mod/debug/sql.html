@@ -3,9 +3,8 @@
 	<textarea style="display:block;margin:5px auto;width:90%;max-width:600px" rows="3" name="query">{{ query | e }}</textarea>
 	<input style="display:block;margin:5px auto" type="submit" value="Query">
 </form>
-
 {% if result == 'empty' %}
-	<p style="text-align:center">Query successful (no result).</p>
+	<p style="text-align:center">{% trans %}Query successful (no result).{% endtrans %}</p>
 {% elseif result %}
 	<table class="modlog">
 		<tr>

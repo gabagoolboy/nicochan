@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS `antispam` (
   `hash` char(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `created` int(11) NOT NULL,
   `expires` int(11) DEFAULT NULL,
-  `passed` smallint(6) NOT NULL,
+  `passed` smallint(6) DEFAULT 0 NOT NULL,
+  `shadow` int(1) DEFAULT 0 NOT NULL,
   PRIMARY KEY (`hash`),
   KEY `board` (`board`,`thread`),
   KEY `expires` (`expires`)
@@ -68,13 +69,13 @@ CREATE TABLE IF NOT EXISTS `bans` (
   `ipstart` varbinary(61) NOT NULL,
   `ipend` varchar(61) DEFAULT NULL,
   `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
-  `cookiebanned` tinyint(1) NOT NULL,
+  `cookiebanned` tinyint(1) DEFAULT 0 NOT NULL,
   `created` int(10) UNSIGNED NOT NULL,
   `expires` int(10) UNSIGNED DEFAULT NULL,
   `board` varchar(58) DEFAULT NULL,
   `creator` int(10) NOT NULL,
   `reason` text,
-  `seen` tinyint(1) NOT NULL,
+  `seen` tinyint(1) DEFAULT 0 NOT NULL,
   `post` blob,
   `appealable` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
@@ -110,8 +111,8 @@ CREATE TABLE IF NOT EXISTS `ban_appeals` (
   `ban_id` int(10) UNSIGNED NOT NULL,
   `time` int(10) UNSIGNED NOT NULL,
   `message` text NOT NULL,
-  `denied` tinyint(1) NOT NULL,
-  `denial_reason` text,
+  `denied` tinyint(1) DEFAULT 0 NOT NULL,
+  `denial_reason` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ban_id` (`ban_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -161,6 +162,7 @@ CREATE TABLE IF NOT EXISTS `cites` (
   `post` int(11) NOT NULL,
   `target_board` varchar(58) NOT NULL,
   `target` int(11) NOT NULL,
+  `shadow` int(1) DEFAULT 0 NOT NULL,
   KEY `target` (`target_board`,`target`),
   KEY `post` (`board`,`post`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -189,6 +191,7 @@ CREATE TABLE IF NOT EXISTS `filehashes` (
   `thread` int(11) NOT NULL,
   `post` int(11) NOT NULL,
   `filehash` text CHARACTER SET ascii NOT NULL,
+  `shadow` int(1) DEFAULT 0 NOT NULL,
   PRIMARY KEY (`id`),
   KEY `thread_id` (`thread`),
   KEY `post_id` (`post`)
@@ -312,7 +315,7 @@ CREATE TABLE IF NOT EXISTS `nicenotices` (
   `board` varchar(58) DEFAULT NULL,
   `creator` int(10) NOT NULL,
   `reason` text,
-  `seen` tinyint(1) NOT NULL,
+  `seen` tinyint(1) DEFAULT 0 NOT NULL,
   `post` blob,
   PRIMARY KEY (`id`),
   KEY `ipstart` (`ip`)
@@ -363,7 +366,7 @@ CREATE TABLE IF NOT EXISTS `pms` (
   `to` int(11) NOT NULL,
   `message` text NOT NULL,
   `time` int(11) NOT NULL,
-  `unread` tinyint(1) NOT NULL,
+  `unread` tinyint(1) DEFAULT 1 NOT NULL,
   PRIMARY KEY (`id`),
   KEY `to` (`to`,`unread`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -395,8 +398,9 @@ CREATE TABLE IF NOT EXISTS `posts_b` (
   `sticky` int(1) NOT NULL,
   `locked` int(1) NOT NULL,
   `cycle` int(1) NOT NULL,
-  `sage` int(1) NOT NULL,
+  `sage` int(1) DEFAULT 0 NOT NULL,
   `hideid` int(1) NOT NULL,
+  `shadow` int(1) DEFAULT 0 NOT NULL,
   `embed` text,
   `slug` varchar(256) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),
@@ -449,39 +453,6 @@ CREATE TABLE IF NOT EXISTS `search_queries` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `shadow_antispam`
---
-
-CREATE TABLE IF NOT EXISTS `shadow_antispam` (
-  `board` varchar(58) NOT NULL,
-  `thread` int(11) DEFAULT NULL,
-  `hash` char(40) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-  `created` int(11) NOT NULL,
-  `expires` int(11) DEFAULT NULL,
-  `passed` smallint(6) NOT NULL,
-  PRIMARY KEY (`hash`),
-  KEY `board` (`board`,`thread`),
-  KEY `expires` (`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `shadow_cites`
---
-
-CREATE TABLE IF NOT EXISTS `shadow_cites` (
-  `board` varchar(58) NOT NULL,
-  `post` int(11) NOT NULL,
-  `target_board` varchar(58) NOT NULL,
-  `target` int(11) NOT NULL,
-  KEY `target` (`target_board`,`target`),
-  KEY `post` (`board`,`post`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `shadow_deleted`
 --
 
@@ -495,62 +466,6 @@ CREATE TABLE IF NOT EXISTS `shadow_deleted` (
   PRIMARY KEY (`id`),
   KEY `board` (`board`),
   KEY `post_id` (`post_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `shadow_filehashes`
---
-
-CREATE TABLE IF NOT EXISTS `shadow_filehashes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `board` varchar(58) NOT NULL,
-  `thread` int(11) NOT NULL,
-  `post` int(11) NOT NULL,
-  `filehash` text CHARACTER SET ascii NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `thread_id` (`thread`),
-  KEY `post_id` (`post`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `shadow_posts_b`
---
-
-CREATE TABLE IF NOT EXISTS `shadow_posts_b` (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `thread` int(11) DEFAULT NULL,
-  `subject` varchar(100) DEFAULT NULL,
-  `email` varchar(30) DEFAULT NULL,
-  `name` varchar(35) DEFAULT NULL,
-  `trip` varchar(15) DEFAULT NULL,
-  `capcode` varchar(50) DEFAULT NULL,
-  `body` text NOT NULL,
-  `body_nomarkup` text,
-  `time` int(11) NOT NULL,
-  `bump` int(11) DEFAULT NULL,
-  `files` text,
-  `num_files` int(11) DEFAULT '0',
-  `filehash` text CHARACTER SET ascii,
-  `password` varchar(64) DEFAULT NULL,
-  `ip` varchar(61) CHARACTER SET ascii NOT NULL,
-  `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
-  `sticky` int(1) NOT NULL,
-  `locked` int(1) NOT NULL,
-  `cycle` int(1) NOT NULL,
-  `sage` int(1) NOT NULL,
-  `hideid` int(1) NOT NULL,
-  `embed` text,
-  `slug` varchar(256) DEFAULT NULL,
-  UNIQUE KEY `id` (`id`),
-  KEY `thread_id` (`thread`,`id`),
-  KEY `filehash` (`filehash`(40)),
-  KEY `time` (`time`),
-  KEY `ip` (`ip`),
-  KEY `list_threads` (`thread`,`sticky`,`bump`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -595,7 +510,7 @@ CREATE TABLE IF NOT EXISTS `warnings` (
   `board` varchar(58) DEFAULT NULL,
   `creator` int(10) NOT NULL,
   `reason` text,
-  `seen` tinyint(1) NOT NULL,
+  `seen` tinyint(1) DEFAULT 0 NOT NULL,
   `post` blob,
   PRIMARY KEY (`id`),
   KEY `ipstart` (`ip`)
@@ -628,7 +543,22 @@ CREATE TABLE IF NOT EXISTS `whitelist_region` (
  `id` int(10) AUTO_INCREMENT,
  `ip` varchar(39) NOT NULL,
  `ip_hash` varchar(69) NOT NULL,
-  PRIMARY KEY (id, ip)
+  PRIMARY KEY (id, ip),
+  UNIQUE KEY `whitelistreg_pk` (`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `modlogins`
+--
+
+CREATE TABLE IF NOT EXISTS `modlogins` (
+  `username` varchar(30),
+  `ip` varchar(39),
+  `ip_hash` varchar(69),
+  `time`	int(11),
+  `success` boolean NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 COMMIT;
 

@@ -1,5 +1,5 @@
 {% if config.display_flags and post.modifiers.flag and ((config.display_flags_mod_only and mod) or not config.display_flags_mod_only) %}
-	 <img
+	 &nbsp;<img
 		{% if config.country_flags_condensed %}
 			 class="flag flag-{{ post.modifiers.flag }}" src="{{ config.image_blank }}"
 		{% else %}
@@ -11,8 +11,8 @@
 				{{ config.flag_style }}
 			{% endif %}"
 
-		{% if post.modifiers['flag alt'] %} alt="{{ post.modifiers['flag alt'] | e('html_attr') }}"
-			 title="{{ post.modifiers['flag alt'] | e('html_attr') }}"
+		{% if post.modifiers['flag alt'] %} alt="{{ post.modifiers['flag alt']|e }}"
+			 title="{{ post.modifiers['flag alt']|e }}"
 		{% endif %}
 	>
 {% endif %}

@@ -18,9 +18,12 @@ function load_twig() {
 		'autoescape' => false,
 		'cache' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')) ?
 			new Twig_Cache_TinyboardFilesystem("{$config['dir']['template']}/cache") : false,
-		'debug' => $config['debug']
+		'debug' => $config['debug'],
+		'auto_reload' => $config['twig_auto_reload']
 	));
-	$twig->addExtension(new Twig_Extensions_Extension_Tinyboard());
+	if ($config['debug'])
+		$twig->addExtension(new \Twig\Extension\DebugExtension());
+	$twig->addExtension(new Tinyboard());
 	$twig->addExtension(new PhpMyAdmin\Twig\Extensions\I18nExtension());
 }
 
@@ -69,36 +72,7 @@ function Element($templateFile, array $options) {
 	}
 }
 
-class Twig_Cache_TinyboardFilesystem extends Twig\Cache\FilesystemCache
-{
-	private $directory;
-	private $options;
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function __construct($directory, $options = 0)
-	{
-		parent::__construct($directory, $options);
-
-		$this->directory = $directory;
-	}
-
-	/**
-	 * This function was removed in Twig 2.x due to developer views on the Twig library. Who says we can't keep it for ourselves though?
-	 */
-	public function clear()
-	{
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->directory), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-			if ($file->isFile()) {
-				@unlink($file->getPathname());
-			}
-		}
-	}
-}
-
-
-class Twig_Extensions_Extension_Tinyboard extends Twig\Extension\AbstractExtension
+class Tinyboard extends Twig\Extension\AbstractExtension
 {
 
 	public function getFilters()
@@ -160,11 +134,14 @@ function twig_push_filter($array, $value) {
 	return $array;
 }
 
-function twig_strftime_filter($date, $format = false) {
+function twig_strftime_filter($date, $format = false, $oldformat = null) {
 	global $config;
 
-	if (isset($format) && $format)
+	if ($oldformat && $format)
 		return gmdate($format, $date);
+
+	if (!$format)
+		$format = $config['post_date'];
 
 	$fmt = new IntlDateFormatter(
 		locale: $config['locale'],
@@ -173,7 +150,7 @@ function twig_strftime_filter($date, $format = false) {
 	);
 
 	$dt = new DateTime("@$date");
-	return $fmt->format($dt);
+	return ucwords($fmt->format($dt), "(\ ");
 }
 
 function twig_hasPermission_filter($mod, $permission, $board = null) {

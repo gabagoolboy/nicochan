@@ -25,12 +25,14 @@
 	<title>{{ board.url }} - {{ meta_subject }}</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-thread" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
+	<div class="bar top">
 	{{ boardlist.top }}
+	</div>
 	<a name="top"></a>
-	{% if pm %}<div class="top_notice">You have <a href="?/PM/{{ pm.id }}">an unread PM</a>{% if pm.waiting > 0 %}, plus {{ pm.waiting }} more waiting{% endif %}.</div><hr />{% endif %}
+	{% if pm %}<div class="top_notice">{% trans %}You have{% endtrans %}&nbsp;<a href="?/PM/{{ pm.id }}">{% trans %}an unread PM{% endtrans %}</a>{% if pm.waiting > 0 %}, {% trans %}plus{% endtrans %} {{ pm.waiting }} {% trans %}more waiting{% endtrans %}{% endif %}.</div><hr />{% endif %}
 
 
-	{% if config.url_banner %}<img class="board_image" src="{{ config.url_banner }}?board={% if not isukko %}{{ board.uri }}{% else %}{{ config.banner_overboard }}{% endif %}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}alt="" loading="lazy" />{% endif %}
+	{% if config.url_banner %}<a href="/" style="display: block; width:{{ config.banner_width }}px; height:{{ config.banner_height }}px; margin: 20px auto 0 auto;"><img class="board_image" src="{{ config.url_banner }}?board={% if not isukko %}{{ board.uri }}{% else %}{{ config.banner_overboard }}{% endif %}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}loading="lazy" /></a>{% endif %}
 
 
 
@@ -48,20 +50,18 @@
 		</div>
 	</header>
 
-	{% include 'attention_bar.html' %}
-
 	<div class="banner">{% trans %}Posting mode: Reply{% endtrans %}</div>
 
 	{{ config.ad.top }}
 
 	{% include 'post_form.html' %}
 
-	{% if config.global_message %}<hr /><div class="blotter">{{ config.global_message }}</div>{% endif %}
+	{% if config.global_message %}{% for global_message in config.global_message %}<hr /><div class="blotter">{{ global_message }}</div>{% endfor %}{% endif %}
 	<hr />
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
 		<input type="hidden" name="board" value="{{ board.uri }}" />
 		{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-		&nbsp; <a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %} &nbsp; <a id="unimportant" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
+		&nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %} &nbsp; <a id="unimportant" href="{{ return }}">[{% trans %}Back{% endtrans %}]</a>
 
 		{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
 		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
@@ -71,9 +71,9 @@
 			<span id="thread-links">
 				<a id="thread-top" href="#top">[{% trans %}Go to top{% endtrans %}]</a>
                 		{% if config.catalog_link %}
-					<a id="thread-catalog" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
+				<a id="thread-catalog" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
 		                {% endif %}
-				<a id="thread-return" href="{{ return }}">[{% trans %}Return{% endtrans %}]</a>
+				<a id="thread-return" href="{{ return }}">[{% trans %}Back{% endtrans %}]</a>
 			</span>
 
 			<span id="thread-quick-reply">
@@ -95,14 +95,6 @@
 	</center>
 
 	{% include 'footer.html' %}
-
-	{% if reports >= 1 %}
-			<div class="countrptth">
-				{% set _reports = ' Report' ~ (reports > 1 ? 's' : '') %}
-				<span>({{ reports }}){{ _reports }}</span>
-			</div>
-	{% endif %}
-
 
 	<script type="text/javascript">{% verbatim %}
 		ready();

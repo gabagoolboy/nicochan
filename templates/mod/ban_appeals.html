@@ -89,11 +89,11 @@
 				<th>{% trans 'Action' %}</th>
 				<td>
 					<input type="hidden" name="appeal_id" value="{{ ban.id }}">
-					<input type="submit" name="unban" value="Unban">
-					<input type="submit" name="deny" value="Deny appeal">
+					<input type="submit" name="unban" value="{% trans %}Unban{% endtrans %}">
+					<input type="submit" name="deny" value="{% trans %}Deny appeal{% endtrans %}">
 				</td>
 			</tr>
-			<tr><th>{% trans 'Denial Reason<br/>(Optional on Deny)' %}</th><td><textarea name="deny-reason" rows="8" placeholder="Add additional message that will be showed to the denied poster"></textarea></td></tr>
+			<tr><th>{% trans 'Denial Reason<br/>(Optional on Deny)' %}</th><td><textarea name="deny-reason" rows="8" placeholder="{% trans %}Add additional message that will be showed to the denied poster{% endtrans %}"></textarea></td></tr>
 		{% endif %}
 	</table>
 

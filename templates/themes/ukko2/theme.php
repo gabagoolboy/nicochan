@@ -33,17 +33,17 @@
 			$query = '';
 			foreach($boards as &$_board) {
 				if(isset($this->settings['exclude'])){
-				if(in_array($_board['uri'], explode(' ', $this->settings['exclude'])))
-					continue;
+					if(in_array($_board['uri'], explode(' ', $this->settings['exclude'])))
+						continue;
 				}
-					$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` WHERE `thread` IS NULL UNION ALL ", $_board['uri'], $_board['uri']);
+					$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` WHERE `thread` IS NULL ". ($mod && hasPermission($config['mod']['view_shadow_posts'], $_board['uri']) ? '' : 'AND `shadow` = 0') . " UNION ALL ", $_board['uri'], $_board['uri']);
 					array_push($boardsforukko2,$_board);
 
 			}
 			$query = preg_replace('/UNION ALL $/', 'ORDER BY `bump` DESC', $query);
 			$query = query($query) or error(db_error());
 
-			$queryReports = query('SELECT COUNT(*) FROM ``reports``') or error(db_error($queryReports));
+			$queryReports = query('SELECT COUNT(1) FROM ``reports``') or error(db_error($queryReports));
 			$reports = $queryReports->fetchColumn();
 
 
@@ -62,7 +62,7 @@
 
 				if($count < $this->settings['thread_limit']) {
 					openBoard($post['board']);
-					$thread = new Thread($post, $mod ? '?/' : $config['root'], $mod);
+					$thread = new Thread($config, $post, $mod ? '?/' : $config['root'], $mod);
 
 					$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ORDER BY `sticky` DESC, `id` DESC LIMIT :limit", $post['board']));
 					$posts->bindValue(':id', $post['id']);
@@ -73,7 +73,7 @@
 					while ($po = $posts->fetch()) {
 						if ($po['files'])
 							$num_images++;
-					        $post2 	= new Post($po, $mod ? '?/' : $config['root'], $mod);
+					        $post2 	= new Post($config, $po, $mod ? '?/' : $config['root'], $mod);
 						$thread->add($post2);
 
 					}

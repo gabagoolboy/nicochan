@@ -50,7 +50,7 @@
  			$queries = array();
 			$threads = array();
 
-			if(isset($ukkoSettings['exclude']))
+			if(!$mod && isset($ukkoSettings['exclude']))
 				$exclusions = explode(' ', $ukkoSettings['exclude']);
 			else
 				$exclusions = [];
@@ -89,7 +89,7 @@
 				$totalThreads = count($recent_posts);
 				$page = 0;
 				for ($i = 1; $i <= $totalThreads; $i++) {
-					$pages[$page][] = new Thread($recent_posts[$i-1]);
+					$pages[$page][] = new Thread($config, $recent_posts[$i-1]);
 
 					// If we have not yet visited all threads,
 					// and we hit the limit on the current page,
@@ -155,20 +155,12 @@
 				}
 
 				if($post['reply_count'] >= $config['noko50_min']){
-					if (!$mod) {
-						$post['noko'] = '<a href="' . $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post, true) . '">' .
+						$post['noko'] = '<a href="' . $config['root'] . ($mod ? $config['file_mod'] . '?/' : '') . $board['dir'] . $config['dir']['res'] . link_for($post, true) . '">' .
 						'['.$config['noko50_count'].']'. '</a>';
-					} else {
-						$post['noko'] = '<a href="' . $config['root'] . $config['file_mod'] . '?/' . $board['dir'] . $config['dir']['res'] . link_for($post, true) . '">' .
-						'['.$config['noko50_count'].']'. '</a>';
-					}
 				}
 
-				if (!$mod)
-					$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post);
-				else
-					$post['link'] = $config['root'] . $config['file_mod'] . '?/' . $board['dir'] . $config['dir']['res'] . link_for($post);
 
+				$post['link'] = $config['root'] . ($mod ? $config['file_mod'] . '?/' : ''). $board['dir'] . $config['dir']['res'] . link_for($post);
 
 				if ($post['embed'] && preg_match('/^https?:\/\/(\w+\.)?(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11}.+|\?t\=)$/i', $post['embed'], $matches)) {
 					$post['youtube'] = $matches[2];
@@ -212,12 +204,11 @@
 	private function saveForBoard($board_name, $recent_posts, $isOverboard = false, $mod = false) {
 		global $board, $config;
 
-
 			if (is_array($board_name) && $isOverboard) {
 				$boards = listBoards();
 				$boardsforukko2 = [];
 				foreach($boards as &$_board){
-					if (isset($board_name['exclude'])){
+					if (!$mod && isset($board_name['exclude'])){
 						if(in_array($_board['uri'], explode(' ', $board_name['exclude'])))
 							continue;
 					}
@@ -234,7 +225,6 @@
 			$antibot = create_antibot($board_name);
 			$antibot->reset();
 
-
 			$element = Element('themes/catalog/catalog.html', Array(
 				'settings' => $this->settings,
 				'config' => $config,
@@ -247,16 +237,16 @@
 				'mod' => $mod
 			));
 
-
 			if ($mod)
 				echo $element;
 			else {
-			file_write($config['dir']['home'] . $board_name . '/catalog.html', $element);
+				file_write($config['dir']['home'] . $board_name . '/catalog.html', $element);
 
-			file_write($config['dir']['home'] . $board_name . '/index.rss', Element('themes/catalog/index.rss', Array(
-				'config' => $config,
-				'recent_posts' => $recent_posts,
-				'board' => $board
-			)));
-		}}
+				file_write($config['dir']['home'] . $board_name . '/index.rss', Element('themes/catalog/index.rss', Array(
+					'config' => $config,
+					'recent_posts' => $recent_posts,
+					'board' => $board
+				)));
+			}
+		}
 	};

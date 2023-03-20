@@ -15,7 +15,9 @@
 	<title>{{ board.uri }} - Catalog</title>
 </head>
 <body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} theme-catalog active-catalog" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
+	<div class="bar top">
 	{{ boardlist.top }}
+	</div>
 	<a name="top"></a>
 	<header>
 		<h1>/<a class="no-decoration" href="{% if mod %}?/{{ board.uri }}/{% else %}./{% endif %}">{{ board.uri }}</a>/ - {{ board.title|e }}</h1>
@@ -34,18 +36,18 @@
                 <option value="random:desc">{% trans 'Random' %}</option>
         </select>
 
-        <span>{% trans 'Image size' %}: </span>
+        <span id="image_size">{% trans 'Image size' %}: </span>
         <select id="image_size" style="display: inline-block">
                 <option value="vsmall">{% trans 'Very small' %}</option>
                 <option selected value="small">{% trans 'Small' %}</option>
                 <option value="large">{% trans 'Large' %}</option>
         </select>
 
-	&nbsp; <a id="unimportant" href="{% if mod %}?/{{ board.uri }}/{{ config.catalog_link }}{% else %}./{{ config.catalog_link }}{% endif %}">[{% trans %}Reload{% endtrans %}]</a>
+	<a id="unimportant" style="float: right" href="{% if mod %}?/{{ board.uri }}/{{ config.catalog_link }}{% else %}./{{ config.catalog_link }}{% endif %}">[{% trans %}Reload{% endtrans %}]</a>
 
 	{% if not isukko %}
-		{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
-		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
+		{% if config.archive.threads %} &nbsp; <a id="unimportant" style="float:right" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
+		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" style="float: right" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
 	{% endif %}
         <div class="threads">
                 <div id="Grid">
@@ -65,10 +67,10 @@
 						{% else %}
 							<img src="{{post.file}}"
 						{% endif %}
-                                                 id="img-{{ post.id }}" data-subject="{% if post.subject %}{{ post.subject|e }}{% endif %}" data-name="{{ post.name|e }}" data-muhdifference="{{ post.muhdifference }}" class="{{post.board}} thread-image" title="{{post.bump|strftime(config.catalog_date)}}">
+                                                 id="img-{{ post.id }}" data-subject="{% if post.subject %}{{ post.subject|e }}{% endif %}" data-name="{{ post.name|e }}" data-muhdifference="{{ post.muhdifference }}" class="{{post.board}} thread-image" title="{{ post.bump|strftime(config.catalog_date) }}" {% if config.content_loading_lazy %} loading="lazy" {% endif %}>
                                         </a>
                                                 <div class="replies">
-					<strong><span class="catalog-help" title="(R)espostas / (I)magens / (P)ágina">R: {{ post.reply_count }} / I: {{ post.image_count }} / P: {{ (loop.index // config.threads_per_page) + 1 }}</span></strong>
+							<strong><span class="catalog-help" title="{% trans %}(R)eply / (I)mages / (P)age{% endtrans %}">R: {{ post.reply_count }} / I: {{ post.image_count }} / P: {{ (loop.index // config.threads_per_page) + 1 }}</span></strong>
 
 								{% if post.sticky %}
 									{% if config.font_awesome %}
@@ -84,7 +86,7 @@
 										<img class="icon" title="Locked" src="{{ config.image_locked }}" alt="Locked" />
 									{% endif %}
 								{% endif %}
-								{% if post.bumplocked and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
+								{% if post.sage and (config.mod.view_bumplock < 0 or (post.mod and post.mod|hasPermission(config.mod.view_bumplock, board.uri))) %}
 									{% if config.font_awesome %}
 										<i class="fa fa-anchor" title="Bumplocked"></i>
 									{% else %}

@@ -113,11 +113,15 @@
 	$config['blotter'] = &$config['global_message'];
 
 	// Shows some extra information at the bottom of pages. Good for development/debugging.
-	$config['debug'] = true;
+	$config['debug'] = false;
 	// For development purposes. Displays (and "dies" on) all errors and warnings. Turn on with the above.
-	$config['verbose_errors'] = true;
+	$config['verbose_errors'] = false;
+	// Warn about deprecations? See vichan-devel/vichan#363 and https://www.youtube.com/watch?v=9crnlHLVdno
+	$config['deprecation_errors'] = false;
 	// EXPLAIN all SQL queries (when in debug mode).
 	$config['debug_explain'] = false;
+	// Skip cache in twig. this is already enabled with debug
+	$config['twig_auto_reload'] = false;
 
 	// Directory where temporary files will be created.
 	$config['tmp'] = sys_get_temp_dir();
@@ -173,12 +177,6 @@
 	// Connection timeout duration in seconds
 	$config['db']['timeout'] = 30;
 
-	// Setting to indicate if ip addresses should be hashed
-	$config['bcrypt_ip_addresses'] = true;
-	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
-	$config['bcrypt_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
-	// Cost of hashing the ip
-	$config['bcrypt_ip_cost'] = 12;
 
 
 /*
@@ -255,6 +253,16 @@
 
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
+
+	// Salt for passwords
+	$config['secure_password_salt'] = 'abcdefghijklmnopqrstuvwxyz09123456789!@#$%^&*()';
+
+	// Setting to indicate if ip addresses should be hashed
+	$config['bcrypt_ip_addresses'] = true;
+	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
+	$config['bcrypt_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
+	// Cost of hashing the ip
+	$config['bcrypt_ip_cost'] = 12;
 
 	// Cookie name for check of dumb posters ban evade
 	$config['cookies']['uuser_cookie_name'] = 'ponypoontang';
@@ -384,7 +392,9 @@
 		'json_response',
 		'user_flag',
 		'no_country',
-		'hideposterid'
+		'cbsingle',
+		'hideposterid',
+		'rmexif'
 	);
 
 	// Enable hCaptcha to make spam even harder. Rarely necessary.
@@ -401,6 +411,9 @@
 	// Require solving a captcha when creating a new thread.
 	$config['captcha']['thread_captcha'] = false;
 
+	// Use CAPTCHA for reports?
+	$config['captcha']['report_captcha'] = false;
+
 	// Custom captcha get provider path (if not working get the absolute path aka your url.)
 	$config['captcha']['provider_get'] = '/captcha.php';
 	// Custom captcha check provider path
@@ -416,7 +429,7 @@
 	$config['board_locked'] = false;
 
 	// If poster's proxy supplies X-Forwarded-For header, check if poster's real IP is banned.
-	$config['proxy_check'] = true;
+	$config['proxy_check'] = false;
 
 	/*
 	 * Custom filters detect certain posts and reject/ban accordingly. They are made up of a condition and an
@@ -568,6 +581,8 @@
 	// (contained in a board configuration file) which has a flood-time greater than any of those in the
 	// global configuration, you need to set the following variable to the maximum flood-time condition value.
 	// $config['flood_cache'] = 60 * 60 * 24; // 24 hours
+	// Set to -1 to disable.
+	$config['flood_cache'] = -1;
 
 	// Require users to become whitelisted by completing a captcha before posting
 	$config['whitelist']['enabled'] = false;
@@ -582,7 +597,7 @@
  */
 
 	// Do you need a body for your reply posts?
-	$config['force_body'] = false;
+	$config['force_body'] = true;
 	// Do you need a body for new threads?
 	$config['force_body_op'] = true;
 	// Require an image for threads?
@@ -656,11 +671,20 @@
 	$config['link_prefix'] = '';
 	$config['url_ads'] = &$config['link_prefix'];	 // leave alias
 
-	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then Tinyboard will
-	// download it. Not usually recommended.
-	$config['allow_upload_by_url'] = false;
+	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then Tinyboard will download it. Not usually recommended.
+	// I strongly suggest you to use a proxy if youre behind cloudflare
+	// the proxy implementation is NOT CURLOPT_PROXY.
+	$config['url_upload']['enabled'] = false;
 	// The timeout for the above, in seconds.
-	$config['upload_by_url_timeout'] = 15;
+	$config['url_upload']['timeout'] = 15;
+
+	// this is a proxy http
+	// based of https://github.com/Athlon1600/php-proxy-app
+	// the parameters is currently hardcoded: snoop and ip
+	$config['url_upload']['curl_proxy'] = 'https://images.weserv.nl/?url=%%url%%';
+
+	// valid extensions for proxy
+	$config['url_upload']['curl_extensions'] = ['.webp', '.jpg', '.jpeg', '.bmp', '.gif', '.png', '.tiff', '.tif', '.svg'];
 
 	// Enable early 404? With default settings, a thread would 404 if it was to leave page 3, if it had less
 	// than 3 replies.
@@ -714,30 +738,7 @@
 	// Don't display user's email when it's not "sage"
 	$config['hide_email'] = false;
 
-	// Attach country flags to posts.
-	$config['country_flags'] = false;
 
-	// Allow the user to decide whether or not he wants to display his country
-	$config['allow_no_country'] = false;
-
-	// Load all country flags from one file
-	$config['country_flags_condensed'] = true;
-	$config['country_flags_condensed_css'] = 'static/flags/flags.css';
-
-	// Allow the user choose a /pol/-like user_flag that will be shown in the post. For the user flags, please be aware
-	// that you will have to disable BOTH country_flags and contry_flags_condensed optimization (at least on a board
-	// where they are enabled).
-	$config['user_flag'] = false;
-
-	// List of user_flag the user can choose. Flags must be placed in the directory set by $config['uri_flags']
-	$config['user_flags'] = array();
-	/* example: 
-	$config['user_flags'] = array (
-		'nz' => 'Nazi',
-		'cm' => 'Communist',
-		'eu' => 'Europe'
-	);
-	*/
 
 	// Allow dice rolling: an email field of the form "dice XdY+/-Z" will result in X Y-sided dice rolled and summed,
 	// with the modifier Z added, with the result displayed at the top of the post body.
@@ -939,6 +940,8 @@
 
 	// Strip EXIF metadata from JPEG files.
 	$config['strip_exif'] = false;
+	// Strip EXIF if the user wants
+	$config['strip_exif_single'] = true;
 	// Use the command-line `exiftool` tool to strip EXIF metadata without decompressing/recompressing JPEGs.
 	// Ignored when $config['redraw_image'] is true. This is also used to adjust the Orientation tag when
 	//  $config['strip_exif'] is false and $config['convert_manual_orient'] is true.
@@ -1101,18 +1104,16 @@
 	$config['locale'] = 'en'; // (en, ru_RU.UTF-8, fi_FI.UTF-8, pl_PL.UTF-8)
 	// Timezone to use for displaying dates/times.
 	$config['timezone'] = 'America/Los_Angeles';
-	// The format string passed to strftime() for displaying dates.
-	// https://framework.zend.com/manual/1.12/en/zend.date.constants.html#zend.date.constants.selfdefinedformats
-	// Some aren't avaiable, but this is the best list I could find
-	$config['post_date'] = 'MM/dd/yy (EEE) HH:mm:ss';
+	// The format string passed to IntlDateFormatter class for displaying dates.
+	// https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
+	$config['post_date'] = 'dd/MM/yyyy (EEE) HH:mm:ss';
 	// The format string passed to JavaScript's strfdate() for displaying local dates.
 	// https://www.php.net/manual/en/function.strftime.php
 	$config['post_date_js'] = '%m/%d/%y (%a) %T';
 	// Same as above, but used for catalog tooltips.
-	$config['catalog_date'] = 'M d H:i';
+	$config['catalog_date'] = 'MMM dd kk:mm';
 	// Same as above, but used for 'you are banned' pages.
-	$config['ban_date'] = 'l j F, Y';
-
+	$config['ban_date'] = 'EEEE dd MMMM, yyyy';
 
 	// The names on the post buttons. (On most imageboards, these are both just "Post").
 	$config['button_newtopic'] = _('New Topic');
@@ -1136,13 +1137,15 @@
 	// Custom stylesheets available for the user to choose. See the "stylesheets/" folder for a list of
 	// available stylesheets (or create your own).
 	$config['stylesheets']['Yotsuba B'] = ''; // Default; there is no additional/custom stylesheet for this.
-	//$config['stylesheets']['Yotsuba'] = 'yotsuba.css';
+	$config['stylesheets']['Yotsuba'] = 'yotsuba.css';
+	$config['stylesheets']['Futaba'] = 'futaba.css';
+	$config['stylesheets']['Dark'] = 'dark.css';
 
 	// The prefix for each stylesheet URI. Defaults to $config['root']/stylesheets/
 	// $config['uri_stylesheets'] = 'http://static.example.org/stylesheets/';
 
 	// The default stylesheet to use.
-	//$config['default_stylesheet'] = array('Yotsuba B', $config['stylesheets']['Yotsuba B']);
+	$config['default_stylesheet'] = array('Yotsuba B', $config['stylesheets']['Yotsuba B']);
 
 	// Make stylesheet selections board-specific.
 	$config['stylesheets_board'] = false;
@@ -1206,6 +1209,20 @@
 	//	'top' => '',
 	//	'bottom' => '',
 	// );
+
+	// Countryballs forced for everyone
+	$config['countryballs'] = false;
+
+	// Allow users to check a box to display their country balls
+	$config['show_countryballs_single'] = false;
+
+	// Allow the user to decide whether or not he wants to display his country
+	// only works when $config['countryballs'] is set to true
+	$config['allow_no_country'] = false;
+
+	// Load all country flags from one file
+	$config['country_flags_condensed'] = true;
+	$config['country_flags_condensed_css'] = 'static/flags/countryball/flags.css';
 
 	// Display flags (when available). This config option has no effect unless poster flags are enabled (see
 	// $config['country_flags']). Disable this if you want all previously-assigned flags to be hidden.
@@ -1271,49 +1288,45 @@
 
 	// Custom embedding (YouTube, vimeo, etc.)
 	// It's very important that you match the entire input (with ^ and $) or things will not work correctly.
-	// This is mess, but it works.
-	$config['embedding'] = array(
-		array(
-			'/^https?:\/\/(?:\w+\.|)(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11})?$/i',
-			'<div class="video-container" data-video="$1">'.
-			'<span class="unimportant yt-help">YouTube embed. Click thumbnail to play.</span><br>'.
-			'<a href="$0" target="_blank" class="file">'.
-			'<img style="width:%%tb_width%%px" src="//img.youtube.com/vi/$1/0.jpg" class="post-image"/>'.
-			'</a></div>'
-		),
-		array(
-			'/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})(\?.+)?$/i',
-			'<div class="video-container"><iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" src="https://player.vimeo.com/video/$2?line=0" frameborder="0" allowfullscreen></iframe></div>'
-		),
-		array(
-			'/^https?:\/\/(\w+\.)?dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})(_.+)?$/i',
-			'<div class="video-container"><iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe></div>'
-		),
-		array(
-			'/^https?:\/\/(\w+\.|)(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,15})?$/i',
-			'<div class="video-container"><iframe width="300" height="60" src="https://vocaroo.com/embed/$3?autoplay=0" frameborder="0" allow="autoplay"></iframe></div>'
-		),
-		array(
-			'/^https?:\/\/(\w+\.)?bitchute\.com\/video\/([^\s?&#\/]+)\/?$/i',
-			'<div class="video-container"><iframe width="%%tb_width%%" height="%%tb_height%%" scrolling="no" frameborder="0" style="border: none;" src="https://www.bitchute.com/embed/$2"></iframe></div>'
-		),
-		array(
-		         '/^https?:\/\/(\w+\.)?soundcloud\.com\/([a-zA-Z0-9\-\_\/]+)(_.+)?$/i',
-		         '<div class="video-container"><iframe width="520" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https://soundcloud.com/$2?&color=%23ff5500&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/$2" target="_blank" style="color: #cccccc; text-decoration: none;"></a></div></div>'
-                         )
-	);
+	// oEmbed help: https://oembed.com/
+	// Since we are using oEmbed, this changed the behavior of embed field, now we store a json with the title and url (see: tools/update_embed.php)
+	// To insert video title into a frame, take a look at youtube html. %%VIDEO_NAME%% = mb_substr(0, 60); %%VIDEO_FULLNAME%% = non cut title 
+	$config['embeds'][] = [
+		'regex' => '/^https?:\/\/(?:\w+\.|)(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11})?$/i',
+		'oembed' => 'https://www.youtube.com/oembed?url=%s&format=json',
+		'service' => 'youtube',
+		'html' => '<div class="video-container" data-video="$1"><span class="unimportant yt-help" title="%%VIDEO_FULLNAME%%">YouTube: <a href="https://youtu.be/$1">%%VIDEO_NAME%%</a></span><br><a href="$0" target="_blank" class="file"><img style="width:%%tb_width%%px" src="//img.youtube.com/vi/$1/0.jpg" class="post-image"/></a></div>'];
+	$config['embeds'][] = [
+		'regex' => '/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})$/i',
+		'oembed' => 'https://vimeo.com/api/oembed.json?url=%s',
+		'service' => 'vimeo',
+		'html' => '<div class="video-container"><iframe style="float: left;margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" src="https://player.vimeo.com/video/$2?line=0" frameborder="0" allowfullscreen></iframe></div>'];
+	$config['embeds'][] = [
+		'regex' => '/^https?:\/\/(\w+\.)?soundcloud\.com\/([a-zA-Z0-9\-\_\/]+)$/i',
+		'oembed' => 'https://soundcloud.com/oembed?url=%s&format=json',
+		'service' => 'soundcloud',
+		'html' => '<div class="video-container"><iframe width="520" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https://soundcloud.com/$2?&color=%23ff5500&hide_related=false&show_comments=false&show_user=false&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/$2" target="_blank" style="color: #cccccc; text-decoration: none;"></a></div></div>'];
+	$config['embeds'][] = [
+		'regex' => '/^https?:\/\/(\w+\.)?dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})$/i',
+		'oembed' => 'https://www.dailymotion.com/services/oembed?url=%s',
+		'service' => 'dailymotion',
+		'html' => '<div class="video-container"><iframe style="float: left; margin: 10px 20px;" width="%%tb_width%%" height="%%tb_height%%" frameborder="0" src="https://www.dailymotion.com/embed/video/$2" allowfullscreen></iframe></div>'];
+	$config['embeds'][] = [
+		'regex' => '/^https?:\/\/(\w+\.|)(vocaroo\.com\/|voca\.ro\/)([a-zA-Z0-9]{2,15})$/i',
+		'oembed' => '',
+		'service' => 'voocaro',
+		'html' => '<div class="video-container"><iframe width="300" height="60" src="https://vocaroo.com/embed/$3?autoplay=0" frameborder="0" allow="autoplay"></iframe></div>'];
 
 	// Embedding width and height.
 	$config['embed_width'] = 300;
 	$config['embed_height'] = 246;
 
 	$config['embed_url_regex'] = [
-		'youtube' => '/(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11}.+|\?t\=)$/i',
+		'youtube' => '/(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11})/i',
 		'vimeo' => '/vimeo\.com\/(\d{2,10})/i',
 		'dailymotion' => '/dailymotion\.com\/video\/([a-zA-Z0-9]{2,10})/i',
-		'soundcloud' => '/soundcloud\.com\/([a-zA-Z0-9\-\_\/]+)(_.+)?$/i',
+		'soundcloud' => '/soundcloud\.com\/([a-zA-Z0-9\-\_\/]+)/i',
 		'vocaroo' => '/(?:vocaroo\.com\/|voca\.ro\/)([^\s?&#\/]+)/i',
-		'bitchute' => '/bitchute\.com\/video\/([^\s?&#\/]+)/i'
 	];
 
 
@@ -1350,7 +1363,7 @@
 	$config['error']['toomanycross']	= _('Too many cross-board links; post discarded.');
 	$config['error']['nodelete']		= _('You didn\'t select anything to delete.');
 	$config['error']['noreport']		= _('You didn\'t select anything to report.');
-	$config['error']['invalidreport']	= _('The reason was invalid.');
+	$config['error']['invalidreport']	= _('Invalid reason.');
 	$config['error']['toomanyreports']	= _('You can\'t report that many posts at once.');
 	$config['error']['invalidpassword']	= _('Wrong password…');
 	$config['error']['invalidimg']		= _('Invalid image.');
@@ -1373,6 +1386,8 @@
 	$config['error']['too_many_posts']	= _('To prevent raids, the maximum number of posts in given interval has been limited. Please try again in a short while.');
 	$config['error']['already_voted']	= _('You have already voted for this thread to be featured.');
 	$config['error']['already_whitelisted']	= _('You\'re already whitelisted!');
+	$config['error']['flag_undefined']	= _('The flag %s is undefined, your PHP version is too old!');
+	$config['error']['flag_wrongtype']	= _('defined_flags_accumulate(): The flag %s is of the wrong type!');
 
 	// Moderator errors
 	$config['error']['toomanyunban']	= _('You are only allowed to unban %s users at a time. You tried to unban %u users.');
@@ -1558,6 +1573,7 @@
 	$config['mod']['link_bandeletebyip'] = '[B&amp;D+]';
 	$config['mod']['link_deletefile'] = '[F]';
 	$config['mod']['link_spoilerimage'] = '[S]';
+	$config['mod']['link_unspoilerimage'] = '<s>[S]</s>';
 	$config['mod']['link_deletebyip'] = '[D+]';
 	$config['mod']['link_deletebyip_global'] = '[D++]';
 	$config['mod']['link_sticky'] = '[Sticky]';
@@ -1729,9 +1745,6 @@
 	$config['mod']['delete'] = JANITOR;
 	// Deliver Bantz to User and Post
 	$config['mod']['bantz'] = MOD;
-
-	// Ability to See Sitewide Post and Ban info
-	$config['mod']['sitewide_post_info'] = MOD;
 
 	// Issue Nicenotice to a poster
 	$config['mod']['nicenotice'] = MOD;
@@ -2138,8 +2151,6 @@
 	// You can set it to a higher value, to further migrate to other password hashing function.
 	$config['password_crypt_version'] = 1;
 
-	// Use CAPTCHA for reports?
-	$config['report_captcha'] = false;
 
 	// Allowed HTML tags in ?/edit_pages.
 	$config['allowed_html'] = 'a[href|title],p,br,li,ol,ul,strong,em,u,h2,b,i,tt,div,img[src|alt|title],hr';
@@ -2177,9 +2188,11 @@
 	// this requires setting up maxmind db
 	// either installing geoipupdate or downloading manually
 	// https://dev.maxmind.com/geoip/updating-databases?lang=en#1-install-geoip-update
+	// for whitelisting, see "Whitelist" in the dashboard and add "token_for.js" script (non js alternative soon)
 	$config['regionblock'] = false;
 	// Error message for region block
-	$config['error']['regionblock'] = 'Posts de outro país não são permitidos.</br></br>Seu IP: (%s)</br>';
+	$config['error']['regionblock'] = _('It\'s not allowed to post from a foreign country.</br></br>Do you think this was a mistake?</br>Send us an email with your IP (%s) to:</br><strong>your@email.com</strong>');
+
 	// Allowed countries
 	$config['regionblock_countries'] = array('BR');
 
@@ -2197,7 +2210,7 @@
 	$config['mod']['edit_banners'] = ADMIN;
 
 	// Optional banner image at the top of every page.
-	 $config['url_banner'] = '/banner.php';
+	 $config['url_banner'] = '/banners.php';
 	// Banner dimensions are also optional. As the banner loads after the rest of the page, everything may be
 	// shifted down a few pixels when it does. Making the banner a fixed size will prevent this.
 	$config['banner_width'] = 300;
@@ -2213,14 +2226,26 @@
 	// Show how much time a page took to load
 	$config['show_timer'] = true;
 
+	// Filter public banlist. This is done via regexp and you should write valid regex
+	$config['banlist_filters'] = '/Teste/i';
+
 	// Securimage options
 	$config['securimage_options'] = ['send_headers' => false, 'no_exit' => true];
 
 	// Maxmind db path
 	$config['maxmind_db_path'] = '/usr/share/GeoIP/GeoLite2-City.mmdb';
 
-	// banlist filters
-	$config["banlist_filters"] = '/Teste/i';
+
+	// A management for login attempts and block login
+	// backported from kissu
+	$config['max_login_attempts_refresh_time'] = 60 * 60 * 24; // 24 hours
+	$config['true_login_refresh_time'] = 60 * 60; // 1 hour
+	$config['max_login_attempts'] = 4;
+	$config['error']['max_logins_reached'] = _('You tried to sign in way too many times...');
+
+	// Loading lazy
+	// https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading
+	$config['content_loading_lazy'] = true;
 
 	// ukko2 name. set false do disable
 	// this will not install the theme ukko2 for users, only for mod use

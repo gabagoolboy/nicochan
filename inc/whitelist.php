@@ -8,7 +8,7 @@ class Whitelist {
 		if (!$config['whitelist']['enabled'])
 			return true;
 
-		$query = prepare("SELECT COUNT(*) AS total FROM ``whitelist`` WHERE `ip` = :ip OR `cookie` = :cookie");
+		$query = prepare("SELECT COUNT(1) AS total FROM ``whitelist`` WHERE `ip` = :ip OR `cookie` = :cookie");
 		$query->bindValue(':ip', $ip);
 		$query->bindValue(':cookie', $cookie);
 		$query->execute() or error(db_error($query));

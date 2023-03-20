@@ -51,11 +51,11 @@ $(window).on('load', (function(){
 </form>
 
 {% if reasons %}
-<h3>Predefined Nicenotice Texts:</h3>
-
-<table class="ReasonTableForm">
+<h3>{% trans %}Predefined Nicenotice Reasons:{% endtrans %}</h3>
+<form>
+<table class="ReasonTableForm" style="margin-left: unset">
 	<tr>
-		<td style="text-align: center">Reason</td>
+		<th>{% trans %}Reason{% endtrans %}</th>
 	</tr>
 	{% for key, reason in reasons %}
 		<tr id="ResonSelectorID_{{ key }}">
@@ -63,4 +63,6 @@ $(window).on('load', (function(){
 		</tr>
 	{% endfor %}
 </table>
+</form>
 {% endif %}
+

@@ -802,6 +802,27 @@ if (file_exists($config['has_installed'])) {
 				query(sprintf('ALTER TABLE ``posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
 				query(sprintf('ALTER TABLE ``shadow_posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
 			}
+		case '6.0.8':
+			foreach ($boards as &$board){
+				query(sprintf("ALTER TABLE ``posts_%s`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `hideid`;", $board['uri']));
+				query(sprintf('DROP TABLE ``shadow_posts_%s``;', $board['uri']));
+			}
+			query('ALTER TABLE ``antispam`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `passed`;');
+			query('ALTER TABLE ``filehashes`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `filehash`;');
+			query('ALTER TABLE ``cites`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `target`;');
+			query('DROP TABLE ``shadow_antispam``;');
+			query('DROP TABLE ``shadow_cites``;');
+			query('DROP TABLE ``shadow_filehashes``;');
+			query('ALTER TABLE ``whitelist_region`` ADD `token` varchar(12) NOT NULL AFTER `ip_hash`;');
+			query('ALTER TABLE ``antispam`` MODIFY `passed` smallint(6) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``pms`` MODIFY `unread` tinyint(1) DEFAULT 1 NOT NULL;');
+			query('ALTER TABLE ``warnings`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``nicenotices`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``bans`` MODIFY `cookiebanned` tinyint(1) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``bans`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``whitelist_region`` ADD CONSTRAINT `whitelistreg_pk` UNIQUE KEY (`ip`);');
+			query('ALTER TABLE ``ban_appeals`` MODIFY `denied` tinyint(1) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``ban_appeals`` MODIFY `denial_reason` text DEFAULT NULL;');
 
 			case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
