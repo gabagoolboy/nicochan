@@ -3,17 +3,23 @@
 	<table>
 		<tr>
 			<th>{% trans %}To{% endtrans %}</th>
-			{% if mod|hasPermission(config.mod.editusers) %}
-				<td><a href="?/users/{{ id }}">{{ username|e }}</a></td>
-			{% else %}
-				<td>{{ username|e }}</td>
-			{% endif %}
+			<td>
+				{% if mod|hasPermission(config.mod.editusers) %}
+					<a href="?/users/{{ id }}">{{ username|e }}</a>
+				{% else %}
+					{{ username|e }}
+				{% endif %}
+			</td>
 		</tr>
 		<tr>
 			<th>{% trans %}Message{% endtrans %}</th>
-			<td><textarea name="message" rows="10" cols="40">{{ message }}</textarea></td>
+			<td>
+				<textarea name="message" rows="10" cols="40">{{ message }}</textarea>
+			</td>
 		</tr>
 	</table>
-
-	<p style="text-align:center"><input type="submit" value="{% trans 'Send message' %}"></p>
+	<p style="text-align:center">
+		<input type="submit" value="{% trans %}Send message{% endtrans %}">
+	</p>
 </form>
+

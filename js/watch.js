@@ -124,7 +124,7 @@ $(function(){
 
       var tag;
       if (variant == 'desktop') {
-        tag = $("<a href='"+((storage()[board].slugs && storage()[board].slugs[tid]) || (modRoot+board+"/res/"+tid+".html"))+"'><span>#"+tid+"</span><span class='cb-uri watch-remove'>"+newposts+"</span>");
+        tag = $("<a href='"+((storage()[board].slugs && storage()[board].slugs[tid]) || (getModRoot()+board+"/res/"+tid+".html"))+"'><span>#"+tid+"</span><span class='cb-uri watch-remove'>"+newposts+"</span>");
 	tag.find(".watch-remove").mouseenter(function() {
           this.oldval = $(this).html();
           $(this).css("min-width", $(this).width());
@@ -135,7 +135,7 @@ $(function(){
         })
       }
       else if (variant == 'mobile') {
-        tag = $("<a href='"+((storage()[board].slugs && storage()[board].slugs[tid]) || (modRoot+board+"/res/"+tid+".html"))+"'><span>#"+tid+"</span><span class='cb-uri'>"+newposts+"</span>"
+        tag = $("<a href='"+((storage()[board].slugs && storage()[board].slugs[tid]) || (getModRoot()+board+"/res/"+tid+".html"))+"'><span>#"+tid+"</span><span class='cb-uri'>"+newposts+"</span>"
                +"<span class='cb-uri watch-remove'><i class='fa fa-minus'></i></span>");	
       }
 
@@ -175,9 +175,9 @@ $(function(){
     for (var i in st) {
       if (is_pinned(st[i])) {
 	var link;
-        if (bl.find('[href*="'+modRoot+i+'/index.html"]:not(.cb-menuitem)').length) link = bl.find('[href*="'+modRoot+i+'/"]').first();
+        if (bl.find('[href*="'+getModRoot()+i+'/index.html"]:not(.cb-menuitem)').length) link = bl.find('[href*="'+getModRoot()+i+'/"]').first();
 
-        else link = $('<a href="'+modRoot+i+'/" class="cb-item cb-cat">/'+i+'/</a>').appendTo(pinned);
+        else link = $('<a href="'+getModRoot()+i+'/" class="cb-item cb-cat">/'+i+'/</a>').appendTo(pinned);
 
 	if (link[0].origtitle === undefined) {
 	  link[0].origtitle = link.html();
@@ -360,7 +360,7 @@ $(function(){
 
     var boardconfig = storage()[board] || {};
     
-    $('hr:first').before('<div id="watch-thread" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
+    $('hr:first').before('<div id="watch-thread" style="text-align:right"><a class="unimportant">-</a></div>');
     $('#watch-thread a').html(is_threadwatched(boardconfig, thread) ? _("Stop watching this thread") : _("Watch this thread")).click(function() {
       $(this).html(toggle_threadwatched(board, thread) ? _("Stop watching this thread") : _("Watch this thread"));
       update_pinned();
@@ -371,14 +371,14 @@ $(function(){
 
     var boardconfig = storage()[board] || {};
 
-    $('hr:first').before('<div id="watch-pin" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
+    $('hr:first').before('<div id="watch-pin" style="text-align:right"><a class="unimportant">-</a></div>');
     $('#watch-pin a').html(is_pinned(boardconfig) ? _("Unpin this board") : _("Pin this board")).click(function() {
       $(this).html(toggle_pinned(board) ? _("Unpin this board") : _("Pin this board"));
       $('#watch-board a').html(is_boardwatched(boardconfig) ? _("Stop watching this board") : _("Watch this board"));
       update_pinned();
     });
 
-    $('hr:first').before('<div id="watch-board" style="text-align:right"><a class="unimportant" href="javascript:void(0)">-</a></div>');
+    $('hr:first').before('<div id="watch-board" style="text-align:right"><a class="unimportant">-</a></div>');
     $('#watch-board a').html(is_boardwatched(boardconfig) ? _("Stop watching this board") : _("Watch this board")).click(function() {
       $(this).html(toggle_boardwatched(board) ? _("Stop watching this board") : _("Watch this board"));
       $('#watch-pin a').html(is_pinned(boardconfig) ? _("Unpin this board") : _("Pin this board"));

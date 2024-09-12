@@ -5,57 +5,62 @@
  * Released under the MIT license
  * Copyright (c) 2012 Michael Save <savetheinternet@tinyboard.org>
  * Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net> 
+ * Copyright (c) 2024 Perdedora <weav@anche.no>
  *
  * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   // $config['additional_javascript'][] = 'js/post-hover'; (optional; must come first)
  *   $config['additional_javascript'][] = 'js/show-backlinks.js';
  *
  */
 
-onready(function(){
-	var showBackLinks = function() {
-		var reply_id = $(this).attr('id').replace(/(^reply_)|(^op_)/, '');
-		
-		$(this).find('div.body a:not([rel="nofollow"])').each(function() {
-			var id, post, $mentioned;
-		
-			if(id = $(this).text().match(/^>>(\d+)$/))
-				id = id[1];
-			else
-				return;
-		
-			$post = $('#reply_' + id);
-			if($post.length == 0){
-				$post = $('#op_' + id);
-				if($post.length == 0)
-					return;
+document.addEventListener('DOMContentLoaded', () => {
+	const showBackLinks = (post) => {
+		const replyId = post.id.split('_')[1];
+
+		post.querySelectorAll('div.body a.highlight-link').forEach(link => {
+			const citeId = link.getAttribute('data-cite');
+			if (!citeId) return;
+
+			let targetPost = document.getElementById(`reply_${citeId}`) || document.getElementById(`op_${citeId}`);
+			if (!targetPost) return;
+
+            if (targetPost.classList.contains('op')) {
+				if (targetPost.id.split('_')[1] === citeId) {
+                	const opTag = Vichan.createElement('small', { className: 'op_cite', text: ' (OP)' });
+                	if (!link.nextElementSibling?.textContent?.includes(opTag.textContent)) {
+                		link.after(opTag);
+                	}
+				}
+            }
+
+			let mentioned = targetPost.querySelector('p.intro span.mentioned');
+			if (!mentioned) {
+				mentioned = Vichan.createElement('span', {
+					className: 'mentioned unimportant',
+					parent: targetPost.querySelector('p.intro')
+				});
 			}
-		
-			$mentioned = $post.find('p.intro span.mentioned');
-			if($mentioned.length == 0)
-				$mentioned = $('<span class="mentioned unimportant"></span>').appendTo($post.find('p.intro'));
-			
-			if ($mentioned.find('a.mentioned-' + reply_id).length != 0)
-				return;
-			
-			var $link = $('<a class="mentioned-' + reply_id + '" onclick="highlightReply(\'' + reply_id + '\');" href="#' + reply_id + '">&gt;&gt;' +
-				reply_id + '</a>');
-			$link.appendTo($mentioned)
-			
-			if (window.init_hover) {
-				$link.each(init_hover);
+
+			if (!mentioned.querySelector(`a.mentioned-${replyId}`)) {
+				Vichan.createElement('a', {
+					className: `mentioned-${replyId} highlight-link`,
+					attributes: { 'data-cite': replyId, href: `#${replyId}` },
+					text: `>>${replyId}`,
+					parent: mentioned,
+					onClick: window.init_hover ? () => init_hover.call(mentionLink) : null
+				});
 			}
 		});
 	};
-	
-	$('div.post.reply').each(showBackLinks);
-	$('div.post.op').each(showBackLinks);
 
-        $(document).on('new_post', function(e, post) {
-		showBackLinks.call(post);
-		if ($(post).hasClass("op")) {
-			$(post).find('div.post.reply').each(showBackLinks);
-		}
+	const processPosts = (sel = document) => {
+        sel.querySelectorAll('div.post.reply, div.post.op').forEach(post => showBackLinks(post));
+	}
+
+	processPosts()
+
+	document.addEventListener('new_post_js', event => {
+		const post = event.detail.detail;
+        processPosts(post.classList.contains('op') ? post : post.parentElement);
 	});
 });

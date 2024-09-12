@@ -1,18 +1,8 @@
-{% if config.display_flags and post.modifiers.flag and ((config.display_flags_mod_only and mod) or not config.display_flags_mod_only) %}
-	 &nbsp;<img
-		{% if config.country_flags_condensed %}
-			 class="flag flag-{{ post.modifiers.flag }}" src="{{ config.image_blank }}"
-		{% else %}
-			 class="flag" src="{{ config.uri_flags|format(post.modifiers.flag) }}"
-		{% endif %}
-		 style="{% if post.modifiers['flag style'] %}
-				{{ post.modifiers['flag style'] }}
-			{% else %}
-				{{ config.flag_style }}
-			{% endif %}"
-
-		{% if post.modifiers['flag alt'] %} alt="{{ post.modifiers['flag alt']|e }}"
-			 title="{{ post.modifiers['flag alt']|e }}"
-		{% endif %}
-	>
+{% if config.display_flags and post.flag_iso and (not config.display_flags_mod_only or mod) %}
+    &nbsp;<img
+        class="flag{% if config.country_flags_condensed %} flag-{{ post.flag_iso }}{% endif %}"
+        src="{% if config.country_flags_condensed %}{{ config.image_blank }}{% else %}{{ config.uri_flags|format(post.flag_iso) }}{% endif %}"
+        style="{{ post.modifiers['flag style']|default(config.flag_style) }}"
+        {% if post.flag_ext %}alt="{{ post.flag_ext|e }}" title="{{ post.flag_ext|e }}"{% endif %}
+    >
 {% endif %}

@@ -1,48 +1,83 @@
-if (active_page == 'catalog') $(function(){
-	if (localStorage.catalog !== undefined) {
-		var catalog = JSON.parse(localStorage.catalog);
-	} else {
-		var catalog = {};
-		localStorage.catalog = JSON.stringify(catalog);
-	}
+document.addEventListener('DOMContentLoaded', () => {
+	'use strict';
 
-	$("#sort_by").change(function(){
-		var value = this.value;
-		$('#Grid').mixItUp('sort', (value == "random" ? value : "sticky:desc " + value));
+	const catalog = JSON.parse(localStorage.getItem('catalog')) || {};
+
+	const updateLocalStorage = () => {
+		localStorage.setItem('catalog', JSON.stringify(catalog));
+	};
+
+	const handleSortChange = (event) => {
+		const value = event.target.value;
 		catalog.sort_by = value;
-		localStorage.catalog = JSON.stringify(catalog);
-	});
+		updateLocalStorage();
+		sortGrid(value);
+	};
 
-	$("#image_size").change(function(){
-		var value = this.value, old;
-		$(".grid-li").removeClass("grid-size-vsmall");
-		$(".grid-li").removeClass("grid-size-small");
-		$(".grid-li").removeClass("grid-size-large");
-		$(".grid-li").addClass("grid-size-"+value);
+	const handleImageSizeChange = (event) => {
+		const value = event.target.value;
+		document.querySelectorAll('.grid-li').forEach((li) => {
+			li.className = li.className.replace(/grid-size-\w+/, `grid-size-${value}`);
+		});
 		catalog.image_size = value;
-		localStorage.catalog = JSON.stringify(catalog);
-	});
+		updateLocalStorage();
+	};
 
-	$('#Grid').mixItUp({
-		animation: {
-			enable: false
+	window.sortGrid = (value) => {
+		const grid = document.getElementById('Grid');
+		const threads = Array.from(grid.querySelectorAll('.mix'));
+
+		if (value === "random:desc") {
+			threads.sort(() => Math.random() - 0.5);
+		} else { // kill me
+			const [key, order] = value.split(':');
+			threads.sort((a, b) => {
+				const stickyA = a.dataset.sticky === 'true' ? -1 : 1;
+				const stickyB = b.dataset.sticky === 'true' ? -1 : 1;
+
+				if (stickyA !== stickyB) return stickyA - stickyB;
+
+				const dataA = key === 'bump' || key === 'time' ? parseInt(a.dataset[key], 10) : a.dataset[key];
+				const dataB = key === 'bump' || key === 'time' ? parseInt(b.dataset[key], 10) : b.dataset[key];
+
+				if (dataA < dataB) return order === 'desc' ? 1 : -1;
+				if (dataA > dataB) return order === 'desc' ? -1 : 1;
+				return 0;
+			});
 		}
-	});
 
-	if (catalog.sort_by !== undefined) {
-		$('#sort_by').val(catalog.sort_by).trigger('change');
-	}
-	if (catalog.image_size !== undefined) {
-		$('#image_size').val(catalog.image_size).trigger('change');
+		threads.forEach(thread => grid.appendChild(thread));
+	};
+
+	window.updateImageSize = () => {
+		document.querySelector('select#image_size').value = catalog.image_size;
+		document.querySelectorAll('.grid-li').forEach((li) => {
+			li.className = li.className.replace(/grid-size-\w+/, `grid-size-${catalog.image_size}`);
+		});
 	}
 
-	$('div.thread').on('click', function(e) {
-		if ($(this).css('overflow-y') === 'hidden') {
-			$(this).css('overflow-y', 'auto');
-			$(this).css('width', '100%');
-		} else {
-			$(this).css('overflow-y', 'hidden');
-			$(this).css('width', 'auto');
-		}
+
+	document.querySelector('select#sort_by').addEventListener('change', handleSortChange);
+	document.querySelector('select#image_size').addEventListener('change', handleImageSizeChange);
+
+	if (catalog.sort_by) {
+		document.querySelector('select#sort_by').value = catalog.sort_by;
+		sortGrid(catalog.sort_by);
+	}
+
+	if (catalog.image_size) {
+		updateImageSize();
+	}
+
+	document.querySelectorAll('div.thread').forEach(thread => {
+		thread.addEventListener('click', (e) => {
+			if (thread.style.overflowY === 'hidden') {
+				thread.style.overflowY = 'auto';
+				thread.style.width = '100%';
+			} else {
+				thread.style.overflowY = 'hidden';
+				thread.style.width = 'auto';
+			}
+		});
 	});
 });

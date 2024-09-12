@@ -1,40 +1,42 @@
-<script type="text/javascript">
-	var active_page = "mod";
-</script>
-<script src="js/id_colors.js"></script>
+<span id="active-page" data-page="mod"></span>
+<script src="js/id_colors.js?v={{ config.resource_version }}"></script>
 
-{% if not posts|length %}
-	<p style="text-align:center">({% trans 'There are none posts.' %})</p>
+{% if posts|length == 0 %}
+    <p style="text-align:center">{% trans %}There are no posts.{% endtrans %}</p>
 {% else %}
-	{% for board_posts in posts %}
-		<fieldset>
-			<legend>
-				<a href="?/{{ config.board_path|format(board_posts.board.uri) }}">
-					{{ config.board_abbreviation|format(board_posts.board.uri) }}
-					 -
-					 {{ board_posts.board.title|e }}
-				</a>
-			</legend>
-			{{ board_posts.posts|join('<hr>') }}
-		</fieldset>
-	{% endfor %}
+    {% for board_posts in posts %}
+        <fieldset>
+            <legend>
+                <a href="?/{{ config.board_path|format(board_posts.board.uri) }}">
+                    {{ config.board_abbreviation|format(board_posts.board.uri) }} -
+                    {{ board_posts.board.title|e }}
+                </a>
+            </legend>
+            {{ board_posts.posts|join('<hr>')|raw }}
+        </fieldset>
+    {% endfor %}
+    {% if totalPosts > 1 %}
+		    <div class="pages" style="display: flex; justify-content: center; align-items: center; width: fit-content; margin: 5px auto;">
+            {% for page in 1..totalPages %}
+                <a href="{{'?/IP' ~ '/' ~ ip ~ '/page/' ~ page }}">[{{ page }}]</a>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endif %}
 
 {% if mod|hasPermission(config.mod.view_notes) %}
 	<fieldset id="notes">
-		<legend>
-			{% set notes_length = notes|length %}
-			<legend>{{ notes_length }} {% trans %}note on record{% plural notes_length %}notes on record{% endtrans %}</legend>
-		</legend>
+		{% set notes_length = notes|length %}
+		<legend>{{ notes_length }} {% trans %}note on record{% endtrans %}{% if notes_length > 1 %}{% trans %}notes on record{% endtrans %}{% endif %}</legend>
 
 		{% if notes|length > 0 %}
 			<table class="modlog">
 				<tr>
-					<th>{% trans 'Staff' %}</th>
-					<th>{% trans 'Note' %}</th>
-					<th>{% trans 'Date' %}</th>
+					<th>{% trans %}Staff{% endtrans %}</th>
+					<th>{% trans %}Note{% endtrans %}</th>
+					<th>{% trans %}Date{% endtrans %}</th>
 					{% if mod|hasPermission(config.mod.remove_notes) %}
-						<th>{% trans 'Actions' %}</th>
+						<th>{% trans %}Actions{% endtrans %}</th>
 					{% endif %}
 				</tr>
 				{% for note in notes %}
@@ -43,19 +45,15 @@
 							{% if note.username %}
 								<a href="?/new_PM/{{ note.username|e }}">{{ note.username|e }}</a>
 							{% else %}
-								<em>{% trans 'deleted?' %}</em>
+								<em>{% trans %}deleted?{% endtrans %}</em>
 							{% endif %}
 						</td>
-						<td>
-							{{ note.body }}
-						</td>
-						<td class="minimal">
-							{{ note.time|strftime }}
-						</td>
+						<td>{{ note.body }}</td>
+						<td class="minimal">{{ note.time|strftime }}</td>
 						{% if mod|hasPermission(config.mod.remove_notes) %}
 							<td class="minimal">
 								<a href="?/IP/{{ ip|url_encode(true) }}/remove_note/{{ note.id }}">
-									<small>[{% trans 'remove' %}]</small>
+									<small>[{% trans %}remove{% endtrans %}]</small>
 								</a>
 							</td>
 						{% endif %}
@@ -69,20 +67,16 @@
 				<input type="hidden" name="token" value="{{ security_token }}">
 				<table>
 					<tr>
-						<th>{% trans 'Staff' %}</th>
+						<th>{% trans %}Staff{% endtrans %}</th>
 						<td>{{ mod.username|e }}</td>
 					</tr>
 					<tr>
-						<th>
-							<label for="note">{% trans 'Note' %}</label>
-						</th>
-						<td>
-							<textarea id="note" name="note" rows="5" cols="30"></textarea>
-						</td>
+						<th><label for="note">{% trans %}Note{% endtrans %}</label></th>
+						<td><textarea id="note" name="note" rows="5" cols="30"></textarea></td>
 					</tr>
 					<tr>
 						<td></td>
-						<td><input type="submit" value="{% trans 'New note' %}"></td>
+						<td><input type="submit" value="{% trans %}New note{% endtrans %}"></td>
 					</tr>
 				</table>
 			</form>
@@ -90,53 +84,46 @@
 	</fieldset>
 {% endif %}
 
-
 {% if mod|hasPermission(config.mod.forcedflag) %}
 	<fieldset id="forcedflag">
-		<legend>
-			<legend>{% trans 'Set custom user flag' %}</legend>
-		</legend>
+		<legend>{% trans %}Set custom user flag{% endtrans %}</legend>
 
 		{% if is_forcedflag %}
 			<form action="" method="post" style="text-align:center; margin:0">
-				<b>{% trans 'Fucking' %} {{ is_forcedflag }}</b><br/>
+				<b>{% trans %}Fucking{% endtrans %} {{ is_forcedflag }}</b><br/>
 				<input type="hidden" name="token" value="{{ security_token }}">
-				<input type="submit" name="remove_forcedflag" value="{% trans 'Remove' %} {{ is_forcedflag }} {% trans 'Flag' %}">
+				<input type="submit" name="remove_forcedflag" value="{% trans %}Remove{% endtrans %} {{ is_forcedflag }} {% trans %}Flag{% endtrans %}">
 			</form>
 		{% else %}
 			<form action="" method="post"  style="text-align:center; margin:0">
 				<input type="hidden" name="token" value="{{ security_token }}">
-
-				{% trans 'Make IP fucking ' %}
+				{% trans %}Make IP fucking{% endtrans %} 
 				<select name="country" id="country">
-					<option selected="selected">Choose one</option>
+					<option selected="selected">{% trans %}Choose one{% endtrans %}</option>
 					{% for country in countries %}
 						<option value="{{ country.id|e }}">{{ country.name|e }}</option>
 					{% endfor %}
 				</select>
-
-				<input type="submit" name="set_forcedflag" value="{% trans 'Make it so' %}">
+				<input type="submit" name="set_forcedflag" value="{% trans %}Make it so{% endtrans %}">
 			</form>
 		{% endif %}
 	</fieldset>
 {% endif %}
 
-
-
 {% if bans|length > 0 and mod|hasPermission(config.mod.view_ban) %}
 	<fieldset id="bans">
 		{% set bans_length = bans|length %}
-		<legend>{{ bans_length }} {% trans %}ban on record{% plural bans_length %}bans on record{% endtrans %}</legend>
+		<legend>{{ bans_length }} {% trans %}ban on record{% endtrans %}{% if bans_length > 1 %}{% trans %}bans on record{% endtrans %}{% endif %}</legend>
 
 		{% for ban in bans %}
 			<form action="" method="post" style="text-align:center">
 				<input type="hidden" name="token" value="{{ security_token }}">
-				{% include 'mod/ban_history.html' %}
+				{% include 'mod/partials/ban_history.html' %}
 				<input type="hidden" name="ban_id" value="{{ ban.id }}">
 				<input type="hidden" name="appeal" value="{{ ban.appealable }}">
 				<input type="submit" name="ban_cookie" value="{% trans %}Ban Cookie{% endtrans %}">
 				<input type="submit" name="change_appeal" value="{% trans %}Change appeal status{% endtrans %}">
-				<input type="submit" name="unban" value="{% trans 'Remove ban' %}">
+				<input type="submit" name="unban" value="{% trans %}Remove ban{% endtrans %}">
 				<input type="submit" name="edit_ban" value="{% trans %}Edit Ban{% endtrans %}">
 			</form>
 		{% endfor %}
@@ -145,47 +132,24 @@
 
 {% if mod|hasPermission(config.mod.ban) %}
 	<fieldset>
-		<legend>{% trans 'New ban' %}</legend>
-		{% set redirect = '?/IP/' ~ ip ~ '#bans' %}
+		<legend>{% trans %}New ban{% endtrans %}</legend>
+		{% set redirect = '?/IP/' ~ ip ~ '/page/' ~ currentPage ~ '#bans' %}
 		{% include 'mod/ban_form.html' %}
 	</fieldset>
 {% endif %}
 
-{% if logs|length > 0  %}
+{% if logs|length > 0 %}
 	<fieldset id="history">
-		<legend>{% trans 'History' %}</legend>
+		<legend>{% trans %}History{% endtrans %}</legend>
 		<table class="modlog" style="width:100%">
 			<tr>
-				<th>{% trans 'Staff' %}</th>
-				<th>{% trans 'Time' %}</th>
-				<th>{% trans 'Board' %}</th>
-				<th>{% trans 'Action' %}</th>
+				<th>{% trans %}Staff{% endtrans %}</th>
+				<th>{% trans %}Time{% endtrans %}</th>
+				<th>{% trans %}Board{% endtrans %}</th>
+				<th>{% trans %}Action{% endtrans %}</th>
 			</tr>
 			{% for log in logs %}
-				<tr>
-					<td class="minimal">
-						{% if log.username %}
-							<a href="?/log:{{ log.username|e }}">{{ log.username|e }}</a>
-						{% elseif log.mod == -1 %}
-							<em>{% trans %}system{% endtrans %}</em>
-						{% else %}
-							<em>{% trans 'deleted?' %}</em>
-						{% endif %}
-					</td>
-					<td class="minimal">
-						<span title="{{ log.time|strftime(config.post_date) }}">{{ log.time|ago }}</span>
-					</td>
-					<td class="minimal">
-						{% if log.board %}
-							<a href="?/{{ config.board_path|format(log.board) }}{{ config.file_index }}">{{ config.board_abbreviation|format(log.board) }}</a>
-						{% else %}
-							-
-						{% endif %}
-					</td>
-					<td>
-						{{ log.text }}
-					</td>
-				</tr>
+				{% include 'mod/partials/log.html' %}
 			{% endfor %}
 		</table>
 	</fieldset>

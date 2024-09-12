@@ -7,76 +7,86 @@
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/comment-toolbar.js';
  */
-if (active_page == 'catalog') {
-	$(document).ready(function () {
-		'use strict';
+document.addEventListener('DOMContentLoaded', () => {
+  'use strict';
 
-		//	'true' = enable shortcuts
-		var useKeybinds = true;
+  const useKeybinds = true;
+  const delay = 400;
+  let timeoutHandle;
 
-		//	trigger the search 400ms after last keystroke
-		var delay = 400;
-		var timeoutHandle;
+  const filter = (searchTerm) => {
+    searchTerm = searchTerm.toLowerCase();
 
-		//search and hide none matching threads
-		function filter(search_term) {
-			$('.replies').each(function () {
-				var subject = $(this).children('.intro').text().toLowerCase();
-				var comment = $(this).clone().children().remove(':lt(2)').end().text().trim().toLowerCase();
-				search_term = search_term.toLowerCase();
+    document.querySelectorAll('.replies').forEach(reply => {
+      const subject = reply.querySelector('.intro')?.textContent.toLowerCase() || '';
+	  const content = reply.innerHTML.split('<br>')[1] || '';
+	  const comment = content.trim().toLowerCase();
 
-				if (subject.indexOf(search_term) == -1 && comment.indexOf(search_term) == -1) {
-					$(this).parents('div[id="Grid"]>.mix').css('display', 'none');
-				} else {
-					$(this).parents('div[id="Grid"]>.mix').css('display', 'inline-block');
-				}
-			});
-		}
+      const match = subject.includes(searchTerm) || comment.includes(searchTerm);
+      reply.closest('div[id="Grid"]>.mix').style.display = match ? 'inline-block' : 'none';
+    });
+  };
 
-		function searchToggle() {
-			var button = $('#catalog_search_button');
+  const searchToggle = () => {
+    const button = document.getElementById('catalog_search_button');
 
-			if (!button.data('expanded')) {
-				button.data('expanded', '1');
-				button.text(_('Close'));
-				$('.catalog_search').append(' <input id="search_field" style="border: inset 1px;">');
-				$('#search_field').focus();
-			} else {
-				button.removeData('expanded');
-				button.text(_('Search'));
-				$('.catalog_search').children().last().remove();
-				$('div[id="Grid"]>.mix').each(function () { $(this).css('display', 'inline-block'); });
-			}
-		}
+    if (!button.dataset.expanded) {
+      button.dataset.expanded = '1';
+      button.textContent = _('Close');
+      const input = Vichan.createElement('input', {
+        idName: 'search_field',
+        attributes: { style: 'border: inset 1px;' },
+        parent: document.querySelector('.catalog_search')
+      });
+      input.focus();
+    } else {
+      delete button.dataset.expanded;
+      button.textContent = _('Search');
+      const searchField = document.getElementById('search_field');
+      if (searchField) searchField.remove();
+      document.querySelectorAll('div[id="Grid"]>.mix').forEach(mix => {
+        mix.style.display = 'inline-block';
+      });
+    }
+  };
 
-		$('.threads').before('<span class="catalog_search">[<a id="catalog_search_button" style="text-decoration:none; cursor:pointer;"></a>]</span>');
-		$('#catalog_search_button').text(_('Search'));
+  const imageSizeSelect = document.querySelector('select#image_size');
 
-		$('#catalog_search_button').on('click', searchToggle);
-		$('.catalog_search').on('keyup', 'input#search_field', function (e) {
-			window.clearTimeout(timeoutHandle);
-			timeoutHandle = window.setTimeout(filter, 400, e.target.value);
-		});
+  const catalogSearchSpan = Vichan.createElement('span', {
+    className: 'catalog_search',
+	attributes: { style: 'margin-left: 10px;' },
+    innerHTML: `[<a id="catalog_search_button" style="text-decoration:none; cursor:pointer">${_('Search')}</a>]`,
+  });
 
-		if (useKeybinds) {
-			//	's'
-			$('body').on('keydown', function (e) {
-				if (e.which === 83 && e.target.tagName === 'BODY' && !(e.ctrlKey || e.altKey || e.shiftKey)) {
-					e.preventDefault();
-					if ($('#search_field').length !== 0) { 
-						$('#search_field').focus();
-					} else {
-						searchToggle();
-					}
-				}
-			});
-			//	'esc'
-			$('.catalog_search').on('keydown', 'input#search_field', function (e) {
-				if (e.which === 27 && !(e.ctrlKey || e.altKey || e.shiftKey)) {
-					window.clearTimeout(timeoutHandle);
-					searchToggle();
-				}
-			});
-		}
-	});
-}
+  imageSizeSelect.insertAdjacentElement('afterend', catalogSearchSpan);
+
+  document.getElementById('catalog_search_button').addEventListener('click', searchToggle);
+
+  document.querySelector('.catalog_search').addEventListener('keyup', (e) => {
+    if (e.target.id === 'search_field') {
+      clearTimeout(timeoutHandle);
+      timeoutHandle = setTimeout(() => filter(e.target.value), delay);
+    }
+  });
+
+  if (useKeybinds) {
+    document.body.addEventListener('keydown', (e) => {
+      if (e.key === 's' && e.target.tagName === 'BODY' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        e.preventDefault();
+        const searchField = document.getElementById('search_field');
+        if (searchField) {
+          searchField.focus();
+        } else {
+          searchToggle();
+        }
+      }
+    });
+
+    document.querySelector('.catalog_search').addEventListener('keydown', (e) => {
+      if (e.target.id === 'search_field' && e.key === 'Escape' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        clearTimeout(timeoutHandle);
+        searchToggle();
+      }
+    });
+  }
+});

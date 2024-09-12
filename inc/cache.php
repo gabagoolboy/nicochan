@@ -15,6 +15,7 @@ class Cache {
 			case 'memcached':
 				self::$cache = new Memcached();
 				self::$cache->addServers($config['cache']['memcached']);
+				break;
 			case 'redis':
 				self::$cache = new Redis();
 				self::$cache->connect($config['cache']['redis'][0], $config['cache']['redis'][1]);
@@ -25,6 +26,8 @@ class Cache {
 				break;
 			case 'php':
 				self::$cache = array();
+				break;
+			default:
 				break;
 		}
 	}
@@ -40,14 +43,8 @@ class Cache {
 					self::init();
 				$data = self::$cache->get($key);
 				break;
-			case 'apc':
-				$data = apc_fetch($key);
-				break;
 			case 'apcu':
 				$data = apcu_fetch($key);
-				break;
-			case 'xcache':
-				$data = xcache_get($key);
 				break;
 			case 'php':
 				$data = isset(self::$cache[$key]) ? self::$cache[$key] : false;
@@ -55,11 +52,12 @@ class Cache {
 			case 'fs':
 				$key = str_replace('/', '::', $key);
 				$key = str_replace("\0", '', $key);
-				if (!file_exists('tmp/cache/'.$key)) {
+				$path = 'tmp/cache/'.$key;
+				if (!file_exists($path)) {
 					$data = false;
 				}
 				else {
-					$data = file_get_contents('tmp/cache/'.$key);
+					$data = file_get_contents($path);
 					$data = json_decode($data, true);
 				}
 				break;
@@ -67,6 +65,8 @@ class Cache {
 				if (!self::$cache)
 					self::init();
 				$data = json_decode(self::$cache->get($key), true);
+				break;
+			default:
 				break;
 		}
 
@@ -94,14 +94,8 @@ class Cache {
 					self::init();
 				self::$cache->setex($key, $expires, json_encode($value));
 				break;
-			case 'apc':
-				apc_store($key, $value, $expires);
-				break;
 			case 'apcu':
 				apcu_store($key, $value, $expires);
-				break;
-			case 'xcache':
-				xcache_set($key, $value, $expires);
 				break;
 			case 'fs':
 				$key = str_replace('/', '::', $key);
@@ -110,6 +104,8 @@ class Cache {
 				break;
 			case 'php':
 				self::$cache[$key] = $value;
+				break;
+			default:
 				break;
 		}
 
@@ -132,22 +128,20 @@ class Cache {
 					self::init();
 				self::$cache->del($key);
 				break;
-			case 'apc':
-				apc_delete($key);
-				break;
 			case 'apcu':
 				apcu_delete($key);
-				break;
-			case 'xcache':
-				xcache_unset($key);
 				break;
 			case 'fs':
 				$key = str_replace('/', '::', $key);
 				$key = str_replace("\0", '', $key);
-				@unlink('tmp/cache/'.$key);
+				$path = 'tmp/cache/'.$key;
+				if (file_exists($path))
+					unlink($path);
 				break;
 			case 'php':
 				unset(self::$cache[$key]);
+				break;
+			default:
 				break;
 		}
 
@@ -162,8 +156,6 @@ class Cache {
 				if (!self::$cache)
 					self::init();
 				return self::$cache->flush();
-			case 'apc':
-				return apc_clear_cache('user');
 			case 'apcu':
 				return apcu_clear_cache();
 			case 'php':
@@ -179,13 +171,15 @@ class Cache {
 				if (!self::$cache)
 					self::init();
 				return self::$cache->flushDB();
+			default:
+				break;
 		}
 
 		return false;
 	}
 }
 
-class Twig_Cache_TinyboardFilesystem extends Twig\Cache\FilesystemCache
+class TwigCacheTinyboardFilesystem extends Twig\Cache\FilesystemCache
 {
 	private $directory;
 	private $options;

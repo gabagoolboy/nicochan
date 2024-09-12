@@ -5,7 +5,7 @@ function user_flag() {
 	$('select[name=user_flag]').change(function() {
 		window.localStorage.setItem(flagStorage, $(this).val());
 	});
-	$(window).on('quick-reply', function() {
+	window.addEventListener('quick-reply', function() {
 		$('form#quick-reply select[name="user_flag"]').val($('select[name="user_flag"]').val());
 	});
 }

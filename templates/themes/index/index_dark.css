@@ -7,7 +7,7 @@ header div.subtitle, h1 {
     color: #CCCCCC;
 }
 
-a:link, a:visited, p.intro a.email span.name {
+a:link, a, a:visited, p.intro a.email span.name {
         color: #CCCCCC;
         text-decoration: underline;
         font-family: sans-serif;

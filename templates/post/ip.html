@@ -1,3 +1,6 @@
-{% if post.mod and (post.mod|hasPermission(config.mod.show_ip, board.uri) or post.mod|hasPermission(config.sitewide_post_info)) %}  
-	 [<a class="ip-link" style="margin:0;" href="?/IP/{{ post.ip }}">{{ post.ip_human_readable }}</a>]  
+{% if post.mod and post.mod|hasPermission(config.mod.show_ip, board.uri) %}
+    &nbsp;
+    <span class="mod-ip">
+        [<a class="ip-link" style="margin:0;" href="?/IP/{{ post.ip }}/page/1">{{ post.ip_human_readable }}</a>]
+    </span>
 {% endif %}

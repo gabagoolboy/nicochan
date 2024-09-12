@@ -43,16 +43,15 @@
 			$query = preg_replace('/UNION ALL $/', 'ORDER BY `bump` DESC', $query);
 			$query = query($query) or error(db_error());
 
-			$queryReports = query('SELECT COUNT(1) FROM ``reports``') or error(db_error($queryReports));
-			$reports = $queryReports->fetchColumn();
-
-
 			$count = 0;
 			$threads = array();
 	                if ($config['api']['enabled']) {
 				$apithreads = array();
 			}
 			while($post = $query->fetch()) {
+
+				if($post['shadow'] && $post['files'])
+					$post['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($post['files'], $config['shadow_del']['filename_seed']);
 
 				if(!isset($threads[$post['board']])) {
 					$threads[$post['board']] = 1;
@@ -64,16 +63,19 @@
 					openBoard($post['board']);
 					$thread = new Thread($config, $post, $mod ? '?/' : $config['root'], $mod);
 
-					$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ORDER BY `sticky` DESC, `id` DESC LIMIT :limit", $post['board']));
+					$posts = prepare(sprintf("SELECT * FROM ``posts_%s`` WHERE `thread` = :id ". ($mod && hasPermission($config['mod']['view_shadow_posts'], $post['board']) ? '' : 'AND `shadow` = 0') . " ORDER BY `sticky` DESC, `id` DESC LIMIT :limit", $post['board']));
 					$posts->bindValue(':id', $post['id']);
 					$posts->bindValue(':limit', ($post['sticky'] ? $config['threads_preview_sticky'] : $config['threads_preview']), PDO::PARAM_INT);
 					$posts->execute() or error(db_error($posts));
 
 					$num_images = 0;
 					while ($po = $posts->fetch()) {
+						if($po['shadow'] && $po['files'])
+							$po['files'] = Shadowdelete::hashShadowDelFilenamesDBJSON($po['files'], $config['shadow_del']['filename_seed']);
 						if ($po['files'])
 							$num_images++;
-					        $post2 	= new Post($config, $po, $mod ? '?/' : $config['root'], $mod);
+						$po['board'] = $post['board'];
+					    $post2 	= new Post($config, $po, $mod ? '?/' : $config['root'], $mod);
 						$thread->add($post2);
 
 					}
@@ -91,7 +93,7 @@
 
 
 					$thread->posts = array_reverse($thread->posts);
-					$body .= '<h2><a href="' . $config['root'] . $post['board'] . '">/' . $post['board'] . '/</a></h2>';
+					$body .= '<h2 id="board-header"><a href="' . $config['root'] . $post['board'] . '">/' . $post['board'] . '/</a></h2>';
 					$body .= $thread->build(true);
 					if ($config['api']['enabled']) {
 						array_push($apithreads,$thread);
@@ -107,11 +109,11 @@
 				$count += 1;
 			}
 
-			$body .= '<script> var overflow = ' . json_encode($overflow) . '</script>';
-			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js"></script>';
+			$body .= '<script id="overflow-data" type="application/json">' . json_encode($overflow) . '</script>';
+			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js?v='. $config['resource_version'].'"></script>';
 
 			 // json api
-	                 if ($config['api']['enabled'] && !$mod) {
+	        if ($config['api']['enabled'] && !$mod) {
 				$api = new Api($config);
 				$jsonFilename = $board['dir'] . '0.json';
 				$json = json_encode($api->translatePage($apithreads));
@@ -124,7 +126,6 @@
 			}
 			$antibot->reset();
 
-			$isukko = true;
 			$config['archive']['threads'] = false;
 			$config['feature']['threads'] = false;
 
@@ -132,10 +133,12 @@
 				'config' => $config,
 				'board' => $board,
 				'no_post_form' => false,
-				'isukko' => $isukko,
+				'page' => 'ukko',
+				'isukko' => true,
 				'body' => $body,
-				'mod' => $mod,
-				'reports' => $mod ? $reports : null,
+				'mod' => $mod ? true : false,
+				'recent' => getLatestReplies($config),
+				'reports' => $mod ? getCountReports() : false,
 				'boardlist' => createBoardlist($mod),
 				'boards' => $boardsforukko2,
 				'antibot' => $antibot

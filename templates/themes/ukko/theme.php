@@ -62,7 +62,7 @@
 					while ($po = $posts->fetch()) {
 						if ($po['files'])
 							$num_images++;
-
+						$po['board'] = $post['board'];
 						$thread->add(new Post($config, $po, $mod ? '?/' : $config['root'], $mod));
 
 					}
@@ -94,7 +94,7 @@
 			}
 
 			$body .= '<script> var overflow = ' . json_encode($overflow) . '</script>';
-			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js"></script>';
+			$body .= '<script type="text/javascript" src="/'.$this->settings['uri'].'/ukko.js?v='. $config['resource_version'].'"></script>';
 
 			$config['catalog_link'] = false;
 			$config['archive']['threads'] = false;

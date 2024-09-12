@@ -789,12 +789,6 @@ if (file_exists($config['has_installed'])) {
 		case '6.0.7':
 			query('DROP TABLE IF EXISTS ``nntp_references``;') or error(db_error());
 			query('DROP TABLE IF EXISTS ``announcements``;') or error(db_error());
-			query('CREATE TABLE IF NOT EXISTS ``whitelist_region`` (
-				`id` int(10) AUTO_INCREMENT,
-				`ip` varchar(39) NOT NULL,
-				`ip_hash` varchar(69) NOT NULL,
-				PRIMARY KEY (`id`, `ip`)
-				); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;') or error(db_error());
 			query('ALTER TABLE ``custom_geoip`` MODIFY `country` varchar(6) NOT NULL;');
 			query('ALTER TABLE ``bans`` ADD `appealable` tinyint(1) DEFAULT 1 NOT NULL AFTER `post`;');
 			query('ALTER TABLE ``ban_appeals`` ADD `denial_reason` text AFTER `denied`;');
@@ -802,10 +796,14 @@ if (file_exists($config['has_installed'])) {
 				query(sprintf('ALTER TABLE ``posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
 				query(sprintf('ALTER TABLE ``shadow_posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
 			}
-		case '6.0.8':
+		case '6.7.8':
 			foreach ($boards as &$board){
 				query(sprintf("ALTER TABLE ``posts_%s`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `hideid`;", $board['uri']));
 				query(sprintf('DROP TABLE ``shadow_posts_%s``;', $board['uri']));
+				query(sprintf('ALTER TABLE ``posts_%s`` MODIFY `sage` int(1) DEFAULT 0 NOT NULL;', $board['uri']));
+				query(sprintf('ALTER TABLE ``posts_%s`` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', $board['uri']));
+				query(sprintf("ALTER TABLE ``posts_%s`` ADD `flag_iso` varchar(6) DEFAULT NULL AFTER `slug`;", $board['uri']));
+				query(sprintf("ALTER TABLE ``posts_%s`` ADD `flag_ext` varchar(100) DEFAULT NULL AFTER `flag_iso`;", $board['uri']));
 			}
 			query('ALTER TABLE ``antispam`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `passed`;');
 			query('ALTER TABLE ``filehashes`` ADD `shadow` int(1) DEFAULT 0 NOT NULL AFTER `filehash`;');
@@ -813,16 +811,17 @@ if (file_exists($config['has_installed'])) {
 			query('DROP TABLE ``shadow_antispam``;');
 			query('DROP TABLE ``shadow_cites``;');
 			query('DROP TABLE ``shadow_filehashes``;');
-			query('ALTER TABLE ``whitelist_region`` ADD `token` varchar(12) NOT NULL AFTER `ip_hash`;');
 			query('ALTER TABLE ``antispam`` MODIFY `passed` smallint(6) DEFAULT 0 NOT NULL;');
 			query('ALTER TABLE ``pms`` MODIFY `unread` tinyint(1) DEFAULT 1 NOT NULL;');
 			query('ALTER TABLE ``warnings`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
-			query('ALTER TABLE ``nicenotices`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
+			query('ALTER TABLE ``nicenotices`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;'); // temporary
 			query('ALTER TABLE ``bans`` MODIFY `cookiebanned` tinyint(1) DEFAULT 0 NOT NULL;');
 			query('ALTER TABLE ``bans`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
-			query('ALTER TABLE ``whitelist_region`` ADD CONSTRAINT `whitelistreg_pk` UNIQUE KEY (`ip`);');
 			query('ALTER TABLE ``ban_appeals`` MODIFY `denied` tinyint(1) DEFAULT 0 NOT NULL;');
 			query('ALTER TABLE ``ban_appeals`` MODIFY `denial_reason` text DEFAULT NULL;');
+			query('DROP TABLE IF EXISTS ``whitelist``;') or error(db_error());
+			query('ALTER TABLE ``noticeboard`` ADD `reply` int(11) DEFAULT NULL;');
+
 
 			case false:
 			// TODO: enhance Tinyboard -> vichan upgrade path.
@@ -924,27 +923,23 @@ if ($step == 0) {
 		'Redis' => [
 			'installed' => extension_loaded('redis'),
 			'required' => false
-		],
-		'XCache' => [
-			'installed' => extension_loaded('xcache'),
-			'required' => false
 		]
 	];
 
 	$tests = [
 		[
 			'category' => 'PHP',
-			'name' => 'PHP &ge; 7.2',
-			'result' => PHP_VERSION_ID >= 70200,
+			'name' => 'PHP &ge; 8.0',
+			'result' => PHP_VERSION_ID >= 80300,
 			'required' => true,
-			'message' => 'Nicochan requires PHP 7.2 or better.',
+			'message' => 'Nicochan requires PHP 8.0 or better.',
 		],
 		[
 			'category' => 'PHP',
-			'name' => 'PHP &ge; 7.2',
-			'result' => PHP_VERSION_ID >= 70200,
+			'name' => 'PHP &ge; 8.0',
+			'result' => PHP_VERSION_ID >= 80300,
 			'required' => false,
-			'message' => 'Nicochan works best on PHP 7.2 or better.',
+			'message' => 'Nicochan works best on PHP 8.0 or better.',
 		],
 		[
 			'category' => 'PHP',
@@ -1061,14 +1056,14 @@ if ($step == 0) {
 		[
 			'category' => 'File permissions',
 			'name' => getcwd() . '/templates/cache',
-			'result' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')),
+			'result' => is_dir('templates/cache/') && is_writable('templates/cache/'),
 			'required' => true,
 			'message' => 'You must give Nicochan permission to create (and write to) the <code>templates/cache</code> directory or performance will be drastically reduced.'
 		],
 		[
 			'category' => 'File permissions',
 			'name' => getcwd() . '/tmp/cache',
-			'result' => is_dir('tmp/cache') && is_writable('tmp/cache'),
+			'result' => is_dir('tmp/cache/') && is_writable('tmp/cache/'),
 			'required' => true,
 			'message' => 'You must give Nicochan permission to write to the <code>tmp/cache</code> directory.'
 		],
@@ -1081,10 +1076,10 @@ if ($step == 0) {
 		],
 		[
 			'category' => 'Misc',
-			'name' => 'Caching available (APC, XCache, or Redis)',
-			'result' => extension_loaded('apc') || extension_loaded('apcu') || extension_loaded('memcached') || extension_loaded('redis') || extension_loaded('xcache'),
+			'name' => 'Caching available (APCu, Memcached, or Redis)',
+			'result' => extension_loaded('apcu') || extension_loaded('memcached') || extension_loaded('redis'),
 			'required' => false,
-			'message' => 'You will not be able to enable the additional caching system, designed to minimize SQL queries and significantly improve performance. <a href="https://php.net/manual/en/book.apcu.php">APCu</a> is the recommended method of caching, but <a href="https://www.php.net/manual/en/book.apc.php">APC</a>, <a href="https://pecl.php.net/package/redis">Redis</a>, <a href="https://www.php.net/manual/en/book.memcached.php">Memcached</a>, and <a href="https://xcache.lighttpd.net/">XCache</a> are also supported.'
+			'message' => 'You will not be able to enable the additional caching system, designed to minimize SQL queries and significantly improve performance. <a href="https://pecl.php.net/package/redis">Redis</a> is the recommended method of caching, but <a href="https://www.php.net/manual/en/book.apcu.php">APCu</a> and <a href="https://www.php.net/manual/en/book.memcached.php">Memcached</a> are also supported.'
 		],
 		[
 			'category' => 'Misc',
@@ -1098,7 +1093,7 @@ if ($step == 0) {
 			'name' => 'Curl extension installed',
 			'result' => extension_loaded('curl'),
 			'required' => false,
-			'message' => 'You must install the PHP <a href="https://www.php.net/manual/en/book.curl.php">cURL</a> extension. cURL is NOT a requirement, but you\'ll going to need for discord and captcha support.',
+			'message' => 'You must install the PHP <a href="https://www.php.net/manual/en/book.curl.php">cURL</a> extension. cURL is NOT a requirement, but you\'ll going to need for discord support.',
 		]
 	];
 
@@ -1197,13 +1192,17 @@ if ($step == 0) {
 	preg_match_all("/(^|\n)((SET|CREATE|INSERT).+)\n\n/msU", $sql, $queries);
 	$queries = $queries[2];
 
-	$queries[] = str_replace('%s', 'b', file_get_contents($config['dir']['template'].'/posts.sql'));
+	$queries[] = sprintf(file_get_contents($config['dir']['template'].'/posts.sql'), 'b');
 
 	$sql_errors = '';
+	$sql_err_count = 0;
 	foreach ($queries as $query) {
 		$query = preg_replace('/^([\w\s]*)`([0-9a-zA-Z$_\x{0080}-\x{FFFF}]+)`/u', '$1``$2``', $query);
-		if (!query($query))
-			$sql_errors .= '<li>' . db_error() . '</li>';
+		if (!query($query)) {
+			$sql_err_count++;
+			$error = db_error();
+			$sql_errors .= "<li>$sql_err_count<ul><li>$query</li><li>$error</li></ul></li>";
+		}
 	}
 
 	$page['title'] = 'Installation complete';

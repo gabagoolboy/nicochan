@@ -1,16 +1,14 @@
 {% set capcode = post.capcode|capcode %}
-{% if post.email|length > 0 and (config.hide_sage!=true or post.email!='sage') and config.hide_email!=true %}
-	{# start email #}
-	<a class="email" href="mailto:{{ post.email }}">
+{% if post.email|length > 0 and not (config.hide_sage and post.email == 'sage') and not config.hide_email %}
+    <a class="email" href="mailto:{{ post.email }}">
 {% endif %}
-	<span {% if capcode.name %}style="{{ capcode.name }}" {% endif %} class="name">{{ post.name|bidi_cleanup }}</span>
-	{% if post.trip|length > 0 %}
-		<span {% if capcode.trip %}style="{{ capcode.trip }}" {% endif %} class="trip">{{ post.trip }}</span>
-	{% endif %}
-{% if post.email|length > 0 and (config.hide_sage!=true or post.email!='sage') and config.hide_email!=true %}
-	{# end email #}
-	</a>
+    <span class="name" {% if capcode.name %}style="{{ capcode.name }}"{% endif %}>{{ post.name|bidi_cleanup }}</span>
+    {% if post.trip|length > 0 %}
+        <span class="trip" {% if capcode.trip %}style="{{ capcode.trip }}"{% endif %}>{{ post.trip }}</span>
+    {% endif %}
+{% if post.email|length > 0 and not (config.hide_sage and post.email == 'sage') and not config.hide_email %}
+    </a>
 {% endif %}
 {% if capcode %}
-        {{ capcode.cap }}
+    {{ capcode.cap }}
 {% endif %}

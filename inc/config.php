@@ -43,9 +43,6 @@
 	//$config['public_stat']['date'] = '%m/%d/%y (%a) %l %P';
 	$config['public_stat']['date'] = '<time datetime="%Y-%m-%dT%H:%M:%SZ">%Y-%m-%dT%H:%M:%S</time>';
 
-	// Max number of dices possible to roll at once in one [NdS+/-A] roll
-	$config['max_roll_count'] = 100;
-
 
 /*
  * =======================
@@ -100,6 +97,18 @@
 
 	$config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We don't want to loose you.";
 
+
+/*
+ * =======================
+ *  List of Report Reasons - only when using report.php
+ * =======================
+ */
+
+	$config['report_reasons'][] = 'CP';
+
+
+	// People can only report posts selecting one of the reason of report_reasons
+	$config['report_system_predefined'] = false;
 
 /*
  * =======================
@@ -177,6 +186,12 @@
 	// Connection timeout duration in seconds
 	$config['db']['timeout'] = 30;
 
+	// Setting to indicate if ip addresses should be hashed
+	$config['bcrypt_ip_addresses'] = true;
+	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
+	$config['bcrypt_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
+	// Cost of hashing the ip
+	$config['bcrypt_ip_cost'] = 12;
 
 
 /*
@@ -251,18 +266,16 @@
 	// Whether or not you can access the mod cookie in JavaScript. Most users should not need to change this.
 	$config['cookies']['httponly'] = true;
 
+	// Do not allow logins via unsecure connections.
+	// 0 = off. Allow logins on unencrypted HTTP connections. Should only be used in testing environments.
+	// 1 = on, trust HTTP headers. Allow logins on (at least reportedly partial) HTTPS connections. Use this only if you
+	// use a proxy, CDN or load balancer via an unencrypted connection. Be sure to filter 'HTTP_X_FORWARDED_PROTO' in
+	// the remote server, since an attacker could inject the header from the client.
+	// 2 = on, do not trust HTTP headers. Secure default, allow logins only on HTTPS connections.
+	$config['cookies']['secure_login_only'] = 2;
+
 	// Used to salt secure tripcodes ("##trip") and poster IDs (if enabled).
 	$config['secure_trip_salt'] = ')(*&^%$#@!98765432190zyxwvutsrqponmlkjihgfedcba';
-
-	// Salt for passwords
-	$config['secure_password_salt'] = 'abcdefghijklmnopqrstuvwxyz09123456789!@#$%^&*()';
-
-	// Setting to indicate if ip addresses should be hashed
-	$config['bcrypt_ip_addresses'] = true;
-	// Salt for hashing ip addresses NEEDS TO BE 22 CHAR [0-9A-Za-z]
-	$config['bcrypt_ip_salt'] = "gAQlzt99Ynwnnc5QWY2lTk";
-	// Cost of hashing the ip
-	$config['bcrypt_ip_cost'] = 12;
 
 	// Cookie name for check of dumb posters ban evade
 	$config['cookies']['uuser_cookie_name'] = 'ponypoontang';
@@ -372,6 +385,7 @@
 		'hash',
 		'board',
 		'thread',
+		'active-page',
 		'mod',
 		'name',
 		'email',
@@ -584,10 +598,6 @@
 	// Set to -1 to disable.
 	$config['flood_cache'] = -1;
 
-	// Require users to become whitelisted by completing a captcha before posting
-	$config['whitelist']['enabled'] = false;
-	// Auto remove entries after this many days
-	$config['whitelist']['expires_in'] = 90;
 
 
 /*
@@ -671,21 +681,6 @@
 	$config['link_prefix'] = '';
 	$config['url_ads'] = &$config['link_prefix'];	 // leave alias
 
-	// Allow "uploading" images via URL as well. Users can enter the URL of the image and then Tinyboard will download it. Not usually recommended.
-	// I strongly suggest you to use a proxy if youre behind cloudflare
-	// the proxy implementation is NOT CURLOPT_PROXY.
-	$config['url_upload']['enabled'] = false;
-	// The timeout for the above, in seconds.
-	$config['url_upload']['timeout'] = 15;
-
-	// this is a proxy http
-	// based of https://github.com/Athlon1600/php-proxy-app
-	// the parameters is currently hardcoded: snoop and ip
-	$config['url_upload']['curl_proxy'] = 'https://images.weserv.nl/?url=%%url%%';
-
-	// valid extensions for proxy
-	$config['url_upload']['curl_extensions'] = ['.webp', '.jpg', '.jpeg', '.bmp', '.gif', '.png', '.tiff', '.tif', '.svg'];
-
 	// Enable early 404? With default settings, a thread would 404 if it was to leave page 3, if it had less
 	// than 3 replies.
 	$config['early_404'] = false;
@@ -739,10 +734,20 @@
 	$config['hide_email'] = false;
 
 
+	// Allow the user choose a /pol/-like user_flag that will be shown in the post. For the user flags, please be aware
+	// that you will have to disable BOTH country_flags and contry_flags_condensed optimization (at least on a board
+	// where they are enabled).
+	$config['user_flag'] = false;
 
-	// Allow dice rolling: an email field of the form "dice XdY+/-Z" will result in X Y-sided dice rolled and summed,
-	// with the modifier Z added, with the result displayed at the top of the post body.
-	$config['allow_roll'] = false;
+	// List of user_flag the user can choose. Flags must be placed in the directory set by $config['uri_flags']
+	$config['user_flags'] = array();
+	/* example: 
+	$config['user_flags'] = array (
+		'nz' => 'Nazi',
+		'cm' => 'Communist',
+		'eu' => 'Europe'
+	);
+	*/
 
 	// Use semantic URLs for threads, like /b/res/12345/daily-programming-thread.html
 	$config['slugify'] = false;
@@ -791,6 +796,9 @@
 	// Optional HTML to append to "You were issued a warning. For example, you could include instructions and/or
 	// a link to an email address or IRC chat room to appeal the ban.
 	$config['warning_page_extra'] = '';
+
+	// Check made using > operator
+	$config['report_same_limit'] = 2;
 
 
 /*
@@ -852,9 +860,6 @@
 	// $config['markup'][] = array("/\[\/\]/s", "</span>");
 	// $config['markup'][] = array("/\[align=(center|right)\](.+?)\[\/align\]/s", "<div style=\"text-align: $1;\">\$2</div>");
 	// $config['markup'][] = array("/\[r\](.+?)\[\/r\]/s", "<span class=\"rainbow\">\$1</span>");
-
-	// Dice Roll Markup
-	// $config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
 
 	// Code markup. This should be set to a regular expression, using tags you want to use. Examples:
 	// "/\[code\](.*?)\[\/code\]/is"
@@ -1031,6 +1036,8 @@
 	$config['webm']['max_length'] = 120;
 	$config['webm']['ffmpeg_path'] = 'ffmpeg';
 	$config['webm']['ffprobe_path'] = 'ffprobe';
+	$config['webm']['animated_thumbnail'] = false;
+	$config['webm']['thumb_keep_animation_frames'] = 20;
 
 	// Display image identification links for ImgOps, regex.info/exif, Google Images and iqdb.
 	$config['image_identification'] = false;
@@ -1210,20 +1217,6 @@
 	//	'bottom' => '',
 	// );
 
-	// Countryballs forced for everyone
-	$config['countryballs'] = false;
-
-	// Allow users to check a box to display their country balls
-	$config['show_countryballs_single'] = false;
-
-	// Allow the user to decide whether or not he wants to display his country
-	// only works when $config['countryballs'] is set to true
-	$config['allow_no_country'] = false;
-
-	// Load all country flags from one file
-	$config['country_flags_condensed'] = true;
-	$config['country_flags_condensed_css'] = 'static/flags/countryball/flags.css';
-
 	// Display flags (when available). This config option has no effect unless poster flags are enabled (see
 	// $config['country_flags']). Disable this if you want all previously-assigned flags to be hidden.
 	$config['display_flags'] = true;
@@ -1292,7 +1285,7 @@
 	// Since we are using oEmbed, this changed the behavior of embed field, now we store a json with the title and url (see: tools/update_embed.php)
 	// To insert video title into a frame, take a look at youtube html. %%VIDEO_NAME%% = mb_substr(0, 60); %%VIDEO_FULLNAME%% = non cut title 
 	$config['embeds'][] = [
-		'regex' => '/^https?:\/\/(?:\w+\.|)(?:youtu\.be\/|youtube\.com\/(?:shorts\/|embed\/|watch\?v=))([a-zA-Z0-9\-_]{10,11})?$/i',
+		'regex'	=> '/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?&v=))([a-zA-Z0-9\-_]{11})/i',
 		'oembed' => 'https://www.youtube.com/oembed?url=%s&format=json',
 		'service' => 'youtube',
 		'html' => '<div class="video-container" data-video="$1"><span class="unimportant yt-help" title="%%VIDEO_FULLNAME%%">YouTube: <a href="https://youtu.be/$1">%%VIDEO_NAME%%</a></span><br><a href="$0" target="_blank" class="file"><img style="width:%%tb_width%%px" src="//img.youtube.com/vi/$1/0.jpg" class="post-image"/></a></div>'];
@@ -1365,6 +1358,7 @@
 	$config['error']['noreport']		= _('You didn\'t select anything to report.');
 	$config['error']['invalidreport']	= _('Invalid reason.');
 	$config['error']['toomanyreports']	= _('You can\'t report that many posts at once.');
+	$config['error']['toomanysamereport']	= _('You can\'t report the same post many times');
 	$config['error']['invalidpassword']	= _('Wrong password…');
 	$config['error']['invalidimg']		= _('Invalid image.');
 	$config['error']['phpfileserror']	= _('Upload failure (file #%index%): Error code %code%. Refer to <a href="http://php.net/manual/en/features.file-upload.errors.php">http://php.net/manual/en/features.file-upload.errors.php</a>; post discarded.');
@@ -1385,13 +1379,14 @@
 	$config['error']['too_many_threads']	= _('To prevent raids, the maximum number of threads has been limited per hour. Please check back later or post in an existing thread.');
 	$config['error']['too_many_posts']	= _('To prevent raids, the maximum number of posts in given interval has been limited. Please try again in a short while.');
 	$config['error']['already_voted']	= _('You have already voted for this thread to be featured.');
-	$config['error']['already_whitelisted']	= _('You\'re already whitelisted!');
 	$config['error']['flag_undefined']	= _('The flag %s is undefined, your PHP version is too old!');
 	$config['error']['flag_wrongtype']	= _('defined_flags_accumulate(): The flag %s is of the wrong type!');
+	$config['error']['nopost']		= _('Post specified does not exist.');
 
 	// Moderator errors
 	$config['error']['toomanyunban']	= _('You are only allowed to unban %s users at a time. You tried to unban %u users.');
 	$config['error']['invalid']		= _('Invalid username and/or password.');
+	$config['error']['insecure'] = _('Login on insecure connections is disabled.');
 	$config['error']['notamod']		= _('You are not a mod…');
 	$config['error']['invalidafter']	= _('Invalid username and/or password. Your user may have been deleted or changed.');
 	$config['error']['missedafield']	= _('Your browser didn\'t submit an input when it should have.');
@@ -1407,6 +1402,7 @@
 	$config['error']['badsyntax']		= _('Your code contained PHP syntax errors. Please go back and correct them. PHP says: ');
 	$config['error']['bad_forcedflag']	= _('The provided Country ID is not allowed');
 	$config['error']['already_deleted']	= _('This image has already been deleted');
+	$config['error']['shadow_cannotrestore']	= _('You cannot restore a single post from a shadow thread');
 
 
 /*
@@ -2114,17 +2110,6 @@
 	// Example: Add links to dashboard (will all be in a new "Other" category).
 	// $config['mod']['dashboard_links']['Something'] = '?/something';
 
-	// Remote servers. I'm not even sure if this code works anymore. It might. Haven't tried it in a while.
-	// $config['remote']['static'] = array(
-	// 	'host' => 'static.example.org',
-	// 	'auth' => array(
-	// 		'method' => 'plain',
-	// 		'username' => 'username',
-	// 		'password' => 'password!123'
-	// 	),
-	// 	'type' => 'scp'
-	// );
-
 	// Create gzipped static files along with ungzipped.
 	// This is useful with nginx with gzip_static on.
 	$config['gzip_static'] = false;
@@ -2134,7 +2119,7 @@
 	$config['board_regex'] = '[0-9a-zA-Z$_\x{0080}-\x{FFFF}]{1,58}';
 
 	// Youtube.js embed HTML code
-	$config['youtube_js_html'] = '<div class="video-container" data-video="$2"><a href="https://youtu.be/$2" target="_blank" class="file"><img style="width:360px;height:270px;" src="//img.youtube.com/vi/$2/0.jpg" class="post-image"/></a></div>';
+	$config['youtube_js_html'] = '<div class="video-container" data-video="$1"><a href="https://youtu.be/$1" target="_blank" class="file"><img style="width:360px;height:270px;" src="//img.youtube.com/vi/$1/0.jpg" class="post-image"/></a></div>';
 
 	// Password hashing function
 	//
@@ -2154,15 +2139,6 @@
 
 	// Allowed HTML tags in ?/edit_pages.
 	$config['allowed_html'] = 'a[href|title],p,br,li,ol,ul,strong,em,u,h2,b,i,tt,div,img[src|alt|title],hr';
-
-	// // Dice Roll Markup
-	// $config['markup'][] = array("/\[diceroll\](.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' width=16 height=16/><b>\$1</b>");
-
-	// Dice Roll Markup
-	$config['markup'][] = array("/\[diceroll\](\{((\d+)?([d])(\d+)([-+]\d+)?)\}\|\|)?(.+?)\[\/diceroll\]/s", "<img src='" . $config['root'] . "static/icons/dice.png' alt='\$2' title='\$2' width=16 height=16/><b>\$7</b>");
-
-	// If user tries to delete post with a diceroll, the diceroll and trip is kept.
-	$config['diceroll']['anticheat'] = true;
 
 	// Discord report webhook
 	$config['discord']['enabled'] = false;
@@ -2184,17 +2160,6 @@
 	// IP change permission
 	$config['mod']['ip_change_name'] = MOD;
 
-	// Apply region block for all posts, reports, and deletetion
-	// this requires setting up maxmind db
-	// either installing geoipupdate or downloading manually
-	// https://dev.maxmind.com/geoip/updating-databases?lang=en#1-install-geoip-update
-	// for whitelisting, see "Whitelist" in the dashboard and add "token_for.js" script (non js alternative soon)
-	$config['regionblock'] = false;
-	// Error message for region block
-	$config['error']['regionblock'] = _('It\'s not allowed to post from a foreign country.</br></br>Do you think this was a mistake?</br>Send us an email with your IP (%s) to:</br><strong>your@email.com</strong>');
-
-	// Allowed countries
-	$config['regionblock_countries'] = array('BR');
 
 	// Show youtube titles instead of url
 	$config['youtube_show_title'] = false;
@@ -2210,7 +2175,7 @@
 	$config['mod']['edit_banners'] = ADMIN;
 
 	// Optional banner image at the top of every page.
-	 $config['url_banner'] = '/banners.php';
+	 $config['url_banner'] = '/banner.php';
 	// Banner dimensions are also optional. As the banner loads after the rest of the page, everything may be
 	// shifted down a few pixels when it does. Making the banner a fixed size will prevent this.
 	$config['banner_width'] = 300;
@@ -2226,8 +2191,25 @@
 	// Show how much time a page took to load
 	$config['show_timer'] = true;
 
-	// Filter public banlist. This is done via regexp and you should write valid regex
-	$config['banlist_filters'] = '/Teste/i';
+	// Countryballs forced for everyone
+	$config['countryballs'] = false;
+
+	// Allow users to check a box to display their country balls
+	$config['show_countryballs_single'] = false;
+
+	// Allow the user to decide whether or not he wants to display his country
+	// only works when $config['countryballs'] is set to true
+	$config['allow_no_country'] = true;
+
+	// Load all country flags from one file
+	$config['country_flags_condensed'] = true;
+	$config['country_flags_condensed_css'] = 'static/flags/flags.css';
+
+	// Filter public banlist. This is done via regex
+	$config['banlist_filters'] = '';
+
+	// Permission for mod to view password history
+	$config['mod']['show_password_less'] = MOD;
 
 	// Securimage options
 	$config['securimage_options'] = ['send_headers' => false, 'no_exit' => true];
@@ -2235,6 +2217,8 @@
 	// Maxmind db path
 	$config['maxmind_db_path'] = '/usr/share/GeoIP/GeoLite2-City.mmdb';
 
+	// Salt for passwords
+	$config['secure_password_salt'] = "abcdefghijklmnopqrstuvxz";
 
 	// A management for login attempts and block login
 	// backported from kissu
@@ -2246,7 +2230,3 @@
 	// Loading lazy
 	// https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading
 	$config['content_loading_lazy'] = true;
-
-	// ukko2 name. set false do disable
-	// this will not install the theme ukko2 for users, only for mod use
-	$config['ukko2_enabled'] = 'overboard';

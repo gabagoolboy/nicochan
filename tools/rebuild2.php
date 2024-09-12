@@ -96,7 +96,7 @@ function doboard($board) {
 	}
 
 	if ($options['threads']) {
-		$query = query(sprintf("SELECT `id` FROM ``posts_%s`` WHERE `thread` IS NULL", $board['uri'])) or error(db_error());
+		$query = query(sprintf("SELECT `id` FROM ``posts_%s`` WHERE `thread` IS NULL AND `shadow` = 0", $board['uri'])) or error(db_error());
 		while($post = $query->fetch()) {
 			echo "(/{$board['uri']}/) Rebuilding #{$post['id']}...\n";
 			@buildThread($post['id']);

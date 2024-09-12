@@ -21,6 +21,7 @@ var watchlist = {};
 watchlist.render = function(reset) {
 	/* jshint eqnull:true */
 	if (reset == null) reset = false;
+	var active_page = getActivePage();
 	/* jshint eqnull:false */
 	if (reset && $('#watchlist').length) $('#watchlist').remove();
 	var threads = [];
@@ -61,6 +62,8 @@ watchlist.add = function(sel) {
 	var threadName, threadInfo;
 
 	var board_name = $(sel).parents('.thread').data('board');
+
+	var active_page = getActivePage();
 
 	if (active_page === 'thread') {
 		if ($('.subject').length){
@@ -144,14 +147,15 @@ watchlist.exists = function(sel) {
 };
 
 $(document).ready(function(){
-	if (!(active_page == 'thread' || active_page == 'index' || active_page == 'catalog' || active_page == 'ukko')) {
+	var active_page = getActivePage();
+	if (!['thread', 'index', 'catalog', 'ukko'].includes(active_page)) {
 		return;
 	}
 
 	//Append the watchlist toggle button.
-	$('.boardlist').append('<a class="watchlist-toggle" style="float:right;" href="#">['+_('watchlist')+']</a>&nbsp;');
+	$('#options-toggle').before('<a class="watchlist-toggle" href="#"><i class="fa fa-bookmark"></i></a>&nbsp;');
     	//Append a watch thread button after every OP post number.
-	$('.op>.intro>.post_no:odd').after('<a class="watchThread" href="#">['+_('Watch Thread')+']</a>');	
+	$('#reply-button').before('<a class="watchThread" href="#">['+_('Watch Thread')+']</a>');
 
 	//Draw the watchlist, hidden.
 	watchlist.render();

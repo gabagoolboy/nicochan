@@ -5,7 +5,7 @@ body {
 h1 {
   color:#800000
 }
-a:link, a:visited, .intro a.email span.name {
+a:link, a, a[data-href], a:visited, .intro a.email span.name {
 	color: #0000ff;
 }
 a:hover {

@@ -114,7 +114,8 @@ CREATE TABLE IF NOT EXISTS `ban_appeals` (
   `denied` tinyint(1) DEFAULT 0 NOT NULL,
   `denial_reason` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `ban_id` (`ban_id`)
+  KEY `ban_id` (`ban_id`),
+  CONSTRAINT `fk_ban_id` FOREIGN KEY (`ban_id`) REFERENCES `bans`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -333,6 +334,7 @@ CREATE TABLE IF NOT EXISTS `noticeboard` (
   `time` int(11) NOT NULL,
   `subject` text NOT NULL,
   `body` text NOT NULL,
+  `reply` int(11) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),
   KEY `time` (`time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -403,6 +405,8 @@ CREATE TABLE IF NOT EXISTS `posts_b` (
   `shadow` int(1) DEFAULT 0 NOT NULL,
   `embed` text,
   `slug` varchar(256) DEFAULT NULL,
+  `flag_iso` varchar(6) DEFAULT NULL,
+  `flag_ext` varchar(100) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),
   KEY `thread_id` (`thread`,`id`),
   KEY `filehash` (`filehash`(40)),
@@ -518,36 +522,6 @@ CREATE TABLE IF NOT EXISTS `warnings` (
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `whitelist`
---
-
-CREATE TABLE IF NOT EXISTS `whitelist` (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `expiration_time` int(11) NOT NULL,
-  `ip` varchar(61) CHARACTER SET ascii NOT NULL,
-  `cookie` varchar(40) CHARACTER SET ascii NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `expiration_time` (`expiration_time`),
-  KEY `ip` (`ip`),
-  KEY `cookie` (`cookie`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `whitelist_region`
---
-
-CREATE TABLE IF NOT EXISTS `whitelist_region` (
- `id` int(10) AUTO_INCREMENT,
- `ip` varchar(39) NOT NULL,
- `ip_hash` varchar(69) NOT NULL,
-  PRIMARY KEY (id, ip),
-  UNIQUE KEY `whitelistreg_pk` (`ip`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `modlogins`

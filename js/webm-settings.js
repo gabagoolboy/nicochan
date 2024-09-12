@@ -42,7 +42,7 @@ if (window.Options) {
   $(settingsMenu).appendTo(tab.content);
 }
 else {
-  prefix = '<a class="unimportant" href="javascript:void(0)">'+_('WebM Settings')+'</a>';
+  prefix = '<a class="unimportant">'+_('WebM Settings')+'</a>';
   settingsMenu.style.textAlign = "right";
   settingsMenu.style.background = "inherit";
   suffix = '</div>';

@@ -44,9 +44,9 @@
         		        'title' => _("Ban list"),
         		        'subtitle' => "",
 						'boardlist' => createBoardlist(false),
-		                'nojavascript' => true,
 		                'body' => Element('mod/ban_list.html', array(
 			                'mod' => false,
+							'resource_version' => $config['resource_version'],
 			                'boards' => "[]",
 			                'token' => false,
 			                'token_json' => false,

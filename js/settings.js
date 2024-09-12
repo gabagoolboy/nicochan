@@ -19,7 +19,7 @@
 *   // $config['additional_javascript'][] = 'js/quick-reply.js';
 *
 * Usage in scripts:
-*   var settings = new script_settings('my-script');
+*   var settings = new ScriptSettings('my-script');
 *   var some_value = settings.get('option', 'default value');
 *
 */

@@ -6,260 +6,325 @@
 
 defined('TINYBOARD') or exit;
 
-class Filter {
-	public $flood_check;
-	private $condition;
-	private $post;
+class Filter
+{
+    private array $post;
+    private FloodChecker $floodChecker;
+    private FilterAction $filterAction;
+    private array $conditions;
 
-	public function __construct(array $arr) {
-		foreach ($arr as $key => $value)
-			$this->$key = $value;
-	}
+    public function __construct(array $conditions, array $post, FloodChecker $floodChecker, FilterAction $filterAction)
+    {
+        $this->conditions = $conditions;
+        $this->post = $post;
+        $this->floodChecker = $floodChecker;
+        $this->filterAction = $filterAction;
+    }
 
-	public function match($condition, $match) {
-		$condition = strtolower($condition);
+    public function check(): bool
+    {
+        foreach ($this->conditions as $condition => $value) {
+            $negate = $condition[0] === '!';
+            $condition = $negate ? substr($condition, 1) : $condition;
 
-		$post = &$this->post;
+            if ($this->matchCondition($condition, $value) === $negate) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-		switch($condition) {
-			case 'custom':
-				if (!is_callable($match))
-					error('Custom condition for filter is not callable!');
-				return $match($post);
-			case 'flood-match':
-				if (!is_array($match))
-					error('Filter condition "flood-match" must be an array.');
+    private function matchCondition(string $condition, $value): bool
+    {
+        switch (strtolower($condition)) {
+            case 'custom':
+                return $this->matchCustom($value);
+            case 'flood-match':
+                return $this->floodChecker->match($value, $this->post);
+            case 'flood-time':
+                return $this->floodChecker->isFloodTime($value);
+            case 'flood-count':
+                return $this->floodChecker->isFloodCount($value, $this->conditions['flood-time'] ?? 0);
+            case 'name':
+            case 'trip':
+            case 'email':
+            case 'subject':
+            case 'body':
+            case 'filehash':
+                return preg_match($value, $this->post[$condition]);
+            case 'body_reg':
+                return $this->matchBodyReg($value);
+            case 'filename':
+            case 'extension':
+                return $this->matchFileCondition($value, $condition);
+            case 'ip':
+                return preg_match($value, $_SERVER['REMOTE_ADDR']);
+            case 'rdns':
+                return preg_match($value, gethostbyaddr($_SERVER['REMOTE_ADDR']));
+            case 'agent':
+                return in_array($_SERVER['HTTP_USER_AGENT'], $value);
+            case 'op':
+            case 'has_file':
+            case 'board':
+            case 'password':
+                return $this->post[$condition] == $value;
+            default:
+                throw new InvalidArgumentException('Unknown filter condition: ' . $condition);
+        }
+    }
 
-				// Filter out "flood" table entries which do not match this filter.
+    private function matchCustom(callable $callback): bool
+    {
+        if (!is_callable($callback)) {
+            throw new InvalidArgumentException('Custom condition for filter is not callable!');
+        }
+        return $callback($this->post);
+    }
 
-				$flood_check_matched = array();
+    private function matchBodyReg(array $patterns): bool
+    {
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $this->post['body_nomarkup'])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-				foreach ($this->flood_check as $flood_post) {
-					foreach ($match as $flood_match_arg) {
-						switch ($flood_match_arg) {
-							case 'ip':
-								if ($flood_post['ip'] != $_SERVER['REMOTE_ADDR'])
-									continue 3;
-								break;
-							case 'body':
-								if ($flood_post['posthash'] != make_comment_hex($post['body_nomarkup']))
-									continue 3;
-								break;
-							case 'file':
-								if (!isset($post['filehash']))
-									return false;
-								if ($flood_post['filehash'] != $post['filehash'])
-									continue 3;
-								break;
-							case 'board':
-								if ($flood_post['board'] != $post['board'])
-									continue 3;
-								break;
-							case 'isreply':
-								if ($flood_post['isreply'] == $post['op'])
-									continue 3;
-								break;
-							default:
-								error('Invalid filter flood condition: ' . $flood_match_arg);
-						}
-					}
-					$flood_check_matched[] = $flood_post;
-				}
+    private function matchFileCondition($value, $condition): bool
+    {
+        if (empty($this->post['files'])) {
+            return false;
+        }
+        foreach ($this->post['files'] as $file) {
+            if (preg_match($value, $file[$condition])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-				$this->flood_check = $flood_check_matched;
-
-				return !empty($this->flood_check);
-			case 'flood-time':
-				foreach ($this->flood_check as $flood_post) {
-					if (time() - $flood_post['time'] <= $match) {
-						return true;
-					}
-				}
-				return false;
-			case 'flood-count':
-				$count = 0;
-				foreach ($this->flood_check as $flood_post) {
-					if (time() - $flood_post['time'] <= $this->condition['flood-time']) {
-						++$count;
-					}
-				}
-				return $count >= $match;
-			case 'name':
-				return preg_match($match, $post['name']);
-			case 'trip':
-				return $match === $post['trip'];
-			case 'email':
-				return preg_match($match, $post['email']);
-			case 'subject':
-				return preg_match($match, $post['subject']);
-			case 'body':
-				return preg_match($match, $post['body_nomarkup']);
-			case 'filehash':
-				return $match === $post['filehash'];
-			case 'body_reg':
-				$match_found = false;
-				foreach($match as $value){
-					if(preg_match($value, $post['body_nomarkup']))
-						$match_found = true;
-				}
-				return $match_found;
-			case 'filename':
-				if (!$post['files'])
-					return false;
-
-				foreach ($post['files'] as $file) {
-					if (preg_match($match, $file['filename'])) {
-						return true;
-					}
-				}
-				return false;
-			case 'extension':
-				if (!$post['files'])
-					return false;
-
-				foreach ($post['files'] as $file) {
-					if (preg_match($match, $file['extension'])) {
-						return true;
-					}
-				}
-				return false;
-			case 'ip':
-				return preg_match($match, $_SERVER['REMOTE_ADDR']);
-			case 'rdns':
-				return preg_match($match, gethostbyaddr($_SERVER['REMOTE_ADDR']));
-			case 'agent':
-				return array_search($_SERVER['HTTP_USER_AGENT'], $match) !== false;
-			case 'op':
-				return $post['op'] == $match;
-			case 'has_file':
-				return $post['has_file'] == $match;
-			case 'board':
-				return $post['board'] == $match;
-			case 'password':
-				return $post['password'] == $match;
-			default:
-				error('Unknown filter condition: ' . $condition);
-		}
-	}
-
-	public function action() {
-		global $board, $config;
-
-		$this->add_note = isset($this->add_note) ? $this->add_note : false;
-		if ($this->add_note) {
-			$query = prepare('INSERT INTO ``ip_notes`` (`ip`, `mod`, `time`, `body`) VALUES (:ip, :mod, :time, :body)');
-			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
-			$query->bindValue(':mod', -1);
-			$query->bindValue(':time', time());
-			$query->bindValue(':body', "Autoban message: ".$this->post['body']);
-			$query->execute() or error(db_error($query));
-		}
-		if (isset ($this->action)) switch($this->action) {
-			case 'reject':
-				error(isset($this->message) ? $this->message : 'Posting throttled by filter.');
-			case 'ban':
-				if (!isset($this->reason))
-					error('The ban action requires a reason.');
-
-				$this->expires = isset($this->expires) ? $this->expires : false;
-				$this->reject = isset($this->reject) ? $this->reject : true;
-				$this->all_boards = isset($this->all_boards) ? $this->all_boards : false;
-				$this->ban_cookie = isset($this->ban_cookie) ? $this->ban_cookie : false;
-
-				$ban_id = Bans::new_ban(get_ip_hash($_SERVER['REMOTE_ADDR']), get_uuser_cookie(), $this->reason, $this->expires, $this->all_boards ? false : $board['uri'], -1);
-
-				if ($this->ban_cookie)
-				{
-					Bans::ban_cookie($ban_id);
-				}
-
-				if ($this->reject) {
-					if (isset($this->message))
-						error($this->message);
-
-					checkBan($board['uri']);
-					exit;
-				}
-
-				break;
-			default:
-				error('Unknown filter action: ' . $this->action);
-		}
-	}
-
-	public function check(array $post) {
-		$this->post = $post;
-		foreach ($this->condition as $condition => $value) {
-			if ($condition[0] == '!') {
-				$NOT = true;
-				$condition = substr($condition, 1);
-			} else $NOT = false;
-
-			if ($this->match($condition, $value) == $NOT)
-				return false;
-		}
-		return true;
-	}
+    public function applyAction(): void
+    {
+        $this->filterAction->execute($this->post);
+    }
 }
 
-function purge_flood_table() {
-	global $config;
+class FilterRule
+{
+    private array $condition;
+    private FilterAction $action;
 
-	// Determine how long we need to keep a cache of posts for flood prevention. Unfortunately, it is not
-	// aware of flood filters in other board configurations. You can solve this problem by settings the
-	// config variable $config['flood_cache'] (seconds).
+    public function __construct(array $condition, FilterAction $action)
+    {
+        $this->condition = $condition;
+        $this->action = $action;
+    }
 
-	if ($config['flood_cache'] != -1) {
-		$max_time = &$config['flood_cache'];
-	} else {
-		$max_time = 0;
-		foreach ($config['filters'] as $filter) {
-			if (isset($filter['condition']['flood-time']))
-				$max_time = max($max_time, $filter['condition']['flood-time']);
-		}
-	}
+    public function getCondition(): array
+    {
+        return $this->condition;
+    }
 
-	$time = time() - $max_time;
-
-	query("DELETE FROM ``flood`` WHERE `time` < $time") or error(db_error());
+    public function getAction(): FilterAction
+    {
+        return $this->action;
+    }
 }
 
-function do_filters(array $post) {
-	global $config;
+class FilterAction
+{
+    private string $action;
+    private ?string $message;
+    private ?bool $addNote;
+    private ?bool $allBoards;
+    private ?int $expires;
+    private ?string $reason;
+    private ?bool $reject;
+    private ?bool $banCookie;
 
-	if (!isset($config['filters']) || empty($config['filters']))
-		return;
+    public function __construct(array $params)
+    {
+        $this->action = $params['action'] ?? 'reject';
+        $this->message = $params['message'] ?? null;
+        $this->addNote = $params['addNote'] ?? false;
+        $this->allBoards = $params['allBoards'] ?? false;
+        $this->expires = $params['expires'] ?? null;
+        $this->reason = $params['reason'] ?? null;
+        $this->reject = $params['reject'] ?? true;
+        $this->banCookie = $params['banCookie'] ?? false;
+    }
 
-	foreach ($config['filters'] as $filter) {
-		if (isset($filter['condition']['flood-match'])) {
-			$has_flood = true;
-			break;
-		}
-	}
+    public function execute(array $post): void
+    {
+        if ($this->addNote) {
+            $this->addNoteToIP($post['body']);
+        }
 
-	if (isset($has_flood)) {
-		if ($post['has_file']) {
-			$query = prepare("SELECT * FROM ``flood`` WHERE `ip` = :ip OR `posthash` = :posthash OR `filehash` = :filehash");
-			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
-			$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
-			$query->bindValue(':filehash', $post['filehash']);
-		} else {
-			$query = prepare("SELECT * FROM ``flood`` WHERE `ip` = :ip OR `posthash` = :posthash");
-			$query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
-			$query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
-		}
-		$query->execute() or error(db_error($query));
-		$flood_check = $query->fetchAll(PDO::FETCH_ASSOC);
-	} else {
-		$flood_check = false;
-	}
+        switch ($this->action) {
+            case 'reject':
+                $this->reject();
+                break;
+            case 'ban':
+                $this->ban($post['board'], $post['body']);
+                break;
+            default:
+                throw new InvalidArgumentException('Unknown filter action: ' . $this->action);
+        }
+    }
 
-	foreach ($config['filters'] as $filter_array) {
-		$filter = new Filter($filter_array);
-		$filter->flood_check = $flood_check;
-		if ($filter->check($post))
-			$filter->action();
-	}
+    private function addNoteToIP(string $body): void
+    {
+        $query = prepare('INSERT INTO ``ip_notes`` (`ip`, `mod`, `time`, `body`) VALUES (:ip, :mod, :time, :body)');
+        $query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
+        $query->bindValue(':mod', -1);
+        $query->bindValue(':time', time());
+        $query->bindValue(':body', "Autoban message: " . $body);
+        $query->execute() or error(db_error($query));
+    }
 
-	purge_flood_table();
+    private function reject(): void
+    {
+        error($this->message ?? 'Posting throttled by filter.');
+    }
+
+    private function ban(string $boardUri): void
+    {
+        if (empty($this->reason)) {
+            throw new InvalidArgumentException('The ban action requires a reason.');
+        }
+
+        $banId = Bans::new_ban(get_ip_hash($_SERVER['REMOTE_ADDR']), get_uuser_cookie(), $this->reason, $this->expires, $this->allBoards ? false : $boardUri, -1);
+
+        if ($this->banCookie) {
+            Bans::ban_cookie($banId);
+        }
+
+        if ($this->reject) {
+            error($this->message ?? 'You have been banned.');
+        }
+    }
+}
+
+class FloodChecker
+{
+    private array $floodCheck;
+
+    public function __construct(array $floodCheck)
+    {
+        $this->floodCheck = $floodCheck;
+    }
+
+    public function match(array $match, array $post): bool
+    {
+        $filteredFloodCheck = array_filter(
+            $this->floodCheck,
+            function ($floodPost) use ($match, $post) {
+                foreach ($match as $floodMatchArg) {
+                    if (!$this->checkFloodCondition($floodMatchArg, $floodPost, $post)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        );
+        return !empty($filteredFloodCheck);
+    }
+
+    public function isFloodTime(int $time): bool
+    {
+        foreach ($this->floodCheck as $floodPost) {
+            if (time() - $floodPost['time'] <= $time) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function isFloodCount(int $threshold, int $timeLimit): bool
+    {
+        $currentCount = count(array_filter(
+            $this->floodCheck,
+            function ($floodPost) use ($timeLimit) {
+                return time() - $floodPost['time'] <= $timeLimit;
+            }
+        ));
+
+        return $currentCount >= $threshold;
+    }
+
+    private function checkFloodCondition(string $condition, array $floodPost, array $post): bool
+    {
+        switch ($condition) {
+            case 'ip':
+                return $floodPost['ip'] == $_SERVER['REMOTE_ADDR'];
+            case 'body':
+                return $floodPost['posthash'] == make_comment_hex($post['body_nomarkup']);
+            case 'file':
+                return isset($post['filehash']) && $floodPost['filehash'] == $post['filehash'];
+            case 'board':
+                return $floodPost['board'] == $post['board'];
+            case 'isreply':
+                return $floodPost['isreply'] == $post['op'];
+            default:
+                throw new InvalidArgumentException('Invalid filter flood condition: ' . $condition);
+        }
+    }
+}
+
+function purge_flood_table(array $config): void
+{
+    $max_time = $config['flood_cache'] ?? max(array_map(fn ($filter) => $filter['condition']['flood-time'] ?? 0, $config['filters']));
+
+    $time = time() - $max_time;
+
+    query("DELETE FROM ``flood`` WHERE `time` < $time") or error(db_error());
+}
+
+function do_filters(array $post, array $config): void
+{
+    if (empty($config['filters'])) {
+        return;
+    }
+
+    $floodCheck = getFloodCheck($post, $config);
+
+    foreach ($config['filters'] as $filterConfig) {
+        $floodChecker = new FloodChecker($floodCheck);
+        $filterAction = new FilterAction($filterConfig);
+        $filter = new Filter($filterConfig['condition'], $post, $floodChecker, $filterAction);
+
+        if ($filter->check()) {
+            $filter->applyAction();
+        }
+    }
+
+    purge_flood_table($config);
+}
+
+function getFloodCheck(array $post, array $config): array
+{
+    if (array_search('flood-match', array_column($config['filters'], 'condition'))) {
+        $query = prepareFloodQuery($post);
+        $query->execute() or error(db_error($query));
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    return [];
+}
+
+function prepareFloodQuery(array $post): PDOStatement
+{
+    $queryStr = $post['has_file']
+        ? "SELECT * FROM ``flood`` WHERE `ip` = :ip OR `posthash` = :posthash OR `filehash` = :filehash"
+        : "SELECT * FROM ``flood`` WHERE `ip` = :ip OR `posthash` = :posthash";
+
+    $query = prepare($queryStr);
+    $query->bindValue(':ip', get_ip_hash($_SERVER['REMOTE_ADDR']));
+    $query->bindValue(':posthash', make_comment_hex($post['body_nomarkup']));
+
+    if ($post['has_file']) {
+        $query->bindValue(':filehash', $post['filehash']);
+    }
+
+    return $query;
 }

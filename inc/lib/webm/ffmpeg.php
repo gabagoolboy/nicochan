@@ -3,63 +3,122 @@
 * ffmpeg.php
 * A barebones ffmpeg based webm implementation for vichan.
 */
-function get_webm_info($filename) {
-  global $board, $config;
-  $filename = escapeshellarg($filename);
-  $ffprobe = $config['webm']['ffprobe_path'];
-  $ffprobe_out = array();
-  $webminfo = array();
-  exec("$ffprobe -v quiet -print_format json -show_format -show_streams $filename", $ffprobe_out);
-  $ffprobe_out = json_decode(implode("\n", $ffprobe_out), 1);
-  $webminfo['error'] = is_valid_webm($ffprobe_out);
-  if(empty($webminfo['error'])) {
-    $webminfo['width'] = $ffprobe_out['streams'][0]['width'];
-    $webminfo['height'] = $ffprobe_out['streams'][0]['height'];
-    $webminfo['duration'] = $ffprobe_out['format']['duration'];
-  }
-  return $webminfo;
-}
-function is_valid_webm($ffprobe_out) {
-  global $board, $config;
-  if (empty($ffprobe_out))
-    return array('code' => 1, 'msg' => $config['error']['genwebmerror']);
-  $extension = pathinfo($ffprobe_out['format']['filename'], PATHINFO_EXTENSION);
-  if ($extension === 'webm') {
-    if ($ffprobe_out['format']['format_name'] != 'matroska,webm')
-      return array('code' => 2, 'msg' => $config['error']['invalidwebm']);
-  } elseif ($extension === 'mp4') {
-    if ($ffprobe_out['streams'][0]['codec_name'] != 'h264' && $ffprobe_out['streams'][1]['codec_name'] != 'aac')
-      return array('code' => 2, 'msg' => $config['error']['invalidwebm']);
-  } else {
-    return array('code' => 1, 'msg' => $config['error']['genwebmerror']);  
-  }
-  if ((count($ffprobe_out['streams']) > 1) && (!$config['webm']['allow_audio']))
-    return array('code' => 3, 'msg' => $config['error']['webmhasaudio']);
-  if (empty($ffprobe_out['streams'][0]['width']) || (empty($ffprobe_out['streams'][0]['height'])))
-    return array('code' => 2, 'msg' => $config['error']['invalidwebm']);
-  if ($ffprobe_out['format']['duration'] > $config['webm']['max_length'])
-    return array('code' => 4, 'msg' => sprintf($config['error']['webmtoolong'], $config['webm']['max_length']));
-}
-function make_webm_thumbnail($filename, $thumbnail, $width, $height, $duration) {
-  global $board, $config;
-  $filename = escapeshellarg($filename);
-  $thumbnailfc = escapeshellarg($thumbnail); // Should be safe by default but you
-                                           // can never be too safe.
-  $width = escapeshellarg($width);
-  $height = escapeshellarg($height); // Same as above.
-  $ffmpeg = $config['webm']['ffmpeg_path'];
-  $ret = 0;
-  $ffmpeg_out = array();
-  exec("$ffmpeg -strict -2 -ss " . floor($duration / 2) . " -i $filename -v quiet -an -vframes 1 -f mjpeg -vf scale=$width:$height $thumbnailfc 2>&1", $ffmpeg_out, $ret);
-  // Work around for https://trac.ffmpeg.org/ticket/4362
-  if (filesize($thumbnail) === 0) {
-    // try again with first frame
-    exec("$ffmpeg -y -strict -2 -ss 0 -i $filename -v quiet -an -vframes 1 -f mjpeg -vf scale=$width:$height $thumbnailfc 2>&1", $ffmpeg_out, $ret);
-    clearstatcache();
-    // failed if no thumbnail size even if ret code 0, ffmpeg is buggy
-    if (filesize($thumbnail) === 0) {
-      $ret = 1;
+
+function get_webm_info(string $filename, array $config): array
+{
+
+    $escapedFilename = escapeshellarg($filename);
+    $ffprobePath = $config['webm']['ffprobe_path'];
+    $command = "$ffprobePath -v quiet -print_format json -show_format -show_streams $escapedFilename";
+
+    $output = [];
+    exec($command, $output);
+    $ffprobeOutput = json_decode(implode("\n", $output), true);
+
+    $webmInfo = ['error' => validate_webm($ffprobeOutput, $config)];
+
+    if (empty($webmInfo['error'])) {
+        $webmInfo['width'] = $ffprobeOutput['streams'][0]['width'] ?? null;
+        $webmInfo['height'] = $ffprobeOutput['streams'][0]['height'] ?? null;
+        $webmInfo['duration'] = $ffprobeOutput['format']['duration'] ?? null;
     }
-  }
-  return $ret;
+
+    return $webmInfo;
+}
+
+function validate_webm(array $ffprobeOutput, array $config): array
+{
+
+    if (empty($ffprobeOutput)) {
+        return ['code' => 1, 'msg' => $config['error']['genwebmerror']];
+    }
+
+    $extension = pathinfo($ffprobeOutput['format']['filename'] ?? '', PATHINFO_EXTENSION);
+    $formatName = $ffprobeOutput['format']['format_name'] ?? '';
+    $streams = $ffprobeOutput['streams'] ?? [];
+
+    switch ($extension) {
+        case 'webm':
+            if ($formatName !== 'matroska,webm') {
+                return ['code' => 2, 'msg' => $config['error']['invalidwebm']];
+            }
+            break;
+
+        case 'mp4':
+            if (empty($streams[0]['codec_name']) || empty($streams[1]['codec_name']) ||
+                $streams[0]['codec_name'] !== 'h264' && $streams[1]['codec_name'] !== 'aac') {
+                return ['code' => 2, 'msg' => $config['error']['invalidwebm']];
+            }
+            break;
+
+        default:
+            return ['code' => 1, 'msg' => $config['error']['genwebmerror']];
+    }
+
+    if (count($streams) > 1 && !$config['webm']['allow_audio']) {
+        return ['code' => 3, 'msg' => $config['error']['webmhasaudio']];
+    }
+
+    if (empty($streams[0]['width']) || empty($streams[0]['height'])) {
+        return ['code' => 2, 'msg' => $config['error']['invalidwebm']];
+    }
+
+    if (($ffprobeOutput['format']['duration'] ?? 0) > $config['webm']['max_length']) {
+        return ['code' => 4, 'msg' => sprintf($config['error']['webmtoolong'], $config['webm']['max_length'])];
+    }
+
+    return [];
+}
+
+function make_webm_thumbnail(array $config, string $filename, string $thumbnail, int $width, int $height, float $duration): int
+{
+
+    $fileConfig['escapedFilename'] = escapeshellarg($filename);
+    $fileConfig['escapedThumbnail'] = escapeshellarg($thumbnail);
+    $fileConfig['escapedWidth'] = escapeshellarg($width);
+    $fileConfig['escapedHeight'] = escapeshellarg($height);
+    $fileConfig['durationInSeconds'] = floor($duration / 2);
+    $fileConfig['maxFrames'] = $config['webm']['thumb_keep_animation_frames'];
+
+    $commands = build_ffmpeg_commands($config, $fileConfig);
+
+    $result = execute_ffmpeg_command($commands['first'], $thumbnail);
+
+    if ($result === 1) {
+        // Retry with the first frame if the file is empty
+        $result = execute_ffmpeg_command($commands['retry'], $thumbnail);
+    }
+
+    return $result;
+}
+
+function build_ffmpeg_commands(array $config, array $fileConfig): array
+{
+    $commands = [];
+    $ffmpegPath = $config['webm']['ffmpeg_path'];
+
+    if ($config['webm']['animated_thumbnail']) {
+        $commands['first'] = "{$ffmpegPath} -y -strict -2 -ss {$fileConfig['durationInSeconds']} -i {$fileConfig['escapedFilename']} -v quiet -vcodec libwebp -loop 0 -vf \"fps=10,scale={$fileConfig['escapedWidth']}:{$fileConfig['escapedHeight']},select='lte(n,{$fileConfig['maxFrames']})'\" -f webp {$fileConfig['escapedThumbnail']} 2>&1";
+        $commands['retry'] = "{$ffmpegPath} -y -strict -2 -ss 0 -i {$fileConfig['escapedFilename']} -v quiet -vcodec libwebp -loop 0 -vf \"fps=10,scale={$fileConfig['escapedWidth']}:{$fileConfig['escapedHeight']},select='lte(n,{$fileConfig['maxFrames']})'\" -f webp {$fileConfig['escapedThumbnail']} 2>&1";
+    } else {
+        $commands['first'] = "{$ffmpegPath} -y -strict -2 -ss {$fileConfig['durationInSeconds']} -i {$fileConfig['escapedFilename']} -v quiet -an -vframes 1 -vcodec libwebp -vf scale={$fileConfig['escapedWidth']}:{$fileConfig['escapedHeight']} {$fileConfig['escapedThumbnail']} 2>&1";
+        $commands['retry'] = "{$ffmpegPath} -y -strict -2 -ss 0 -i {$fileConfig['escapedFilename']} -v quiet -an -vframes 1 -vcodec libwebp -vf scale={$fileConfig['escapedWidth']}:{$fileConfig['escapedHeight']} {$fileConfig['escapedThumbnail']} 2>&1";
+    }
+
+    return $commands;
+}
+
+function execute_ffmpeg_command(string $command, string $thumbnail): int
+{
+    $output = [];
+    $returnValue = 0;
+
+    exec($command, $output, $returnValue);
+
+    // Work around for FFmpeg issue with zero-byte files
+    if (filesize($thumbnail) === 0) {
+        $returnValue = 1;
+    }
+
+    return $returnValue;
 }

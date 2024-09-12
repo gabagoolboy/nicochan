@@ -1,165 +1,326 @@
-var banlist_init = function(token, my_boards, inMod) {
-  inMod = !inMod;
+/*
+ * ban-list.js
+ *
+ * Released under the MIT license
+ * Copyright (c) 2024 Perdedora <weav@anche.no>
+ *
+ */
 
-  var lt;
+document.addEventListener('DOMContentLoaded', function() {
+    const banlistToken = document.getElementById('banlist').dataset.token;
+    const inMod = document.getElementById('banlist').dataset.ismod === 'true';
+    banlist_init(banlistToken, inMod);
+});
 
-  var selected = {};
+const banlist_init = (token, inMod) => {
 
-  var time = function() { return Date.now()/1000|0; }
+  let selected = {};
+  let gridApi;
+  let tooltipDiv;
+  const time = () => Math.floor(Date.now() / 1000);
 
-  $.getJSON(inMod ? ("?/bans.json/"+token) : token, function(t) {
-    $("#banlist").on("new-row", function(e, drow, el) {
-      var sel = selected[drow.id];
-      if (sel) {
-        $(el).find('input.unban').prop("checked", true);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(inMod ? `?/bans.json/${token}` : token);
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.statusText}`);
       }
-      $(el).find('input.unban').on("click", function() {
-        selected[drow.id] = $(this).prop("checked");
-      });
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      alert('Failed to load ban list data.');
+      return [];
+    }
+  };
 
+  const expiredStyle = (expires) => {
+    if (expires && expires !== 0 && expires < time()) return { textDecoration: 'line-through' }; 
+  };
 
-      if (drow.expires && drow.expires != 0 && drow.expires < time()) {
-        $(el).find("td").css("text-decoration", "line-through");
-      }
-    });
+  const isMobile = window.innerWidth < 768;
 
-    var selall = "<input type='checkbox' id='select-all' style='float: left;'>";
+  const createColumnDefs = () => [
+    {
+      headerName: _('Unban'),
+      field: 'unban',
+      width: 10,
+      checkboxSelection: true,
+      hide: !inMod,
+    },
+    {
+      headerName: _('ID'),
+      field: 'id',
+      width: 10,
+      hide: isMobile,
+      filter: true,
+      filterParams: {
+        filterOptions: ["equals"],
+        buttons: ["reset", "apply"],
+        closeOnApply: true,
+        maxNumConditions: 1,
+      },
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _('Mask'),
+      field: 'mask',
+      width: isMobile ? 70 : 50,
+      filter: true,
+      filterParams: {
+        filterOptions: ["equals"],
+        buttons: ["reset", "apply"],
+        closeOnApply: true,
+        maxNumConditions: 1,
+      },
+      cellRenderer: ({ data, value }) => {
+        return inMod && data.single_addr && !data.masked
+          ? `<a href="?/IP/${value}/page/1">${data.mask_human_readable}</a>`
+          : data.mask_human_readable;
+      },
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _("Reason"),
+      field: 'reason',
+      width: isMobile ? 140 : 120,
+      wrapText: true,
+      autoHeight: true,
+      filter: 'agTextColumnFilter',
+      cellRenderer: ({ data, value }) => {
+        let add = data.message ? `<i class='fa fa-comment' style="margin-right: 5px;" title='${_("Message for which user was banned is included. Click to see.")}'></i>` : '';
+            add += data.seen ? `<i class='fa fa-eye' style='font-size: 16px;' title='${_('Seen')}'></i>`
+                            : `<i class='fa fa-eye-slash' style='font-size: 16px;' title='${_('Not Seen')}'></i>`;
+        return `<div style='float: right;'>${add}</div>${value || '-'}`;
+      },
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _("Board"),
+      field: 'board',
+      width: 20,
+      hide: isMobile,
+      filter: true,
+      filterParams: {
+        filterOptions: ["equals", "notEqual"],
+        buttons: ["reset", "apply"],
+        closeOnApply: true,
+        maxNumConditions: 1
+      },
+      cellRenderer: ({ value }) => value ? `/${value}/` : `<em>${_("all")}</em>`,
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _("Set"),
+      field: 'created',
+      width: isMobile ? 60 : 40,
+      sort: 'desc',
+      valueFormatter: ({ value }) => `${ago(value)}${_(" ago")}`,
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _("Expires"),
+      field: 'expires',
+      width: isMobile ? 60 : 40,
+      cellRenderer: ({ value }) => !value || value === 0
+        ? `<em>${_("never")}</em>`
+        : `${strftime(window.post_date, new Date((value | 0) * 1000), datelocale)} ${(value < time()) ? "" : " <small>" + _("in ") + until(value | 0) + "</small>"}`,
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _("Staff"),
+      field: 'username',
+      width: 20,
+      hide: isMobile,
+      filter: true,
+      filterParams: {
+        filterOptions: ["equals", "notEqual"],
+        buttons: ["reset", "apply"],
+        closeOnApply: true,
+        maxNumConditions: 1
+      },
+      cellRenderer: ({ data, value }) => {
+        const pre = inMod && value && value !== '?' && !data.vstaff ? `<a href='?/new_PM/${value}'>` : '';
+        const suf = pre ? '</a>' : '';
+        return `${pre}${value || `<em>${_("system")}</em>`}${suf}`;
+      },
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+    {
+      headerName: _("Edit"),
+      field: 'id',
+      width: 20,
+      hide: !inMod || isMobile,
+      cellRenderer: ({ value }) => `<a href='?/edit_ban/${value}'>Edit</a>`,
+      cellStyle: ({ data }) => expiredStyle(data.expires)
+    },
+  ];
 
-    lt = $("#banlist").longtable({
-      mask: {name: selall+_("IP address"), width: "160px", fmt: function(f) {
-        var pre = "";
-        if (inMod && f.access) {
-          pre = "<input type='checkbox' class='unban'>";
-        }
+  const setupGrid = (data) => {
+    const columnDefs = createColumnDefs();
 
-        if (inMod && f.single_addr && !f.masked) {
-	  return pre+"<a href='?/IP/"+f.mask+"'>"+f.mask_human_readable+"</a>";
-	}
-	return pre+f.mask_human_readable;
-      } },
-
-      // reason: {name: _("Reason"), width: (inMod)?"calc(100% - 895px - 7 * 4px)":"calc(100% - 720px - 7 * 4px)", fmt: function(f) {
-      reason: {name: _("Reason"), width: (inMod)?"calc(100% - 710px - 6 * 4px)":"calc(100% - 675px - 6 * 4px)", fmt: function(f) {
-	var add = "", suf = '';
-        if (f.seen == 1) add += "<i class='fa fa-check' title='"+_("Seen")+"'></i>";
-	if (f.message) {
-	  add += "<i class='fa fa-comment' title='"+_("Message for which user was banned is included")+"'></i>";
-	  suf = "<br /><br /><strong>"+_("Message:")+"</strong><br />"+f.message;
-	}
-
-	if (add) { add = "<div style='float: right;'>"+add+"</div>"; }
-
-        if (f.reason) return add + f.reason + suf;
-        else return add + "-" + suf;
-      } },
-      board: {name: _("Board"), width: "60px", fmt: function(f) {
-        if (f.board) return "/"+f.board+"/";
-	else return "<em>"+_("all")+"</em>";
-      } },
-      created: {name: _("Set"), width: "100px", fmt: function(f) {
-        return ago(f.created) + _(" ago"); // in AGO form
-      } },
-      // duration?
-      expires: {name: _("Expires"), width: "235px", fmt: function(f) {
-	if (!f.expires || f.expires == 0) return "<em>"+_("never")+"</em>";
-        return strftime(window.post_date, new Date((f.expires|0)*1000), datelocale) + 
-          ((f.expires < time()) ? "" : " <small>"+_("in ")+until(f.expires|0)+"</small>");
-      } },
-      username: {name: _("Staff"), width: "100px", fmt: function(f) {
-	var pre='',suf='',un=f.username;
-	if (inMod && f.username && f.username != '?' && !f.vstaff) {
-	  pre = "<a href='?/new_PM/"+f.username+"'>";
-	  suf = "</a>";
-	}
-	if (!f.username) {
-	  un = "<em>"+_("system")+"</em>";
-	}
-	return pre + un + suf;
-      } },
-      id: {
-         name: (inMod)?_("Edit"):"&nbsp;", width: (inMod)?"35px":"0px", fmt: function(f) {
-	 if (!inMod) return '';
-         return "<a href='?/edit_ban/"+f.id+"'>Edit</a>";
-       } }
-
-    }, {}, t);
-
-    $("#select-all").click(function(e) {
-      var $this = $(this);
-      $("input.unban").prop("checked", $this.prop("checked"));
-      lt.get_data().forEach(function(v) { v.access && (selected[v.id] = $this.prop("checked")); });
-      e.stopPropagation();
-    });
-
-    var filter = function(e) {
-      if ($("#only_mine").prop("checked") && ($.inArray(e.board, my_boards) === -1)) return false;
-      if ($("#only_not_expired").prop("checked") && e.expires && e.expires != 0 && e.expires < time()) return false;
-      if ($("#search").val()) {
-        var terms = $("#search").val().split(" ");
-
-        var fields = ["mask", "reason", "board", "staff", "message"];
-
-        var ret_false = false;
-	terms.forEach(function(t) {
-          var fs = fields;
-
-	  var re = /^(mask|reason|board|staff|message):/, ma;
-          if (ma = t.match(re)) {
-            fs = [ma[1]];
-	    t = t.replace(re, "");
-	  }
-
-	  var found = false
-	  fs.forEach(function(f) {
-	    if (e[f] && e[f].indexOf(t) !== -1) {
-	      found = true;
-	    }
-	  });
-	  if (!found) ret_false = true;
+    const gridOptions = {
+      columnDefs,
+      rowData: data,
+      localeText: AG_GRID_LOCALE_BR,
+      rowSelection: 'multiple',
+      enableCellTextSelection: true,
+      suppressMovableColumns: true,
+      pagination: true,
+      paginationPageSize: 50,
+      paginationPageSizeSelector: [50, 100, 200, 300, 500],
+      domLayout: 'autoHeight',
+      suppressHorizontalScroll: false,
+      onGridReady: ({ api }) => {
+        api.sizeColumnsToFit();
+        gridApi = api;
+      },
+      onSelectionChanged: ({ api }) => {
+        selected = {};
+        api.getSelectedNodes().forEach(node => {
+          selected[node.data.id] = true;
         });
-
-        if (ret_false) return false;
-      }
-
-      return true;
+      },
+      onCellClicked: ({ colDef, data, event }) => {
+        if (colDef.field === 'reason' && data.message) toggleTooltip(event, data.message);
+      },
     };
 
-    $("#only_mine, #only_not_expired, #search").on("click input", function() {
-      lt.set_filter(filter);
-    });
-    lt.set_filter(filter);
+    const gridDiv = document.querySelector('#banlist');
+    agGrid = new agGrid.createGrid(gridDiv, gridOptions);
 
-    $(".banform").on("submit", function() { return false; });
+    setupEventListeners();
+  };
 
-    $("#unban").on("click", function() {
-      $(".banform .hiddens").remove();
-      $("<input type='hidden' name='unban' value='unban' class='hiddens'>").appendTo(".banform");
-
-      $.each(selected, function(e) {
-        $("<input type='hidden' name='ban_"+e+"' value='unban' class='hiddens'>").appendTo(".banform");
-      });
-
-      $(".banform").off("submit").submit();
-    });
-
-    if (device_type == 'desktop') {
-      // Stick topbar
-      var stick_on = $(".banlist-opts").offset().top;
-      var state = true;
-      $(window).on("scroll resize", function() {
-        if ($(window).scrollTop() > stick_on && state == true) {
-  	  $("body").css("margin-top", $(".banlist-opts").height());
-          $(".banlist-opts").addClass("boardlist top").detach().prependTo("body");
-  	  $("#banlist tr:not(.row)").addClass("tblhead").detach().appendTo(".banlist-opts");
-	  state = !state;
-        }
-        else if ($(window).scrollTop() < stick_on && state == false) {
-	  $("body").css("margin-top", "auto");
-          $(".banlist-opts").removeClass("boardlist top").detach().prependTo(".banform");
-	  $(".tblhead").detach().prependTo("#banlist");
-          state = !state;
-        }
+  const setupEventListeners = () => {
+    const searchInput = document.querySelector('#search');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        gridApi.setGridOption('quickFilterText', searchInput.value);
       });
     }
+
+    const selectAll = document.querySelector('#select-all');
+    if (selectAll) {
+      selectAll.addEventListener('click', () => {
+        const checked = selectAll.checked;
+        gridApi.forEachNode(node => {
+          node.setSelected(checked);
+          if (node.data.access) selected[node.data.id] = checked;
+        });
+      });
+    }
+
+    document.querySelector(".banform").addEventListener('submit', e => e.preventDefault());
+
+    const unbanBtn = document.querySelector("#unban");
+    if (unbanBtn) {
+      unbanBtn.addEventListener('click', handleUnban);
+    }
+  };
+
+  const handleUnban = () => {
+    if (confirm(_('Are you sure you want to unban the selected IPs?'))) {
+      document.querySelectorAll(".banform .hiddens").forEach(el => el.remove());
+
+      Vichan.createElement('input', {
+          attributes: { type: 'hidden', name: 'unban', value: 'unban' },
+          className: 'hiddens',
+          parent: document.querySelector(".banform")
+      });
+
+      Object.keys(selected).forEach(e => {
+          Vichan.createElement('input', {
+              attributes: { type: 'hidden', name: `ban_${e}`, value: 'unban' },
+              className: 'hiddens',
+              parent: document.querySelector(".banform")
+          });
+      });
+
+      document.querySelector(".banform").submit();
+    }
+  };
+
+  const showTooltip = (event, message) => {
+    if (!tooltipDiv) {
+      tooltipDiv = Vichan.createElement('div', {
+          className: 'post reply',
+          attributes: {
+              style: 'position: absolute; padding-right: 10px; max-width: 50%; z-index: 1000;',
+          },
+          parent: document.body
+      });
+
+      const introPara = Vichan.createElement('p', {
+          className: 'intro',
+          parent: tooltipDiv
+      });
+
+      Vichan.createElement('span', {
+          className: 'name',
+          text: 'Anônima',
+          parent: introPara
+      });
+
+      Vichan.createElement('time', {
+          text: message.date,
+          attributes: { style: 'margin-left: 10px;' },
+          parent: introPara
+      });
+
+      Vichan.createElement('a', {
+          className: 'post_no',
+          text: `No.${message.id}`,
+          attributes: { style: 'margin-left: 10px;' },
+          parent: introPara
+      });
+
+      const bodyDiv = Vichan.createElement('div', {
+          className: 'body',
+          attributes: { style: 'all: unset;' },
+          parent: tooltipDiv
+      });
+
+      Vichan.createElement('p', {
+          innerHTML: message.post,
+          parent: bodyDiv
+      });
+    }
+
+    updateTooltipPosition(event);
+  };
+
+  const hideTooltip = () => {
+    if (tooltipDiv) {
+      document.body.removeChild(tooltipDiv);
+      tooltipDiv = null;
+    }
+  };
+
+  const toggleTooltip = (event, message) => {
+    if (!tooltipDiv || tooltipDiv.style.display === 'none') {
+      showTooltip(event, message);
+    } else {
+      hideTooltip();
+    }
+  };
+
+  const updateTooltipPosition = (event) => {
+    if (tooltipDiv) {
+      tooltipDiv.style.left = `${event.clientX + 10}px`;
+      tooltipDiv.style.top = `${event.clientY + window.scrollY + 10}px`;
+      tooltipDiv.style.display = 'block';
+    }
+  };
+
+  document.addEventListener('click', event => {
+    if (tooltipDiv && !tooltipDiv.contains(event.target)) hideTooltip();
   });
-}
+
+  document.addEventListener('scroll', event => {
+    if (tooltipDiv && tooltipDiv.style.display === 'block') {
+      updateTooltipPosition(event);
+    }
+  }, true);
+
+  fetchData().then(setupGrid);
+};

@@ -14,73 +14,150 @@
  *
  */
 
+(function () {
+  const getPosts = () => JSON.parse(localStorage.getItem('own_posts') || '{}');
+  const setPosts = (posts) => localStorage.setItem('own_posts', JSON.stringify(posts));
+  const getBoard = () => document.querySelector('input[name="board"]')?.value;
 
-+function(){
+  const updateReferenceMarkers = (postId, action, rootElement = document) => {
+    const posts = getPosts();
+    const board = currentBoard;
 
+    rootElement.querySelectorAll(`div.body .highlight-link[data-cite="${postId}"]`).forEach(link => {
+      const youMarker = link.nextElementSibling?.matches('small.own_post');
+      if (action === 'add' && posts[board]?.includes(postId) && !youMarker) {
+        link.insertAdjacentHTML('afterend', ` <small class="own_post">${_('(You)')}</small>`);
+      } else if (action === 'remove' && youMarker) {
+        link.nextElementSibling.remove();
+      }
+    });
+  };
 
-var update_own = function() {
-  if ($(this).is('.you')) return;
+  const modifyPost = (postId, action) => {
+    const posts = getPosts();
+    const board = currentBoard;
+    const postList = posts[board] || [];
 
-  var thread = $(this).parents('[id^="thread_"]').first();
-  if (!thread.length) {
-    thread = $(this);
-  }
-
-  var board = thread.attr('data-board');
-  var posts = JSON.parse(localStorage.own_posts || '{}');
-
-  var id = $(this).attr('id').split('_')[1];
-
-  if (posts[board] && posts[board].indexOf(id) !== -1) { // Own post!
-    $(this).addClass('you');
-    $(this).find('span.name').first().append(' <span class="own_post">'+_('(You)')+'</span>');
-  }
-
-  // Update references
-  $(this).find('div.body:first a:not([rel="nofollow"])').each(function() {
-    var postID;
-
-    if(postID = $(this).text().match(/^>>(\d+)$/))
-      postID = postID[1];
-    else
-      return;
-
-    if (posts[board] && posts[board].indexOf(postID) !== -1) {
-      $(this).after(' <small>'+_('(You)')+'</small>');
+    if (action === 'add' && !postList.includes(postId)) {
+      postList.push(postId);
+    } else if (action === 'remove') {
+      const index = postList.indexOf(postId);
+      if (index > -1) postList.splice(index, 1);
     }
+
+    if (postList.length) {
+      posts[board] = postList;
+    } else {
+      delete posts[board];
+    }
+
+    setPosts(posts);
+
+    const postElement = document.getElementById(`reply_${postId}`) || document.getElementById(`op_${postId}`);
+    if (postElement) {
+      if (action === 'add') {
+        postElement.classList.add('you');
+        const nameElement = postElement.querySelector('span.name');
+        addYouSmall(nameElement);
+      } else {
+        postElement.classList.remove('you');
+        const ownPostMarker = postElement.querySelector('.own_post');
+        if (ownPostMarker) ownPostMarker.remove();
+      }
+    }
+
+    updateReferenceMarkers(postId, action);
+    updateReferencesInsidePost(postElement);
+  };
+
+  const updateReferencesInsidePost = (postElement) => {
+    const posts = getPosts();
+    const board = currentBoard;
+
+    postElement.querySelectorAll('div.body .highlight-link').forEach(link => {
+      const citedPostId = link.dataset.cite;
+      if (posts[board]?.includes(citedPostId)) {
+        const youMarker = link.nextElementSibling?.matches('small.own_post');
+        if (!youMarker) {
+          link.insertAdjacentHTML('afterend', ` <small class="own_post">${_('(You)')}</small>`);
+        }
+      }
+    });
+  };
+
+  const updateAfterAdded = (postElement) => {
+    const postId = postElement.id.split('_')[1];
+    updateReferenceMarkers(postId, 'add', postElement);
+    updateOwnPost(postElement);
+    updateReferencesInsidePost(postElement);
+  };
+
+  const addYouSmall = (nameElement) => {
+    if (nameElement && !nameElement.querySelector('.own_post')) {
+      nameElement.insertAdjacentHTML('beforeend', ` <span class="own_post">${_('(You)')}</span>`);
+    }
+  };
+
+  const updateOwnPost = (postElement) => {
+    if (postElement.classList.contains('you')) return;
+
+    const threadElement = postElement.closest('[id^="thread_"]') || postElement;
+    const board = threadElement.getAttribute('data-board');
+    const posts = getPosts();
+    const postId = postElement.id.split('_')[1];
+
+    if (posts[board]?.includes(postId)) {
+      postElement.classList.add('you');
+      const nameElement = postElement.querySelector('span.name');
+      addYouSmall(nameElement);
+      updateReferenceMarkers(postId, 'add');
+    }
+  };
+
+  const updateAllPosts = () => {
+    document.querySelectorAll('div.post.op, div.post.reply').forEach(updateOwnPost);
+  };
+
+  let currentBoard = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    currentBoard = getBoard();
+    updateAllPosts();
   });
-};
 
-var update_all = function() {
-  $('div[id^="thread_"], div.post.reply').each(update_own);
-};
+  document.addEventListener('ajax_after_post', (event) => {
+    const postId = event.detail.detail.id;
+    modifyPost(postId, 'add');
+  });
 
-var board = null;
+  document.addEventListener('new_post_js', (event) => {
+    const post = event.detail.detail;
+    updateAfterAdded(post);
+  });
 
-$(function() {
-  board = $('input[name="board"]').first().val();
+  document.addEventListener('menu_ready_js', () => {
+    const Menu = window.Menu;
+    Menu.add_item("add_you_menu", _("Add (You)"));
+    Menu.add_item("remove_you_menu", _("Remove (You)"));
 
-  update_all();
-});
+    Menu.onclick((e, buf) => {
+      const ele = e.target.closest('div.post');
+      const postId = ele.querySelector('a.post_no').dataset.cite;
+      const [menuItem] = buf;
+      const addMenu = menuItem.querySelector('#add_you_menu');
+      const removeMenu = menuItem.querySelector('#remove_you_menu');
 
-$(document).on('ajax_after_post', function(e, r) {
-  var posts = JSON.parse(localStorage.own_posts || '{}');
-  posts[board] = posts[board] || [];
-  posts[board].push(r.id);
-  localStorage.own_posts = JSON.stringify(posts);
-});
+      addMenu.classList.toggle('hidden', ele.classList.contains('you'));
+      removeMenu.classList.toggle('hidden', !ele.classList.contains('you'));
 
-$(document).on('new_post', function(e,post) {
-  var $post = $(post);
-  if ($post.is('div.post.reply')) { // it's a reply
-    $post.each(update_own);
-  }
-  else {
-    $post.each(update_own); // first OP
-    $post.find('div.post.reply').each(update_own); // then replies
-  }
-});
+      addMenu.onclick = () => {
+        modifyPost(postId, 'add');
+        updateAfterAdded(ele);
+      };
 
-
-
-}();
+      removeMenu.onclick = () => {
+        modifyPost(postId, 'remove');
+      };
+    });
+  });
+})();

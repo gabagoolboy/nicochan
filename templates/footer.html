@@ -1,21 +1,26 @@
 <footer>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    <p class="unimportant" style="margin-top:5px;text-align:center;">
+        - Tinyboard +&nbsp;
+		<a href="https://github.com/vichan-devel/vichan">vichan</a>&nbsp;+&nbsp;
+		<a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a>&nbsp;+&nbsp;
+		<a href="https://github.com/perdedora/nicochan">nicochan</a>&nbsp;{{ config.version }}
+        <br/>
+        &copy; 2010-2014 Tinyboard Development Group<br>
+        &copy; 2012-2018 <a href="https://github.com/vichan-devel/vichan">vichan</a> Development Group<br>
+        &copy; 2017-2018 <a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a> Development Group<br>
+        &copy; 2021-2024 <a href="https://github.com/perdedora/nicochan">Magalichan</a>
+    </p>
 
-    <p class="unimportant" style="margin-top:5px;text-align:center;">-&nbsp;Tinyboard&nbsp;+&nbsp;
-	<a href="https://github.com/vichan-devel/vichan">vichan</a>&nbsp;+&nbsp;
-	<a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a>&nbsp;+&nbsp;
-	<a href="https://github.com/perdedora/nicochan">nicochan</a>&nbsp;{{ config.version }}
+    {% if config.show_timer %}
+        <p class="unimportant" style="text-align:center;">Took: {{ microtime(startTime) }}</p>
+    {% endif %}
 
-        <br>Tinyboard Copyright &copy; 2010-2014 Tinyboard Development Group
-        <br><a href="https://github.com/vichan-devel/vichan">vichan</a> Copyright &copy; 2012-2018 vichan-devel
-        <br><a href="https://github.com/fallenPineapple/NPFchan">NPFchan</a> Copyright &copy; 2017-2018 NPFchan
-	<br><a href="https://github.com/perdedora/nicochan">Magalichan</a> Copyright &copy; 2021-2023 nicochan</p>
-
-	{% if config.show_timer %}
-	<p class="unimportant" style="text-align:center;">Took: {{ microtime() }}</p>
-	{% endif %}
-
-
-    {% for footer in config.footer %}<p class="unimportant" style="text-align:center;">{{ footer }}</p>{% endfor %}
-
-
+    {% for footer in config.footer %}
+        <p class="unimportant" style="text-align:center;">{{ footer }}</p>
+    {% endfor %}
 </footer>

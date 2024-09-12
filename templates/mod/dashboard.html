@@ -1,187 +1,221 @@
 <style>
-ul{
-list-style-type: none;
+ul {
+    list-style-type: none;
 }
-i{
-color: #272626 !important;
+i {
+    color: #d81159 !important;
 }
 </style>
-<p class="unimportant" style="text-align: center; margin-top: -15px"><strong>{% trans %}Logged in as:{% endtrans %}&nbsp;{{ mod.username }}</strong></p>
-<fieldset>
-	<legend>{% trans 'Boards' %}</legend>
-	<ul style="list-style: initial;">
-		{% for board in boards %}
-			<li>
-				<a href="?/{{ config.board_path|format(board.uri) }}">{{ config.board_abbreviation|format(board.uri) }}</a>
-					 -
-				&nbsp;{{ board.title|e }}
-				{% if board.subtitle %}
-					<small>&nbsp;&mdash;&nbsp;
-						{% if config.allow_subtitle_html %}
-							{{ board.subtitle }}
-						{% else %}
-							{{ board.subtitle|e }}
-						{% endif %}
-					</small>
-				{% endif %}&nbsp;
-				{% if mod|hasPermission(config.mod.manageboards) %}
-					<a href="?/edit/{{ board.uri }}"><small>[{% trans 'edit' %}]</small></a>
-				{% endif %}
-				{% if mod|hasPermission(config.mod.edit_pages) %}
-					<a href="?/edit_pages/{{ board.uri }}"><small>[{% trans 'pages' %}]</small></a>
-				{% endif %}
-				{% if mod|hasPermission(config.mod.edit_banners) %}
-					<a href="?/banners/{{ board.uri }}"><small>[{% trans 'banners' %}]</small></a>
-				{% endif %}
-			</li>
-		{% endfor %}
-		{% if mod|hasPermission(config.mod.newboard) %}
-			<li style="margin-top:15px; list-style-type: none;"><a href="?/new-board"><strong><i class="fa fa-plus"></i>&nbsp;{% trans 'Create new board' %}</strong></a></li>
-		{% endif %}
-	</ul>
-</fieldset>
-<fieldset>
-	<legend>{% trans 'Messages' %}</legend>
-	<ul>
-		{% if mod|hasPermission(config.mod.noticeboard) %}
-			{% if noticeboard|length > 0 %}
-				<li>
-					{% trans 'Noticeboard' %}:
-					<ul>
-						{% for post in noticeboard %}
-							<li>
-								<a href="?/noticeboard#{{ post.id }}"><i class="fa fa-newspaper-o"></i>&nbsp;
-									{% if post.subject %}
-										{{ post.subject|e }}
-									{% else %}
-										<em>{% trans 'no subject' %}</em>
-									{% endif %}
-								</a>
-								<small class="unimportant">
-									&mdash;&nbsp;{% trans 'by' %}&nbsp;
-									{% if post.username %}
-										{{ post.username|e }}
-									{% else %}
-										<em>{% trans %}deleted?{% endtrans %}</em>
-									{% endif %}
-									&nbsp;{% trans 'at' %}&nbsp;
-									{{ post.time|strftime }}
-								</small>
-							</li>
-						{% endfor %}
-					</ul>
-				</li>
-			{% endif %}
-			<li><a href="?/noticeboard"><i class="fa fa-newspaper-o"></i>&nbsp;{% trans 'View all noticeboard entries' %}</a></li>
-		{% endif %}
-		<li><a href="?/edit_news"><i class="fa fa-pencil-square"></i>&nbsp;{% trans 'News' %}</a></li>
-		<li>
-			<a href="?/inbox"><i class="fa fa-envelope"></i>&nbsp;
-				{% trans 'PM inbox' %}
-				{% if unread_pms > 0 %}<strong>{% endif %}
-					({{ unread_pms }} {% trans %}unread{% endtrans %})
-				{% if unread_pms > 0 %}</strong>{% endif %}
-			</a>
-		</li>
-	</ul>
-</fieldset>
-<fieldset>
-	<legend>{% trans 'Administration' %}</legend>
 
-	<ul>
-	{% if mod|hasPermission(config.mod.edit_banners) %}
-		<li><a href="?/banners/banners_priority"><i class="fa fa-upload"></i>&nbsp;{% trans %}Banners General{% endtrans %}</li></a>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.view_whitelist) and config.regionblock %}
-		<li><a href="?/wl_region"><i class="fa fa-align-justify"></i>&nbsp;{% trans %}Whitelist{% endtrans %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.reports) %}
-		<li>
-			{% if reports > 0 %}<strong>{% endif %}
-				<a href="?/reports"><i class="fa fa-flag"></i>&nbsp;{% trans 'Report queue' %} ({{ reports }})</a>
-			{% if reports > 0 %}</strong>{% endif %}
-		</li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.view_banlist) %}
-		<li><a href="?/bans"><i class="fa fa-ban"></i>&nbsp;{% trans 'Ban list' %}</a></li>
-	{% endif %}
-	{% if config.ban_appeals and mod|hasPermission(config.mod.view_ban_appeals) %}
-		<li>
-			{% if appealcount > 0 %}<strong>{% endif %}
-			<a href="?/ban-appeals"><i class="fa fa-balance-scale"></i>&nbsp;{% trans 'Ban appeals' %} ({{ appealcount }})</a>
-			{% if appealcount > 0 %}</strong>{% endif %}
-		</li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.manageusers) %}
-		<li><a href="?/users"><i class="fa fa-users"></i>&nbsp;{% trans 'Manage users' %}</a></li>
-	{% elseif mod|hasPermission(config.mod.change_password) %}
-		<li><a href="?/users/{{ mod.id }}"><i class="fa fa-key"></i>&nbsp;{% trans 'Change password' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.themes) %}
-		<li><a href="?/themes"><i class="fa fa-columns"></i>&nbsp;{% trans 'Manage themes' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.modlog) %}
-		<li><a href="?/log"><i class="fa fa-list-alt"></i>&nbsp;{% trans 'Moderation log' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.edit_pages) %}
-		<li><a href="?/edit_pages"><i class="fa fa-edit"></i>&nbsp;{% trans 'Global static pages' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.recent) %}
-		<li><a href="?/recent/25"><i class="fa fa-comments"></i>&nbsp;{% trans 'Recent posts' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.view_shadow_posts) %}
-		<li><a href="?/recent_shadow/25"><i class="fa fa-comments-o"></i>&nbsp;{% trans 'Recent shadow deleted posts' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.view_statistics) %}
-		<li><a href="?/statistics"><i class="fa fa-area-chart"></i>&nbsp;{% trans 'View Statistics' %}</a></li>
-	{% endif %}
-		{% if mod|hasPermission(config.mod.rebuild) %}
-		<li><a href="?/rebuild"><i class="fa fa-refresh"></i>&nbsp;{% trans 'Rebuild' %}</a></li>
-	{% endif %}
-	{% if mod|hasPermission(config.mod.edit_config) %}
-		<li><a href="?/config"><i class="fa fa-wrench"></i>&nbsp;{% trans 'Configuration' %}</a></li>
-	{% endif %}
-	</ul>
+<p class="unimportant" style="text-align: center; margin-top: -15px">
+    <strong>{% trans %}Logged in as:{% endtrans %} {{ mod.username }}</strong>
+</p>
+
+<fieldset>
+    <legend>{% trans %}Boards{% endtrans %}</legend>
+    <ul style="list-style: initial;">
+        {% for board in boards %}
+            <li>
+                <a href="?/{{ config.board_path|format(board.uri) }}">{{ config.board_abbreviation|format(board.uri) }}</a> - 
+                {{ board.title|e }}
+                {% if board.subtitle %}
+                    <small>
+                        &mdash;
+                        {% if config.allow_subtitle_html %}
+                            {{ board.subtitle }}
+                        {% else %}
+                            {{ board.subtitle|e }}
+                        {% endif %}
+                    </small>
+                {% endif %}
+                {% if mod|hasPermission(config.mod.manageboards) %}
+                    <a href="?/edit/{{ board.uri }}"><small>[{% trans %}edit{% endtrans %}]</small></a>
+                {% endif %}
+                {% if mod|hasPermission(config.mod.edit_pages) %}
+                    <a href="?/edit_pages/{{ board.uri }}"><small>[{% trans %}pages{% endtrans %}]</small></a>
+                {% endif %}
+                {% if mod|hasPermission(config.mod.edit_banners) %}
+                    <a href="?/banners/{{ board.uri }}"><small>[{% trans %}banners{% endtrans %}]</small></a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        {% if mod|hasPermission(config.mod.newboard) %}
+            <li style="margin-top:15px; list-style-type: none;">
+                <a href="?/new-board">
+                    <strong><i class="fa fa-plus"></i>&nbsp;{% trans %}Create new board{% endtrans %}</strong>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
 </fieldset>
+
+<fieldset>
+    <legend>{% trans %}Messages{% endtrans %}</legend>
+    <ul>
+        {% if mod|hasPermission(config.mod.noticeboard) %}
+            {% if noticeboard|length > 0 %}
+                <li>
+                    {% trans %}Noticeboard{% endtrans %}:
+                    <ul>
+                        {% for post in noticeboard %}
+                            <li>
+                                <a href="?/noticeboard#{{ post.id }}">
+                                    <i class="fa fa-newspaper-o"></i>&nbsp;
+                                    {% if post.subject %}
+                                        {{ post.subject|e }}
+                                    {% else %}
+                                        <em>{% trans %}no subject{% endtrans %}</em>
+                                    {% endif %}
+                                </a>
+                                <small class="unimportant">
+                                    &mdash;&nbsp;{% trans %}by{% endtrans %}&nbsp;
+                                    {% if post.username %}
+                                        {{ post.username|e }}
+                                    {% else %}
+                                        <em>{% trans %}deleted?{% endtrans %}</em>
+                                    {% endif %}
+                                    &nbsp;{% trans %}at{% endtrans %}&nbsp;
+                                    {{ post.time|strftime }}
+                                </small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endif %}
+            <li>
+                <a href="?/noticeboard">
+                    <i class="fa fa-newspaper-o"></i>&nbsp;{% trans %}View all noticeboard entries{% endtrans %}
+                </a>
+            </li>
+        {% endif %}
+        <li>
+            <a href="?/edit_news">
+                <i class="fa fa-pencil-square"></i>&nbsp;{% trans %}News{% endtrans %}
+            </a>
+        </li>
+        <li>
+            <a href="?/inbox">
+                <i class="fa fa-envelope"></i>&nbsp;
+                {% trans %}PM inbox{% endtrans %}
+                {% if unread_pms > 0 %}
+                    <strong>({{ unread_pms }} {% trans %}unread{% endtrans %})</strong>
+                {% else %}
+                    ({{ unread_pms }} {% trans %}unread{% endtrans %})
+                {% endif %}
+            </a>
+        </li>
+    </ul>
+</fieldset>
+
+<fieldset>
+    <legend>{% trans %}Administration{% endtrans %}</legend>
+    <ul>
+        {% if mod|hasPermission(config.mod.view_hashlist) %}
+            <li><a href="?/hashlist"><i class="fa fa-hashtag"></i>&nbsp;{% trans %}Hashban list{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.view_whitelist) and config.regionblock %}
+            <li><a href="?/wl_region"><i class="fa fa-align-justify"></i>&nbsp;{% trans %}Whitelist{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.edit_banners) %}
+            <li><a href="?/banners/banners_priority"><i class="fa fa-upload"></i>&nbsp;{% trans %}Banners General{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.reset_all_reports) %}
+            <li><a href="?/reset_stuff"><i class="fa fa-undo"></i>&nbsp;{% trans %}Reset Stuff{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.reports) %}
+            <li>
+                <a href="?/reports">
+                    <i class="fa fa-flag"></i>&nbsp;{% trans %}Report queue{% endtrans %}
+                    {% if reports > 0 %}
+                        <strong>({{ reports }})</strong>
+                    {% endif %}
+                </a>
+            </li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.view_banlist) %}
+            <li><a href="?/bans"><i class="fa fa-ban"></i>&nbsp;{% trans %}Ban list{% endtrans %}</a></li>
+        {% endif %}
+        {% if config.ban_appeals and mod|hasPermission(config.mod.view_ban_appeals) %}
+            <li>
+                <a href="?/ban-appeals">
+                    <i class="fa fa-balance-scale"></i>&nbsp;{% trans %}Ban appeals{% endtrans %}
+                    {% if appealcount > 0 %}
+                        <strong>({{ appealcount }})</strong>
+                    {% endif %}
+                </a>
+            </li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.manageusers) %}
+            <li><a href="?/users"><i class="fa fa-users"></i>&nbsp;{% trans %}Manage users{% endtrans %}</a></li>
+        {% elseif mod|hasPermission(config.mod.change_password) %}
+            <li><a href="?/users/{{ mod.id }}"><i class="fa fa-key"></i>&nbsp;{% trans %}Change password{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.themes) %}
+            <li><a href="?/themes"><i class="fa fa-columns"></i>&nbsp;{% trans %}Manage themes{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.modlog) %}
+            <li><a href="?/log"><i class="fa fa-list-alt"></i>&nbsp;{% trans %}Moderation log{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.edit_pages) %}
+            <li><a href="?/edit_pages"><i class="fa fa-edit"></i>&nbsp;{% trans %}Global static pages{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.recent) %}
+            <li><a href="?/recent/25"><i class="fa fa-comments"></i>&nbsp;{% trans %}Recent posts{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.view_shadow_posts) %}
+            <li><a href="?/recent_shadow/25"><i class="fa fa-comments-o"></i>&nbsp;{% trans %}Recent shadow deleted posts{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.view_statistics) %}
+            <li><a href="?/statistics"><i class="fa fa-area-chart"></i>&nbsp;{% trans %}View Statistics{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.rebuild) %}
+            <li><a href="?/rebuild"><i class="fa fa-refresh"></i>&nbsp;{% trans %}Rebuild{% endtrans %}</a></li>
+        {% endif %}
+        {% if mod|hasPermission(config.mod.edit_config) %}
+            <li><a href="?/config"><i class="fa fa-wrench"></i>&nbsp;{% trans %}Configuration{% endtrans %}</a></li>
+        {% endif %}
+    </ul>
+</fieldset>
+
 {% if mod|hasPermission(config.mod.search) %}
-	<fieldset>
-		<legend>{% trans 'Search' %}</legend>
-		<ul>
-			<li>
-				{% include 'mod/search_form.html' %}
-			</li>
-		</ul>
-	</fieldset>
+    <fieldset>
+        <legend>{% trans %}Search{% endtrans %}</legend>
+        <ul>
+            <li>{% include 'mod/partials/search_form.html' %}</li>
+        </ul>
+    </fieldset>
 {% endif %}
-{% if config.mod.dashboard_links and config.mod.dashboard_links|length %}
-	<fieldset>
-		<legend>{% trans 'Other' %}</legend>
-		<ul>
-			{% for label,link in config.mod.dashboard_links %}
-				<li><a href="{{ link }}">{{ label }}</a></li>
-			{% endfor %}
-		</ul>
-	</fieldset>
-{% endif %}
-{% if config.debug %}
-	<fieldset>
-		<legend>{% trans 'Debug' %}</legend>
-		<ul>
-			<li><a href="?/debug/antispam">{% trans 'Anti-spam' %}</a></li>
-			<li><a href="?/debug/recent">{% trans 'Recent posts' %}</a></li>
-			{% if config.cache.enabled == 'apcu' or config.cache.enabled == 'apc' %}
-				<li><a href="?/debug/apcu">{% trans 'APCU' %}</a></li>
-			{% endif %}
-			{% if mod|hasPermission(config.mod.debug_sql) %}
-				<li><a href="?/debug/sql">{% trans 'SQL' %}</a></li>
-			{% endif %}
-		</ul>
-	</fieldset>
-{% endif %}
-<fieldset>
-	<legend>{% trans 'User account' %}</legend>
 
-	<ul>
-		<li><a href="?/logout/{{ logout_token }}">{% trans 'Logout' %}</a></li>
-	</ul>
+{% if config.mod.dashboard_links and config.mod.dashboard_links|length %}
+    <fieldset>
+        <legend>{% trans %}Other{% endtrans %}</legend>
+        <ul>
+            {% for label, link in config.mod.dashboard_links %}
+                <li><a href="{{ link }}">{{ label }}</a></li>
+            {% endfor %}
+        </ul>
+    </fieldset>
+{% endif %}
+
+{% if config.debug %}
+    <fieldset>
+        <legend>{% trans %}Debug{% endtrans %}</legend>
+        <ul>
+            <li><a href="?/debug/antispam">{% trans %}Anti-spam{% endtrans %}</a></li>
+            <li><a href="?/debug/recent">{% trans %}Recent posts{% endtrans %}</a></li>
+            {% if config.cache.enabled == 'apcu' %}
+                <li><a href="?/debug/apcu">{% trans %}APCU{% endtrans %}</a></li>
+            {% endif %}
+            {% if mod|hasPermission(config.mod.debug_sql) %}
+                <li><a href="?/debug/sql">{% trans %}SQL{% endtrans %}</a></li>
+            {% endif %}
+        </ul>
+    </fieldset>
+{% endif %}
+
+<fieldset>
+    <legend>{% trans %}User account{% endtrans %}</legend>
+    <ul>
+        <li><a href="?/logout/{{ logout_token }}">{% trans %}Logout{% endtrans %}</a></li>
+    </ul>
 </fieldset>

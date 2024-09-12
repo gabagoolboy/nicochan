@@ -1,82 +1,126 @@
 <?php
+
 // Glue code for handling a Tinyboard post.
 // Portions of this file are derived from Tinyboard code.
-function postHandler($post) {
+
+function postHandler(object $post): null | string
+{
     global $board, $config;
-    if ($post->has_file) foreach ($post->files as &$file) if ($file->extension === 'webm' || $file->extension === 'mp4') {
-      if ($config['webm']['use_ffmpeg']) {
-        require_once dirname(__FILE__) . '/ffmpeg.php';
-        $webminfo = get_webm_info($file->file_path);
-        if (empty($webminfo['error'])) {
-          $file->width = $webminfo['width'];
-          $file->height = $webminfo['height'];
-          if ($config['spoiler_images'] && isset($_POST['spoiler'])) {
-            $file = webm_set_spoiler($file);
-          }
-          else {
-            $file = set_thumbnail_dimensions($post, $file);
-            $tn_path = $board['dir'] . $config['dir']['thumb'] . $file->file_id . '.jpg';
-            if(0 == make_webm_thumbnail($file->file_path, $tn_path, $file->thumbwidth, $file->thumbheight, $webminfo['duration'])) {
-              $file->thumb = $file->file_id . '.jpg';
+
+    if (!$post->has_file) {
+        return null;
+    }
+
+    foreach ($post->files as &$file) {
+        if (in_array($file->extension, ['webm', 'mp4'])) {
+            if ($config['webm']['use_ffmpeg']) {
+                $error = handleWebmWithFFmpeg($file, $board, $post->op, $config);
+            } else {
+                $error = handleWebmWithoutFFmpeg($file, $board, $post->op, $config);
             }
-            else {
-              $file->thumb = 'file';
-            }
-          }
-        }
-        else {
-          return $webminfo['error']['msg'];
-        }
-      }
-      else {
-        require_once dirname(__FILE__) . '/videodata.php';
-        $videoDetails = videoData($file->file_path);
-        if (!isset($videoDetails['container']) || $videoDetails['container'] != 'webm') return "not a WebM file";
-        // Set thumbnail
-        $thumbName = $board['dir'] . $config['dir']['thumb'] . $file->file_id . '.webm';
-        if ($config['spoiler_images'] && isset($_POST['spoiler'])) {
-            // Use spoiler thumbnail
-              $file = webm_set_spoiler($file);
-        } elseif (isset($videoDetails['frame']) && $thumbFile = fopen($thumbName, 'wb')) {
-            // Use single frame from video as pseudo-thumbnail
-            fwrite($thumbFile, $videoDetails['frame']);
-            fclose($thumbFile);
-            $file->thumb = $file->file_id . '.webm';
-        } else {
-            // Fall back to file thumbnail
-            $file->thumb = 'file';
-        }
-        unset($videoDetails['frame']);
-        // Set width and height
-        if (isset($videoDetails['width']) && isset($videoDetails['height'])) {
-            $file->width = $videoDetails['width'];
-            $file->height = $videoDetails['height'];
-            if ($file->thumb !== 'file' && $file->thumb !== 'spoiler') {
-                  $file = set_thumbnail_dimensions($post, $file);
-                }
+
+            if ($error) {
+                return $error;
             }
         }
     }
+
+    return null;
 }
-function set_thumbnail_dimensions($post,$file) {
-  global $config;
-  $tn_dimensions = array();
-  $tn_maxw = $post->op ? $config['thumb_op_width'] : $config['thumb_width'];
-  $tn_maxh = $post->op ? $config['thumb_op_height'] : $config['thumb_height'];
-  if ($file->width > $tn_maxw || $file->height > $tn_maxh) {
-      $file->thumbwidth = min($tn_maxw, (int)round($file->width * $tn_maxh / $file->height));
-      $file->thumbheight = min($tn_maxh, (int)round($file->height * $tn_maxw / $file->width));
-  } else {
-      $file->thumbwidth = $file->width;
-      $file->thumbheight = $file->height;
-  }
-  return $file;
+
+function handleWebmWithFFmpeg(object $file, array $board, bool $op, array $config): null | string
+{
+
+    require_once dirname(__FILE__) . '/ffmpeg.php';
+    $webmInfo = get_webm_info($file->file_path, $config);
+
+    if (!empty($webmInfo['error'])) {
+        return $webmInfo['error']['msg'];
+    }
+
+    $file->width = $webmInfo['width'];
+    $file->height = $webmInfo['height'];
+
+    if ($config['spoiler_images'] && isset($_POST['spoiler'])) {
+        $file = webm_set_spoiler($file, $config['spoiler_image']);
+    } else {
+        $file = set_thumbnail_dimensions($op, $file, $config);
+        $tnPath = $board['dir'] . $config['dir']['thumb'] . $file->file_id . '.webp';
+
+        if (make_webm_thumbnail($config, $file->file_path, $tnPath, $file->thumbwidth, $file->thumbheight, $webmInfo['duration']) === 0) {
+            $file->thumb = $file->file_id . '.webp';
+        } else {
+            $file->thumb = 'file';
+        }
+    }
+
+    return null;
 }
-function webm_set_spoiler($file) {
-  global $config;
-  $file->thumb = 'spoiler';
-  $size = @getimagesize($config['spoiler_image']);
-  $file->thumbwidth = $size[0];
-  $file->thumbheight = $size[1];
-  return $file;
+
+function handleWebmWithoutFFmpeg(object $file, array $board, bool $op, array $config): null | string
+{
+
+    require_once dirname(__FILE__) . '/videodata.php';
+    $videoDetails = videoData($file->file_path);
+
+    if (!isset($videoDetails['container']) || $videoDetails['container'] !== 'webm') {
+        return $webmInfo['error']['msg'];
+    }
+
+    $file->thumb = setThumbnailFromVideoDetails($file, $videoDetails, $board, $config);
+    $file->width = $videoDetails['width'] ?? $file->width;
+    $file->height = $videoDetails['height'] ?? $file->height;
+
+    if ($file->thumb !== 'file' || $file->thumb !== 'spoiler') {
+        $file = set_thumbnail_dimensions($op, $file, $config);
+    }
+
+    return null;
+}
+
+function setThumbnailFromVideoDetails(object $file, array $videoDetails, array $board, array $config): string
+{
+
+    $thumbName = $board['dir'] . $config['dir']['thumb'] . $file->file_id . '.webm';
+
+    if ($config['spoiler_images'] && isset($_POST['spoiler'])) {
+        $file = webm_set_spoiler($file, $config['spoiler_image']);
+        return 'spoiler';
+    }
+
+    if (isset($videoDetails['frame']) && $thumbFile = fopen($thumbName, 'wb')) {
+        fwrite($thumbFile, $videoDetails['frame']);
+        fclose($thumbFile);
+        unset($videoDetails['frame']);
+        return $file->file_id . '.webm';
+    }
+
+    return 'file';
+}
+
+function set_thumbnail_dimensions(bool $op, object $file, array $config): object
+{
+
+    $tnMaxW = $op ? $config['thumb_op_width'] : $config['thumb_width'];
+    $tnMaxH = $op ? $config['thumb_op_height'] : $config['thumb_height'];
+
+    if ($file->width > $tnMaxW || $file->height > $tnMaxH) {
+        $file->thumbwidth = min($tnMaxW, (int) round($file->width * $tnMaxH / $file->height));
+        $file->thumbheight = min($tnMaxH, (int) round($file->height * $tnMaxW / $file->width));
+    } else {
+        $file->thumbwidth = $file->width;
+        $file->thumbheight = $file->height;
+    }
+
+    return $file;
+}
+
+function webm_set_spoiler(object $file, string $spoiler_image): object
+{
+
+    $file->thumb = 'spoiler';
+    $size = @getimagesize($spoiler_image);
+    $file->thumbwidth = $size[0];
+    $file->thumbheight = $size[1];
+    return $file;
 }

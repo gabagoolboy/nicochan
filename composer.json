@@ -1,5 +1,5 @@
 {
-    "name": "perdora/nicochan",
+    "name": "perdora/mazuka",
     "description": "Vichan is a light-weight, fast, highly configurable and user-friendly imageboard software package released under a non-restrictive open-source license. It is written in PHP and has few dependencies.",
     "type": "project",
     "config": {
@@ -16,13 +16,14 @@
     "require": {
 	"ext-pdo": "*",
 	"ext-gd": "*",
-	"gettext/gettext": "^5.5",
-    "twig/twig": "^3.1",
+	"ext-redis": "*",
+	"gettext/gettext": "^5.6",
+    "twig/twig": "^3.11.1",
     "mrclay/jsmin-php": "~2",
 	"lifo/ip": "^1.0",
-	"dapphp/securimage": "dev-master",
-	"phpmyadmin/twig-i18n-extension": "^4.0",
-	"geoip2/geoip2": "^2.0"
+	"phpmyadmin/twig-i18n-extension": "^4.1",
+	"geoip2/geoip2": "^2.13",
+    "dapphp/securimage": "dev-master"
     },
     "autoload": {
         "classmap": ["inc/"],
@@ -35,7 +36,8 @@
             "inc/api.php",
             "inc/mod/auth.php",
             "inc/functions.php",
-	    "inc/shadow-delete.php"
+	        "inc/shadow-delete.php",
+            "inc/functions/net.php"
         ]
     },
     "license": "MIT",
@@ -61,8 +63,8 @@
             "email": "dsaunders@dansaunders.me"
         },
 	    {
-	        "name": "perdedora",
-	        "homepage": "https://github.com/perdedora"
+	        "name": "fowr",
+	        "email": "weav@anche.no"
 	    }
     ],
     "suggest": {

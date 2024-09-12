@@ -6,6 +6,7 @@
  * Copyright (c) 2012-2013 Michael Save <savetheinternet@tinyboard.org>
  * Copyright (c) 2013 Czterooki <czterooki1337@gmail.com>
  * Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net>
+ * Copyright (c) 2024 Perdedora <weav@anche.no>
  *
  * Usage:
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
@@ -13,57 +14,115 @@
  *
  */
 
-$(document).ready(function(){
-	if($('span.omitted').length == 0)
-		return; // nothing to expand
+document.addEventListener('DOMContentLoaded', () => {
+	const omittedSpans = document.querySelectorAll('span.omitted');
+	if (omittedSpans.length === 0) return; // nothing to expand
 
-	var do_expand = function() {
-		$(this)
-			.html($(this).text().replace(_("Click reply to view."), '<a href="javascript:void(0)">'+_("Click to expand")+'</a>.'))
-			.find('a').click(window.expand_fun = function() {
-				var thread = $(this).parents('[id^="thread_"]');
-				var id = thread.attr('id').replace(/^thread_/, '');
-				$.ajax({
-					url: thread.find('p.intro a.post_no:first').attr('href'),
-					context: document.body,
-					success: function(data) {
-						var last_expanded = false;
-						$(data).find('div.post.reply').each(function() {
-							thread.find('div.hidden').remove();
-							var post_in_doc = thread.find('#' + $(this).attr('id'));
-							if(post_in_doc.length == 0) {
-								if(last_expanded) {
-									$(this).addClass('expanded').insertAfter(last_expanded).before('<br class="expanded">');
-								} else {
-									$(this).addClass('expanded').insertAfter(thread.find('div.post:first')).after('<br class="expanded">');
-								}
-								last_expanded = $(this);
-								$(document).trigger('new_post', this);
-							} else {
-								last_expanded = post_in_doc;
-							}
-						});
-						
+	document.querySelectorAll('div.post.op span.reply_view').forEach(span => setupExpand(span));
 
-						thread.find("span.omitted").css('display', 'none');
+	document.addEventListener('new_post_js', event => handleNewPost(event));
+});
 
-						$('<span class="omitted hide-expanded"><a href="javascript:void(0)">' + _('Hide expanded replies') + '</a>.</span>')
-							.insertAfter(thread.find('.op div.body, .op span.omitted').last())
-							.click(function() {
-								thread.find('.expanded').remove();
-								$(this).parent().find(".omitted:not(.hide-expanded)").css('display', '');
-								$(this).parent().find(".hide-expanded").remove();
-							});
-					}
-				});
-			});
+function setupExpand(span) {
+	span.innerHTML = `<a>${_("Click to expand")}</a>.`;
+	const link = span.querySelector('a');
+
+	link.addEventListener('click', event => handleExpandClick(event, span));
+}
+
+async function handleExpandClick(event, span) {
+	event.preventDefault();
+	const thread = span.closest('[id^="thread_"]');
+	const threadUrl = thread.querySelector('div.post.op > p.intro > a.cite-link').href;
+
+	try {
+		const data = await fetchThreadData(threadUrl);
+		handleFetchSuccess(data, thread);
+	} catch (error) {
+		console.error('Error fetching thread data:', error);
+	}
+}
+
+async function fetchThreadData(url) {
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error('Network response was not ok');
+	}
+	return await response.text();
+}
+
+function handleFetchSuccess(data, thread) {
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(data, 'text/html');
+	let lastExpanded = null;
+
+	doc.querySelectorAll('div.post.reply').forEach(reply => {
+		processReply(reply, thread, lastExpanded);
+		lastExpanded = updateLastExpanded(reply, thread);
+	});
+
+	hideOmittedAndReplyView(thread);
+	setupHideExpanded(thread);
+}
+
+function processReply(reply, thread, lastExpanded) {
+	thread.querySelectorAll('div.hidden').forEach(hidden => hidden.remove());
+	const postInDoc = thread.querySelector(`#${reply.id}`);
+	if (!postInDoc) {
+		insertReply(reply, lastExpanded, thread);
+	}
+}
+
+function updateLastExpanded(reply, thread) {
+	const postInDoc = thread.querySelector(`#${reply.id}`);
+	return postInDoc || reply;
+}
+
+function insertReply(reply, lastExpanded, thread) {
+	reply.classList.add('expanded');
+	if (lastExpanded) {
+		lastExpanded.insertAdjacentElement('afterend', reply);
+		reply.insertAdjacentHTML('beforebegin', '<br class="expanded">');
+	} else {
+		thread.querySelector('div.post.op').insertAdjacentElement('afterend', reply);
+		reply.insertAdjacentHTML('afterend', '<br class="expanded">');
 	}
 
-	$('div.post.op span.omitted').each(do_expand);
+	triggerCustomEvent('new_post_js', document, { detail: reply })
+	$(document).trigger('new_post', reply); // ugh
+}
 
-	$(document).on("new_post", function(e, post) {
-		if (!$(post).hasClass("reply")) {
-			$(post).find('div.post.op span.omitted').each(do_expand);
-		}
-	});
-});
+function hideOmittedAndReplyView(thread) {
+	thread.querySelectorAll("span.omitted, span.reply_view").forEach(span => span.style.display = 'none');
+}
+
+function setupHideExpanded(thread) {
+	const hideExpandedSpan = document.createElement('span');
+	hideExpandedSpan.className = 'hide-expanded';
+	hideExpandedSpan.style.marginTop = '1em';
+	hideExpandedSpan.style.display = 'inline-block';
+	hideExpandedSpan.innerHTML = `<a href="">${_('Hide expanded replies')}</a>.`;
+
+	const replyViewSpan = thread.querySelector('span.reply_view');
+	if (replyViewSpan) {
+		replyViewSpan.insertAdjacentElement('afterend', hideExpandedSpan);
+	}
+
+	hideExpandedSpan.addEventListener('click', event => handleHideExpandedClick(event, thread));
+}
+
+function handleHideExpandedClick(event, thread) {
+	event.preventDefault();
+	thread.querySelectorAll('.expanded').forEach(expanded => expanded.remove());
+	thread.querySelectorAll('.omitted:not(.hide-expanded), span.reply_view').forEach(span => span.style.display = '');
+	setupExpand(thread.querySelector('span.reply_view'));
+	event.target.closest('.hide-expanded').remove();
+	event.target.remove();
+}
+
+function handleNewPost(event) {
+	const post = event.detail.detail;
+	if (!post.classList.contains('reply')) {
+		post.querySelectorAll('div.post.op span.reply_view').forEach(span => setupExpand(span));
+	}
+}

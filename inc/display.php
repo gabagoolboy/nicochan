@@ -35,7 +35,7 @@ function doBoardListPart($list, $root, &$boards) {
 					$title = ' title="'.$boards[$board].'"';
 				}
 
-				$body .= ' <a href="' . $root . $board . '/' . '"'.$title.'>' . $board . '</a> /';
+				$body .= ' <a data-isboard="true" href="' . $root . $board . '/' . '"'.$title.'>' . $board . '</a> /';
 			}
 		}
 	}
@@ -62,11 +62,8 @@ function createBoardlist($mod=false) {
 
 	$body = trim($body);
 
-	// Message compact-boardlist.js faster, so that page looks less ugly during loading
-	$top = "<script type='text/javascript'>if (typeof do_boardlist != 'undefined') do_boardlist();</script>";
-
 	return array(
-		'top' => '<div class="boardlist">' . $body . '</div>' . $top,
+		'top' => '<div class="boardlist">' . $body . '</div>',
 		'bottom' => '<div class="boardlist bottom">' . $body . '</div>'
 	);
 }
@@ -81,54 +78,40 @@ function error($message, $priority = true, $debug_stuff = []) {
 
 	if (defined('STDIN')) {
 		// Running from CLI
-		echo('Error: ' . $message . "\n");
+		echo "Error: $message\n";
 		debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 		die();
 	}
 
-	if ($config['debug'] && isset($db_error)) {
-		$debug_stuff = array_combine(array('SQLSTATE', 'Error code', 'Error message'), $db_error);
-	}
-
-	if ($config['debug']) {
-		$debug_stuff['backtrace'] = debug_backtrace();
-		ini_set('memory_limit', '160M'); // i know but it works
-	}
-
 	if (isset($_POST['json_response'])) {
 		header('Content-Type: text/json; charset=utf-8');
-		die(json_encode(array(
+		die(json_encode([
 			'error' => $message
-		)));
-	}
-	else {
+		]));
+	} else {
 		header($_SERVER['SERVER_PROTOCOL'] . ' 400 Bad Request');
 	}
 
-	$pw = $config['db']['password'];
-	$debug_callback = function($item) use (&$debug_callback, $pw) {
-		if (is_array($item)) {
-			$item = array_filter($item, $debug_callback);
+	if ($config['debug']) {
+		if (isset($db_error)) {
+			$debug_stuff = array_combine(['SQLSTATE', 'Error code', 'Error message'], $db_error);
 		}
-		return ($item !== $pw || !$pw);
-	};
 
+		$debug_stuff['backtrace'] = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+	}
 
-	if ($debug_stuff)
-		$debug_stuff = array_filter($debug_stuff, $debug_callback);
-
-	die(Element('page.html', array(
+	die(Element('page.html', [
 		'config' => $config,
 		'title' => _('Error'),
 		'subtitle' => _('An error has occured.'),
-		'body' => Element('error.html', array(
+		'body' => Element('error.html', [
 			'config' => $config,
 			'message' => $message,
 			'mod' => $mod,
 			'board' => isset($board) ? $board : false,
-			'debug' => $config['debug'] ? (is_array($debug_stuff) ? str_replace("\n", '&#10;', utf8tohtml(print_r($debug_stuff, true))) : utf8tohtml($debug_stuff)) : null
-		))
-	)));
+			'debug' => $config['debug'] ? str_replace("\n", '&#10;', utf8tohtml(print_r($debug_stuff, true))) : null
+		])
+	]));
 }
 
 function message($message, $title = '',  $subtitle = '') {
@@ -331,208 +314,250 @@ function bidi_cleanup($data) {
 }
 
 function secure_link_confirm($text, $title, $confirm_message, $href) {
-	global $config;
+    $secure_url = htmlspecialchars('?/' . $href . '/' . make_secure_link_token($href), ENT_QUOTES, 'UTF-8');
 
-	return '<a onclick="if (event.which==2) return true;if (confirm(\'' . htmlentities(addslashes($confirm_message)) . '\')) document.location=\'?/' . htmlspecialchars(addslashes($href . '/' . make_secure_link_token($href))) . '\';return false;" title="' . htmlentities($title) . '" href="?/' . $href . '">' . $text . '</a>';
+	$title = htmlentities($title);
+
+	$confirm_message = htmlentities($confirm_message);
+    
+	return "<a title='{$title}' data-href='{$secure_url}' href='?/{$href}' data-confirm='{$confirm_message}'>{$text}</a>";
 }
+
 function secure_link($href) {
 	return $href . '/' . make_secure_link_token($href);
 }
 
-function embed_html($link) {
-	global $config;
+abstract class AbstractPost
+{
+    protected array $config;
+    public string $board;
+    public array $full_board;
+    public string $root;
+    public mixed $mod;
+    public int $id;
+    public ?int $thread;
+    public ?string $subject;
+    public ?string $email;
+    public ?string $name;
+    public ?string $trip;
+    public ?string $capcode;
+    public string $body;
+    public string $body_nomarkup;
+    public int $time;
+    public int $bump;
+    public mixed $files;
+    public int $num_files;
+    public ?string $filehash;
+    public ?string $password;
+    public string $ip_human_readable;
+    public string $ip;
+    public string $cookie;
+    public bool $shadow;
+    public ?string $embed;
+    public ?string $slug;
+    public ?string $flag_iso;
+    public ?string $flag_ext;
+    public ?string $embed_url;
+    public ?string $embed_title;
+    public ?array $modifiers;
 
-	$link = json_decode($link);
-	foreach ($config['embeds'] as $embed) {
-		if ($html = preg_replace($embed['regex'], $embed['html'], $link->url)) {
-				if ($html == $link->url)
-					continue; // Nope
+    public function __construct(array $config, array $post, string $root = '', mixed $mod = false)
+    {
+        $this->config = $config;
+        $this->root = empty($root) ? $this->config['root'] : $root;
+        $this->mod = $mod;
 
-			$html = str_replace('%%VIDEO_NAME%%', htmlspecialchars(mb_substr($link->title, 0, 60, 'UTF-8')), $html);
-			$html = str_replace('%%VIDEO_FULLNAME%%', htmlspecialchars($link->title), $html);
-			$html = str_replace('%%tb_width%%', $config['embed_width'], $html);
-			$html = str_replace('%%tb_height%%', $config['embed_height'], $html);
+        $this->initialize($post);
+    }
 
-			return $html;
-		}
-	}
-
-	if ($link[0] == '<') {
-		// Prior to v0.9.6-dev-8, HTML code for embedding was stored in the database instead of the link.
-		return $link;
-	}
-
-	return 'Embedding error.';
-}
-
-class Post {
-	public function __construct($config, $post, $root=null, $mod=false) {
-
-		$this->config = $config;
-
-		if (!isset($root))
-			$root = &$this->config['root'];
-
-		foreach ($post as $key => $value) {
-			$this->{$key} = $value;
-		}
-
-		// Make human readable ip address
-		$this->ip_human_readable = getHumanReadableIP($this->ip);
-
-		if (isset($this->files) && $this->files)
-			$this->files = is_string($this->files) ? json_decode($this->files) : $this->files;
-
-		$this->subject = utf8tohtml($this->subject);
-		$this->name = utf8tohtml($this->name);
-		$this->mod = $mod;
-		$this->root = $root;
-
-		if ($this->embed) {
-			// this is just for the api
-			$url = json_decode($this->embed);
-			$this->embed_url = $url->url;
-			$this->embed_title = $url->title;
-			$this->embed = embed_html($this->embed);
-		}
-
-		$this->modifiers = extract_modifiers($this->body_nomarkup);
-
-		if ($this->config['always_regenerate_markup']) {
-			$this->body = $this->body_nomarkup;
-			markup($this->body);
-		}
-
-		if ($this->mod)
-			// Fix internal links
-			// Very complicated regex
-			$this->body = preg_replace(
-				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($this->config['root'], '/') . '(' . sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex']) . ')/u',
-				'<a $1href="?/$4',
-				$this->body
-			);
-	}
-	public function link($pre = '', $page = false) {
-		global $config, $board;
-
-		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
-	}
-
-	public function build($index=false) {
-		global $board;
-
-		return Element('post_reply.html', array('config' => $this->config, 'board' => $board, 'post' => &$this, 'index' => $index, 'mod' => $this->mod));
-	}
-};
-
-class Thread {
-	public function __construct($config, $post, $root = null, $mod = false, $hr = true) {
-
-		$this->config = $config;
-
-		if (!isset($root))
-			$root = &$this->config['root'];
-
-		foreach ($post as $key => $value) {
-			$this->{$key} = $value;
-		}
-
-		// Make human readable ip address
-		$this->ip_human_readable = getHumanReadableIP($this->ip);
-
-		if (isset($this->files))
-			$this->files = is_string($this->files) ? json_decode($this->files) : $this->files;
-
-		$this->subject = utf8tohtml($this->subject);
-		$this->name = utf8tohtml($this->name);
-		$this->mod = $mod;
-		$this->root = $root;
-		$this->hr = $hr;
-
-		$this->posts = array();
-		$this->omitted = 0;
-		$this->omitted_images = 0;
-
-		if ($this->embed) {
-			// this is just for the api
-			$url = json_decode($this->embed);
-			$this->embed_url = $url->url;
-			$this->embed_title = $url->title;
-			$this->embed = embed_html($this->embed);
-		}
-
-		$this->modifiers = extract_modifiers($this->body_nomarkup);
-
-		if ($this->config['always_regenerate_markup']) {
-			$this->body = $this->body_nomarkup;
-			markup($this->body);
-		}
-
-		if ($this->mod)
-			// Fix internal links
-			// Very complicated regex
-			$this->body = preg_replace(
-				'/<a((([a-zA-Z]+="[^"]+")|[a-zA-Z]+=[a-zA-Z]+|\s)*)href="' . preg_quote($this->config['root'], '/') . '(' . sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex']) . ')/u',
-				'<a $1href="?/$4',
-				$this->body
-			);
-	}
-	public function link($pre = '', $page = false) {
-		global $config, $board;
-
-		return $this->root . $board['dir'] . $config['dir']['res'] . link_for((array)$this, $page == '50') . '#' . $pre . $this->id;
-	}
-
-	public function add(Post $post) {
-		$this->posts[] = $post;
-	}
-	public function postCount() {
-		   return count($this->posts) + $this->omitted;
-	}
-	public function build($index=false, $isnoko50=false) {
-		global $board, $debug;
-
-		$hasnoko50 = $this->postCount() >= $this->config['noko50_min'];
-
-		event('show-thread', $this);
-
-		// Var telling if we should hide poster id
-		$hideposterid = $this->hideid;
-
-		// Fix Inline Links for Last 50
-		// Get minimum post_no in thread
-		// Go through all post.body and use regex on links
-		// if link is to a post within the thread and shown
-		// alter it to  CURRENT_URL#POST_NR
-        if($isnoko50)
-        {
-            $thread_num = $this->posts[0]->id;
-			$min_post_num = $this->posts[1]->id;
-
-            for($i=1; $i<count($this->posts); $i++)
-            {
-                // Find all links
-                preg_match_all('/(href="\/' . $board['uri'] . '\/res\/)([\d]*)(.html#)([\d]*)(")/', $this->posts[$i]->body, $results, PREG_PATTERN_ORDER);
-                // Build list of links to change
-                $patterns = array();
-                $changes = array();
-                foreach($results[4] as $key => $num)
-                {
-                    if(($num >= $min_post_num) || ($num == $thread_num))
-                    {
-                        $patterns[] = '/' . str_replace('/', '\/', preg_quote($results[0][$key])) . '/';
-                        $changes[] = $results[1][$key] . sprintf($this->config['file_page50'], $results[2][$key]) . "#" . $results[4][$key] . '"';
-                    }
-                }
-
-                // Update Links
-                $this->posts[$i]->body = preg_replace($patterns, $changes, $this->posts[$i]->body);
-            }
+    protected function initialize(array $post): void
+    {
+        foreach ($post as $key => $value) {
+            $this->{$key} = $value;
         }
 
-		$file = ($index && $this->config['file_board']) ? 'post_thread_fileboard.html' : 'post_thread.html';
-		$built = Element($file, array('config' => $this->config, 'hideposterid' => $hideposterid, 'board' => $board, 'post' => &$this, 'index' => $index, 'hasnoko50' => $hasnoko50, 'isnoko50' => $isnoko50, 'mod' => $this->mod));
+        $this->full_board['uri'] = $this->board;
+        $this->full_board['dir'] = sprintf($this->config['board_path'], $this->board);
+        $this->ip_human_readable = getHumanReadableIP($this->ip);
+        $this->files = is_string($this->files) ? json_decode($this->files) : $this->files;
+        $this->subject = utf8tohtml($this->subject);
 
-		return $built;
+        if ($this->embed) {
+            $url = json_decode($this->embed);
+            $this->embed_url = $url->url;
+            $this->embed_title = $url->title;
+            $this->embed_html($url);
+        }
+
+        $this->modifiers = extract_modifiers($this->body_nomarkup);
+
+        if ($this->config['always_regenerate_markup']) {
+            $this->body = $this->body_nomarkup;
+            markup($this->body);
+        }
+
+        if ($this->mod) {
+            $this->fixInternalLinks();
+        }
+    }
+
+    protected function fixInternalLinks(): void
+    {
+        $this->body = preg_replace(
+            '/<a\s*((?:[a-zA-Z-]+="[^"]*"\s*)*)href="'
+            . preg_quote($this->config['root'], '/')
+            . '('
+            . sprintf(preg_quote($this->config['board_path'], '/'), $this->config['board_regex'])
+            . '([^"]+))"/u',
+            '<a $1href="?/$2"',
+            $this->body
+        );
+    }
+
+    public function link(string $pre = '', string|bool $page = false, bool $no_hash = false): string
+    {
+        $link = $this->root . $this->full_board['dir'] . $this->config['dir']['res'] . link_for((array)$this, $page == '50');
+
+        if (!$no_hash) {
+            $link .= '#' . $pre . $this->id;
+        }
+
+        return $link;
+    }
+
+    public function embed_html(object $link): void
+    {
+        foreach ($this->config['embeds'] as $embed) {
+            if ($html = preg_replace($embed['regex'], $embed['html'], $link->url)) {
+                if ($html === $link->url) {
+                    continue;
+                } // Nope
+
+                $html = str_replace('%%VIDEO_NAME%%', htmlspecialchars(twig_truncate_filter($link->title, 44)), $html);
+                $html = str_replace('%%VIDEO_FULLNAME%%', htmlspecialchars($link->title), $html);
+                $html = str_replace('%%tb_width%%', $this->config['embed_width'], $html);
+                $html = str_replace('%%tb_height%%', $this->config['embed_height'], $html);
+
+                $this->embed = $html;
+				break;
+            }
+
+        	$this->embed = 'Embedding error.';
+        }
+
+    }
+
+    abstract public function build(bool $index = false);
+}
+
+class Post extends AbstractPost
+{
+    public function build(bool $index = false): string
+    {
+        return Element('post_reply.html', [
+            'config' => $this->config,
+            'board' => $this->full_board,
+            'post' => &$this,
+            'index' => $index,
+            'mod' => $this->mod
+        ]);
+    }
+}
+
+class Thread extends AbstractPost
+{
+    public array $posts = [];
+    public bool $sticky;
+    public bool $locked;
+    public bool $cycle;
+    public bool $sage;
+    public bool $hideid;
+    public int $omitted = 0;
+    public int $omitted_images = 0;
+    public int $thread_id;
+    public int $reply_count;
+	public int $image_count;
+    public string $link;
+    public string $file;
+    public string $orig_file;
+    public string $pubdate;
+    public int $images;
+    public int $replies;
+    public bool $hr;
+
+    public function __construct(array $config, array $post, string $root = '', mixed $mod = false, bool $hr = true)
+    {
+        parent::__construct($config, $post, $root, $mod);
+        $this->hr = $hr;
+    }
+
+    public function add(Post $post): void
+    {
+        $this->posts[] = $post;
+    }
+
+    public function postCount(): int
+    {
+        return count($this->posts) + $this->omitted;
+    }
+
+    public function build(bool $index = false, bool $isnoko50 = false): string
+    {
+        $hasnoko50 = $this->postCount() >= $this->config['noko50_min'];
+
+        event('show-thread', $this);
+
+        if ($isnoko50) {
+            $this->fixInlineLinks();
+        }
+
+        return Element('post_thread.html', [
+            'config' => $this->config,
+            'hideposterid' => $this->hideid,
+            'board' => $this->full_board,
+            'post' => &$this,
+            'index' => $index,
+            'hasnoko50' => $hasnoko50,
+            'isnoko50' => $isnoko50,
+            'mod' => $this->mod
+        ]);
+    }
+
+    private function fixInlineLinks(): void
+    {
+	    if (empty($this->posts) || count($this->posts) < 2) {
+        	return;
+    	}
+
+    	$thread_num = $this->posts[0]->id;
+    	$min_post_num = $this->posts[1]->id;
+
+    	for ($i = 1; $i < count($this->posts); $i++) {
+        	$body = $this->posts[$i]->body;
+
+        	if (!is_string($body)) {
+            	continue;
+        	}
+
+        	preg_match_all(
+            	'/(href="\?\/' . preg_quote($this->full_board['dir'], '/') . 'res\/)(\d+)#(\d+)(")/',
+            	$body,
+            	$matches,
+            	PREG_SET_ORDER
+        	);
+
+        	$patterns = [];
+        	$changes = [];
+        	foreach ($matches as $match) {
+            	list($fullMatch, $prefix, $pageId, $postId, $suffix) = $match;
+
+            	if ($postId >= $min_post_num || $postId == $thread_num) {
+                	$patterns[] = '/' . preg_quote($fullMatch, '/') . '/';
+                	$changes[] = $prefix . sprintf($this->config['file_page50'], $pageId) . "#" . $postId . $suffix;
+            	}
+        	}
+
+        	$this->posts[$i]->body = preg_replace($patterns, $changes, $body);
+    	}
 	}
-};
+}

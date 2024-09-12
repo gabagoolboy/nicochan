@@ -1,50 +1,44 @@
-if (active_page == 'thread' || active_page == 'index') {
-	$(document).ready(function(){
-		function arrayRemove(a, v) { a.splice(a.indexOf(v) == -1 ? a.length : a.indexOf(v), 1); }
+document.addEventListener('DOMContentLoaded', () => {
+	let currentHighlightedId = null;
 
-		var idshighlighted = [];
-
-		function getPostsById(id){
-			return $(".poster_id").filter(function(i){
-				return $(this).text() == id;
+	const toggleHighlight = (id, add) => {
+		document.querySelectorAll(`.poster_id`)
+			.forEach(el => {
+				if (el.textContent === id) {
+					const post = el.closest('.post.reply');
+					if (post) {
+						post.classList.toggle('highlighted', add);
+					}
+				}
 			});
+	};
+
+	const removeAllHighlights = () => {
+		document.querySelectorAll('.post.reply.highlighted').forEach(post => {
+			post.classList.remove('highlighted');
+		});
+	};
+
+	const idHighlighter = (event) => {
+		const id = event.target.textContent;
+
+		removeAllHighlights();
+
+		if (currentHighlightedId === id) {
+			currentHighlightedId = null;
+		} else {
+			toggleHighlight(id, true);
+			currentHighlightedId = id;
 		}
+	};
 
-		function getMasterPosts(parents){
-			if(!parents.hasClass("post")) return;
-			
-			var toRet = [];
-			
-			$(parents).each(function(){
-				if($(this).hasClass("post"))
-					toRet.push($(this));
-			});
-			
-			return toRet;
-		}
+	document.querySelectorAll('.poster_id').forEach(el => {
+		el.addEventListener('click', idHighlighter);
+	});
 
-		var id_highlighter = function(){
-			var id = $(this).text();
-			
-			if($.inArray(id, idshighlighted) !== -1){
-				arrayRemove(idshighlighted, id);
-				
-				$(getMasterPosts(getPostsById(id).parents())).each(function(i){
-					$(this).removeClass("highlighted");
-				});
-			}else{
-				idshighlighted.push(id);
-				
-				$(getMasterPosts(getPostsById(id).parents())).each(function(i){
-					$(this).addClass("highlighted");
-				});
-			}
-		}
-
-		$(".poster_id").on('click', id_highlighter);
-
-		$(document).on('new_post', function(e, post) {
-			$(post).find('.poster_id').on('click', id_highlighter);
+	document.addEventListener('new_post_js', (e) => {
+		e.detail.detail.querySelectorAll('.poster_id').forEach(el => {
+			el.addEventListener('click', idHighlighter);
 		});
 	});
-}
+});

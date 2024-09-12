@@ -1,40 +1,36 @@
-	{% if post.embed %}
-		{{ post.embed }}
-    {% else %}
+{% if post.embed %}
+    {{ post.embed }}
+{% else %}
     <div class="files">
-    {% for file in post.files %}
-        <div class="file{% if post.num_files > 1 %} multifile" style="width:{{ file.thumbwidth + 40 }}px"{% else %}"{% endif %}>
-	{% if file.file == 'deleted' %}
-		<img class="post-image deleted" src="{{ config.root }}{{ config.image_deleted }}" alt="" />
-	{% else %}
-		<p class="fileinfo">File: <a href="{% if post.shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ file.file }}">{{ file.file }}</a> <span class="unimportant">
-		&nbsp;(
-			{% if file.thumb == 'spoiler' %}
-				{% trans %}Spoiler Image{% endtrans %},
-			{% endif %}
-			{{ file.size|filesize }}
-			{% if file.width and file.height %}
-				, {{ file.width}}x{{ file.height }}
-				{% if config.show_ratio %}
-					, {{ ratio(file.width, file.height) }}
-				{% endif %}
-			{% endif %}
-			{% if (config.show_filename and file.filename) or post.mod|hasPermission(config.mod.show_filename) and file.filename %}
-				,
-				{% if file.filename|length > config.max_filename_display %}
-				<a class="post-filename" href="{{ config.uri_img }}{{ file.file|e|bidi_cleanup }}" data-truncate="true" download="{{ file.filename|e|bidi_cleanup }}" title="{% trans %}Save as original filename{% endtrans %}: {{ file.filename|e|bidi_cleanup }}">{{ file.filename|truncate_filename(config.max_filename_display)|e|bidi_cleanup }}</a>
-
-				{% else %}
-				<a class="post-filename" href="{{ config.uri_img }}{{ file.file|e|bidi_cleanup }}" download="{{ file.filename|e|bidi_cleanup }}" title="{% trans %}Save as original filename{% endtrans %}">{{ file.filename|e|bidi_cleanup }}</a>
-
-				{% endif %}
-			{% endif %}
-		)
-		&nbsp;{% include "post/image_identification.html" %}
-		{% include "post/file_controls.html" %}</span></p>
-	{% include "post/image.html" with {'shadow':post.shadow, 'post':file} %}
-	{% endif %}
-</div>
-    {% endfor %}
-</div>
-    {% endif %}
+        {% for index, file in post.files %}
+            <div class="file{{ post.num_files > 1 ? ' multifile' }}" style="{{ post.num_files > 1 ? 'width:' ~ (file.thumbwidth + 40) ~ 'px' }}">
+                {% if file.file == 'deleted' %}
+                    <img class="post-image deleted" src="{{ config.root ~ config.image_deleted }}" alt="" />
+                {% else %}
+                    <p class="fileinfo">
+                        {% trans %}File:{% endtrans %} 
+                        <a class="file-url" href="{{ post.shadow ? config.uri_shadow_img : config.uri_img }}{{ file.file }}">{{ file.file }}</a> 
+                        <span class="unimportant fileinfo-desktop">
+                            &nbsp;
+                            ({{ file.size|filesize }}{{ file.width and file.height ? ', ' ~ file.width ~ 'x' ~ file.height ~ (config.show_ratio ? ', ' ~ ratio(file.width, file.height) : '') : '' }} 
+                            {% if (config.show_filename and file.filename) or (post.mod|hasPermission(config.mod.show_filename) and file.filename) %}
+                                , 
+								<a class="post-filename" href="{{ config.uri_img ~ file.file|e|bidi_cleanup }}" 
+                                {{ file.filename|length > config.max_filename_display ? 'data-truncate="true"' : '' }} 
+                                download="{{ file.filename|e|bidi_cleanup }}" title="{% trans %}Save as original filename{% endtrans %}">
+                                {{ file.filename|length > config.max_filename_display ? file.filename|truncate_filename(config.max_filename_display)|e|bidi_cleanup : file.filename|e|bidi_cleanup }}
+                                </a>
+                            {% endif %})
+                        </span>
+                        <span class="unimportant fileinfo-mobile">
+                            ({{ file.size|filesize }})
+                        </span>
+                        {% include "post/image_identification.html" %}
+                        {% include "post/file_controls.html" with {'file': file, 'index': index} %}
+                    </p>
+                    {% include "post/image.html" with {'shadow': post.shadow, 'post': file} %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

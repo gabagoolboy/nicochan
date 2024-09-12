@@ -34,10 +34,12 @@ class PoeditParser {
 
 			preg_match_all('# ^ (msgid|msgstr)\ " ( (?: (?>[^"\\\\]++) | \\\\\\\\ | (?<!\\\\)\\\\(?!\\\\) | \\\\" )* ) (?<!\\\\)" $ #ixm', $part, $matches2, PREG_SET_ORDER);
 
-			$k = $this->_fixQuotes($matches2[0][2]);
-			$v = !empty($matches2[1][2]) ? $this->_fixQuotes($matches2[1][2]) : '';
+			if ($matches2) {
+				$k = $this->_fixQuotes($matches2[0][2]);
+				$v = !empty($matches2[1][2]) ? $this->_fixQuotes($matches2[1][2]) : '';
 
-			$this->strings[$k] = new PoeditString($k, $v, $isFuzzy, $comments);
+				$this->strings[$k] = new PoeditString($k, $v, $isFuzzy, $comments);
+			}
 		}
 	}
 

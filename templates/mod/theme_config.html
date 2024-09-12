@@ -1,7 +1,8 @@
 <form action="" method="post">
 	<input type="hidden" name="token" value="{{ token }}">
+
 	{% if not config %}
-	<p style="text-align:center" class="unimportant">{% trans %}(No configuration required.){% endtrans %}</p>
+		<p style="text-align:center" class="unimportant">{% trans %}(No configuration required.){% endtrans %}</p>
 	{% else %}
 		<table>
 			{% for conf in theme.config %}
@@ -10,36 +11,25 @@
 					<td>
 						{% if conf.type == 'checkbox' %}
 							<input type="checkbox" name="{{ conf.name }}"
-							{% if settings[conf.name] or (not settings[conf.name] is defined and conf.default) %}
-								checked
-							{% endif %}>
+								{{ settings[conf.name] or (settings[conf.name] is not defined and conf.default) ? 'checked' : '' }}>
 						{% elseif conf.type == 'textarea' %}
-							<textarea name="{{ conf.name }}">{% if settings[conf.name] %}{{ settings[conf.name] }}{% else %} {% if conf.default %}{{ conf.default }}{% endif %}{% endif %}</textarea> 
+							<textarea name="{{ conf.name }}">{{ settings[conf.name] ?: conf.default ?: '' }}</textarea>
 						{% else %}
-							<input type="text" name="{{ conf.name }}" 
-							{% if settings[conf.name] %}
-								value="{{ settings[conf.name] }}"
-							{% else %}
-								{% if conf.default %}value="{{ conf.default }}"{% endif %}{% endif %}
-							{% if conf.size %}
-								size="{{ conf.size }}"
-							{% endif %}>
-						
+							<input type="text" name="{{ conf.name }}"
+								value="{{ settings[conf.name] ?: conf.default ?: '' }}"
+								{{ conf.size ? 'size=' ~ conf.size : '' }}>
 						{% endif %}
-					{% if conf.comment %}
-						 <span class="unimportant">{{ conf.comment }}</span>
-					{% endif %}
+
+						{% if conf.comment %}
+							<span class="unimportant">{{ conf.comment }}</span>
+						{% endif %}
 					</td>
 				</tr>
 			{% endfor %}
 		</table>
 	{% endif %}
+
 	<p style="text-align:center">
-		<input name="install" type="submit" value="{% trans 'Install theme' %}" />
+		<input name="install" type="submit" value="{% trans %}Install theme{% endtrans %}" />
 	</p>
 </form>
-<script>
-$(function() {
-    ( $('textarea').val() );
-});
-</script>

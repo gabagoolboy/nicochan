@@ -1,4 +1,3 @@
-if (active_page === 'thread' || active_page === 'index' || active_page === 'catalog' || active_page === 'ukko') {
 	$(document).on('menu_ready', function () {
 		'use strict';
 		
@@ -174,6 +173,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			if ($(ele).data('hidden'))
 				return;
 
+			var active_page = getActivePage();
 			$(ele).data('hidden', true);
 			if ($ele.hasClass('op')) {
 				$ele.parent().find('.body, .files, .video-container').not($ele.children('.reply').children()).hide();
@@ -188,6 +188,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 		function show(ele) {
 			var $ele = $(ele);
 
+			var active_page = getActivePage();
 			$(ele).data('hidden', false);
 			if ($ele.hasClass('op')) {
 				$ele.parent().find('.body, .files, .video-container').show();
@@ -346,7 +347,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 				$('.hide-thread-link').remove();*/
 
 			if ($(ele).hasClass('op') && !$(ele).find('.hide-thread-link').length) {
-				$('<a class="hide-thread-link" style="float:left;margin-right:5px" href="javascript:void(0)">' + ($(ele).data('hidden') ? '<i class="fa fa-plus-square"></i>' : '<i class="fa fa-minus-square"></i>') + '</a>')
+				$('<a class="hide-thread-link" style="float:left;margin-right:5px">' + ($(ele).data('hidden') ? '<i class="fa fa-plus-square" style="color: #9e0059 !important"></i>' : '<i class="fa fa-minus-square" style="color: #9e0059 !important"></i>') + '</a>')
 					.insertBefore($(ele).find(':not(h2,h2 *):first'))
 					.click(function() {
 						var postId = $(ele).find('.post_no').not('[id]').text();
@@ -524,6 +525,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 		 function filterPage(pageData) {
 			var list = getList();
 
+			var active_page = getActivePage();
 			if (active_page != 'catalog') {
 
 				// empty the local and no-reply list
@@ -788,6 +790,8 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 		}
 
 		function init() {
+			var active_page = getActivePage();
+			if (!['thread', 'index', 'catalog', 'ukko'].includes(active_page)) return;
 			if (typeof localStorage.postFilter === 'undefined') {
 				localStorage.postFilter = JSON.stringify({
 					generalFilter: [],
@@ -798,7 +802,7 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 			}
 
 			var pageData = {
-				boardId: board_name,  // get the id from the global variable
+				boardId: document.querySelector('input[name="board"]').value,  // get the id from the global variable
 				localList: [],  // all the blacklisted post IDs or UIDs that apply to the current page
 				noReplyList: [],  // any posts that replies to the contents of this list shall be hidden
 				hasUID: (document.getElementsByClassName('poster_id').length > 0),
@@ -849,4 +853,3 @@ if (active_page === 'thread' || active_page === 'index' || active_page === 'cata
 	if (typeof window.Menu !== "undefined") {
 		$(document).trigger('menu_ready');
 	}
-}

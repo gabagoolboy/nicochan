@@ -61,7 +61,7 @@ $(document).ready(function() {
     } else {
       node = $(this)
 
-      var to_search = inMod ? this.search : this.pathname;
+      var to_search = document.querySelector('input[name="mod"]') ? this.search : this.pathname;
       targetOP = to_search.match(/(\d+).html/)[1]
     }
 
@@ -140,7 +140,6 @@ $(document).ready(function() {
   if (App.options.get('useInlining')) {
     var assign_inline = function() {
         $('.body a[href*="'+location.pathname+'"]').not('[rel]').not('.toolong > a').add('.mentioned a')
-          .attr('onclick', null)// XXX disable highlightReply
           .off('click')
           .click(inline)
     }

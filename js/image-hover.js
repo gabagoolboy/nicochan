@@ -5,194 +5,202 @@
  * Thanks Pashe for using WTFPL.
  */
 
-if (active_page === "catalog" || active_page === "thread" || active_page === "index" ||  active_page === "ukko") {
-$(document).ready(function () {
-
-if (window.Options && Options.get_tab('general')) {
-	Options.extend_tab("general",
-	"<fieldset><legend>"+_('Image hover')+"</legend>"
-	+ ("<label class='image-hover' id='imageHover'><input type='checkbox' /> "+_('Image hover')+"</label>")
-	+ ("<label class='image-hover' id='catalogImageHover'><input type='checkbox' /> "+_('Image hover on catalog')+"</label>")
-	+ ("<label class='image-hover' id='imageHoverFollowCursor'><input type='checkbox' /> "+_('Image hover should follow cursor')+"</label>")
-	+ "</fieldset>");
-}
-
-$('.image-hover').on('change', function(){
-	var setting = $(this).attr('id');
-
-	localStorage[setting] = $(this).children('input').is(':checked');
-});
-
-if (!localStorage.imageHover || !localStorage.catalogImageHover || !localStorage.imageHoverFollowCursor) {
-	localStorage.imageHover = 'true';
-	localStorage.catalogImageHover = 'false';
-	localStorage.imageHoverFollowCursor = 'true';
-}
-
-if (getSetting('imageHover')) $('#imageHover>input').prop('checked', 'checked');
-if (getSetting('catalogImageHover')) $('#catalogImageHover>input').prop('checked', 'checked');
-if (getSetting('imageHoverFollowCursor')) $('#imageHoverFollowCursor>input').prop('checked', 'checked');
-
-function getFileExtension(filename) { //Pashe, WTFPL
-	if (filename === undefined) {return;} // catalog
-	if (filename.match(/\.([a-z0-9]+)/i)) {
-		return filename.match(/\.([a-z0-9]+)/i)[1];
-	} else if (filename.match(/img\.youtube\.com/)) {
-		return 'Youtube';
-	} else {
-		return "unknown: " + filename;
-	}
-}
-
-function isImage(fileExtension) { //Pashe, WTFPL
-	return ($.inArray(fileExtension, ["jpg", "jpeg", "gif", "png", "webp", "jfif"]) !== -1);
-}
-
-function isVideo(fileExtension) { //Pashe, WTFPL
-	return ($.inArray(fileExtension, ["webm", "mp4", "php"]) !== -1);
-}
-
-function isOnCatalog() {
-	return window.active_page === "catalog";
-}
-
-function isOnThread() {
-	return window.active_page === "thread";
-}
-
-function isOnUkko() {
-	return window.active_page === "ukko";
-}
-
-function getSetting(key) {
-	return (localStorage[key] == 'true');
-}
-
-function initImageHover() { //Pashe, influenced by tux, et al, WTFPL
-	if (!getSetting("imageHover") && !getSetting("catalogImageHover")) {return;}
-
-	var selectors = [];
-
-	if (getSetting("imageHover")) {selectors.push("img.post-image", "canvas.post-image");}
-	if (getSetting("catalogImageHover") && isOnCatalog()) {
-		selectors.push(".thread-image");
-		$(".theme-catalog div.thread").css("position", "inherit");
+document.addEventListener('DOMContentLoaded', () => {
+	// Extend options tab if available
+	if (window.Options && Options.get_tab('general')) {
+		Options.extend_tab(
+			'general',
+			`<fieldset><legend>${_('Image hover')}</legend>
+        <label class='image-hover' id='imageHover'><input type='checkbox' /> ${_('Image hover')}</label>
+        <label class='image-hover' id='catalogImageHover'><input type='checkbox' /> ${_('Image hover on catalog')}</label>
+        <label class='image-hover' id='imageHoverFollowCursor'><input type='checkbox' /> ${_('Image hover should follow cursor')}</label>
+        </fieldset>`
+		);
 	}
 
-	function bindEvents(el) {
-		$(el).find(selectors.join(", ")).each(function () {
-			if ($(this).parent().data("expanded")) {return;}
-
-			var $this = $(this);
-
-			$this.on("mousemove", imageHoverStart);
-			$this.on("mouseout",  imageHoverEnd);
-			$this.on("click",     imageHoverEnd);
+	document.querySelectorAll('.image-hover').forEach(element => {
+		element.addEventListener('change', () => {
+			localStorage.setItem(element.id, element.querySelector('input').checked.toString());
 		});
-	}
-
-	bindEvents(document.body);
-	$(document).on('new_post', function(e, post) {
-		bindEvents(post);
 	});
-}
 
-function followCursor(e, hoverImage) {
-	var scrollTop = $(window).scrollTop();
-	var imgWidth = Number(hoverImage.css("max-width").slice(0,-2))
-	var imgHeight = Number(hoverImage.css("max-height").slice(0,-2))
-	var imgTop = e.pageY - (imgHeight/2);
-	var windowWidth = $(window).width();
-	var imgEnd = imgWidth + e.pageX;
+	const defaultSettings = {
+		imageHover: 'true',
+		catalogImageHover: 'true',
+		imageHoverFollowCursor: 'true'
+	};
 
-	if (imgTop < scrollTop + 15) {
-		imgTop = scrollTop + 15;
-	} else if (imgTop > scrollTop + $(window).height() - imgHeight - 15) {
-		imgTop = scrollTop + $(window).height() - imgHeight - 15;
-	}
-
-	if (imgEnd > windowWidth) {
-		hoverImage.css({
-			'left': (e.pageX + (windowWidth - imgEnd)),
-			'top' : imgTop,
-		});
-	} else {
-		hoverImage.css({
-			'left': e.pageX,
-			'top' : imgTop,
-		});
-	}
-}
-
-function imageHoverStart(e) { //Pashe, anonish, WTFPL
-	var hoverImage = $("#chx_hoverImage");
-
-	if (hoverImage.length){
-		if (getSetting("imageHoverFollowCursor")) {
-			followCursor(e, hoverImage);
-			hoverImage.appendTo($("body"));
+	Object.keys(defaultSettings).forEach(key => {
+		if (localStorage.getItem(key) === null) {
+			localStorage.setItem(key, defaultSettings[key]);
 		}
+	});
+
+	['imageHover', 'catalogImageHover', 'imageHoverFollowCursor'].forEach(id => {
+		const checkbox = document.querySelector(`#${id} > input`);
+		if (checkbox && getSetting(id)) {
+			checkbox.checked = true;
+		}
+	});
+
+	const active_page = getActivePage();
+
+	if (!["catalog", "thread", "index", "ukko"].includes(active_page)) {
 		return;
 	}
 
-	var $this = $(this);
+	function getFileExtension(filename) {
+		if (!filename) return;
+		const match = filename.match(/\.([a-zA-Z0-9]+)(?:[\?#]|$)/);
+		if (match) return match[1].toLowerCase();
+		if (filename.includes('youtube.com')) return 'Youtube';
+		return `unknown: ${filename}`;
+	}
 
-	var fullUrl;
-	if ($this.parent().attr("href") !== undefined) {
-		if ($this.parent().attr("href").match("src")) {
-			fullUrl = $this.parent().attr("href");
-		} else if (isOnCatalog()) {
-			fullUrl = $this.attr("data-fullimage");
-			if (!isImage(getFileExtension(fullUrl))) {fullUrl = $this.attr("src");}
+	function isImage(fileExtension) {
+		return ['jpg', 'jpeg', 'gif', 'png', 'webp', 'jfif'].includes(fileExtension);
+	}
+
+	function isVideo(fileExtension) {
+		return ['webm', 'mp4', 'php'].includes(fileExtension);
+	}
+
+	function getSetting(key) {
+		return localStorage.getItem(key) === 'true';
+	}
+
+	function initImageHover() {
+		if (!getSetting('imageHover')) return;
+
+		const selectors = [];
+
+		if (getSetting('imageHover')) {
+			selectors.push('img.post-image', 'canvas.post-image');
+		}
+		if (getSetting('catalogImageHover') && active_page === 'catalog') {
+			selectors.push('.thread-image');
+			document.querySelectorAll('.theme-catalog div.thread').forEach(thread => {
+				thread.style.position = 'inherit';
+			});
+		}
+
+
+		function bindEvents(element) {
+			element.querySelectorAll(selectors.join(', ')).forEach(image => {
+				if (image.parentElement.dataset.expanded) return;
+				image.addEventListener('mousemove', imageHoverStart);
+				image.addEventListener('mouseout', imageHoverEnd);
+				image.addEventListener('click', imageHoverEnd);
+			});
+		}
+
+		bindEvents(document.body);
+		document.addEventListener('new_post_js', event => {
+			bindEvents(event.detail.detail);
+		});
+	}
+
+	function getMeta(url, callback) {
+		const img = new Image();
+		img.src = url;
+		img.onload = function () {
+			callback(this.width, this.height);
+		};
+	}
+
+	function followCursor(e, hoverImage) {
+		const scrollTop = window.scrollY;
+		const imgWidth = parseFloat(hoverImage.style.maxWidth);
+		const imgHeight = parseFloat(hoverImage.style.maxHeight);
+		let imgTop = e.pageY - imgHeight / 2;
+		const windowWidth = window.innerWidth;
+		const imgEnd = imgWidth + e.pageX;
+
+		if (imgTop < scrollTop + 15) {
+			imgTop = scrollTop + 15;
+		} else if (imgTop > scrollTop + window.innerHeight - imgHeight - 15) {
+			imgTop = scrollTop + window.innerHeight - imgHeight - 15;
+		}
+
+		if (imgEnd > windowWidth) {
+			hoverImage.style.left = `${e.pageX + (windowWidth - imgEnd)}px`;
+			hoverImage.style.top = `${imgTop}px`;
+		} else {
+			hoverImage.style.left = `${e.pageX}px`;
+			hoverImage.style.top = `${imgTop}px`;
 		}
 	}
 
-	if (fullUrl === undefined) return;
+	function imageHoverStart(e) {
+		let hoverImage = document.getElementById('chx_hoverImage');
 
-	if (isVideo(getFileExtension(fullUrl))) {return;}
+		if (hoverImage) {
+			if (getSetting('imageHoverFollowCursor')) {
+				followCursor(e, hoverImage);
+				document.body.appendChild(hoverImage);
+			}
+			return;
+		}
 
-	hoverImage = $('<img id="chx_hoverImage" src="'+fullUrl+'" />');
+		const target = e.currentTarget;
+		let fullUrl;
+		if (target.parentElement.getAttribute('href') !== null) {
+			fullUrl = target.parentElement.getAttribute('href');
 
-	if (getSetting("imageHoverFollowCursor") && active_page !== "catalog") {
-		var size = $this.parents('.file').find('.fileinfo').text().match(/\b(\d+)x(\d+)\b/);
-			maxWidth = $(window).width(),
-			maxHeight = $(window).height();
+			if (active_page === 'catalog') {
+				fullUrl = target.getAttribute('data-fullimage');
+				if (!isImage(getFileExtension(fullUrl))) {
+					fullUrl = target.getAttribute('src');
+				}
+			}
+		}
 
-		var scale = Math.min(1, maxWidth / size[1], maxHeight / size[2]);
-		hoverImage.css({
-			"position"      : "absolute",
-			"z-index"       : 101,
-			"pointer-events": "none",
-			"width"         : size[1] + "px",
-			"height"        : size[2] + "px",
-			"max-width"     : (size[1] * scale) + "px",
-			"max-height"    : (size[2] * scale) + "px",
-		});
-	} else {
-		hoverImage.css({
-			"position"      : "fixed",
-			"top"           : 0,
-			"right"         : 0,
-			"z-index"       : 101,
-			"pointer-events": "none",
-			"max-width"     : "100%",
-			"max-height"    : "100%",
-		});
+		if (!fullUrl || isVideo(getFileExtension(fullUrl))) return;
+		if (getFileExtension(fullUrl) === 'Youtube') fullUrl = target.getAttribute('src');
+
+		hoverImage = document.createElement('img');
+		hoverImage.id = 'chx_hoverImage';
+		hoverImage.src = fullUrl;
+
+		if (getSetting('imageHoverFollowCursor')) {
+			const maxWidth = window.innerWidth / 1.3;
+			const maxHeight = window.innerHeight / 1.3;
+
+			getMeta(fullUrl, (width, height) => {
+				const scale = Math.min(1, maxWidth / width, maxHeight / height);
+				hoverImage.style.position = 'absolute';
+				hoverImage.style.zIndex = 101;
+				hoverImage.style.pointerEvents = 'none';
+				hoverImage.style.width = `${width}px`;
+				hoverImage.style.height = `${height}px`;
+				hoverImage.style.maxWidth = `${width * scale}px`;
+				hoverImage.style.maxHeight = `${height * scale}px`;
+				hoverImage.style.left = `${e.pageX}px`;
+				hoverImage.style.top = `${e.pageY - (height * scale) / 2}px`;
+			});
+		} else {
+			hoverImage.style.position = 'fixed';
+			hoverImage.style.top = '0';
+			hoverImage.style.right = '0';
+			hoverImage.style.zIndex = '101';
+			hoverImage.style.pointerEvents = 'none';
+			hoverImage.style.maxWidth = '100%';
+			hoverImage.style.maxHeight = '100%';
+		}
+
+		if (getSetting('imageHoverFollowCursor')) {
+			followCursor(e, hoverImage);
+		}
+
+		document.body.appendChild(hoverImage);
 	}
 
-	if (getSetting("imageHoverFollowCursor")) {
-		followCursor(e, hoverImage);
+	function imageHoverEnd() {
+		const hoverImage = document.getElementById('chx_hoverImage');
+		if (hoverImage) {
+			hoverImage.remove();
+		}
 	}
 
-	hoverImage.appendTo($("body"));
-
-	if (isOnThread()) {$this.css("cursor", "none");}
-}
-
-function imageHoverEnd() { //Pashe, WTFPL
-	$("#chx_hoverImage").remove();
-}
-
-initImageHover();
+	initImageHover();
 });
-}

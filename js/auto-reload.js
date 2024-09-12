@@ -97,9 +97,7 @@ $(document).ready(function(){
 		}
 	}
 
-	// not thread
-	if (active_page != 'thread')
-		return;
+	if (getActivePage() !== 'thread') return;
 
 	var countdown_interval;
 
@@ -112,7 +110,7 @@ $(document).ready(function(){
 	}
 
 	// Grab the settings
-	var settings = new script_settings('auto-reload');
+	var settings = new ScriptSettings('auto-reload');
 	var poll_interval_mindelay        = settings.get('min_delay_bottom', 5000);
 	var poll_interval_maxdelay        = settings.get('max_delay', 600000);
 	var poll_interval_errordelay      = settings.get('error_delay', 30000);
@@ -249,6 +247,7 @@ $(document).ready(function(){
 				recheck_activated();
 				elementsToTriggerNewpostEvent.forEach(function(ele){
 					$(document).trigger('new_post', ele);
+          			triggerCustomEvent('new_post_js', document, { detail: ele });
 				});
 				time_loaded = Date.now(); // interop with watch.js
 				

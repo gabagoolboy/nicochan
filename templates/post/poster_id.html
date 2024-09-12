@@ -1,17 +1,6 @@
 {% if config.poster_ids %}
-	{% if not hideposterid %}
-		{% if post.thread %}
-				 <span class="poster_id">{{ post.ip|poster_id(post.thread) }}</span>
-		{% else %}
-				 <span class="poster_id">{{ post.ip|poster_id(post.id) }}</span>
-		{% endif %}
-	{% else %}
-		{% if mod %}
-			{% if post.thread %}
-					 <span class="poster_id" style="opacity: 0.5;">{{ post.ip|poster_id(post.thread) }}</span>
-			{% else %}
-					 <span class="poster_id" style="opacity: 0.5;">{{ post.ip|poster_id(post.id) }}</span>
-			{% endif %}
-		{% endif %}
-	{% endif %}
+  {% set poster_id = post.ip|poster_id(post.thread ?: post.id) %}
+	<span class="poster_id" {% if hideposterid and mod %}style="opacity: 0.5;"{% endif %}>
+		{{ poster_id }}
+	</span>
 {% endif %}

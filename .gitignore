@@ -68,7 +68,7 @@ favicon.ico
 
 # Banners
 /static/banners/*
-/static/banners_priority/*
+/static/banners_priority/
 
 # Images from twemoji
 js/twemoji/16x16/

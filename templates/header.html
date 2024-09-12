@@ -1,51 +1,45 @@
-		<link rel="stylesheet" media="screen" href="{{ config.url_stylesheet }}?v={{ config.resource_version }}">
-		{% if config.url_favicon %}<link rel="shortcut icon" href="{{ config.url_favicon }}">{% endif %}
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-		{% if config.meta_description %}<meta name="description" content="{{ config.meta_description }}">{% endif %}
-		{% if config.meta_keywords %}<meta name="keywords" content="{{ config.meta_keywords }}">{% endif %}
-		{% if config.default_stylesheet.1 != '' %}<link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet.1 }}">{% endif %}
-		{% if config.font_awesome %}<link rel="stylesheet" href="{{ config.root }}{{ config.font_awesome_css }}">{% endif %}
+<link rel="preload" as="style" type="text/css" fetchpriority="high" href="{{ config.url_stylesheet }}?v={{ config.resource_version }}">
+<link rel="stylesheet" type="text/css" href="{{ config.url_stylesheet }}?v={{ config.resource_version }}">
+{% if config.url_favicon %}
+    <link rel="shortcut icon" href="{{ config.url_favicon }}">
+{% endif %}
+{% if config.default_stylesheet.1 is not empty %}
+    <link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet[1] }}?v={{ config.resource_version }}">
+{% endif %}
+{% if config.font_awesome %}
+    <link rel="stylesheet" href="{{ config.root }}{{ config.font_awesome_css }}">
+{% endif %}
+{% if config.css_special %}
+    <link rel="stylesheet" href="{{ config.root }}{{ config.css_special_css }}">
+{% endif %}
+{% if config.country_flags_condensed %}
+    <link rel="stylesheet" href="{{ config.root }}{{ config.country_flags_condensed_css }}">
+{% endif %}
 
-		{% if config.country_flags_condensed %}<link rel="stylesheet" href="{{ config.root }}{{ config.country_flags_condensed_css }}">{% endif %}
-		<script type="text/javascript">
-			var configRoot="{{ config.root }}";
-			var inMod = {% if mod %}true{% else %}false{% endif %};
-			var modRoot="{{ config.root }}"+(inMod ? "mod.php?/" : "");
-		</script>
-		{% if not nojavascript %}
-			<script type="text/javascript" src="{{ config.url_javascript }}?v={{ config.resource_version }}"></script>
-			{% if not config.additional_javascript_compile %}
-			{% for javascript in config.additional_javascript %}<script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}"></script>{% endfor %}
-			{% endif %}
-		{% endif %}
-		{% if config.hcaptcha %}<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-		<style type="text/css">
-			#hcaptcha_area {
-				float: none !important;
-				padding: 0 !important;
-			}
-			#hcaptcha_logo, #hcaptcha_privacy {
-				display: none;
-			}
-			#hcaptcha_table {
-				border: none !important;
-			}
-			#hcaptcha_table tr:first-child {
-				height: auto;
-			}
-			.hcaptchatable img {
-				float: none !important;
-			}
-			#hcaptcha_response_field {
-				font-size: 10pt !important;
-				border: 1px solid #a9a9a9 !important;
-				padding: 1px !important;
-			}
-			td.hcaptcha_image_cell {
-				background: transparent !important;
-			}
-			.hcaptchatable, #hcaptcha_area tr, #hcaptcha_area td, #hcaptcha_area th {
-				padding: 0 !important;
-			}
-		</style>{% endif %}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+{% if config.meta_description %}
+    <meta name="description" content="{{ config.meta_description }}">
+{% endif %}
+{% if config.meta_keywords %}
+    <meta name="keywords" content="{{ config.meta_keywords }}">
+{% endif %}
+
+{% if mod %}
+    <script type="text/javascript" src="js/expand-filename.js?v={{ config.resource_version }}"></script>
+    <script type="text/javascript" src="js/mod/mod-scripts.js?v={{ config.resource_version }}"></script>
+{% endif %}
+
+{% if not nojavascript %}
+    <link rel="preload" as="script" type="text/javascript" fetchpriority="high" href="{{ config.url_javascript }}?v={{ config.resource_version }}">
+    {% if not config.additional_javascript_compile %}
+        {% for javascript in config.additional_javascript %}
+            <script type="text/javascript" src="{{ config.additional_javascript_url }}{{ javascript }}"></script>
+        {% endfor %}
+    {% endif %}
+<script type="text/javascript" src="{{ config.url_javascript }}?v={{ config.resource_version }}"></script>
+{% endif %}
+
+{% if config.hcaptcha %}
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+{% endif %}

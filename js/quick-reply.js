@@ -14,7 +14,7 @@
  */
 
 (function() {
-	var settings = new script_settings('quick-reply');
+	var settings = new ScriptSettings('quick-reply');
 
 	var do_css = function() {
 		$('#quick-reply-css').remove();
@@ -128,24 +128,33 @@
 	};
 
 	var show_quick_reply = function(target_id){
-		if(active_page == 'ukko')
-			return;
 
-		if($('div.banner').length == 0){
+		let in_index = false;
+
+		if($('div.banner').length == 0) {
 			$("#PostAreaToggle").prop("checked", true);
-			var thread_id =  $("#reply_" + target_id + ",#op_"+target_id).closest("[id*=thread_").attr("id").replace("thread_", "");
-			var in_index = true;
-		} else
-			var in_index = false;
+			var thread_sel = $(`#reply_${target_id}, #op_${target_id}`).closest("[id*=thread_");
+			var thread_id = thread_sel.attr("id").replace("thread_", "");
+			var board = thread_sel.attr("data-board");
+			in_index = true;
+		}
 
-		if($('#quick-reply').length != 0)
+		if($('#quick-reply').length !== 0) {
+ 			if ($('#quick-reply').data('thread-id') !== target_id) {
+				$('#quick-reply input[name="thread"]').val(thread_id);
+				$("#quick-reply .handle #thread-id-number").text(`(${thread_id})`);
+				$("#quick-reply").attr("data-thread-id", thread_id);
+			}
 			return;
+		}
 
 		do_css();
 
 		var $postForm = $('form[name="post"]').clone();
 
 		$postForm.clone();
+
+		triggerCustomEvent('quick-reply', window);
 
 		$dummyStuff = $('<div class="nonsense"></div>').appendTo($postForm);
 
@@ -254,9 +263,9 @@
 				}
 
 				// Disable embedding if configured so
-		//		if (!settings.get('show_embed', false) && $td.find('input[name="embed"]').length) {
-		//			$(this).remove();
-		//		}
+				if (!settings.get('show_embed', false) && $td.find('input[name="embed"]').length) {
+					$(this).remove();
+				}
 
 				// Remove oekaki if existent
 				if ($(this).is('#oekaki')) {
@@ -268,6 +277,14 @@
 					$(this).remove();
 				}
 
+				if ($td.is('#mod-flags')) {
+					$(this).remove();
+				}
+
+				if ($td.prevObject && $td.prevObject.is('#tegaki-form')) {
+					$(this).remove();
+				}
+
 				// Remove mod controls, because it looks shit.
 				if ($td.find('input[type="checkbox"]').length) {
 					if ($postForm.find('td.post-options').length == 0)
@@ -275,11 +292,7 @@
 
 					var tr = this;
 					$td.find('input[type="checkbox"]').each(function() {
-						if ($(this).attr('name') == 'spoiler' || $(this).attr('name') == 'no_country' || $(this).attr('name') == 'cbsingle' || $(this).attr('name') == 'rmexif') {
-							$(this).parent('label').appendTo($postForm.find('td.post-options'));
-						} else {
-							$(tr).hide();
-						}
+							$(this).appendTo($postForm.find('td.post-options'));
 					});
 				}
 
@@ -294,7 +307,7 @@
 		$postForm.find('br').remove();
 		$postForm.find('table').prepend('<tr><th colspan="2">\
 			<span class="handle">\
-				<a class="close-btn" href="javascript:void(0)">×</a>\
+				<a class="close-btn">×</a>\
 				' + _('Quick Reply') + '\
 			</span>\
 			</th></tr>');
@@ -304,23 +317,21 @@
 		$postForm.appendTo($('body')).hide();
 		$origPostForm = $('form[name="post"]:first');
 
-		if(in_index){
-			let board=$('#thread_'+thread_id).attr("data-board");	
-			$("#quick-reply textarea").attr("id", "body");
-			$("<input type='hidden' name='thread' value='" + thread_id + "'></input>").appendTo($("#quick-reply"));
-			$("#quick-reply .handle").append(document.createTextNode("(" + thread_id + ")"));
+		if (in_index) {
+			$(`<input type='hidden' name='thread' value='${thread_id}'></input>`).appendTo($("#quick-reply"));
+			const threadIdSpan = `<span id="thread-id-number">(${thread_id})</span>`;
+			$("#quick-reply .handle").append(threadIdSpan);
+			$("#quick-reply").attr("data-thread-id", thread_id);
 			$("#quick-reply .form_submit").attr("value", button_reply);
-			// TODO: fix quotes between boards. eg: start quick reply on thread 7 on b and quote post 3 from an. the inserted quote behave as if the post 3 is from b aswell
-			if ($("#quick-reply #boardsUkko").length) {
-					$('#quick-reply #boardsUkko').remove();
-					$("<input type='hidden' name='board' value='" + board + "'></input>").appendTo($("#quick-reply"));	
-
+			if ($('#quick-reply select[name="board"]').length) {
+					$('#quick-reply select[name="board"]').remove();
+					$('#quick-reply input[name="board"]').val(board);
 			}
 
-			if(post_captcha == 'false')
+			if (post_captcha === 'false') {
 				$("#quick-reply .captcha").remove();
-
-		}else if(!in_index){
+			}
+		}
 
 			// Synchronise body text with original post form
 			$origPostForm.find('textarea[name="body"]').on('change input propertychange', function() {
@@ -351,7 +362,6 @@
 			$postForm.find('input[type="checkbox"]').on('change input propertychange', function() {
 				$origPostForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
 			});
-		}
 
 		if (typeof $postForm.draggable != 'undefined') {
 			if (localStorage.quickReplyPosition) {
@@ -385,7 +395,7 @@
 		$postForm.find('th .close-btn').click(function() {
 			$origPostForm.find('textarea[name="body"]').attr('id', 'body');
 			$postForm.remove();
-			floating_link();
+			floatingLink();
 		});
 
 		// Fix bug when table gets too big for form. Shouldn't exist, but crappy CSS etc.
@@ -393,7 +403,6 @@
 		$postForm.width($postForm.find('table').width());
 		$postForm.hide();
 
-		$(window).trigger('quick-reply');
 
 		$(window).ready(function() {
 			if (settings.get('hide_at_top', true)) {
@@ -418,71 +427,104 @@
 		});
 	};
 
-	$(window).on('cite', function(e, id, with_link) {
-		if ($(this).width() <= 400)
-			return;
-		var origin_id = id;
-		show_quick_reply(origin_id);
-		if (with_link) {
-			$(document).ready(function() {
-				if ($('#' + id).length) {
-					highlightReply(id);
-					$(document).scrollTop($('#' + id).offset().top);
-				}
+	window.addEventListener('cite', function (e) {
+		const id = e.detail.id;
 
-				// Honestly, I'm not sure why we need setTimeout() here, but it seems to work.
-				// Same for the "tmp" variable stuff you see inside here:
-				setTimeout(function() {
-					var tmp = $('#quick-reply textarea[name="body"]').val();
-					$('#quick-reply textarea[name="body"]').val('').focus().val(tmp);
-				}, 1);
+		if (window.innerWidth <= 400) return;
+
+		show_quick_reply(id);
+	})
+
+	const floatingLink = () => {
+		if (settings.get('floating_link', false)) {
+			if (!document.querySelector('div.banner')) return;
+
+			const style = Vichan.createElement('style', {
+				text: `a.quick-reply-btn {
+                		position: fixed;
+                		right: 0;
+                		bottom: 0;
+                		display: block;
+                		padding: 5px 13px;
+                		text-decoration: none;`,
+				parent: document.head
 			});
-		}
-	});
-
-	var floating_link = function() {
-		if (!settings.get('floating_link', false))
-			return;
-		$('<a href="javascript:void(0)" class="quick-reply-btn">'+_('Quick Reply')+'</a>')
-			.click(function() {
-				show_quick_reply();
-				$(this).remove();
-			}).appendTo($('body'));
-
-		$(window).on('quick-reply', function() {
-			$('.quick-reply-btn').remove();
-		});
-	};
-
-	if (settings.get('floating_link', false)) {
-		$(window).ready(function() {
-			if($('div.banner').length == 0)
-				return;
-			$('<style type="text/css">\
-			a.quick-reply-btn {\
-				position: fixed;\
-				right: 0;\
-				bottom: 0;\
-				display: block;\
-				padding: 5px 13px;\
-				text-decoration: none;\
-			}\
-			</style>').appendTo($('head'));
-
-			floating_link();
+			
+			createFloatingLink();
 
 			if (settings.get('hide_at_top', true)) {
-				$('.quick-reply-btn').hide();
+				const quickReplyButton = document.querySelector('.quick-reply-btn');
+				quickReplyButton.style.display = 'none';
 
-				$(window).scroll(function() {
-					if ($(this).width() <= 400)
-						return;
-					if ($(this).scrollTop() < $('form[name="post"]:first').offset().top + $('form[name="post"]:first').height() - 100)
-						$('.quick-reply-btn').fadeOut(100);
-					else
-						$('.quick-reply-btn').fadeIn(100);
-				}).scroll();
+				window.addEventListener('scroll', function () {
+					const form = document.querySelector('form[name="post"]');
+					if (!form) return;
+
+					const formOffsetTop = form.offsetTop;
+                	const formHeight = form.offsetHeight;
+                	const scrollPosition = window.scrollY;
+                	const windowWidth = window.innerWidth;
+
+					if (windowWidth <= 400) return;
+
+					if (scrollPosition < formOffsetTop + formHeight - 100) {
+                    	quickReplyButton.style.display = 'none';
+                	} else {
+                    	quickReplyButton.style.display = 'block';
+                	}
+            });
+
+			triggerCustomEvent('scroll', window);
+
+			}
+		}	
+	}
+
+	const createFloatingLink = () => {
+		const quickReplyButton = Vichan.createElement('a', {
+			className: 'quick-reply-btn',
+			text: _('Quick Reply'),
+			onClick: function () {
+				show_quick_reply();
+				this.remove();
+			},
+			parent: document.body
+		});
+
+		window.addEventListener('quick-reply', () => {
+			const existingButton = document.querySelector('.quick-reply-btn');
+			if (existingButton) {
+				existingButton.remove();
 			}
 		});
 	}
+
+	const indexButtonQr = () => {
+		const indexButton = document.querySelectorAll('a#reply-button');
+		if (indexButton) {
+			indexButton.forEach(link => {
+				const threadId = link.dataset.threadId;
+				link.addEventListener('click', (e) => {
+					e.preventDefault();
+					show_quick_reply(threadId);
+				})
+			})
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		floatingLink();
+		indexButtonQr();
+	});
+
+	// fuck this
+	// when a post is sent after ajax, the quickreply becames weird
+	document.addEventListener('ajax_after_post', () => {
+		const qr = document.getElementById('quick-reply');
+		if (qr) {
+			const id = qr.dataset?.threadId;
+			qr.remove();
+			show_quick_reply(id);
+		}
+	});
 })();

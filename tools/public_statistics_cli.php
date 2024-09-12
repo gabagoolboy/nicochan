@@ -73,8 +73,8 @@ function statpage($board = false, $boards, $stat_file) {
 		    'statistics_24h' => $statistics_hour,
 
             'statistics_week_labels' => Statistic::get_stat_week_labels($this_week),
-            'statistics_week' => Statistic::get_stat_week_jsdata($this_week),
-            'statistics_week_past' => Statistic::get_stat_week_jsdata($prev_week)
+            'statistics_week' => $this_week,
+            'statistics_week_past' => $prev_week
         ))
     ));
 }

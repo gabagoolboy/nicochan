@@ -28,41 +28,82 @@ function fmt(s,a) {
 	return s.replace(/\{([0-9]+)\}/g, function(x) { return a[x[1]]; });
 }
 
-function until($timestamp) {
-        var $difference = $timestamp - Date.now()/1000|0, $num;
-        switch(true){
-        case ($difference < 60):
-                return "" + $difference + ' ' + _('second(s)');
-        case ($difference < 3600): //60*60 = 3600
-                return "" + ($num = Math.round($difference/(60))) + ' ' + _('minute(s)');
-        case ($difference < 86400): //60*60*24 = 86400
-                return "" + ($num = Math.round($difference/(3600))) + ' ' + _('hour(s)');
-        case ($difference < 604800): //60*60*24*7 = 604800
-                return "" + ($num = Math.round($difference/(86400))) + ' ' + _('day(s)');
-        case ($difference < 31536000): //60*60*24*365 = 31536000
-                return "" + ($num = Math.round($difference/(604800))) + ' ' + _('week(s)');
-        default:
-                return "" + ($num = Math.round($difference/(31536000))) + ' ' + _('year(s)');
-        }
+var Vichan = Vichan || {};
+
+Vichan.createElement = function (tagName, { innerHTML = '', className = '', attributes = {}, text, onClick, parent, value, idName, title} = {}) {
+    var element = document.createElement(tagName);
+
+    if (innerHTML) {
+      element.innerHTML = innerHTML;
+    }
+
+    if (className) {
+      element.className = className;
+    }
+
+    if (idName) {
+      element.id = idName;
+    }
+
+    if (text) {
+      element.textContent = text;
+    }
+
+    if (onClick) {
+      element.addEventListener('click', onClick);
+    }
+
+    for (let attr in attributes) {
+      element.setAttribute(attr, attributes[attr]);
+    }
+
+    if (parent) {
+      parent.appendChild(element);
+    }
+
+    if (value) {
+      element.value = value;
+    }
+
+	if (title) {
+		element.title = title;
+	}
+
+    return element;
 }
 
-function ago($timestamp) {
-        var $difference = (Date.now()/1000|0) - $timestamp, $num;
-        switch(true){
-        case ($difference < 60) :
-                return "" + $difference + ' ' + _('second(s)');
-        case ($difference < 3600): //60*60 = 3600
-                return "" + ($num = Math.round($difference/(60))) + ' ' + _('minute(s)');
-        case ($difference <  86400): //60*60*24 = 86400
-                return "" + ($num = Math.round($difference/(3600))) + ' ' + _('hour(s)');
-        case ($difference < 604800): //60*60*24*7 = 604800
-                return "" + ($num = Math.round($difference/(86400))) + ' ' + _('day(s)');
-        case ($difference < 31536000): //60*60*24*365 = 31536000
-                return "" + ($num = Math.round($difference/(604800))) + ' ' + _('week(s)');
-        default:
-                return "" + ($num = Math.round($difference/(31536000))) + ' ' + _('year(s)');
-        }
+function timeDifference(timestamp, future = true) {
+    const difference = future ? (timestamp - (Date.now() / 1000 | 0)) : ((Date.now() / 1000 | 0) - timestamp);
+    let num;
+    
+    if (difference < 60) {
+        return `${difference} ${_('second(s)')}`;
+    } else if (difference < 3600) {
+        num = Math.round(difference / 60);
+        return `${num} ${_('minute(s)')}`;
+    } else if (difference < 86400) {
+        num = Math.round(difference / 3600);
+        return `${num} ${_('hour(s)')}`;
+    } else if (difference < 604800) {
+        num = Math.round(difference / 86400);
+        return `${num} ${_('day(s)')}`;
+    } else if (difference < 31536000) {
+        num = Math.round(difference / 604800);
+        return `${num} ${_('week(s)')}`;
+    } else {
+        num = Math.round(difference / 31536000);
+        return `${num} ${_('year(s)')}`;
+    }
 }
+
+function until(timestamp) {
+    return timeDifference(timestamp, true);
+}
+
+function ago(timestamp) {
+    return timeDifference(timestamp, false);
+}
+
 
 var datelocale =
         { days: [_('Sunday'), _('Monday'), _('Tuesday'), _('Wednesday'), _('Thursday'), _('Friday'), _('Saturday')]
@@ -75,41 +116,65 @@ var datelocale =
         , pm: _('pm')
         };
 
+function alert(message, doConfirm, confirmOkAction, confirmCancelAction) {
+    const close = () => {
+        handler.style.opacity = 0;
+        setTimeout(() => handler.remove(), 400);
+        return false;
+    };
 
-function alert(a, do_confirm, confirm_ok_action, confirm_cancel_action) {
-      var handler, div, bg, closebtn, okbtn;
-      var close = function() {
-              handler.fadeOut(400, function() { handler.remove(); });
-              return false;
-      };
+    const handler = Vichan.createElement('div', {
+        idName: 'alert_handler',
+        attributes: { style: 'display: none; opacity: 1;' },
+        parent: document.body
+    });
 
-      handler = $("<div id='alert_handler'></div>").hide().appendTo('body');
+    const bg = Vichan.createElement('div', { idName: 'alert_background', parent: handler });
 
-      bg = $("<div id='alert_background'></div>").appendTo(handler);
+    const div = Vichan.createElement('div', { idName: 'alert_div', parent: handler });
 
-      div = $("<div id='alert_div'></div>").appendTo(handler);
-      closebtn = $("<a id='alert_close' href='javascript:void(0)'><i class='fa fa-times'></i></div>")
-              .appendTo(div);
+    const closeBtn = Vichan.createElement('a', {
+        idName: 'alert_close',
+        innerHTML: '<i class="fa fa-times"></i>',
+        parent: div,
+        onClick: close
+    });
 
-      $("<div id='alert_message'></div>").html(a).appendTo(div);
+    Vichan.createElement('div', {
+        idName: 'alert_message',
+        innerHTML: message,
+        parent: div
+    });
 
-      okbtn = $("<button class='button alert_button'>"+_("OK")+"</button>").appendTo(div);
+    const okBtn = Vichan.createElement('button', {
+        className: 'button alert_button',
+        text: _('OK'),
+        parent: div,
+        onClick: close
+    });
 
-      if (do_confirm) {
-              confirm_ok_action = (typeof confirm_ok_action !== "function") ? function(){} : confirm_ok_action;
-              confirm_cancel_action = (typeof confirm_cancel_action !== "function") ? function(){} : confirm_cancel_action;
-              okbtn.click(confirm_ok_action);
-              $("<button class='button alert_button'>"+_("Cancel")+"</button>").click(confirm_cancel_action).click(close).appendTo(div);
-              bg.click(confirm_cancel_action);
-              okbtn.click(confirm_cancel_action);
-              closebtn.click(confirm_cancel_action);
-      }
+    if (doConfirm) {
+        confirmOkAction = typeof confirmOkAction === 'function' ? confirmOkAction : () => {};
+        confirmCancelAction = typeof confirmCancelAction === 'function' ? confirmCancelAction : () => {};
 
-      bg.click(close);
-      okbtn.click(close);
-      closebtn.click(close);
+        okBtn.addEventListener('click', confirmOkAction);
+        bg.addEventListener('click', confirmCancelAction);
+        closeBtn.addEventListener('click', confirmCancelAction);
 
-      handler.fadeIn(400);
+        Vichan.createElement('button', {
+            className: 'button alert_button',
+            text: _('Cancel'),
+            parent: div,
+            onClick: () => {
+                confirmCancelAction();
+                close();
+            }
+        });
+    }
+
+    bg.addEventListener('click', close);
+    handler.style.display = 'block';
+    setTimeout(() => handler.style.opacity = 1, 10);
 }
 
 var saved = {};
@@ -138,259 +203,227 @@ function changeStyle(styleName, link) {
 	{% endif %}
 	{% verbatim %}
 
-	if (!document.getElementById('stylesheet')) {
-		var s = document.createElement('link');
-		s.rel = 'stylesheet';
-		s.type = 'text/css';
-		s.id = 'stylesheet';
-		var x = document.getElementsByTagName('head')[0];
-		x.appendChild(s);
+	let stylesheetElement = document.getElementById('stylesheet');
+	if (!stylesheetElement) {
+		stylesheetElement = Vichan.createElement('link', {
+			idName: 'stylesheet', 
+			attributes: { rel: 'stylesheet' },
+			parent: document.head
+		});
 	}
 
-	document.getElementById('stylesheet').href = styles[styleName];
+	stylesheetElement.href = `${styles[styleName]}?v={% endverbatim %}{{ config.resource_version }}{% verbatim %}`;
 	selectedstyle = styleName;
 
-	if (document.getElementsByClassName('styles').length != 0) {
-		var styleLinks = document.getElementsByClassName('styles')[0].childNodes;
-		for (var i = 0; i < styleLinks.length; i++) {
-			styleLinks[i].className = '';
-		}
-	}
+	document.querySelectorAll('.styles a').forEach(link => link.classList.remove('selected'));
 
 	if (link) {
-		link.className = 'selected';
+		link.classList.add('selected');
 	}
 
-	if (typeof $ != 'undefined')
-		$(window).trigger('stylesheet', styleName);
+	triggerCustomEvent('stylesheet', window, styleName);
 }
-
 
 {% endverbatim %}
 {% if config.stylesheets_board %}
 	{% verbatim %}
-
-	if (!localStorage.board_stylesheets) {
-		localStorage.board_stylesheets = '{}';
-	}
-
-	var stylesheet_choices = JSON.parse(localStorage.board_stylesheets);
+	const stylesheet_choices = JSON.parse(localStorage.board_stylesheets || '{}');
 	if (board_name && stylesheet_choices[board_name]) {
-		for (var styleName in styles) {
-			if (styleName == stylesheet_choices[board_name]) {
-				changeStyle(styleName);
-				break;
-			}
+		const savedStyle = stylesheet_choices[board_name];
+		if (styles[savedStyle]) {
+			changeStyle(savedStyle);
 		}
 	}
-	{% endverbatim%}
+	{% endverbatim %}
 {% else %}
 	{% verbatim %}
-	if (localStorage.stylesheet) {
-		for (var styleName in styles) {
-			if (styleName == localStorage.stylesheet) {
-				changeStyle(styleName);
-				break;
-			}
-		}
+	const savedStyle = localStorage.stylesheet;
+	if (savedStyle && styles[savedStyle]) {
+		changeStyle(savedStyle);
 	}
 	{% endverbatim %}
 {% endif %}
 {% verbatim %}
 
-function init_stylechooser() {
-	var newElement = document.createElement('div');
-	newElement.className = 'styles';
+function initStylechooser() {
+	const stylesContainer = Vichan.createElement('div', { className: 'styles', parent: document.body });
 
-	for (styleName in styles) {
-		var style = document.createElement('a');
-		style.innerHTML = '[' + styleName + ']';
-		style.onclick = function() {
-			changeStyle(this.innerHTML.substring(1, this.innerHTML.length - 1), this);
-		};
-		if (styleName == selectedstyle) {
-			style.className = 'selected';
-		}
-		style.href = 'javascript:void(0);';
-		newElement.appendChild(style);
-	}
+	Object.keys(styles).forEach(styleName => {
+		const styleLink = Vichan.createElement('a', {
+			innerHTML: `[${styleName}]`,
+			className: styleName === selectedstyle ? 'selected' : '',
+			onClick: () => changeStyle(styleName, styleLink),
+			parent: stylesContainer
+		});
+	});
 
-	document.getElementsByTagName('body')[0].insertBefore(newElement, document.getElementsByTagName('body')[0].lastChild.nextSibling);
+	document.body.appendChild(stylesContainer);
 }
 
-function get_cookie(cookie_name) {
-	var results = document.cookie.match ( '(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
-	if (results)
-		return (unescape(results[2]));
-	else
-		return null;
+function getCookie(cookieName) {
+	const match = document.cookie.match(new RegExp(`(^|; )${cookieName}=([^;]*)`));
+	return match ? decodeURIComponent(match[2]) : null;
 }
 
 function highlightReply(id, evt) {
-	if (typeof window.event != "undefined" && event.which == 2) {
-		// don't highlight on middle click
-		return true;
-	}
+    if (evt && evt.button === 1) {
+        return true;
+    }
 
-	var divs = document.getElementsByTagName('div');
-	for (var i = 0; i < divs.length; i++)
-	{
-		if (divs[i].className.indexOf('post') != -1)
-			divs[i].className = divs[i].className.replace(/highlighted/, '');
-	}
-	if (id) {
-		var post = document.getElementById('reply_'+id);
-		if (post)
-			post.className += ' highlighted';
-			window.location.hash = id;
-	}
-	if (evt == undefined)
-             return true;
-        else{
-            left = evt.target.href.split("/");
-            left.pop();
-            right = window.location.href.split("/");
-            right.pop();
-            return true //JSON.stringify(left) != JSON.stringify(right); // evt.target.href.split("/").pop().split(".").pop() == window.location.href.split("/").pop().split(".").pop();
+    document.querySelectorAll('div.post').forEach(div => {
+        div.classList.remove('highlighted');
+    });
+
+    if (id) {
+        const post = document.getElementById(`reply_${id}`);
+        if (post) {
+            post.classList.add('highlighted');
+            window.location.hash = id;
         }
+    }
+		
 	return true;
 }
 
-function generatePassword() {
-	var pass = '';
-	var chars = '{% endverbatim %}{{ config.genpassword_chars }}{% verbatim %}';
-	for (var i = 0; i < 8; i++) {
-		var rnd = Math.floor(Math.random() * chars.length);
-		pass += chars.substring(rnd, rnd + 1);
-	}
-	return pass;
+function generatePassword(length = 8) {
+    const chars = '{{ config.genpassword_chars }}';
+    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
 function dopost(form) {
-	if (form.elements['name']) {
-		localStorage.name = form.elements['name'].value.replace(/( |^)## .+$/, '');
-	}
-	if (form.elements['password']) {
-		localStorage.password = form.elements['password'].value;
-	}
-	if (form.elements['email'] && form.elements['email'].value != 'sage') {
-		localStorage.email = form.elements['email'].value;
-	}
-	if (form.elements['no_country']) {
-		localStorage.no_country = form.elements['no_country'].checked;
-	}
-	if (form.elements['cbsingle']) {
-		localStorage.cbsingle = form.elements['cbsingle'].checked;
-	}
+    const elements = form.elements;
+    const updateLocalStorage = (key, value) => {
+        if (value !== undefined && value !== null) {
+            localStorage[key] = value;
+        }
+    };
 
-	saved[document.location] = form.elements['body'].value;
-	sessionStorage.body = JSON.stringify(saved);
+    updateLocalStorage('name', elements['name']?.value.replace(/( |^)## .+$/, ''));
+    updateLocalStorage('password', elements['password']?.value);
+    updateLocalStorage('email', elements['email']?.value !== 'sage' ? elements['email'].value : undefined);
+    updateLocalStorage('no_country', elements['no_country']?.checked);
+    updateLocalStorage('cbsingle', elements['cbsingle']?.checked);
 
-	return form.elements['body'].value != "" || (form.elements['file'] && form.elements['file'].value != "") || (form.elements.file_url && form.elements['file_url'].value != "");
+    saved[document.location] = elements['body'].value;
+    sessionStorage.body = JSON.stringify(saved);
+
+    return elements['body'].value !== "" || elements['file']?.value !== "" || elements['file_url']?.value !== "";
 }
 
-function citeReply(id, with_link) {
-	var textarea;
-	if(document.getElementById('index-body') != undefined)
-		textarea = document.getElementById('index-body');
-	else
-        	textarea = document.getElementById('body');
+function citeReply(id) {
+    var textarea = document.getElementById('body');
 
-	if (!textarea) return false;
+    if (!textarea) return false;
 
-	if (document.selection) {
-		// IE
-		textarea.focus();
-		var sel = document.selection.createRange();
-		sel.text = '>>' + id + '\n';
-	} else if (textarea.selectionStart || textarea.selectionStart == '0') {
-		var start = textarea.selectionStart;
-		var end = textarea.selectionEnd;
-		textarea.value = textarea.value.substring(0, start) + '>>' + id + '\n' + textarea.value.substring(end, textarea.value.length);
+    var insertionText = '>>' + id + '\n';
+    
+    if (document.selection) {
+        // IE
+        textarea.focus();
+        var sel = document.selection.createRange();
+        sel.text = insertionText;
+    } else if (textarea.selectionStart !== undefined) {
+        var start = textarea.selectionStart;
+        var end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + insertionText + textarea.value.substring(end);
+        
+        textarea.selectionStart = textarea.selectionEnd = start + insertionText.length;
+    } else {
+        textarea.value += insertionText;
+    }
 
-		textarea.selectionStart += ('>>' + id).length + 1;
-		textarea.selectionEnd = textarea.selectionStart;
-	} else {
-		// ???
-		textarea.value += '>>' + id + '\n';
-	}
-	if (typeof $ != 'undefined') {
-		var select = document.getSelection().toString();
-		if (select) {
-			var body = $('#reply_' + id + ', #op_' + id).find('div.body');  // TODO: support for OPs
-			var index = body.text().indexOf(select.replace('\n', ''));  // for some reason this only works like this
-			if (index > -1) {
-				textarea.value += '>' + select + '\n';
-			}
-		}
+    const selection = window.getSelection().toString();
+    if (selection) {
+        const body = document.querySelector(`#reply_${id}, #op_${id} div.body`);
+        if (body) {
+            const index = body.textContent.indexOf(selection.replace('\n', ''));
+            if (index > -1) {
+                textarea.value += '>' + selection + '\n';
+            }
+        }
+    }
 
-		$(window).trigger('cite', [id, with_link]);
-		$(textarea).change();
-	}
-	return false;
+    triggerCustomEvent('cite', window, { id });
+    textarea.dispatchEvent(new Event('change'))
+
+    return false;
 }
 
 function rememberStuff() {
-	if (document.forms.post) {
-		if (document.forms.post.password) {
-			if (!localStorage.password)
-				localStorage.password = generatePassword();
-			document.forms.post.password.value = localStorage.password;
+	const postForm = document.forms.post;
+
+	if (!postForm) return;
+
+	if (postForm.password) {
+		if (!localStorage.password) {
+			localStorage.password = generatePassword();
 		}
+		postForm.password.value = localStorage.password;
+	}
 
-		if (localStorage.name && document.forms.post.elements['name'])
-			document.forms.post.elements['name'].value = localStorage.name;
-		if (localStorage.email && document.forms.post.elements['email'])
-			document.forms.post.elements['email'].value = localStorage.email;
-		if (localStorage.no_country && document.forms.post.elements['no_country'])
-			document.forms.post.elements['no_country'].checked = localStorage.no_country == 'true';
+    if (postForm.elements['name']) {
+        postForm.elements['name'].value = localStorage.name || '';
+    }
 
-		if (window.location.hash.indexOf('q') == 1)
-			citeReply(window.location.hash.substring(2), true);
+    if (postForm.elements['email']) {
+        postForm.elements['email'].value = localStorage.email || '';
+    }
 
-		if (sessionStorage.body) {
-			var saved = JSON.parse(sessionStorage.body);
-			if (get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}')) {
-				// Remove successful posts
-				var successful = JSON.parse(get_cookie('{% endverbatim %}{{ config.cookies.js }}{% verbatim %}'));
-				for (var url in successful) {
-					saved[url] = null;
-				}
-				sessionStorage.body = JSON.stringify(saved);
+    if (postForm.elements['no_country']) {
+        postForm.elements['no_country'].checked = localStorage.no_country === 'true';
+    }
 
-				document.cookie = '{% endverbatim %}{{ config.cookies.js }}{% verbatim %}={};expires=0;path=/;';
+
+	if (window.location.hash.startsWith('#q')) {
+		citeReply(window.location.hash.slice(2), true);
+	}
+
+	if (sessionStorage.body) {
+		let saved = JSON.parse(sessionStorage.body);
+		const cookieName = '{{ config.cookies.js }}';
+
+		if (getCookie(cookieName)) {
+			const successful = JSON.parse(getCookie(cookieName));
+
+			for (const url in successful) {
+				saved[url] = null;
 			}
-			if (saved[document.location]) {
-				document.forms.post.body.value = saved[document.location];
-			}
+
+			sessionStorage.body = JSON.stringify(saved);
+
+			document.cookie = `${cookieName}={};expires=0;path=/;SameSite=Strict;Secure`;
 		}
 
-		if (localStorage.body) {
-			document.forms.post.body.value = localStorage.body;
-			localStorage.body = '';
+		if (saved[document.location]) {
+			postForm.body.value = saved[document.location];
 		}
+	}
+
+	if (localStorage.body) {
+		postForm.body.value = localStorage.body;
+		localStorage.body = '';
 	}
 }
 
-function populateFormJQuery(frm, data) {
-	$.each(data, function(key, value){
-		$('[name='+key+']', frm).val(value);
-	});
+function triggerCustomEvent(eventName, target = document, detail = {}) {
+    console.log('new event: '+ eventName);
+	const event = new CustomEvent(eventName, { detail, bubbles: true });
+	target.dispatchEvent(event);
 }
 
-var script_settings = function(script_name) {
-	this.script_name = script_name;
-	this.get = function(var_name, default_val) {
-		if (typeof tb_settings == 'undefined' ||
-			typeof tb_settings[this.script_name] == 'undefined' ||
-			typeof tb_settings[this.script_name][var_name] == 'undefined')
-			return default_val;
-		return tb_settings[this.script_name][var_name];
-	}
-};
+class ScriptSettings {
+    constructor(scriptName) {
+        this.scriptName = scriptName;
+    }
+
+    get(varName, defaultVal) {
+        return tb_settings?.[this.scriptName]?.[varName] ?? defaultVal;
+    }
+}
+
 
 function init() {
-	init_stylechooser();
+	initStylechooser();
 
 	{% endverbatim %}
 	{% if config.allow_delete %}
@@ -402,21 +435,60 @@ function init() {
 
 	if (window.location.hash.indexOf('q') != 1 && window.location.hash.substring(1))
 		highlightReply(window.location.hash.substring(1));
-
-
 }
 
-
-onready_callbacks = [];
-function onready(fnc) {
-	onready_callbacks.push(fnc);
-}
-
-function ready() {
-	for (var i = 0; i < onready_callbacks.length; i++) {
-		onready_callbacks[i]();
+function doreport (form) {
+	if (form.elements['reason'].value === '') {
+		alert({% endverbatim %}'{{ config.error.invalidreport|e('js') }}'{% verbatim %});
+		return false;
 	}
+	return true;
 }
+
+function handleArchiveMessage() {
+    handleSortable();
+    const voteLink = document.querySelectorAll('.vote-link');
+    if (voteLink) {
+        voteLink.forEach((link) => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                if (confirm(this.getAttribute('data-confirm-message'))) {
+                    this.parentNode.submit();
+                }
+            });
+        });
+    }
+}
+
+function handleSortable() {
+    if (typeof $.tablesorter !== 'undefined') {
+        $('table.tablesorter').tablesorter({
+            textExtraction: function(node) {
+                const attr = $(node).data('sort-value');
+                return typeof attr !== 'undefined' && attr !== false ? attr : $(node).text();
+            }
+        });
+    }
+} 
+
+const onReadyCallbacks = [];
+function onready(fnc) {
+	onReadyCallbacks.push(fnc);
+}
+
+function executeReadyCallbacks() {
+    onReadyCallbacks.forEach(callback => callback());
+}
+
+function getActivePage() {
+    return document.getElementById('active-page')?.dataset.page ?? 'page';
+}
+
+function getModRoot() {
+    return configRoot + (document.querySelector('input[name="mod"]') ? 'mod.php?/' : '');
+}
+
 
 {% endverbatim %}
 
@@ -424,22 +496,19 @@ var file_post = "{{ config.file_post }}";
 var max_images = {{ config.max_images }};
 var button_reply = "{{ config.button_reply }}";
 var post_captcha = "{{ config.captcha.post_captcha ? 'true' : 'false' }}";
+var provider_captcha = "{{ config.captcha.provider_get }}";
 var post_date = "{{ config.post_date_js }}"
+var configRoot = "{{ config.root }}";
 
-if (typeof active_page === "undefined") {
-	active_page = "page";
-}
+document.addEventListener("securitypolicyviolation", () => {
+    console.log('(⇀‸↼‶) por que você está fazendo isso?');    
+});
 
 onready(init);
 
-{% if config.google_analytics %}{% verbatim %}
-
-var _gaq = _gaq || [];_gaq.push(['_setAccount', '{% endverbatim %}{{ config.google_analytics }}{% verbatim %}']);{% endverbatim %}{% if config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', '{% endverbatim %}{{ config.google_analytics_domain }}{% verbatim %}']){% endverbatim %}{% endif %}{% if not config.google_analytics_domain %}{% verbatim %}_gaq.push(['_setDomainName', 'none']){% endverbatim %}{% endif %}{% verbatim %};_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();{% endverbatim %}{% endif %}
-
-{% if config.statcounter_project and config.statcounter_security %}
-var sc = document.createElement('script');
-sc.type = 'text/javascript';
-sc.innerHTML = 'var sc_project={{ config.statcounter_project }};var sc_invisible=1;var sc_security="{{ config.statcounter_security }}";var scJsHost=(("https:" == document.location.protocol) ? "https://secure." : "http://www.");document.write("<sc"+"ript type=text/javascript src="+scJsHost+"statcounter.com/counter/counter.js></"+"script>");';
-var s = document.getElementsByTagName('script')[0];
-s.parentNode.insertBefore(sc, s);
-{% endif %}
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('(づ｡◕‿‿◕｡)づ');
+	executeReadyCallbacks();
+	rememberStuff();
+    handleArchiveMessage();
+});

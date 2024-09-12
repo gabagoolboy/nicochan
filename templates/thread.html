@@ -1,103 +1,102 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
+    
+    {% include 'header.html' %}
 
-        <script type="text/javascript">
-          var active_page = "thread"
-	    , board_name = "{{ board.uri }}"
-	    , thread_id = "{{ thread.id }}";
-	</script>
+    {% set meta_subject = config.thread_subject_in_title and thread.subject
+        ? thread.subject|e
+        : thread.body_nomarkup|remove_modifiers|remove_markup|e[:256] %}
 
-	{% include 'header.html' %}
+    <meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ meta_subject }}">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ meta_subject }}">
+    <meta name="twitter:description" content="{{ thread.body_nomarkup|remove_modifiers|e }}">
+    {% if thread.files.0.thumb is defined %}
+        <meta name="twitter:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}">
+    {% endif %}
 
-	{% set meta_subject %}{% if config.thread_subject_in_title and thread.subject %}{{ thread.subject|e }}{% else %}{{ thread.body_nomarkup|remove_modifiers|remove_markup|e[:256] }}{% endif %}{% endset %}
+    <meta property="og:title" content="{{ meta_subject }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id ~ (config.remove_ext ? '' : '.html') }}">
+    {% if thread.files[0].thumb is defined %}
+        <meta property="og:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}">
+    {% endif %}
+    <meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|e }}">
+    {% if isnoko50 %}
+        <meta name="robots" content="noindex">
+    {% endif %}
 
-	<meta name="description" content="{{ board.url }} - {{ board.title|e }} - {{ meta_subject }}" />
-	<meta name="twitter:card" value="summary">
-	<meta property="og:title" content="{{ meta_subject }}" />
-	<meta property="og:type" content="article" />
-	<meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id }}.html" />
-	{% if thread.files.0.thumb %}<meta property="og:image" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.thumb }}{{ thread.files.0.thumb }}" />{% endif %}
-	<meta property="og:description" content="{{ thread.body_nomarkup|remove_modifiers|remove_markup|e[:256] }}" />
-	{% if isnoko50 %}<meta name="robots" content="noindex">{% endif %}
-
-	<title>{{ board.url }} - {{ meta_subject }}</title>
+    <title>{{ board.url }} - {{ meta_subject }}</title>
 </head>
-<body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-thread" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
-	<div class="bar top">
-	{{ boardlist.top }}
-	</div>
-	<a name="top"></a>
-	{% if pm %}<div class="top_notice">{% trans %}You have{% endtrans %}&nbsp;<a href="?/PM/{{ pm.id }}">{% trans %}an unread PM{% endtrans %}</a>{% if pm.waiting > 0 %}, {% trans %}plus{% endtrans %} {{ pm.waiting }} {% trans %}more waiting{% endtrans %}{% endif %}.</div><hr />{% endif %}
+<body class="8chan vichan {{ mod ? 'is-moderator' : 'is-not-moderator' }} active-thread" data-stylesheet="{{ config.default_stylesheet.1|default('default') }}">
+    <div class="bar top">
+        {{ boardlist.top }}
+    </div>
+    <a name="top"></a>
+    <span id="active-page" data-page="thread"></span>
 
+    {% if pm %}
+        {% include 'partials/top_notice.html' %}
+        <hr />
+    {% endif %}
 
-	{% if config.url_banner %}<a href="/" style="display: block; width:{{ config.banner_width }}px; height:{{ config.banner_height }}px; margin: 20px auto 0 auto;"><img class="board_image" src="{{ config.url_banner }}?board={% if not isukko %}{{ board.uri }}{% else %}{{ config.banner_overboard }}{% endif %}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}loading="lazy" /></a>{% endif %}
+    {% if config.url_banner %}
+        {% include 'partials/banner.html' %}
+    {% endif %}
 
+    {% include 'partials/header.html' %}
 
+    <div class="banner">{% trans %}Posting mode: Reply{% endtrans %}</div>
 
-	<header>
-		<h1>{{ board.url }} - {{ board.title|e }}</h1>
-		<div class="subtitle">
-			{% if board.subtitle %}
-				{% if config.allow_subtitle_html %}
-					{{ board.subtitle }}
-				{% else %}
-					{{ board.subtitle|e }}
-				{% endif %}
-			{% endif %}
-			{% if mod %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
-		</div>
-	</header>
+    {{ config.ad.top }}
 
-	<div class="banner">{% trans %}Posting mode: Reply{% endtrans %}</div>
+    {% include 'post_form.html' %}
 
-	{{ config.ad.top }}
+    {% if config.global_message %}
+        {% include 'partials/global_message.html' %}
+    {% endif %}
+    {% if mod %}
+        {% include 'partials/reports_count.html' %}
+    {% endif %}
+    <hr />
+    <form name="postcontrols" action="{{ config.post_url }}" method="post">
+        <input type="hidden" name="board" value="{{ board.uri }}">
+        {% if mod %}
+            <input type="hidden" name="mod" value="1">
+        {% endif %}
+        {% include 'partials/buttons.html' %}
+        <hr />
+        {{ body }}
+        <div id="thread-interactions">
+            <span id="thread-links">
+                {% if config.catalog_link %}
+			        <a id="thread-catalog" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
+                {% endif %}
+                <a id="thread-return" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}">[{% trans %}Back{% endtrans %}]</a>
+            </span>
 
-	{% include 'post_form.html' %}
+            <span id="thread-quick-reply">
+                <a id="link-quick-reply" href="#">[{% trans %}Post a Reply{% endtrans %}]</a>
+            </span>
+            <br><br>
+            {% include 'partials/report_delete.html' %}
+        </div>
 
-	{% if config.global_message %}{% for global_message in config.global_message %}<hr /><div class="blotter">{{ global_message }}</div>{% endfor %}{% endif %}
-	<hr />
-	<form name="postcontrols" action="{{ config.post_url }}" method="post">
-		<input type="hidden" name="board" value="{{ board.uri }}" />
-		{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-		&nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %} &nbsp; <a id="unimportant" href="{{ return }}">[{% trans %}Back{% endtrans %}]</a>
+        <div class="clearfix"></div>
+    </form>
+    <a href="#top" class="elevadorCimaTh">△</a>
 
-		{% if config.archive.threads %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
-		{% if config.feature.threads and config.feature.link_post_page %} &nbsp; <a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
-		<hr />
-				{{ body }}
-		<div id="thread-interactions">
-			<span id="thread-links">
-				<a id="thread-top" href="#top">[{% trans %}Go to top{% endtrans %}]</a>
-                		{% if config.catalog_link %}
-				<a id="thread-catalog" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
-		                {% endif %}
-				<a id="thread-return" href="{{ return }}">[{% trans %}Back{% endtrans %}]</a>
-			</span>
+    <a name="bottom"></a>
+    <a href="#bottom" class="elevadorBaixo">▽</a>
+    {{ boardlist.bottom }}
+    <br>
 
-			<span id="thread-quick-reply">
-				<a id="link-quick-reply" href="#">[{% trans %}Post a Reply{% endtrans %}]</a>
-			</span>
-			<br /><br />
-			{% include 'report_delete.html' %}
-		</div>
+    <div class="center">
+        {{ config.ad.bottom }}
+    </div>
 
-		<div class="clearfix"></div>
-	</form>
-
-	<a name="bottom"></a>
-	{{ boardlist.bottom }}
-	<br />
-
-	<center>
-	{{ config.ad.bottom }}
-	</center>
-
-	{% include 'footer.html' %}
-
-	<script type="text/javascript">{% verbatim %}
-		ready();
-	{% endverbatim %}</script>
+    {% include 'footer.html' %}
 </body>
 </html>

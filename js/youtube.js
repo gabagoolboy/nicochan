@@ -11,6 +11,7 @@
 * Released under the MIT license
 * Copyright (c) 2013 Michael Save <savetheinternet@tinyboard.org>
 * Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net> 
+* Copyright (c) 2013-2024 Perdedora <weav@anche.no>
 *
 * Usage:
 *	$config['embedding'] = array();
@@ -22,24 +23,30 @@
 *
 */
 
+document.addEventListener('DOMContentLoaded', function () {
+    const doEmbedYouTube = (container) => {
+        const videoLinks = container.querySelectorAll('div.video-container a');
 
-onready(function(){
-	var do_embed_yt = function(tag) {
-		$('div.video-container a', tag).click(function() {
-			var videoID = $(this.parentNode).data('video');
-		
-			$(this.parentNode).html('<iframe style="float:left;margin: 10px 20px" type="text/html" '+
-				'width="360" height="270" src="//www.youtube.com/embed/' + videoID +
-				'?autoplay=1&html5=1" allowfullscreen frameborder="0"/>');
+        videoLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                
+                const videoID = this.parentElement.dataset.video;
 
-			return false;
-		});
-	};
-	do_embed_yt(document);
-
-        // allow to work with auto-reload.js, etc.
-        $(document).on('new_post', function(e, post) {
-                do_embed_yt(post);
+                this.parentElement.innerHTML = `
+                    <iframe style="float:left;margin: 10px 20px" type="text/html"
+                        width="360" height="270" src="//www.youtube.com/embed/${videoID}?autoplay=1&html5=1" 
+                        allowfullscreen frameborder="0">
+                    </iframe>
+                `;
+            });
         });
-});
+    };
 
+    doEmbedYouTube(document);
+
+    // Allow to work with auto-reload.js, etc.
+    document.addEventListener('new_post_js', function (e) {
+        doEmbedYouTube(e.detail.detail);
+    });
+});

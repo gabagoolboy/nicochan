@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS ``posts_%s`` (
   `shadow` int(1) DEFAULT 0 NOT NULL,
   `embed` text,
   `slug` varchar(256) DEFAULT NULL,
+  `flag_iso` varchar(6) DEFAULT NULL,
+  `flag_ext` varchar(100) DEFAULT NULL,
   UNIQUE KEY `id` (`id`),
   KEY `thread_id` (`thread`,`id`),
   KEY `filehash` (`filehash`(40)),

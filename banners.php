@@ -1,57 +1,113 @@
 <?php
+
 require_once 'inc/bootstrap.php';
+
 class Banners
 {
-	public $bannerDir = 'static/banners/%s/';
-	public $priorityDir = 'static/banners_priority/';
-	public $board;
-	public $ukko = 'overboard';
+    private string $bannerDir = 'static/banners/%s/';
+    private string $priorityDir = 'static/banners_priority/';
+    private string $board;
+    private string $ukko = 'overboard';
 
-	public function __construct(string $board) {
-		$this->board = $board;
-	}
+    public function __construct(string $board)
+    {
+        if (!preg_match('/^\w+$/i', $board)) {
+            $this->board = $this->ukko;
+        }
+        $this->board = $board;
+    }
 
-	private function getFilesInDirectory(string $dir): array | null {
+    private function getFilesInDirectory(string $dir): array
+    {
+        if (!is_dir($dir)) {
+            $dir = $this->priorityDir;
+        }
 
-		if (!is_dir($dir))
-			return null;
+        $cacheKey = "files_{$dir}";
+        $listFiles = Cache::get($cacheKey);
 
-		if (!$listFiles = Cache::get("files_{$dir}")) {
-			$listFiles = array_diff(scandir($dir, SCANDIR_SORT_NONE), array('.', '..'));
-			Cache::set("files_{$dir}", $listFiles, 10800);
-		}
+        if (!$listFiles) {
+            $listFiles = array_diff(scandir($dir, SCANDIR_SORT_NONE), ['.', '..']);
+            $listFiles = array_filter($listFiles, fn ($file) => is_file($dir . $file) && $this->isImage($file));
+            Cache::set($cacheKey, $listFiles, 10800);
+        }
 
-		return $listFiles;
-	}
+        return $listFiles;
+    }
 
-	private function serveRandomBanner(string $dir, array $files): void {
+    private function isImage(string $fileName): bool
+    {
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        return in_array($extension, $allowedExtensions, true);
+    }
 
-		$name = $files[array_rand($files)];
+    private function serveRandomBanner(string $dir, array $files): void
+    {
+        if (empty($files)) {
+            http_response_code(404);
+            exit;
+        }
 
-		// snags the extension
-		$ext = pathinfo($name, PATHINFO_EXTENSION);
+        $name = $files[array_rand($files)];
+        $filePath = $dir . $name;
 
-		// send the right headers
-		header("Content-type: image/" . $ext);
-		header("Content-Length" . filesize($dir.$name));
+        if (!is_file($filePath) || !is_readable($filePath)) {
+            http_response_code(404);
+            exit;
+        }
 
-		// readfile displays the image, passthru seems to spits stream.
-		readfile($dir.$name);
-		exit;
-	}
+        $ext = pathinfo($name, PATHINFO_EXTENSION);
+        $lastModified = filemtime($filePath);
+        $etag = md5_file($filePath);
 
-	public function serve() {
+        header("Content-Type: image/{$ext}");
+        header("Content-Length: " . filesize($filePath));
+        header("Cache-Control: public, max-age=" . (60 * 60 * 24 * 30 * 6)); // 6 months
+        header("ETag: \"$etag\"");
+        header("Last-Modified: " . gmdate('D, d M Y H:i:s', $lastModified) . ' GMT');
+        header("X-Content-Type-Options: nosniff");
 
-		$priority = $this->getFilesInDirectory($this->priorityDir);
-		$this->bannerDir = sprintf($this->bannerDir, $this->board);
-		$banners = $this->getFilesInDirectory($this->bannerDir);
+        $ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
+        $ifNoneMatch = $_SERVER['HTTP_IF_NONE_MATCH'] ?? '';
 
-		if (!is_null($priority) && (is_countable($priority) ? count($priority) : 0) !== 0 && mt_rand(0,3) === 0 || is_null($banners))
-			$this->serveRandomBanner($this->priorityDir, $priority);
+        if (
+            (!empty($ifModifiedSince) && strtotime($ifModifiedSince) === $lastModified) ||
+            (!empty($ifNoneMatch) && trim($ifNoneMatch) === $etag)
+        ) {
+            header("HTTP/1.1 304 Not Modified");
+            exit;
+        }
 
-		$this->serveRandomBanner($this->bannerDir, $banners);
+        readfile($filePath);
+        exit;
+    }
 
-	}
+    public function serve(): void
+    {
+        if (!getBoardInfo($this->board)) {
+            $this->board = $this->ukko;
+        }
+
+        $priorityFiles = $this->getFilesInDirectory($this->priorityDir);
+        $this->bannerDir = sprintf($this->bannerDir, $this->board);
+        $bannerFiles = $this->getFilesInDirectory($this->bannerDir);
+
+        $usePriority = !empty($priorityFiles) && (mt_rand(0, 3) === 0 || empty($bannerFiles) || $this->board === $this->ukko);
+
+        if ($usePriority) {
+            $this->serveRandomBanner($this->priorityDir, $priorityFiles);
+        } else {
+            $this->serveRandomBanner($this->bannerDir, $bannerFiles);
+        }
+    }
 }
-	$b = new Banners((string)htmlspecialchars($_GET['board'] ?? 'overboard'));
-	$b->serve();
+
+try {
+    $board = htmlspecialchars($_GET['board'] ?? $config['banner_overboard'], ENT_QUOTES, 'UTF-8');
+    $b = new Banners($board);
+    $b->serve();
+} catch (InvalidArgumentException $e) {
+    http_response_code(400);
+    exit;
+}

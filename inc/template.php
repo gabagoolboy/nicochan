@@ -7,6 +7,7 @@
 defined('TINYBOARD') or exit;
 require_once 'inc/bootstrap.php';
 
+
 $twig = false;
 
 function load_twig() {
@@ -14,13 +15,14 @@ function load_twig() {
 
 	$loader = new Twig\Loader\FilesystemLoader($config['dir']['template']);
 	$loader->setPaths($config['dir']['template']);
-	$twig = new Twig\Environment($loader, array(
+	$cache_dir = "{$config['dir']['template']}/cache/";
+	$twig = new Twig\Environment($loader, [
 		'autoescape' => false,
-		'cache' => is_writable('templates') || (is_dir('templates/cache') && is_writable('templates/cache')) ?
-			new Twig_Cache_TinyboardFilesystem("{$config['dir']['template']}/cache") : false,
+		'cache' => is_writable('templates/') || (is_dir($cache_dir) && is_writable($cache_dir)) ?
+			new TwigCacheTinyboardFilesystem($cache_dir) : false,
 		'debug' => $config['debug'],
 		'auto_reload' => $config['twig_auto_reload']
-	));
+	]);
 	if ($config['debug'])
 		$twig->addExtension(new \Twig\Extension\DebugExtension());
 	$twig->addExtension(new Tinyboard());
@@ -60,7 +62,8 @@ function Element($templateFile, array $options) {
 
 	// Read the template file
 	if (@file_get_contents("{$config['dir']['template']}/{$templateFile}")) {
-		$body = $twig->render($templateFile, $options);
+		$startTime = microtime(true);
+		$body = $twig->render($templateFile, array_merge_recursive($options, ['startTime' => $startTime]));
 
 		if ($config['minify_html'] && preg_match('/\.html$/', $templateFile)) {
 			$body = trim(preg_replace("/[\t\r\n]/", '', $body));
@@ -91,7 +94,6 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFilter('poster_id', 'poster_id'),
 			new Twig\TwigFilter('ago', 'ago'),
 			new Twig\TwigFilter('until', 'until'),
-			new Twig\TwigFilter('push', 'twig_push_filter'),
 			new Twig\TwigFilter('bidi_cleanup', 'bidi_cleanup'),
 			new Twig\TwigFilter('addslashes', 'addslashes'),
 			new Twig\TwigFilter('human_ip', 'getHumanReadableIP')
@@ -110,11 +112,12 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 			new Twig\TwigFunction('hiddenInputs', 'hiddenInputs'),
 			new Twig\TwigFunction('hiddenInputsHash', 'hiddenInputsHash'),
 			new Twig\TwigFunction('ratio', 'twig_ratio_function'),
-			new Twig\TwigFunction('secure_link_confirm', 'twig_secure_link_confirm'),
-			new Twig\TwigFunction('secure_link', 'twig_secure_link'),
+			new Twig\TwigFunction('secure_link_confirm', 'secure_link_confirm'),
+			new Twig\TwigFunction('secure_link', 'secure_link'),
 			new Twig\TwigFunction('link_for', 'link_for'),
-			new Twig\TwigFunction('microtime', 'twig_microtime_page')
-
+			new Twig\TwigFunction('microtime', function (float $startTime) {
+				return twigGetRenderTime($startTime);
+			})
 		);
 	}
 
@@ -129,11 +132,6 @@ class Tinyboard extends Twig\Extension\AbstractExtension
 	}
 }
 
-function twig_push_filter($array, $value) {
-	array_push($array, $value);
-	return $array;
-}
-
 function twig_strftime_filter($date, $format = false, $oldformat = null) {
 	global $config;
 
@@ -144,9 +142,12 @@ function twig_strftime_filter($date, $format = false, $oldformat = null) {
 		$format = $config['post_date'];
 
 	$fmt = new IntlDateFormatter(
-		locale: $config['locale'],
-		timezone: $config['timezone'],
-		pattern: $config['post_date']
+		$config['locale'],
+		false,
+		false,
+		$config['timezone'],
+		false,
+		$format
 	);
 
 	$dt = new DateTime("@$date");
@@ -195,18 +196,9 @@ function twig_filename_truncate_filter($value, $length = 30, $separator = '…')
 function twig_ratio_function($w, $h) {
 	return fraction($w, $h, ':');
 }
-function twig_secure_link_confirm($text, $title, $confirm_message, $href) {
-	global $config;
 
-	return '<a onclick="if (event.which==2) return true;if (confirm(\'' . htmlentities(addslashes($confirm_message)) . '\')) document.location=\'?/' . htmlspecialchars(addslashes($href . '/' . make_secure_link_token($href))) . '\';return false;" title="' . htmlentities($title) . '" href="?/' . $href . '">' . $text . '</a>';
-}
-function twig_secure_link($href) {
-	return $href . '/' . make_secure_link_token($href);
-}
-function twig_microtime_page() {
-	$start = hrtime(true);
-	$end = hrtime(true);
-	$duration = $end - $start;
-	$calc = round($duration / 10000, 2);
-	return $calc . "s";
+function twigGetRenderTime(float $startTime) {
+	$end = microtime(true);
+	$renderTime = $end - $startTime;
+	return number_format($renderTime, 4, '.', '') . ' s';
 }

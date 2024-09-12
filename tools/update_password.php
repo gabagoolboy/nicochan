@@ -3,11 +3,9 @@
 require dirname(__FILE__) . '/inc/cli.php';
 
 $boards = listBoards();
-		foreach($boards as &$_board){
+		foreach ($boards as &$_board) {
 			query(sprintf('ALTER TABLE ``posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
 			query(sprintf('ALTER TABLE ``shadow_posts_%s`` MODIFY `password` varchar(64) DEFAULT NULL;', $_board['uri'])) or error(db_error());
-		}
-		foreach ($boards as &$_board) {
 		    $query = prepare(sprintf("SELECT DISTINCT `password` FROM ``posts_%s``", $_board['uri']));
 		    $query->execute() or $sql_errors .= "posts_*\n" . db_error();
 

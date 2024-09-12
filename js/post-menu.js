@@ -161,7 +161,7 @@ cssString =
 	'.post-menu li:hover {background-color: '+ cssStyle.hoverBg +';}\n' +
 	'.post-menu ul ul {display: none; position: absolute;}\n' +
 	'.post-menu li:hover>ul {display: block; left: 100%; margin-top: -3px;}\n' +
-	'.post-menu-arrow {float: right; margin-left: 10px;}\n' +
+	'.post-menu-arrow {float: right}\n' +
 	'.post-menu.hidden, .post-menu .hidden {display: none;}\n' +
 	'.post-btn {width: 15px; text-align: center; font-size: 10pt; text-decoration: none; display: inline-block; margin-right: 10px;}';
 
@@ -207,4 +207,5 @@ $(document).on('new_post', function (e, post) {
 });
 
 $(document).trigger('menu_ready');
+triggerCustomEvent('menu_ready_js');
 });

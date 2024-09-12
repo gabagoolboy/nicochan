@@ -1,18 +1,23 @@
-{% if post.files and mod %}
-	{% if not post.shadow %}
-	<span class="controls">
-		{% if file.file != 'deleted' and mod|hasPermission(config.mod.deletefile, board.uri) %}
-			{{ secure_link_confirm(config.mod.link_deletefile, 'Delete file'|trans, 'Are you sure you want to delete this file?'|trans, board.dir ~ 'deletefile/' ~ post.id ~ '/' ~ loop.index0 ) }}&nbsp;
-		{% endif %}
+{% if file.file != 'deleted' and mod %}
+    <span class="controls">
+        <br/>
+        {% if not post.shadow %}
+            {% if mod|hasPermission(config.mod.deletefile, board.uri) %}
+                {% set link_deletefile_title %}{% trans %}Delete file{% endtrans %}{% endset %}
+                {% set link_deletefile_confirm %}{% trans %}Are you sure you want to delete this file?{% endtrans %}{% endset %}
+                {{ secure_link_confirm(config.mod.link_deletefile, link_deletefile_title, link_deletefile_confirm, board.dir ~ 'deletefile/' ~ post.id ~ '/' ~ index) }}&nbsp;
+            {% endif %}
 
-		{% if file.file and file.file != 'deleted' and file.thumb != 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
-			{{ secure_link_confirm(config.mod.link_spoilerimage, 'Spoiler file'|trans, 'Are you sure you want to spoiler this file?'|trans, board.dir ~ 'spoiler/' ~ post.id ~ '/' ~ loop.index0 ) }}&nbsp;
-		{% endif %}
+            {% if file.thumb != 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
+                {% set link_spoilerimage_title %}{% trans %}Spoiler file{% endtrans %}{% endset %}
+                {% set link_spoilerimage_confirm %}{% trans %}Are you sure you want to spoiler this file?{% endtrans %}{% endset %}
+                {{ secure_link_confirm(config.mod.link_spoilerimage, link_spoilerimage_title, link_spoilerimage_confirm, board.dir ~ 'spoiler/' ~ post.id ~ '/' ~ index) }}&nbsp;
+            {% elseif file.thumb == 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
+                {% set link_unspoilerimage_title %}{% trans %}Remove spoiler{% endtrans %}{% endset %}
+                {% set link_unspoilerimage_confirm %}{% trans %}Are you sure you want to remove spoiler on this file?{% endtrans %}{% endset %}
+                {{ secure_link_confirm(config.mod.link_unspoilerimage, link_unspoilerimage_title, link_unspoilerimage_confirm, board.dir ~ 'unspoiler/' ~ post.id ~ '/' ~ index) }}&nbsp;
+            {% endif %}
+        {% endif %}
 
-		{% if file.file and file.file != 'deleted' and file.thumb == 'spoiler' and mod|hasPermission(config.mod.spoilerimage, board.uri) %}
-			{{ secure_link_confirm(config.mod.link_unspoilerimage, 'Spoiler file'|trans, 'Are you sure you want to remove spoilers on this file?'|trans, board.dir ~ 'unspoiler/' ~ post.id ~ '/' ~ loop.index0 ) }}&nbsp;
-		{% endif %}
-
-	</span>
-	{% endif %}
+    </span>
 {% endif %}

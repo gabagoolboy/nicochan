@@ -1,44 +1,42 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8">
-
-        <script type="text/javascript">
-	  var
-          {% if not isukko %}
-              active_page = "index"
-            , board_name = "{{ board.uri }}";
-	  {% else %}
-              active_page = "ukko";
-          {% endif %}
-        </script>
+	<script src="/js/toggleRecent.js?v={{ config.resource_version }}" defer></script>
 
 	{% include 'header.html' %}
-	<title>{{ board.url }} - {{ board.title|e }}</title>
+    
+	{% set page_num %}{% for page in pages %}{% if page.selected %}{% if page.num != 1 %}{{ page.num }}{% endif %}{% endif %}{% endfor %}{% endset %}
+	{% set meta_subject = board.subtitle|default(board.title)|e %}
+
+	<meta name="description" content="{{ meta_subject }}" />
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="{{ board.url }} - {{ board.title|e }}{% if page_num %} {% trans %}Page{% endtrans %} - {{ page_num }}{% endif %}" />
+	<meta name="twitter:description" content="{{ meta_subject }}" />
+	<meta name="twitter:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:title" content="{{ board.url }} - {{ board.title|e }}{% if page_num %} {% trans %}Page{% endtrans %} - {{ page_num }}{% endif %}" />
+	<meta property="og:type" content="article" />
+	<meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ page_num ? page_num ~ (config.remove_ext ? '' : '.html') : '' }}" />
+	<meta property="og:image" content="{{ config.domain }}/{{ config.logo }}" />
+	<meta property="og:description" content="{{ meta_subject }}" />
+	<title>{{ board.url }} - {{ board.title|e }}{% if page_num %} {% trans %}Page{% endtrans %} - {{ page_num }}{% endif %}</title>
 </head>
-<body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-{% if not no_post_form %}index{% else %}ukko{% endif %}" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
+<body class="8chan vichan {{ mod ? 'is-moderator' : 'is-not-moderator' }} active-{{ no_post_form ? 'ukko' : 'index' }}" data-stylesheet="{{ config.default_stylesheet.1|default('default') }}">
 	<div class="bar top">
-	{{ boardlist.top }}
+		{{ boardlist.top }}
 	</div>
 	<a name="top"></a>
-	{% if pm %}<div class="top_notice">{% trans %}You have{% endtrans %}&nbsp;<a href="?/PM/{{ pm.id }}">{% trans %}an unread PM{% endtrans %}</a>{% if pm.waiting > 0 %}, {% trans %}plus{% endtrans %} {{ pm.waiting }} {% trans %}more waiting{% endtrans %}{% endif %}.</div><hr />{% endif %}
+	<span id="active-page" data-page="{{ isukko ? 'ukko' : 'index' }}"></span>
+    
+	{% if pm %}
+		{% include 'partials/top_notice.html' %}
+		<hr />
+	{% endif %}
 
+	{% if config.url_banner %}
+		{% include 'partials/banner.html' %}
+	{% endif %}
 
-	{% if config.url_banner %}<a href="/" style="display: block; width:{{ config.banner_width }}px; height:{{ config.banner_height }}px; margin: 20px auto 0 auto;"><img class="board_image" src="{{ config.url_banner }}?board={% if not isukko %}{{ board.uri }}{% else %}{{ config.banner_overboard }}{% endif %}" {% if config.banner_width or config.banner_height %}style="{% if config.banner_width %}width:{{ config.banner_width }}px{% endif %};{% if config.banner_width %}height:{{ config.banner_height }}px{% endif %}" {% endif %}loading="lazy" /></a>{% endif %}
-
-	<header>
-		<h1>{{ board.url }} - {{ board.title|e }}</h1>
-		<div class="subtitle">
-			{% if board.subtitle %}
-				{% if config.allow_subtitle_html %}
-					{{ board.subtitle }}
-				{% else %}
-					{{ board.subtitle|e }}
-				{% endif %}
-			{% endif %}
-			{% if mod %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
-		</div>
-	</header>
+	{% include 'partials/header.html' %}
 
 	{{ config.ad.top }}
 
@@ -46,66 +44,57 @@
 		{% include 'post_form.html' %}
 	{% endif %}
 
-	{% if config.page_nav_top and not isukko %}
-		<div class="pages top">
-			{% for page in pages %}
-			 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
-			{% endfor %}
-			{{ btn.next }}
-		</div>
+	{% if recent %}
+		{% include 'partials/latest.html' %}
 	{% endif %}
 
+	{% if config.page_nav_top and not isukko %}
+		{% include 'partials/page.html' with { top: true } %}
+	{% endif %}
 
-	{% if config.global_message %}{% for global_message in config.global_message %}<hr /><div class="blotter">{{ global_message }}</div>{% endfor %}{% endif %}
+	{% if config.global_message %}
+		{% include 'partials/global_message.html' %}
+	{% endif %}
 	<hr />
 
 	{% if config.board_search %}
-	<!-- Start Search Form -->
-        	<form style="display:inline" action="/search.php">
-                	<p style="margin: 10px;">
-                    		<input type="text" name="search" placeholder="{{ board.uri }} search">
-                    		<input type="hidden" name="board" value="{{ board.uri }}">
-                    		<input type="submit" value="Search">
-                	</p>
-        	</form>
-    	<!-- End Search Form -->
-    	{% endif %}
+		<form style="display:inline" action="/search.php">
+			<p style="margin: 10px;">
+				<input type="text" name="search" placeholder="{{ board.uri }} search">
+				<input type="hidden" name="board" value="{{ board.uri }}">
+				<input type="submit" value="{% trans %}Search{% endtrans %}">
+			</p>
+		</form>
+	{% endif %}
+    
 	<form name="postcontrols" action="{{ config.post_url }}" method="post">
-	<input type="hidden" name="board" value="{{ board.uri }}" />
-	{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
-	&nbsp;&nbsp;<a id="unimportant" href="#bottom">[{% trans %}Go to bottom{% endtrans %}]</a>
-	{% if config.catalog_link %}&nbsp;&nbsp;<a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
+		<input type="hidden" name="board" value="{{ board.uri }}" />
+		{% if mod %}<input type="hidden" name="mod" value="1" />{% endif %}
 
-	&nbsp;&nbsp;<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}">[{% trans %}Reload{% endtrans %}]</a>
-
-	{% if config.archive.threads %}&nbsp;&nbsp;<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">[{% trans %}Archive{% endtrans %}]</a>{% endif %}
-	{% if config.feature.threads and config.feature.link_post_page %}&nbsp;&nbsp;<a id="unimportant" href="{% if mod %}{{ config.file_mod }}?{% endif %}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">[{% trans %}Featured{% endtrans %}]</a>{% endif %}
-	<hr />
-	{{ body }}
-	&nbsp;&nbsp;<a id="unimportant" href="#top">[{% trans %}Go to top{% endtrans %}]</a> &nbsp; {% if config.catalog_link %}<a id="unimportant" href="{{ config.root }}{% if mod %}{{ config.file_mod }}?/{% endif %}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>{% endif %}
-	{% include 'report_delete.html' %}
+		{% include 'partials/buttons.html' with { index: true } %}
+		<hr />
+		{{ body }}
+		{% include 'partials/report_delete.html' %}
+		{% if mod %}
+			{% include 'partials/reports_count.html' %}
+		{% endif %}
 	</form>
 
+	<a href="#top" class="elevadorCima">△</a>
+    
 	{% if not isukko %}
-	<div class="pages">
-		{{ btn.prev }} {% for page in pages %}
-		 [<a {% if page.selected %}class="selected"{% endif %}{% if not page.selected %}href="{{ page.link }}"{% endif %}>{{ page.num }}</a>]{% if loop.last %} {% endif %}
-		{% endfor %} {{ btn.next }}
-	</div>
-	<a name="bottom"></a>
+		{% include 'partials/page.html' %}
+		<a name="bottom"></a>
+		<a href="#bottom" class="elevadorBaixo">▽</a>
 	{% endif %}
+    
 	{{ boardlist.bottom }}
 	<br />
 
-	<center>
-	{{ config.ad.bottom }}
-	</center>
+	<div class="center">
+		{{ config.ad.bottom }}
+	</div>
 
 	{% include 'footer.html' %}
-
-	<script type="text/javascript">{% verbatim %}
-		ready();
-	{% endverbatim %}</script>
-
 </body>
 </html>

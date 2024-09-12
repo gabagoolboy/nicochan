@@ -1,163 +1,153 @@
 <?php
-	require 'info.php';
+require_once 'info.php';
 
-	function index_build($action, $settings, $board) {
-		// Possible values for $action:
-		//	- all (rebuild everything, initialization)
-		//	- news (news has been updated)
-		//	- boards (board list changed)
-		//	- post (a post has been made)
-		//	- post-thread (a thread has been made)
+function index_build($action, $settings) {
+    $builder = new IndexBuilder();
+    $builder->build($action, $settings);
+}
 
-		$b = new index();
-		$b->build($action, $settings);
+class IndexBuilder {
+    private $stats = [];
+    private $settings;
+
+    public function build($action, $settings) {
+        $this->settings = $settings;
+
+        if ($action === 'all') {
+            $this->copyBaseCSS();
+        }
+
+        if (in_array($action, ['all', 'news', 'post', 'post-thread', 'post-delete'])) {
+            $this->generateHomepage();
+        }
+    }
+
+    private function copyBaseCSS() {
+        global $config;
+        copy('templates/themes/index/' . $this->settings['basecss'], $config['dir']['home'] . $this->settings['css']);
+    }
+
+    private function generateHomepage() {
+        global $config;
+        $homepageContent = $this->homepage();
+        file_write($config['dir']['home'] . $this->settings['html'], $homepageContent);
+    }
+
+    private function homepage() {
+        global $config;
+
+		$this->populateStats();
+        $news = $this->getNews();
+
+        return Element('themes/index/index.html', [
+            'settings' => $this->settings,
+            'config' => $config,
+            'boardlist' => createBoardlist(),
+            'stats' => $this->stats,
+            'news' => $news,
+        ]);
+    }
+
+    private function populateStats() {
+        global $config;
+
+        $boards = listBoards();
+
+        if ($config['cache']['enabled']) {
+            $this->stats = Cache::get('stats_homepage') ?: [];
+        }
+
+        if (empty($this->stats)) {
+            $this->stats['total_posts'] = $this->getTotalPosts($boards);
+            $this->stats['unique_posters'] = $this->getUniquePosters($boards);
+            $this->stats['active_content'] = $this->getActiveContent($boards);
+            $this->stats['total_bans'] = $this->getTotalBans();
+            $this->stats['boards'] = $this->getBoardsList($boards);
+            $this->stats['update'] = twig_strftime_filter(time(), 'dd/MM/yyyy HH:mm:ss');
+
+            Cache::set('stats_homepage', $this->stats, 3600);
+        }
+    }
+
+    private function getTotalPosts($boards) {
+        $query = 'SELECT SUM(`top`) FROM (';
+        foreach ($boards as $_board) {
+            $query .= sprintf("SELECT MAX(`id`) AS `top` FROM ``posts_%s`` WHERE `shadow` = 0 UNION ALL ", $_board['uri']);
+        }
+        $query = preg_replace('/UNION ALL $/', ') AS `posts_all`', $query);
+        $result = query($query) or error(db_error());
+        return number_format($result->fetchColumn());
+    }
+
+    private function getUniquePosters($boards) {
+        $query = 'SELECT COUNT(DISTINCT(`ip`)) FROM (';
+        foreach ($boards as $_board) {
+            $query .= sprintf("SELECT `ip` FROM ``posts_%s`` WHERE `shadow` = 0 UNION ALL ", $_board['uri']);
+        }
+        $query = preg_replace('/UNION ALL $/', ') AS `posts_all`', $query);
+        $result = query($query) or error(db_error());
+        return number_format($result->fetchColumn());
+    }
+
+    private function getActiveContent($boards) {
+        $query = 'SELECT DISTINCT(`files`) FROM (';
+        foreach ($boards as $_board) {
+            $query .= sprintf("SELECT `files` FROM ``posts_%s`` WHERE `num_files` > 0 AND `shadow` = 0 UNION ALL ", $_board['uri']);
+        }
+        $query = preg_replace('/UNION ALL $/', ') AS `posts_all`', $query);
+        $result = query($query) or error(db_error());
+
+        $files = $result->fetchAll();
+        $totalFiles = 0;
+        $activeContent = 0;
+
+    	foreach ($files as $file) {
+        	if (isset($file[0]) && is_string($file[0])) {
+         		preg_match_all('/"size":([\d]*)/', $file[0], $matches);
+            	preg_match_all('/"file":("[\d]+)/', $file[0], $matchFile);
+
+            	if (!empty($matchFile[0])) {
+             		$totalFiles += count($matchFile[0]);
+            	}
+
+            	$activeContent += array_sum($matches[1]);
+        	}
+    	}
+
+        $this->stats['total_files'] = number_format($totalFiles);
+        return $activeContent;
+    }
+
+    private function getTotalBans() {
+        $query = query("SELECT COUNT(1) FROM ``bans`` WHERE `expires` > UNIX_TIMESTAMP() OR `expires` IS NULL");
+        return $query->fetchColumn();
+    }
+
+	private function getBoardsList($boards) {
+    	$boardList = [];
+    
+    	foreach ($boards as $board) {
+        	if (isset($board['uri'])) {
+            	$boardInfo = getBoardInfo($board['uri']);
+            
+            	if ($boardInfo) {
+                	$boardList[] = [
+                    	'title' => $boardInfo['title'],
+                    	'uri' => $boardInfo['uri'],
+                	];
+            	}
+        	}
+    	}
+
+    	$boardList[] = ['title' => 'Overboard', 'uri' => 'overboard'];
+
+    	return $boardList;
 	}
 
-	// Wrap functions in a class so they don't interfere with normal Tinyboard operations
-	class index {
-		public function build($action, $settings) {
-			global $config, $_theme;
+    private function getNews() {
+        $limit = $this->settings['no_recent'] ? ' LIMIT ' . (int)$this->settings['no_recent'] : '';
+        $query = query("SELECT * FROM ``news`` ORDER BY `time` DESC $limit") or error(db_error());
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
 
-			if ($action == 'all')
-				copy('templates/themes/index/' . $settings['basecss'], $config['dir']['home'] . $settings['css']);
-
-
-		      	if ($action == 'all' || $action == 'news' || $action == 'post' || $action == 'post-thread' || $action == 'post-delete')
-				file_write($config['dir']['home'] . $settings['html'], $this->homepage($settings));
-
-		}
-
-
-		// Build news page
-		public function homepage($settings) {
-			global $config, $board;
-
-			$recent_images = Array();
-			$recent_posts = Array();
-			$stats = Array();
-
-			$boards = listBoards();
-
-			$query = '';
-			foreach ($boards as &$_board) {
-				if (in_array($_board['uri'], $this->excluded))
-					continue;
-				$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` WHERE `files` IS NOT NULL UNION ALL ", $_board['uri'], $_board['uri']);
-			}
-			$query = preg_replace('/UNION ALL $/', 'ORDER BY `time` DESC LIMIT ' . (int)$settings['limit_images'], $query);
-
-			if ($query == '') {
-				error(_("Can't build the Index theme, because there are no boards to be fetched."));
-			}
-
-			$query = query($query) or error(db_error());
-
-			while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-				openBoard($post['board']);
-
-				if (isset($post['files']))
-					$files = json_decode($post['files']);
-
-                if ($files[0]->file == 'deleted' || $files[0]->thumb == 'file') continue;
-
-				// board settings won't be available in the template file, so generate links now
-				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res']
-				  . link_for($post) . '#' . $post['id'];
-
-				if ($files) {
-					if ($files[0]->thumb == 'spoiler') {
-						$tn_size = @getimagesize($config['spoiler_image']);
-						$post['src'] = $config['spoiler_image'];
-						$post['thumbwidth'] = $tn_size[0];
-						$post['thumbheight'] = $tn_size[1];
-					}
-					else {
-						$post['src'] = $config['uri_thumb'] . $files[0]->thumb;
-						$post['thumbwidth'] = $files[0]->thumbwidth;
-						$post['thumbheight'] = $files[0]->thumbheight;
-					}
-				}
-
-				$recent_images[] = $post;
-			}
-
-
-			$query = '';
-			foreach ($boards as &$_board) {
-				if (in_array($_board['uri'], $this->excluded))
-					continue;
-				$query .= sprintf("SELECT *, '%s' AS `board` FROM ``posts_%s`` UNION ALL ", $_board['uri'], $_board['uri']);
-			}
-			$query = preg_replace('/UNION ALL $/', 'ORDER BY `time` DESC LIMIT ' . (int)$settings['limit_posts'], $query);
-			$query = query($query) or error(db_error());
-
-			while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
-				openBoard($post['board']);
-
-				$post['link'] = $config['root'] . $board['dir'] . $config['dir']['res'] . link_for($post) . '#' . $post['id'];
-				if ($post['body'] != "")
-					$post['snippet'] = pm_snippet($post['body'], 30);
-				else
-					$post['snippet'] = "<em>" . _("(no comment)") . "</em>";
-				$post['board_name'] = $board['name'];
-
-				$recent_posts[] = $post;
-			}
-
-			// Total posts
-			$query = 'SELECT SUM(`top`) FROM (';
-			foreach ($boards as &$_board) {
-				if (in_array($_board['uri'], $this->excluded))
-					continue;
-				$query .= sprintf("SELECT MAX(`id`) AS `top` FROM ``posts_%s`` UNION ALL ", $_board['uri']);
-			}
-			$query = preg_replace('/UNION ALL $/', ') AS `posts_all`', $query);
-			$query = query($query) or error(db_error());
-			$stats['total_posts'] = number_format($query->fetchColumn());
-
-			// Unique IPs
-			$query = 'SELECT COUNT(DISTINCT(`ip`)) FROM (';
-			foreach ($boards as &$_board) {
-				if (in_array($_board['uri'], $this->excluded))
-					continue;
-				$query .= sprintf("SELECT `ip` FROM ``posts_%s`` UNION ALL ", $_board['uri']);
-			}
-			$query = preg_replace('/UNION ALL $/', ') AS `posts_all`', $query);
-			$query = query($query) or error(db_error());
-			$stats['unique_posters'] = number_format($query->fetchColumn());
-
-			// Active content
-			$query = 'SELECT DISTINCT(`files`) FROM (';
-			foreach ($boards as &$_board) {
-				if (in_array($_board['uri'], $this->excluded))
-					continue;
-				$query .= sprintf("SELECT `files` FROM ``posts_%s`` UNION ALL ", $_board['uri']);
-			}
-			$query = preg_replace('/UNION ALL $/', ' WHERE `num_files` > 0) AS `posts_all`', $query);
-			$query = query($query) or error(db_error());
-			$files = $query->fetchAll();
-			$stats['active_content'] = 0;
-			foreach ($files as &$file) {
-				preg_match_all('/"size":([0-9]*)/', $file[0], $matches);
-				$stats['active_content'] += array_sum($matches[1]);
-			}
-
-			//news entries
-			$settings['no_recent'] = (int) $settings['no_recent'];
-			$query = query("SELECT * FROM ``news`` ORDER BY `time` DESC" . ($settings['no_recent'] ? ' LIMIT ' . $settings['no_recent'] : '')) or error(db_error());
-			$news = $query->fetchAll(PDO::FETCH_ASSOC);
-
-			return Element('themes/index/index.html', Array(
-				'settings' => $settings,
-				'config' => $config,
-				'boardlist' => createBoardlist(),
-				'recent_images' => $recent_images,
-				'recent_posts' => $recent_posts,
-				'stats' => $stats,
-				'news' => $news,
-				'boards' => listBoards()
-			));
-		}
-	};
-
-?>

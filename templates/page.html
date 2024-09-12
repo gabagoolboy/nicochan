@@ -1,19 +1,18 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<script type="text/javascript">
-		var active_page = "page";
-	</script>
 	{% include 'header.html' %}
 	<title>{{ title }}</title>
 </head>
-<body class="8chan vichan {% if mod %}is-moderator{% else %}is-not-moderator{% endif %} active-page" data-stylesheet="{% if config.default_stylesheet.1 != '' %}{{ config.default_stylesheet.1 }}{% else %}default{% endif %}">
+<body class="8chan vichan {{ mod ? 'is-moderator' : 'is-not-moderator' }} active-page" data-stylesheet="{{ config.default_stylesheet.1|default('default') }}">
 	<div class="bar top">
-        {{ boardlist.top }}
+		{{ boardlist.top }}
 	</div>
+	<span id="active-page" data-page="page"></span>
 
-	{% if pm %}<div class="top_notice">{% trans %}You have{% endtrans %}&nbsp;<a href="?/PM/{{ pm.id }}">{% trans %}an unread PM{% endtrans %}</a>{% if pm.waiting > 0 %}, {% trans %}plus{% endtrans %} {{ pm.waiting }} {% trans %}more waiting{% endtrans %}{% endif %}.</div><hr />{% endif %}
+	{% if pm %}
+		{% include 'partials/top_notice.html' %}
+	{% endif %}
 
 	<header>
 		<h1>{{ title }}</h1>
@@ -21,11 +20,16 @@
 			{% if subtitle %}
 				{{ subtitle }}
 			{% endif %}
-			{% if mod and not hide_dashboard_link %}<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>{% endif %}
+			{% if mod and not hide_dashboard_link %}
+				<p><a href="?/">{% trans %}Return to dashboard{% endtrans %}</a></p>
+			{% endif %}
 		</div>
 	</header>
+
 	{{ body }}
+
 	<hr>
+
 	{% include 'footer.html' %}
 </body>
 </html>

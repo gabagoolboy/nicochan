@@ -1,70 +1,35 @@
-if (active_page == 'thread' || active_page == 'index' || active_page == 'ukko' || active_page == 'mod') {
-	$(document).ready(function(){
-		if (window.Options && Options.get_tab('general')) {
-			var selector = '#color-ids>input';
-			var e = 'change';
-			Options.extend_tab("general", "<label id='color-ids'><input type='checkbox' /> "+_('Color IDs')+"</label>");
-		}
+document.addEventListener('DOMContentLoaded', () => {
+	'use strict';
 
-		else {
-			var selector = '#color-ids';
-			var e = 'click';
-			$('hr:first').before('<div id="color-ids" style="text-align:right"><a class="unimportant" href="javascript:void(0)">'+_('Color IDs')+'</a></div>')
-		}
+	Options.extend_tab("general", `<fieldset><legend>${_('IDs')}</legend><label id="color-ids"><input type="checkbox" /> ${_('Color IDs')}</label></fieldset>`)
 
-		$(selector).on(e, function() {
-			if (localStorage.color_ids === 'true') {
-				localStorage.color_ids = 'false';
-			} else {
-				localStorage.color_ids = 'true';
-			}
-		});
+	document.querySelector('#color-ids input').addEventListener('change', toggleColorIds);
 
-		if (typeof localStorage.color_ids === 'undefined') {
-			localStorage.color_ids = 'true';
-		}
+	if (localStorage.color_ids === undefined) localStorage.color_ids = 'true';
 
-		if (!localStorage.color_ids || localStorage.color_ids === 'false') {
-			return;
-		} else {
-			$('#color-ids>input').attr('checked','checked');
-		}
+	if (localStorage.color_ids === 'true') {
+		document.querySelector('#color-ids input')?.setAttribute('checked', 'checked');
+		applyColorToIds();
+	}
 
-		function IDToRGB(id_str){
-			var id = id_str.match(/.{1,2}/g);
-			var rgb = new Array();
+	function toggleColorIds() {
+		localStorage.color_ids = localStorage.color_ids === 'true' ? 'false' : 'true';
+		localStorage.color_ids === 'true' ? applyColorToIds() : removeColorFromIds();
+	}
 
-			for (i = 0; i < id.length; i++) {
-				rgb[i] = parseInt(id[i], 16);
-			}
+	function applyColorToIds() {
+		document.querySelectorAll('.poster_id').forEach(colorPostId);
+	}
 
-			return rgb;
-		}
+	function removeColorFromIds() {
+		document.querySelectorAll('.poster_id').forEach(el => el.removeAttribute('style'));
+	}
 
-		function colorPostId(el) {
-			var rgb = IDToRGB($(el).text());
-			var ft = "#fff";
+	function colorPostId(el) {
+		const [r, g, b] = el.textContent.match(/.{1,2}/g).map(hex => parseInt(hex, 16));
+		const brightness = r * 0.299 + g * 0.587 + b * 0.114;
+		el.style = `background-color: rgb(${r}, ${g}, ${b}); padding: 0px 5px; border-radius: 8px; color: ${brightness > 125 ? '#000' : '#fff'}; opacity: 0.7;`;
+	}
 
-			if ((rgb[0]*0.299 + rgb[1]*0.587 + rgb[2]*0.114) > 125)
-				ft = "#000";
-
-			$(el).css({
-				"background-color": "rgb("+rgb[0]+", "+rgb[1]+", "+rgb[2]+")",
-				"padding": "0px 5px",
-				"border-radius": "8px",
-				"color": ft,
-				"opacity": "0.7"
-			});
-		}
-
-		$(".poster_id").each(function(k, v){
-			colorPostId(v);
-		});
-
-		$(document).on('new_post', function(e, post) {
-			$(post).find('.poster_id').each(function(k, v) {
-				colorPostId(v);
-			});
-		});
-	});
-}
+	document.addEventListener('new_post_js', e => e.detail.detail.querySelectorAll('.poster_id').forEach(colorPostId));
+});

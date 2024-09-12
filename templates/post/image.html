@@ -1,46 +1,25 @@
 <a href="
-	{% if post.file|extension == 'webm' or post.file|extension == 'mp4' or post.file|extension == 'mp3' or post.file|extension == 'ogg' %}
-	{{ config.root }}player.php?v={% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}{% if config.show_filename %}&amp;t={{ post.filename|e('url') }}{% endif %}
-	{% else %}
-		{% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.file }}
-	{% endif %}
-	"
-	 target="_blank"
-	{% if post.thumb == 'file' or post.modifiers['is_file'] == '1' or post.filename|extension == 'webm' or post.file|extension == 'mp4' %}
-		 class="file"
-	{% endif %}
+    {{ post.file|extension in ['webm', 'mp4', 'mp3', 'ogg'] 
+        ? config.root ~ 'player.php?v=' ~ (shadow ? config.uri_shadow_img : config.uri_img) ~ post.file ~ (config.show_filename ? '&amp;t=' ~ post.filename|e('url') : '')
+        : (shadow ? config.uri_shadow_img : config.uri_img) ~ post.file }}"
+   target="_blank"
+   class="{{ post.thumb == 'file' or post.modifiers['is_file'] == '1' or post.filename|extension in ['webm', 'mp4', 'mp3', 'ogg'] ? 'file' : '' }}"
 >
-	{% if post.thumb|extension == 'webm' or post.thumb|extension == 'mp4' %}
-		<video class="post-image" src="{% if shadow %}{{ config.uri_shadow_img }}{% else %}{{ config.uri_img }}{% endif %}{{ post.thumb }}"
-			 poster="
-				{{ config.root }}
-				{% if config.file_icons[post.filename|extension] %}
-					{{ config.file_thumb|format(config.file_icons[post.filename|extension]) }}
-				{% else %}
-					{{ config.file_thumb|format(config.file_icons.default) }}
-				{% endif %}
-			"
-			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" {% if config.content_loading_lazy %} loading="lazy" {% endif %}
-		>
-		</video>
-	{% else %}
-		<img class="post-image"
-			src="
-				{% if post.thumb == 'file' %}
-					{{ config.root }}
-					{% if config.file_icons[post.filename|extension] %}
-						{{ config.file_thumb|format(config.file_icons[post.filename|extension]) }}
-					{% else %}
-						{{ config.file_thumb|format(config.file_icons.default) }}
-					{% endif %}
-				{% elseif post.thumb == 'spoiler' %}
-					{{ config.root }}{{ config.spoiler_image }}
-				{% else %}
-					{% if shadow %}{{ config.uri_shadow_thumb }}{% else %}{{ config.uri_thumb }}{% endif %}{{ post.thumb }}
-				{% endif %}
-			"
-			 style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px" {% if config.content_loading_lazy %} loading="lazy" {% endif %}
-		/>
-	{% endif %}
-
+    {% if post.thumb|extension in ['webm', 'mp4'] %}
+        <video class="post-image" 
+               src="{{ shadow ? config.uri_shadow_img : config.uri_img }}{{ post.thumb }}" 
+               poster="{{ config.root ~ config.file_thumb|format(config.file_icons[post.filename|extension]|default(config.file_icons.default)) }}"
+               style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+               {{ config.content_loading_lazy ? 'loading=lazy' : '' }}>
+        </video>
+    {% else %}
+        <img class="post-image"
+             src="{{ post.thumb == 'file' 
+                ? config.root ~ config.file_thumb|format(config.file_icons[post.filename|extension]|default(config.file_icons.default))
+                : post.thumb == 'spoiler' 
+                    ? config.root ~ config.spoiler_image 
+                    : (shadow ? config.uri_shadow_thumb : config.uri_thumb) ~ post.thumb }}"
+             style="width:{{ post.thumbwidth }}px;height:{{ post.thumbheight }}px"
+             {{ config.content_loading_lazy ? 'loading=lazy' : '' }} />
+    {% endif %}
 </a>

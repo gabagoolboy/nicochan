@@ -6,6 +6,8 @@
  *   $config['additional_javascript'][] = 'js/ajax.js';
  *   $config['additional_javascript'][] = 'js/file-selector.js';
  */
+
+var FileSelector = {};
 function init_file_selector(max_images) {
 
 $(document).ready(function () {
@@ -47,7 +49,7 @@ var files = [];
 $('#upload_file').remove();  // remove the original file selector
 $('.dropzone-wrap').css('user-select', 'none').show();  // let jquery add browser specific prefix
 
-function addFile(file) {
+FileSelector.addFile = function (file) {
 	if (files.length == max_images)
 		return;
 
@@ -55,7 +57,8 @@ function addFile(file) {
 	addThumb(file);
 }
 
-function removeFile(file) {
+FileSelector.removeFile = function (file) {
+	getThumbElement(file).remove();
 	files.splice(files.indexOf(file), 1);
 }
 
@@ -88,20 +91,23 @@ function addThumb(file) {
 	}
 }
 
-$(document).on('ajax_before_post', function (e, formData) {
-	for (var i=0; i<max_images; i++) {
-		var key = 'file';
+document.addEventListener('ajax_before_post', function (e) {
+	const formData = e.detail.detail;
+	for (let i = 0; i < max_images; i++) {
+		let key = 'file';
 		if (i > 0) key += i + 1;
 		if (typeof files[i] === 'undefined') break;
 		formData.append(key, files[i]);
 	}
 });
 
-// clear file queue and UI on success
-$(document).on('ajax_after_post', function () {
+document.addEventListener('ajax_after_post', function () {
 	files = [];
-	$('.file-thumbs').empty();
+	document.querySelectorAll('.file-thumbs').forEach(element => {
+    	element.innerHTML = '';
+  });
 });
+
 
 var dragCounter = 0;
 var dropHandlers = {
@@ -133,7 +139,7 @@ var dropHandlers = {
 
 		var fileList = e.originalEvent.dataTransfer.files;
 		for (var i=0; i<fileList.length; i++) {
-			addFile(fileList[i]);
+			FileSelector.addFile(fileList[i]);
 		}
 	}
 };
@@ -147,8 +153,7 @@ $(document).on('click', '.dropzone .remove-btn', function (e) {
 
 	var file = $(e.target).parent().data('file-ref');
 
-	getThumbElement(file).remove();
-	removeFile(file);
+	FileSelector.removeFile(file);
 });
 
 $(document).on('keypress click', '.dropzone', function (e) {
@@ -164,7 +169,7 @@ $(document).on('keypress click', '.dropzone', function (e) {
 	$fileSelector.on('change', function (e) {
 		if (this.files.length > 0) {
 			for (var i=0; i<this.files.length; i++) {
-				addFile(this.files[i]);
+				FileSelector.addFile(this.files[i]);
 			}
 		}
 		$(this).remove();
@@ -184,9 +189,13 @@ $(document).on('paste', function (e) {
 
 			//convert blob to file
 			var file = new File([clipboard.items[i].getAsFile()], 'ClipboardImage.png', {type: 'image/png'});
-			addFile(file);
+			FileSelector.addFile(file);
 		}
 	}
 });
 
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+	init_file_selector(max_images);
+});

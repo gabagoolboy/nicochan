@@ -8,7 +8,6 @@ query('ALTER TABLE ``warnings`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
 query('ALTER TABLE ``nicenotices`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
 query('ALTER TABLE ``bans`` MODIFY `cookiebanned` tinyint(1) DEFAULT 0 NOT NULL;');
 query('ALTER TABLE ``bans`` MODIFY `seen` tinyint(1) DEFAULT 0 NOT NULL;');
-query('ALTER TABLE ``whitelist_region`` ADD CONSTRAINT `whitelistreg_pk` UNIQUE KEY (`ip`);');
 query('ALTER TABLE ``ban_appeals`` MODIFY `denied` tinyint(1) DEFAULT 0 NOT NULL;');
 query('ALTER TABLE ``ban_appeals`` MODIFY `denial_reason` text DEFAULT NULL;');
 $boards = listBoards();

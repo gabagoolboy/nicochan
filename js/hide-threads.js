@@ -11,77 +11,91 @@
  *   $config['additional_javascript'][] = 'js/hide-threads.js';
  *
  */
+document.addEventListener('DOMContentLoaded', () => {
+	'use strict';
 
-$(document).ready(function(){
-	if (active_page != "index" && active_page != "ukko")
-		return; // not index
-		
-	if (!localStorage.hiddenthreads)
-		localStorage.hiddenthreads = '{}';
-	
-	// Load data from HTML5 localStorage
-	var hidden_data = JSON.parse(localStorage.hiddenthreads);
-	
-	var store_data = function() {
-		localStorage.hiddenthreads = JSON.stringify(hidden_data);
+	if (!['index', 'ukko'].includes(getActivePage())) return;
+
+	if (!localStorage.hiddenthreads) localStorage.hiddenthreads = '{}';
+
+	const hiddenData = JSON.parse(localStorage.hiddenthreads);
+	const fieldsToHide = 'div.file,div.post,div.video-container,video,iframe,img:not(.unanimated),canvas,p.fileinfo,a.hide-thread-link,div.new-posts,br';
+
+	const storeData = () => {
+		localStorage.hiddenthreads = JSON.stringify(hiddenData);
 	};
-	
-	// Delete old hidden threads (7+ days old)
-	for (var key in hidden_data) {
-		for (var id in hidden_data[key]) {
-			if (hidden_data[key][id] < Math.round(Date.now() / 1000) - 60 * 60 * 24 * 7) {
-				delete hidden_data[key][id];
-				store_data();
+
+	const deleteOldHiddenThreads = () => {
+		const oneWeekAgo = Math.round(Date.now() / 1000) - 60 * 60 * 24 * 7;
+		for (let board in hiddenData) {
+			for (let id in hiddenData[board]) {
+				if (hiddenData[board][id] < oneWeekAgo) {
+					delete hiddenData[board][id];
+					storeData();
+				}
 			}
 		}
-	}
+	};
 
-	var fields_to_hide = 'div.file,div.post,div.video-container,video,iframe,img:not(.unanimated),canvas,p.fileinfo,a.hide-thread-link,div.new-posts,br';
-	
-	var do_hide_threads = function() {
-		var id = $(this).children('p.intro').children('a.post_no:eq(1)').text();
-		var thread_container = $(this).parent();
+	const createHideLink = (threadContainer, board, id) => {
+		return Vichan.createElement('a', {
+			className: 'hide-thread-link',
+			attributes: { style: 'float:left;margin-right:5px' },
+			innerHTML: '<i class="fa fa-minus-square"></i>',
+			onClick: () => {
+				hiddenData[board][id] = Math.round(Date.now() / 1000);
+				storeData();
+				threadContainer.querySelectorAll(fieldsToHide).forEach(el => el.style.display = 'none');
+				createUnhideLink(threadContainer, board, id);
+			}
+		});
+	};
 
-		var board = thread_container.data("board");
+	const createUnhideLink = (threadContainer, board, id) => {
+		const hiddenDiv = threadContainer.querySelector('div.post.op > p.intro').cloneNode(true);
+		hiddenDiv.classList.add('thread-hidden');
+		hiddenDiv.querySelectorAll('a[href]:not([href$=".html"]), input').forEach(el => el.remove());
+		hiddenDiv.innerHTML = hiddenDiv.innerHTML.replace(/ \[\] /g, ' ');
 
-		if (!hidden_data[board]) {
-			hidden_data[board] = {}; // id : timestamp
+		Vichan.createElement('a', {
+			className: 'unhide-thread-link',
+			attributes: { style: 'float:left;margin-right:5px;margin-left:0px;' },
+			innerHTML: '<i class="fa fa-plus-square"></i>',
+			onClick: () => {
+				delete hiddenData[board][id];
+				storeData();
+				threadContainer.querySelectorAll(fieldsToHide).forEach(el => el.style.display = '');
+				threadContainer.querySelector('.hidden').style.display = 'none';
+				hiddenDiv.remove();
+			},
+			parent: hiddenDiv.querySelector(':first-child')
+		});
+
+		threadContainer.insertBefore(hiddenDiv, threadContainer.querySelector(':not(h2,h2 *)'));
+	};
+
+	const hideThread = thread => {
+		const id = thread.querySelector('p.intro > a.cite-link').dataset.cite;
+		const threadContainer = thread.closest('div');
+		const board = threadContainer.dataset.board;
+
+		if (!hiddenData[board]) hiddenData[board] = {};
+
+		const hideLink = createHideLink(threadContainer, board, id);
+		const targetElement = threadContainer.querySelector(':not(h2, h2 *):first-child');
+
+		targetElement.parentNode.insertBefore(hideLink, targetElement);
+
+		if (hiddenData[board][id]) {
+			threadContainer.querySelector('.hide-thread-link').click();
 		}
-	
-		$('<a class="hide-thread-link" style="float:left;margin-right:5px" href="javascript:void(0)"><i class="fa fa-minus-square"></i></a><span> </span>')
-			.insertBefore(thread_container.find(':not(h2,h2 *):first'))
-			.click(function() {
-				hidden_data[board][id] = Math.round(Date.now() / 1000);
-				store_data();
-				
-				thread_container.find(fields_to_hide).hide();
-				
-				var hidden_div = thread_container.find('div.post.op > p.intro').clone();
-				hidden_div.addClass('thread-hidden');
-				hidden_div.find('a[href]:not([href$=".html"]),input').remove();
-				hidden_div.html(hidden_div.html().replace(' [] ', ' '));
-				hidden_div.html(hidden_div.html().replace(' [] ', ' '));
-				
-				$('<a class="unhide-thread-link" style="float:left;margin-right:5px;margin-left:0px;" href="javascript:void(0)"><i class="fa fa-plus-square"></i></a><span> </span>')
-					.insertBefore(hidden_div.find(':first'))
-					.click(function() {
-						delete hidden_data[board][id];
-						store_data();
-						thread_container.find(fields_to_hide).show();
-						thread_container.find(".hidden").hide();
-						$(this).remove();
-						hidden_div.remove();
-					});
-				
-				hidden_div.insertAfter(thread_container.find(':not(h2,h2 *):first'));
-			});
-		if (hidden_data[board][id])
-			thread_container.find('.hide-thread-link').click();
-	}
+	};
 
-	$('div.post.op').each(do_hide_threads);
+	deleteOldHiddenThreads();
+	document.querySelectorAll('div.post.op').forEach(hideThread);
 
-	$(document).on('new_post', function(e, post) {
-		do_hide_threads.call($(post).find('div.post.op')[0]);
+	document.addEventListener('new_post_js', e => {
+		const newPost = e.detail.detail;
+		hideThread(newPost.querySelector('div.post.op'));
 	});
 });

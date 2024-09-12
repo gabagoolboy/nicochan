@@ -1,87 +1,77 @@
-{% if post and board %}
-	{% set action = '?/' ~ board ~ '/warning/' ~ post %}
-{% else %}
-	{% set action = '?/warning' %}
-{% endif %}
+{% set action = post and board ? '?/' ~ board ~ '/warning/' ~ post : '?/warning' %}
 
 {% if reasons %}
-<script type="text/javascript">
-$(window).on('load', (function(){
-	{% for key, reason in reasons %}
-		$('#ResonSelectorID_{{ key }}').click(function() { populateFormJQuery('#WarningFromID', $.parseJSON(data_{{ key }})); });
-		var data_{{ key }} = '{"reason":"{{ reason|escape('js') }}"}';
-	{% endfor %}
-}));
+<script type="application/json" id="warningformid-reasons-data">
+{
+    {% for key, reason in reasons %}
+    "{{ key }}": {
+        "reason": "{{ reason|escape('js') }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
 </script>
 {% endif %}
 
-<form action="{{ action }}" method="post" id="WarningFromID">
-	<input type="hidden" name="token" value="{{ token }}">
-	{% if redirect %}
-		<input type="hidden" name="redirect" value="{{ redirect|e }}">
-	{% endif %}
-	{% if post and board %}
-		<input type="hidden" name="delete" value="{% if delete %}1{% else %}0{% endif %}">
-	{% endif %}
-	<table>
-
-		<tr>
-			<th>
-				<label for="ip">{% trans 'IP' %}</label>
-			</th>
-			<td>
-				{% if not hide_ip %}
-					<input type="text" name="ip" id="ip" size="30" maxlength="40" value="{{ ip|e }}">
-				{% else %}
-					<em>{% trans 'hidden' %}</em>
-				{% endif %}
-			</td>
-		</tr>
-		<tr>
-			<th>
-				<label for="reason">{% trans 'Reason' %}</label>
-			</th>
-			<td>
-				<textarea name="reason" id="reason" rows="5" cols="30">{{ reason|e }}</textarea>
-			</td>
-		</tr>
-		{% if post and board and not delete %}
-			<tr>
-				<th>
-					<label for="reason">{% trans 'Message' %}</label>
-				</th>
-				<td>
-					<input type="checkbox" id="public_message" name="public_message"{% if config.mod.check_warning_message %} checked{% endif %}>
-					<input type="text" name="message" id="message" size="35" maxlength="200" value="{{ config.mod.default_warning_message|e }}">
-					<span class="unimportant">({% trans 'public; attached to post' %})</span>
-					<script type="text/javascript">
-						document.getElementById('message').disabled = !document.getElementById('public_message').checked;
-						document.getElementById('public_message').onchange = function() {
-							document.getElementById('message').disabled = !this.checked;
-						}
-					</script>
-				</td>
-			</tr>
-		{% endif %}
-		<tr>
-			<td></td>
-			<td><input name="new_warning" type="submit" value="{% trans 'New Warning' %}"></td>
-		</tr>
-	</table>
+<form action="{{ action }}" method="post" id="WarningFormID">
+    <input type="hidden" name="token" value="{{ token }}">
+    {% if redirect %}
+        <input type="hidden" name="redirect" value="{{ redirect|e }}">
+    {% endif %}
+    {% if post and board %}
+        <input type="hidden" name="delete" value="{{ delete ? '1' : '0' }}">
+    {% endif %}
+    <table>
+        <tr>
+            <th>
+                <label for="ip">{% trans %}IP{% endtrans %}</label>
+            </th>
+            <td>
+                {% if not hide_ip %}
+                    <input type="text" name="ip" id="ip" size="30" maxlength="40" value="{{ ip|e }}">
+                {% else %}
+                    <em>{% trans %}hidden{% endtrans %}</em>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <label for="reason">{% trans %}Reason{% endtrans %}</label>
+            </th>
+            <td>
+                <textarea name="reason" id="reason" rows="5" cols="30">{{ reason|e }}</textarea>
+            </td>
+        </tr>
+        {% if post and board and not delete %}
+            <tr>
+                <th>
+                    <label for="message">{% trans %}Message{% endtrans %}</label>
+                </th>
+                <td>
+                    <input type="checkbox" id="public_message" name="public_message" {{ config.mod.check_warning_message ? 'checked' : '' }}>
+                    <input type="text" name="message" id="message" size="35" maxlength="200" value="{{ config.mod.default_warning_message|e }}">
+                    <span class="unimportant">({% trans %}public; attached to post{% endtrans %})</span>
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td></td>
+            <td><input name="new_warning" type="submit" value="{% trans %}New Warning{% endtrans %}"></td>
+        </tr>
+    </table>
 </form>
 
 {% if reasons %}
-<h3>Predefined Warning Reasons:</h3>
-<form>
-<table class="ReasonTableForm" style="margin-left: unset">
-	<tr>
-		<th>Reason</th>
-	</tr>
-	{% for key, reason in reasons %}
-		<tr id="ResonSelectorID_{{ key }}">
-			<td>{{ reason|e }}</td>
-		</tr>
-	{% endfor %}
-</table>
-</form>
+	<h3>{% trans %}Predefined Warning Reasons:{% endtrans %}</h3>
+	<form>
+    	<table class="ReasonTableForm" style="margin-left: unset">
+        	<tr>
+            	<th>{% trans %}Reason{% endtrans %}</th>
+        	</tr>
+        	{% for key, reason in reasons %}
+            	<tr id="ResonSelectorID_{{ key }}" class="reason-selector" data-key="{{ key }}">
+                	<td>{{ reason|e }}</td>
+            	</tr>
+        	{% endfor %}
+    	</table>
+	</form>
 {% endif %}
