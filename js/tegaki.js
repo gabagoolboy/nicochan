@@ -13,7 +13,7 @@ function initialize_tegaki() {
             <th>
                 Tegaki
             </th>
-            <td>
+            <td id="tegaki-buttons">
                 <input type="text" id="width-tegaki" class="tegaki-input" size="4" maxlength="4" value="400"> x 
                 <input type="text" id="height-tegaki" class="tegaki-input" size="4" maxlength="4" value="400">
                 <input type="button" id="tegaki-start" value="${_('Draw')}">

@@ -5,520 +5,542 @@
  * Released under the MIT license
  * Copyright (c) 2013 Michael Save <savetheinternet@tinyboard.org>
  * Copyright (c) 2013-2014 Marcin Łabanowski <marcin@6irc.net>
+ * Copyright (c) 2024 Perdedora <weav@anche.no>
  *
  * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
- *   $config['additional_javascript'][] = 'js/jquery-ui.custom.min.js'; // Optional; if you want the form to be draggable.
  *   $config['additional_javascript'][] = 'js/quick-reply.js';
- *
  */
 
-(function() {
-	var settings = new ScriptSettings('quick-reply');
+(function () {
+	'use strict';
 
-	var do_css = function() {
-		$('#quick-reply-css').remove();
+	const settings = new ScriptSettings('quick-reply');
 
-		// Find background of reply posts
-		var dummy_reply = $('<div class="post reply"></div>').appendTo($('body'));
-		var reply_background = dummy_reply.css('backgroundColor');
-		var reply_border_style = dummy_reply.css('borderStyle');
-		var reply_border_color = dummy_reply.css('borderColor');
-		var reply_border_width = dummy_reply.css('borderWidth');
-		dummy_reply.remove();
-
-		$('<style type="text/css" id="quick-reply-css">\
-		#quick-reply {\
-			position: fixed;\
-			right: 5%;\
-			top: 5%;\
-			float: right;\
-			display: block;\
-			padding: 0 0 0 0;\
-			width: 300px;\
-			z-index: 100;\
-		}\
-		#quick-reply table {\
-			border-collapse: collapse;\
-			background: ' + reply_background + ';\
-			border-style: ' + reply_border_style + ';\
-			border-width: ' + reply_border_width + ';\
-			border-color: ' + reply_border_color + ';\
-			margin: 0;\
-			width: 100%;\
-		}\
-		#quick-reply tr td:nth-child(2) {\
-			white-space: nowrap;\
-			padding-right: 4px;\
-		}\
-		#quick-reply td.post-options > * {\
-			display: block;\
-			margin-bottom: 2px;\
-		}\
-		#quick-reply tr td:nth-child(2) input[type="submit"] {\
-			width: 100%;\
-		}\
-		#quick-reply th, #quick-reply td {\
-			margin: 0;\
-			padding: 0;\
-		}\
-		#quick-reply th {\
-			text-align: center;\
-			padding: 2px 0;\
-			border: 1px solid #222;\
-		}\
-		#quick-reply th .handle {\
-			float: left;\
-			width: 100%;\
-			display: inline-block;\
-		}\
-		#quick-reply th .close-btn {\
-			float: right;\
-			padding: 0 5px;\
-		}\
-		#quick-reply input[type="text"], #quick-reply select {\
-			width: 100%;\
-			padding: 2px;\
-			font-size: 10pt;\
-			box-sizing: border-box;\
-			-webkit-box-sizing:border-box;\
-			-moz-box-sizing: border-box;\
-		}\
-		#quick-reply textarea {\
-			width: 100%;\
-			min-width: 100%;\
-			box-sizing: border-box;\
-			-webkit-box-sizing:border-box;\
-			-moz-box-sizing: border-box;\
-			font-size: 10pt;\
-			resize: vertical horizontal;\
-		}\
-		#quick-reply input, #quick-reply select, #quick-reply textarea {\
-			margin: 0 0 1px 0;\
-		}\
-		#quick-reply input[type="file"] {\
-			padding: 5px 2px;\
-		}\
-		#quick-reply .nonsense {\
-			display: none;\
-		}\
-		#quick-reply td.submit {\
-			width: 1%;\
-		}\
-		#quick-reply td.hcaptcha {\
-			text-align: center;\
-			padding: 0 0 1px 0;\
-		}\
-		#quick-reply td.hcaptcha span {\
-			display: inline-block;\
-			width: 100%;\
-			background: white;\
-			border: 1px solid #ccc;\
-			cursor: pointer;\
-		}\
-		#quick-reply td.hcaptcha-response {\
-			padding: 0 0 1px 0;\
-		}\
-		@media screen and (max-width: 400px) {\
-			#quick-reply {\
-				display: none !important;\
-			}\
-		}\
-		</style>').appendTo($('head'));
-	};
-
-	var show_quick_reply = function(target_id){
-
-		let in_index = false;
-
-		if($('div.banner').length == 0) {
-			$("#PostAreaToggle").prop("checked", true);
-			var thread_sel = $(`#reply_${target_id}, #op_${target_id}`).closest("[id*=thread_");
-			var thread_id = thread_sel.attr("id").replace("thread_", "");
-			var board = thread_sel.attr("data-board");
-			in_index = true;
+	const do_css = () => {
+		const existingStyle = document.getElementById('quick-reply-css');
+		if (existingStyle) {
+			existingStyle.remove();
 		}
 
-		if($('#quick-reply').length !== 0) {
- 			if ($('#quick-reply').data('thread-id') !== target_id) {
-				$('#quick-reply input[name="thread"]').val(thread_id);
-				$("#quick-reply .handle #thread-id-number").text(`(${thread_id})`);
-				$("#quick-reply").attr("data-thread-id", thread_id);
+		const dummy_reply = Vichan.createElement('div', {
+			className: 'post reply',
+			parent: document.body,
+		});
+
+		const style = window.getComputedStyle(dummy_reply);
+		const reply_background = style.backgroundColor;
+		const reply_border_style = style.borderStyle;
+		const reply_border_color = style.borderColor;
+		const reply_border_width = style.borderWidth;
+
+		dummy_reply.remove();
+
+		const styleContent = `
+		#quick-reply {
+			position: fixed;
+			right: 5%;
+			top: 5%;
+			width: 300px;
+			z-index: 100;
+		}
+		#quick-reply table {
+			border-collapse: collapse;
+			background: ${reply_background};
+			border-style: ${reply_border_style};
+			border-width: ${reply_border_width};
+			border-color: ${reply_border_color};
+			width: 100%;
+		}
+		#quick-reply td.post-options > * {
+			display: block;
+			margin-bottom: 2px;
+		}
+		#quick-reply .form_submit {
+			width: 100%;
+			box-sizing: border-box;
+			margin-left: unset !important;
+		}
+		#quick-reply th, #quick-reply td {
+			margin: 0;
+			padding: 0;
+		}
+		#quick-reply th {
+			text-align: center;
+			padding: 2px 0;
+			border: 1px solid #222;
+		}
+		#quick-reply .handle {
+			float: left;
+			width: 100%;
+		}
+		#quick-reply .close-btn {
+			float: right;
+			padding: 0 5px;
+			cursor: pointer;
+		}
+		#quick-reply input[type="text"], #quick-reply textarea, #quick-reply select {
+			width: 100%;
+			padding: 2px;
+			font-size: 10pt;
+			box-sizing: border-box;
+			margin: unset !important;
+		}
+		@media screen and (max-width: 400px) {
+			#quick-reply {
+				display: none !important;
+			}
+		}
+		`;
+
+		Vichan.createElement('style', {
+			idName: 'quick-reply-css',
+			text: styleContent,
+			parent: document.head,
+		});
+	};
+
+	const show_quick_reply = function (target_id) {
+		let inIndex = ['index', 'ukko'].includes(getActivePage());
+		let thread_id = '';
+		let board = '';
+
+		if (inIndex) {
+			document.getElementById('PostAreaToggle')?.setAttribute('checked', true);
+			const replyElement = document.querySelector(`#reply_${target_id}, #op_${target_id}`);
+			if (!replyElement) return;
+
+			const thread_sel = replyElement.closest('[id*="thread_"]');
+			if (!thread_sel) return;
+
+			thread_id = thread_sel.id.split('_')[1];
+			board = thread_sel.dataset.board;
+		}
+
+		if (document.getElementById('quick-reply')) {
+			const quickReply = document.getElementById('quick-reply');
+			if (quickReply.dataset.threadId !== target_id) {
+				quickReply.querySelector('input[name="thread"]').value = thread_id;
+				quickReply.querySelector('.handle #thread-id-number').textContent = ` (${thread_id})`;
+				quickReply.setAttribute('data-thread-id', thread_id);
 			}
 			return;
 		}
 
 		do_css();
 
-		var $postForm = $('form[name="post"]').clone();
-
-		$postForm.clone();
+		const origPostForm = document.getElementById('post-form');
+		if (!origPostForm) return;
+		const postForm = origPostForm.cloneNode(true);
 
 		triggerCustomEvent('quick-reply', window);
 
-		$dummyStuff = $('<div class="nonsense"></div>').appendTo($postForm);
+		const dummyStuff = Vichan.createElement('div', {
+			className: 'nonsense',
+			parent: postForm,
+		});
 
-		$postForm.find('table tr').each(function() {
-			var $th = $(this).children('th:first');
-			var $td = $(this).children('td:first');
-			if ($th.length && $td.length) {
-				$td.attr('colspan', 2);
+		const rows = postForm.querySelectorAll('table tr');
+		rows.forEach(function (row) {
+			const th = row.querySelector('th');
+			const td = row.querySelector('td');
 
-				if ($td.find('input[type="text"]').length) {
-					// Replace <th> with input placeholders
-					$td.find('input[type="text"]')
-						.removeAttr('size')
-						.attr('placeholder', $th.clone().children().remove().end().text());
+			if (th && td) {
+				td.setAttribute('colspan', '2');
+
+				const fragment = document.createDocumentFragment();
+				th.querySelectorAll('input[type="hidden"], [style*="display:none"], [style*="display: none"]').forEach((el) => {
+					el.style.display = 'none';
+					fragment.appendChild(el);
+				})
+				dummyStuff.appendChild(fragment);
+
+				th.remove();
+
+				if (td.querySelector('.form_submit')) {
+					td.removeAttribute('colspan');
+					const submitTd = Vichan.createElement('td', { className: 'submit' });
+					submitTd.appendChild(td.querySelector('.form_submit'));
+					td.parentNode.insertBefore(submitTd, td.nextSibling);
 				}
 
-				// Move anti-spam nonsense and remove <th>
-				$th.contents().filter(function() {
-					return this.nodeType == 3; // Node.TEXT_NODE
-				}).remove();
-				$th.contents().appendTo($dummyStuff);
-				$th.remove();
-
-				if ($td.find('input[name="password"]').length) {
-					// Hide password field
-					$(this).hide();
-				}
-
-				// Fix submit button
-				if ($td.find('input[type="submit"]').length) {
-					$td.removeAttr('colspan');
-					$('<td class="submit"></td>').append($td.find('input[type="submit"]')).insertAfter($td);
-				}
-
-				// reCAPTCHA
-				if ($td.find('#recaptcha_widget_div').length) {
-					// Just show the image, and have it interact with the real form.
-					var $captchaimg = $td.find('#recaptcha_image img');
-
-					$captchaimg
-						.removeAttr('id')
-						.removeAttr('style')
-						.addClass('recaptcha_image')
-						.click(function() {
-							$('#recaptcha_reload').click();
-						});
-
-					// When we get a new captcha...
-					$('#recaptcha_response_field').focus(function() {
-						if ($captchaimg.attr('src') != $('#recaptcha_image img').attr('src')) {
-							$captchaimg.attr('src', $('#recaptcha_image img').attr('src'));
-							$postForm.find('input[name="recaptcha_challenge_field"]').val($('#recaptcha_challenge_field').val());
-							$postForm.find('input[name="recaptcha_response_field"]').val('').focus();
-						}
-					});
-
-					$postForm.submit(function() {
-						setTimeout(function() {
-							$('#recaptcha_reload').click();
-						}, 200);
-					});
-
-					// Make a new row for the response text
-					var $newRow = $('<tr><td class="recaptcha-response" colspan="2"></td></tr>');
-					$newRow.children().first().append(
-						$td.find('input').removeAttr('style')
-					);
-					$newRow.find('#recaptcha_response_field')
-						.removeAttr('id')
-						.addClass('recaptcha_response_field')
-						.attr('placeholder', $('#recaptcha_response_field').attr('placeholder'));
-
-					$('#recaptcha_response_field').addClass('recaptcha_response_field')
-
-					$td.replaceWith($('<td class="recaptcha" colspan="2"></td>').append($('<span></span>').append($captchaimg)));
-
-					$newRow.insertAfter(this);
-				}
-
-				// Upload section
-				if ($td.find('input[type="file"]').length) {
-					if ($td.find('input[name="file_url"]').length) {
-						$file_url = $td.find('input[name="file_url"]');
-
-						if (settings.get('show_remote', false)) {
-							// Make a new row for it
-							var $newRow = $('<tr><td colspan="2"></td></tr>');
-
-							$file_url.clone().attr('placeholder', _('Upload URL')).appendTo($newRow.find('td'));
-
-							$newRow.insertBefore(this);
-						}
-						$file_url.parent().remove();
-
-
-						$td.find('label').remove();
-						$td.contents().filter(function() {
-							return this.nodeType == 3; // Node.TEXT_NODE
-						}).remove();
-						$td.find('input[name="file_url"]').removeAttr('id');
-					}
-
-					if ($(this).find('input[id="spoiler"]').length) {
-						$td.removeAttr('colspan');
-					}
-				}
-
-				// Disable embedding if configured so
-				if (!settings.get('show_embed', false) && $td.find('input[name="embed"]').length) {
-					$(this).remove();
-				}
-
-				// Remove oekaki if existent
-				if ($(this).is('#oekaki')) {
-					$(this).remove();
-				}
-
-				// Remove upload selection
-				if ($td.is('#upload_selection')) {
-					$(this).remove();
-				}
-
-				if ($td.is('#mod-flags')) {
-					$(this).remove();
-				}
-
-				if ($td.prevObject && $td.prevObject.is('#tegaki-form')) {
-					$(this).remove();
-				}
-
-				// Remove mod controls, because it looks shit.
-				if ($td.find('input[type="checkbox"]').length) {
-					if ($postForm.find('td.post-options').length == 0)
-						$postForm.find('input[type="file"]').parent().removeAttr('colspan').after('<td class="post-options"></td>');
-
-					var tr = this;
-					$td.find('input[type="checkbox"]').each(function() {
-							$(this).appendTo($postForm.find('td.post-options'));
-					});
-				}
-
-				$td.find('small').hide();
+				if (['upload_selection', 'mod-flags', 'tegaki-buttons', 'pwd-field'].includes(td.id)) row.remove();
 			}
 		});
 
-		$postForm.find('textarea[name="body"]').removeAttr('id').removeAttr('cols').attr('placeholder', _('Comment'));
+		postForm.querySelector('textarea[name="body"]').setAttribute('placeholder', _('Comment'));
+		postForm.querySelector('input[name="subject"]').setAttribute('placeholder', _('Subject'));
 
-		$postForm.find('textarea:not([name="body"]),input[type="hidden"]').removeAttr('id').appendTo($dummyStuff);
+		const nonBodyTextareas = postForm.querySelectorAll('textarea:not([name="body"]), input[type="hidden"]');
+		nonBodyTextareas.forEach(element => dummyStuff.appendChild(element));
 
-		$postForm.find('br').remove();
-		$postForm.find('table').prepend('<tr><th colspan="2">\
-			<span class="handle">\
-				<a class="close-btn">×</a>\
-				' + _('Quick Reply') + '\
-			</span>\
-			</th></tr>');
+		postForm.querySelectorAll('br').forEach(br => br.remove());
 
-		$postForm.attr('id', 'quick-reply');
+		const table = postForm.querySelector('table');
+		const headerRow = Vichan.createElement('tr');
+		const headerTh = Vichan.createElement('th', { attributes: { colspan: '2' }, parent: headerRow });
+		const handleSpan = Vichan.createElement('span', { className: 'handle', innerHTML: _('Quick Reply'), parent: headerTh });
+		const closeBtn = Vichan.createElement('a', {
+			className: 'close-btn',
+			text: '✖',
+			attributes: { href: '#' },
+			onClick: function (e) {
+				e.preventDefault();
+				postForm.remove();
+				floatingLink();
+			},
+			parent: handleSpan
+		});
 
-		$postForm.appendTo($('body')).hide();
-		$origPostForm = $('form[name="post"]:first');
-
-		if (in_index) {
-			$(`<input type='hidden' name='thread' value='${thread_id}'></input>`).appendTo($("#quick-reply"));
-			const threadIdSpan = `<span id="thread-id-number">(${thread_id})</span>`;
-			$("#quick-reply .handle").append(threadIdSpan);
-			$("#quick-reply").attr("data-thread-id", thread_id);
-			$("#quick-reply .form_submit").attr("value", button_reply);
-			if ($('#quick-reply select[name="board"]').length) {
-					$('#quick-reply select[name="board"]').remove();
-					$('#quick-reply input[name="board"]').val(board);
-			}
-
-			if (post_captcha === 'false') {
-				$("#quick-reply .captcha").remove();
-			}
-		}
-
-			// Synchronise body text with original post form
-			$origPostForm.find('textarea[name="body"]').on('change input propertychange', function() {
-				$postForm.find('textarea[name="body"]').val($(this).val());
-			});
-			$postForm.find('textarea[name="body"]').on('change input propertychange', function() {
-				$origPostForm.find('textarea[name="body"]').val($(this).val()).trigger('input');
-			});
-			$postForm.find('textarea[name="body"]').focus(function() {
-				$origPostForm.find('textarea[name="body"]').removeAttr('id');
-				$(this).attr('id', 'body');
-			});
-			$origPostForm.find('textarea[name="body"]').focus(function() {
-				$postForm.find('textarea[name="body"]').removeAttr('id');
-				$(this).attr('id', 'body');
-			});
-			// Synchronise other inputs
-			$origPostForm.find('input[type="text"],select').on('change input propertychange', function() {
-				$postForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
-			});
-			$postForm.find('input[type="text"],select').on('change input propertychange', function() {
-				$origPostForm.find('[name="' + $(this).attr('name') + '"]').val($(this).val());
-			});
-
-			$origPostForm.find('input[type="checkbox"]').on('change input propertychange', function() {
-				$postForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
-			});
-			$postForm.find('input[type="checkbox"]').on('change input propertychange', function() {
-				$origPostForm.find('[name="' + $(this).attr('name') + '"]').prop('checked', $(this).prop('checked'));
-			});
-
-		if (typeof $postForm.draggable != 'undefined') {
-			if (localStorage.quickReplyPosition) {
-				var offset = JSON.parse(localStorage.quickReplyPosition);
-				if (offset.top < 0)
-					offset.top = 0;
-				if (offset.right > $(window).width() - $postForm.width())
-					offset.right = $(window).width() - $postForm.width();
-				if (offset.top > $(window).height() - $postForm.height())
-					offset.top = $(window).height() - $postForm.height();
-				$postForm.css('right', offset.right).css('top', offset.top);
-			}
-			$postForm.draggable({
-				handle: 'th .handle',
-				containment: 'window',
-				distance: 10,
-				scroll: false,
-				stop: function() {
-					var offset = {
-						top: $(this).offset().top - $(window).scrollTop(),
-						right: $(window).width() - $(this).offset().left - $(this).width(),
-					};
-					localStorage.quickReplyPosition = JSON.stringify(offset);
-
-					$postForm.css('right', offset.right).css('top', offset.top).css('left', 'auto');
-				}
-			});
-			$postForm.find('th .handle').css('cursor', 'move');
-		}
-
-		$postForm.find('th .close-btn').click(function() {
-			$origPostForm.find('textarea[name="body"]').attr('id', 'body');
-			$postForm.remove();
+		closeBtn.addEventListener('touchend', function (e) {
+			e.preventDefault();
+			postForm.remove();
 			floatingLink();
 		});
 
-		// Fix bug when table gets too big for form. Shouldn't exist, but crappy CSS etc.
-		$postForm.show();
-		$postForm.width($postForm.find('table').width());
-		$postForm.hide();
+		table.insertBefore(headerRow, table.firstChild);
 
+		postForm.id = 'quick-reply';
 
-		$(window).ready(function() {
-			if (settings.get('hide_at_top', true)) {
-				$(window).scroll(function() {
-					if ($(this).width() <= 400)
-						return;
-					if ($(this).scrollTop() < $origPostForm.offset().top + $origPostForm.height() - 100)
-						$postForm.fadeOut(100);
-					else
-						$postForm.fadeIn(100);
-				}).scroll();
-			} else {
-				$postForm.show();
+		postForm.style.display = 'none';
+		document.body.appendChild(postForm);
+
+		if (inIndex) {
+			Vichan.createElement('input', {
+				attributes: { type: 'hidden', name: 'thread', value: thread_id },
+				parent: postForm
+			});
+			Vichan.createElement('span', {
+				idName: 'thread-id-number',
+				text: ` (${thread_id})`,
+				parent: postForm.querySelector('.handle')
+			});
+			postForm.setAttribute('data-thread-id', thread_id);
+			postForm.querySelector('.form_submit').value = button_reply;
+			postForm.querySelectorAll('input#hideposterid, label[for="hideposterid"]').forEach(el => el.remove());
+
+			if (getActivePage() === 'ukko') {
+				postForm.querySelector('select[name="board"]').remove();
+				postForm.querySelector('input[name="board"]').value = board;
 			}
 
-			$(window).on('stylesheet', function() {
-				do_css();
-				if ($('link#stylesheet').attr('href')) {
-					$('link#stylesheet')[0].onload = do_css;
+			if (post_captcha === 'false') {
+				postForm.querySelectorAll('.captcha, .captcha_cookie').forEach(el => el.remove());
+			}
+		}
+
+		const origBodyTextarea = origPostForm.querySelector('textarea[name="body"]');
+		const quickReplyBodyTextarea = postForm.querySelector('textarea[name="body"]');
+
+		if (origBodyTextarea && quickReplyBodyTextarea) {
+			origBodyTextarea.addEventListener('input', function () {
+				quickReplyBodyTextarea.value = this.value;
+			});
+
+			quickReplyBodyTextarea.addEventListener('input', function () {
+				origBodyTextarea.value = this.value;
+			});
+
+			quickReplyBodyTextarea.addEventListener('focus', function () {
+				origBodyTextarea.removeAttribute('id');
+				this.id = 'body';
+			});
+
+			origBodyTextarea.addEventListener('focus', function () {
+				quickReplyBodyTextarea.removeAttribute('id');
+				this.id = 'body';
+			});
+		}
+
+		const syncInputs = function (selector) {
+			const origInputs = origPostForm.querySelectorAll(selector);
+			origInputs.forEach(function (origInput) {
+				const quickReplyInput = postForm.querySelector(`[name="${origInput.name}"]`);
+				if (quickReplyInput) {
+					if (origInput.type === 'checkbox') {
+						origInput.addEventListener('change', function () {
+							quickReplyInput.checked = this.checked;
+						});
+						quickReplyInput.addEventListener('change', function () {
+							origInput.checked = this.checked;
+						});
+					} else {
+						origInput.addEventListener('input', function () {
+							quickReplyInput.value = this.value;
+						});
+						quickReplyInput.addEventListener('input', function () {
+							origInput.value = this.value;
+						});
+					}
 				}
 			});
+		};
+
+		syncInputs('input[type="text"], select, input[type="checkbox"]');
+		if (!document.querySelector('.dropzone-wrap')) {
+			syncInputs('input[type="file"]');
+		}
+
+		if (localStorage.quickReplyPosition) {
+			const offset = JSON.parse(localStorage.quickReplyPosition);
+			if (offset.top < 0) offset.top = 0;
+			if (offset.left < 0) offset.left = 0;
+			if (offset.left > window.innerWidth - postForm.offsetWidth)
+				offset.left = window.innerWidth - postForm.offsetWidth;
+			if (offset.top > window.innerHeight - postForm.offsetHeight)
+				offset.top = window.innerHeight - postForm.offsetHeight;
+
+			postForm.style.left = `${offset.left}px`;
+			postForm.style.top = `${offset.top}px`;
+			postForm.style.right = 'auto';
+		}
+
+		makeDraggable(postForm, postForm.querySelector('.handle'));
+
+		function makeDraggable(element, handle) {
+			let posX = 0,
+				posY = 0,
+				pointerX = 0,
+				pointerY = 0;
+
+			handle = handle || element;
+
+			handle.style.cursor = 'move';
+
+			handle.addEventListener('mousedown', dragStartMouse);
+			handle.addEventListener('touchstart', dragStartTouch, { passive: false });
+
+			function dragStartMouse(e) {
+				e.preventDefault();
+
+				pointerX = e.clientX;
+				pointerY = e.clientY;
+
+				document.addEventListener('mouseup', dragEndMouse);
+				document.addEventListener('mousemove', dragMouseMove);
+			}
+
+			function dragMouseMove(e) {
+				e.preventDefault();
+
+				posX = pointerX - e.clientX;
+				posY = pointerY - e.clientY;
+				pointerX = e.clientX;
+				pointerY = e.clientY;
+
+				moveElement();
+			}
+
+			function dragEndMouse() {
+				document.removeEventListener('mouseup', dragEndMouse);
+				document.removeEventListener('mousemove', dragMouseMove);
+
+				savePosition();
+			}
+
+			function dragStartTouch(e) {
+				e.preventDefault();
+
+				if (e.touches.length > 1) return;
+
+				const touch = e.touches[0];
+				pointerX = touch.clientX;
+				pointerY = touch.clientY;
+
+				document.addEventListener('touchend', dragEndTouch);
+				document.addEventListener('touchmove', dragTouchMove, { passive: false });
+			}
+
+			function dragTouchMove(e) {
+				e.preventDefault();
+
+				if (e.touches.length > 1) return;
+
+				const touch = e.touches[0];
+				posX = pointerX - touch.clientX;
+				posY = pointerY - touch.clientY;
+				pointerX = touch.clientX;
+				pointerY = touch.clientY;
+
+				moveElement();
+			}
+
+			function dragEndTouch() {
+				document.removeEventListener('touchend', dragEndTouch);
+				document.removeEventListener('touchmove', dragTouchMove);
+
+				savePosition();
+			}
+
+			function moveElement() {
+				let newTop = element.offsetTop - posY;
+				let newLeft = element.offsetLeft - posX;
+
+				const minTop = 0;
+				const minLeft = 0;
+				const maxTop = window.innerHeight - element.offsetHeight;
+				const maxLeft = window.innerWidth - element.offsetWidth;
+
+				newTop = Math.max(minTop, Math.min(newTop, maxTop));
+				newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+
+				element.style.top = `${newTop}px`;
+				element.style.left = `${newLeft}px`;
+				element.style.right = 'auto';
+			}
+
+			function savePosition() {
+				const offset = {
+					top: element.offsetTop,
+					left: element.offsetLeft,
+				};
+				localStorage.quickReplyPosition = JSON.stringify(offset);
+			}
+		}
+
+		function initializePosition(element) {
+			if (localStorage.quickReplyPosition) {
+				const offset = JSON.parse(localStorage.quickReplyPosition);
+				let { top, left } = offset;
+
+				top = Math.max(0, Math.min(top, window.innerHeight - element.offsetHeight));
+				left = Math.max(0, Math.min(left, window.innerWidth - element.offsetWidth));
+
+				element.style.left = `${left}px`;
+				element.style.top = `${top}px`;
+				element.style.right = 'auto';
+			} else {
+				element.style.left = '5%';
+				element.style.top = '5%';
+			}
+		}
+
+		initializePosition(postForm);
+
+		window.addEventListener('resize', function () {
+			const qr = document.getElementById('quick-reply');
+			if (qr) {
+				let { top, left } = qr.getBoundingClientRect();
+
+				top = Math.max(0, Math.min(top, window.innerHeight - qr.offsetHeight));
+				left = Math.max(0, Math.min(left, window.innerWidth - qr.offsetWidth));
+
+				qr.style.top = `${top}px`;
+				qr.style.left = `${left}px`;
+
+				const offset = { top, left };
+				localStorage.quickReplyPosition = JSON.stringify(offset);
+			}
+		});
+
+		setupVisibilityHandler();
+
+		window.addEventListener('stylesheet', function () {
+			do_css();
+			const stylesheetLink = document.querySelector('link#stylesheet');
+			if (stylesheetLink && stylesheetLink.href) {
+				stylesheetLink.addEventListener('load', do_css);
+			}
 		});
 	};
 
+	function setupVisibilityHandler() {
+		const postForm = document.getElementById('quick-reply');
+		const origPostForm = document.getElementById('post-form');
+		if (!postForm || !origPostForm) return;
+
+		if (settings.get('hide_at_top', true)) {
+			function scrollHandler() {
+				if (window.innerWidth <= 400) return;
+				if (
+					window.scrollY <
+					origPostForm.offsetTop + origPostForm.offsetHeight - 100
+				) {
+					postForm.style.display = 'none';
+				} else {
+					postForm.style.display = 'block';
+				}
+			}
+
+			window.addEventListener('scroll', scrollHandler);
+			scrollHandler();
+		} else {
+			postForm.style.display = 'block';
+		}
+	}
+
 	window.addEventListener('cite', function (e) {
-		const id = e.detail.id;
-
-		if (window.innerWidth <= 400) return;
-
-		show_quick_reply(id);
-	})
+		if (window.innerWidth > 400) show_quick_reply(e.detail.id);
+	});
 
 	const floatingLink = () => {
 		if (settings.get('floating_link', false)) {
-			if (!document.querySelector('div.banner')) return;
+			if (getActivePage() !== 'thread') return;
 
-			const style = Vichan.createElement('style', {
-				text: `a.quick-reply-btn {
-                		position: fixed;
-                		right: 0;
-                		bottom: 0;
-                		display: block;
-                		padding: 5px 13px;
-                		text-decoration: none;`,
-				parent: document.head
+			Vichan.createElement('style', {
+				text: 'a.quick-reply-btn { position: fixed; right: 0; bottom: 0; padding: 5px 13px; text-decoration: none; }',
+				parent: document.head,
 			});
-			
+
 			createFloatingLink();
 
 			if (settings.get('hide_at_top', true)) {
 				const quickReplyButton = document.querySelector('.quick-reply-btn');
 				quickReplyButton.style.display = 'none';
 
-				window.addEventListener('scroll', function () {
-					const form = document.querySelector('form[name="post"]');
+				function scrollHandler() {
+					const form = document.getElementById('post-form');
 					if (!form) return;
 
 					const formOffsetTop = form.offsetTop;
-                	const formHeight = form.offsetHeight;
-                	const scrollPosition = window.scrollY;
-                	const windowWidth = window.innerWidth;
+					const formHeight = form.offsetHeight;
+					const scrollPosition = window.scrollY;
+					const windowWidth = window.innerWidth;
 
 					if (windowWidth <= 400) return;
 
 					if (scrollPosition < formOffsetTop + formHeight - 100) {
-                    	quickReplyButton.style.display = 'none';
-                	} else {
-                    	quickReplyButton.style.display = 'block';
-                	}
-            });
-
-			triggerCustomEvent('scroll', window);
-
+						quickReplyButton.style.display = 'none';
+					} else {
+						quickReplyButton.style.display = 'block';
+					}
+				}
+				window.addEventListener('scroll', scrollHandler);
+				scrollHandler(); // crappy
 			}
-		}	
-	}
+		}
+	};
 
 	const createFloatingLink = () => {
-		const quickReplyButton = Vichan.createElement('a', {
+		Vichan.createElement('a', {
 			className: 'quick-reply-btn',
 			text: _('Quick Reply'),
-			onClick: function () {
+			attributes: { href: '#' },
+			onClick: function (e) {
+				e.preventDefault();
 				show_quick_reply();
 				this.remove();
 			},
-			parent: document.body
+			parent: document.body,
 		});
-
 		window.addEventListener('quick-reply', () => {
-			const existingButton = document.querySelector('.quick-reply-btn');
-			if (existingButton) {
-				existingButton.remove();
-			}
+			document.querySelector('.quick-reply-btn')?.remove();
 		});
-	}
+	};
 
 	const indexButtonQr = () => {
-		const indexButton = document.querySelectorAll('a#reply-button');
-		if (indexButton) {
-			indexButton.forEach(link => {
-				const threadId = link.dataset.threadId;
-				link.addEventListener('click', (e) => {
-					e.preventDefault();
-					show_quick_reply(threadId);
-				})
-			})
-		}
-	}
+		document.querySelectorAll('a#reply-button')?.forEach((link) => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				show_quick_reply(link.dataset.threadId);
+			});
+		});
+	};
 
 	document.addEventListener('DOMContentLoaded', () => {
 		floatingLink();
 		indexButtonQr();
 	});
 
-	// fuck this
-	// when a post is sent after ajax, the quickreply becames weird
 	document.addEventListener('ajax_after_post', () => {
 		const qr = document.getElementById('quick-reply');
 		if (qr) {

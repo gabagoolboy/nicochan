@@ -89,7 +89,6 @@ function insertReply(reply, lastExpanded, thread) {
 	}
 
 	triggerCustomEvent('new_post_js', document, { detail: reply })
-	$(document).trigger('new_post', reply); // ugh
 }
 
 function hideOmittedAndReplyView(thread) {

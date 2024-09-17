@@ -15,23 +15,23 @@ document.addEventListener("DOMContentLoaded", () => {
 	'use strict';
 
 	const iso8601 = (s) => {
-    	return new Date(s.replace(/\.\d{3}/, '')
-        	.replace(/-/g, '/')
-        	.replace('T', ' ')
-        	.replace('Z', ' UTC')
-        	.replace(/([+-]\d{2}):?(\d{2})/, ' $1$2'));
+		return new Date(s.replace(/\.\d{3}/, '')
+			.replace(/-/g, '/')
+			.replace('T', ' ')
+			.replace('Z', ' UTC')
+			.replace(/([+-]\d{2}):?(\d{2})/, ' $1$2'));
 	};
 
 	const zeropad = (num, count) => String(num).padStart(count, '0');
 
 	const formatDate = (date) => {
-    	const day = zeropad(date.getDate(), 2);
-    	const month = zeropad(date.getMonth() + 1, 2);
-    	const year = date.getFullYear().toString().substring(2);
-    	const dayOfWeek = _(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()]);
-    	const hours = zeropad(date.getHours(), 2);
-    	const minutes = zeropad(date.getMinutes(), 2);
-    	const seconds = zeropad(date.getSeconds(), 2);
+		const day = zeropad(date.getDate(), 2);
+		const month = zeropad(date.getMonth() + 1, 2);
+		const year = date.getFullYear().toString().substring(2);
+		const dayOfWeek = _(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()]);
+		const hours = zeropad(date.getHours(), 2);
+		const minutes = zeropad(date.getMinutes(), 2);
+		const seconds = zeropad(date.getSeconds(), 2);
 
 		return `${day}/${month}/${year} (${dayOfWeek}.) ${hours}:${minutes}:${seconds}`;
 	};
@@ -47,27 +47,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const formatTimeDifference = (time, unitSingular, unitPlural) => {
 			const roundedTime = Math.round(time);
-			return `${roundedTime} ${roundedTime <= 1 ? _(unitSingular) : _(unitPlural)}`;
+			return `${roundedTime} ${roundedTime <= 1 ? unitSingular : unitPlural}`;
 		}
 
 		if (elapsed < msPerMinute) {
 			return _('Just now');
 		} else if (elapsed < msPerHour) {
-			return formatTimeDifference(elapsed / msPerMinute, ' minute ago', ' minutes ago');
+			return formatTimeDifference(elapsed / msPerMinute, _(' minute ago'), _(' minutes ago'));
 		} else if (elapsed < msPerDay) {
-			return formatTimeDifference(elapsed / msPerHour, ' hour ago', ' hours ago');
+			return formatTimeDifference(elapsed / msPerHour, _(' hour ago'), _(' hours ago'));
 		} else if (elapsed < msPerMonth) {
-			return formatTimeDifference(elapsed / msPerDay, ' day ago', ' days ago');
+			return formatTimeDifference(elapsed / msPerDay, _(' day ago'), _(' days ago'));
 		} else if (elapsed < msPerYear) {
-			return formatTimeDifference(elapsed / msPerMonth, ' month ago', ' months ago');
+			return formatTimeDifference(elapsed / msPerMonth, _(' month ago'), _(' months ago'));
 		} else {
-			return formatTimeDifference(elapsed / msPerYear, ' year ago', ' years ago');
+			return formatTimeDifference(elapsed / msPerYear, _(' year ago'), _(' years ago'));
 		}
 	}
 
 	const doLocalTime = (elem) => {
 		const times = elem.querySelectorAll('time');
 		const currentTime = Date.now();
+		const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 		times.forEach(timeElem => {
 			const t = timeElem.getAttribute('datetime');
@@ -76,47 +77,91 @@ document.addEventListener("DOMContentLoaded", () => {
 			timeElem.dataset.local = 'true';
 
 			if (!localStorage.show_relative_time || localStorage.show_relative_time === 'false') {
-				timeElem.setAttribute('title', timeDifference(currentTime, postTime));
+				if (!isTouchDevice) {
+					timeElem.setAttribute('title', timeDifference(currentTime, postTime));
+				} else {
+					setupCustomTooltip(timeElem, timeDifference(currentTime, postTime));
+				}
 			} else {
 				timeElem.textContent = timeDifference(currentTime, postTime);
-				timeElem.setAttribute('title', formatDate(iso8601(t)));
+				if (!isTouchDevice) {
+					timeElem.setAttribute('title', formatDate(iso8601(t)));
+				} else {
+					setupCustomTooltip(timeElem, formatDate(iso8601(t)));
+				}
 			}
 		});
 	};
 
+	const setupCustomTooltip = (element, tooltipText) => {
+		element.dataset.tooltipText = tooltipText;
+
+		element.addEventListener('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			document.querySelector('.custom-tooltip')?.remove();
+
+			const rect = element.getBoundingClientRect();
+			const tooltip = Vichan.createElement('div', {
+				className: 'custom-tooltip',
+				text: tooltipText,
+				attributes: { style: `top: ${rect.bottom + window.scrollY + 5}px; left: ${rect.left + window.scrollX}px` },
+				parent: document.body
+			});
+
+			setTimeout(() => {
+				tooltip.classList.add('show');
+			}, 10);
+
+			document.addEventListener('click', hideTooltip);
+		});
+
+		const hideTooltip = () => {
+			const tooltip = document.querySelector('.custom-tooltip');
+			if (tooltip) {
+				tooltip.classList.remove('show');
+				tooltip.addEventListener('transitionend', () => {
+					tooltip.remove();
+				}, { once: true });
+			}
+			document.removeEventListener('click', hideTooltip);
+		}
+	}
+
 	if (window.Options && Options.get_tab('general')) {
-    	let intervalId;
-    
-    	Options.extend_tab(
-        	'general',
-        	`<fieldset><legend>${_('Dates')}</legend><label id="show-relative-time"><input type="checkbox"> ${_('Show relative time')}</label></fieldset>`
-    	);
+		let intervalId;
 
-    	const showRelativeTimeCheckbox = document.querySelector('#show-relative-time>input');
+		Options.extend_tab(
+			'general',
+			`<fieldset><legend>${_('Dates')}</legend><label id="show-relative-time"><input type="checkbox"> ${_('Show relative time')}</label></fieldset>`
+		);
 
-    	const toggleRelativeTime = () => {
-        	const isEnabled = localStorage.show_relative_time === 'true';
-        	localStorage.show_relative_time = isEnabled ? 'false' : 'true';
+		const showRelativeTimeCheckbox = document.querySelector('#show-relative-time>input');
 
-        	if (isEnabled) {
-            	clearInterval(intervalId);
-        	} else {
-            	intervalId = setInterval(() => doLocalTime(document), 30000);
-        	}
+		const toggleRelativeTime = () => {
+			const isEnabled = localStorage.show_relative_time === 'true';
+			localStorage.show_relative_time = isEnabled ? 'false' : 'true';
 
-        	doLocalTime(document);
-    	};
+			if (isEnabled) {
+				clearInterval(intervalId);
+			} else {
+				intervalId = setInterval(() => doLocalTime(document), 30000);
+			}
 
-    	showRelativeTimeCheckbox.addEventListener('change', toggleRelativeTime);
+			doLocalTime(document);
+		};
 
-    	if (localStorage.show_relative_time === 'true') {
-        	showRelativeTimeCheckbox.checked = true;
-        	intervalId = setInterval(() => doLocalTime(document), 30000);
-    	}
+		showRelativeTimeCheckbox.addEventListener('change', toggleRelativeTime);
 
-    	document.addEventListener('new_post_js', (e) => {
-        	doLocalTime(e.detail.detail);
-    	});
+		if (localStorage.show_relative_time === 'true') {
+			showRelativeTimeCheckbox.checked = true;
+			intervalId = setInterval(() => doLocalTime(document), 30000);
+		}
+
+		document.addEventListener('new_post_js', (e) => {
+			doLocalTime(e.detail.detail);
+		});
 	}
 
 	doLocalTime(document);

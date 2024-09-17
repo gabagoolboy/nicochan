@@ -2,30 +2,55 @@
  * charcount.js
  *
  * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/charcount.js';
  *
  */
 
-$(document).ready(function(){
+document.addEventListener("DOMContentLoaded", () => {
+	'use strict';
 
-	// Storing this jQuery object outside of the event callback 
-	// prevents jQuery from having to search the DOM for it again
-	// every time an event is fired.
-	var $inputArea = $('#body');
-	if ($inputArea.length == 0)
-		return;
+	const maxChars = max_body;
+	const warningThreshold = 100;
 
-	var $maxChars = 6000;
+	const initializeCountdown = (textareaId, countdownSelector) => {
+		const inputArea = document.getElementById(textareaId);
+		if (!inputArea) return;
 
-	// Preset countdown field to max initial content length
-	$('.countdown').text($maxChars - $inputArea.val().length);
+		const countdownElements = document.querySelectorAll(countdownSelector);
+		if (!countdownElements) return;
 
-	// input           :: for all modern browsers [1]
-	// selectionchange :: for IE9 [2]
-	// propertychange  :: for <IE9 [3]
-	$inputArea.on('input selectionchange propertychange', function() {
-		$charCount = $maxChars - $inputArea.val().length;
-		$('.countdown').text($charCount);
-	});
+		const updateCountdown = () => {
+			const charCount = maxChars - inputArea.value.length;
+			countdownElements.forEach(elem => {
+				elem.textContent = charCount;
+
+				if (charCount <= warningThreshold) {
+					elem.classList.add('warning');
+				} else {
+					elem.classList.remove('warning');
+				}
+			});
+		};
+
+		updateCountdown();
+
+		inputArea.addEventListener('input', updateCountdown);
+		inputArea.addEventListener('selectionchange', updateCountdown);
+
+		inputArea.addEventListener('input', () => {
+			if (inputArea.value.length > maxChars) {
+				inputArea.value = inputArea.value.substring(0, maxChars);
+				updateCountdown();
+			}
+		});
+	};
+
+	initializeCountdown('body', '.countdown');
+
+	const handleQuickReply = () => {
+		initializeCountdown('body', '#quick-reply .countdown');
+	};
+
+	window.addEventListener('quick-reply', handleQuickReply);
+
 });

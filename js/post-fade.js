@@ -3,65 +3,88 @@
  * https://370ch.lt/js/post-hover-370.js
  *
  * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/post-hover-370.js';
  *
  *   Also some scripts have been edited to make them work with the
  *   post-hover-tree stuff like inline-expanding.js & local-time.js
  */
 
-$(document).ready(function(){
-	if (localStorage.posthover_delayon == null) {
-		localStorage.posthover_delayon = '50';
+document.addEventListener('DOMContentLoaded', function () {
+	if (localStorage.getItem('posthover_delayon') === null) {
+		localStorage.setItem('posthover_delayon', '50');
 	}
-	if (localStorage.posthover_delayoff == null) {
-		localStorage.posthover_delayoff = '200';
+	if (localStorage.getItem('posthover_delayoff') === null) {
+		localStorage.setItem('posthover_delayoff', '200');
 	}
+
 	if (window.Options && Options.get_tab('general')) {
-		Options.extend_tab("general", "<fieldset id='post-hover'><legend>"+_('Post Hover')+'</legend>'+
-			_('Delay until the message preview is shown:')+
-									  "<select id='posthover-delayon'>" +
-									  "<option value='0'>"+_('Not')+"</option>" +
-									  "<option value='50'>50ms</option>" +
-									  "<option value='100'>100ms</option>" +
-									  "<option value='200'>200ms</option>" +
-									  "<option value='300'>300ms</option>" +
-									  "<option value='400'>400ms</option>" +
-									  "<option value='500'>500ms</option>"+
-									  "</select></br>"+
-			_("Delay until the view of the message is closed:")+
-									  "<select id='posthover-delayoff'>" +
-									  "<option value='100'>100ms</option>" +
-									  "<option value='200'>200ms</option>" +
-									  "<option value='500'>500ms</option>" +
-									  "<option value='800'>800ms</option>" +
-									  "<option value='1000'>1000ms</option>" +
-									  "<option value='2000'>2000ms</option>" +
-									  "<option value='3000'>3000ms</option>" +
-									  "<option value='5000'>5000ms</option>" +
-									  "</select>"+
-			"<label id='posthover-opt'><input type='checkbox' />"+_('Use the old message preview method')+"</label>");
-		$('#posthover-delayon').val(localStorage.posthover_delayon).on('change', function(e) {
-			localStorage.posthover_delayon = e.target.value;
+		const fieldsetHTML = `
+    <fieldset id="post-hover">
+      <legend>${_('Post Hover')}</legend>
+      ${_('Delay until the message preview is shown:')}
+      <select id="posthover-delayon">
+        <option value="0">${_('Not')}</option>
+        <option value="50">50ms</option>
+        <option value="100">100ms</option>
+        <option value="200">200ms</option>
+        <option value="300">300ms</option>
+        <option value="400">400ms</option>
+        <option value="500">500ms</option>
+      </select><br/>
+      ${_('Delay until the view of the message is closed:')}
+      <select id="posthover-delayoff">
+        <option value="100">100ms</option>
+        <option value="200">200ms</option>
+        <option value="500">500ms</option>
+        <option value="800">800ms</option>
+        <option value="1000">1000ms</option>
+        <option value="2000">2000ms</option>
+        <option value="3000">3000ms</option>
+        <option value="5000">5000ms</option>
+      </select>
+      <label id="posthover-opt">
+        <input type="checkbox" /> ${_('Use the old message preview method')}
+      </label>
+    </fieldset>
+  `;
+
+		Options.extend_tab('general', fieldsetHTML);
+
+		const delayOnSelect = document.getElementById('posthover-delayon');
+		const delayOffSelect = document.getElementById('posthover-delayoff');
+		const posthoverOptInput = document.querySelector('#posthover-opt > input');
+
+		delayOnSelect.value = localStorage.getItem('posthover_delayon');
+		delayOffSelect.value = localStorage.getItem('posthover_delayoff');
+
+		delayOnSelect.addEventListener('change', (e) => {
+			localStorage.setItem('posthover_delayon', e.target.value);
 		});
-		$('#posthover-delayoff').val(localStorage.posthover_delayoff).on('change', function(e) {
-			localStorage.posthover_delayoff = e.target.value;
+
+		delayOffSelect.addEventListener('change', (e) => {
+			localStorage.setItem('posthover_delayoff', e.target.value);
 		});
-		$('#posthover-opt>input').on('change', function() {
-			if (localStorage.posthover_opt === 'true') {
-				localStorage.posthover_opt = 'false';
-				$('#posthover-delayon').parent().fadeTo("slow", 1);
-				$('#posthover-delayoff').parent().fadeTo("slow", 1);
-			} else {
-				localStorage.posthover_opt = 'true';
-				$('#posthover-delayon').parent().fadeTo("slow", 0.33);
-				$('#posthover-delayoff').parent().fadeTo("slow", 0.33);
-			}
+
+		function fadeParentOpacity(elementId, targetOpacity) {
+			const elem = document.getElementById(elementId);
+			const parent = elem.parentElement;
+			parent.style.transition = 'opacity 0.5s';
+			parent.style.opacity = targetOpacity;
+		}
+
+		posthoverOptInput.addEventListener('change', () => {
+			const isChecked = posthoverOptInput.checked;
+			localStorage.setItem('posthover_opt', isChecked ? 'true' : 'false');
+
+			const opacityValue = isChecked ? 0.33 : 1;
+			fadeParentOpacity('posthover-delayon', opacityValue);
+			fadeParentOpacity('posthover-delayoff', opacityValue);
 		});
-		if (localStorage.posthover_opt === 'true') {
-			$('#posthover-opt>input').attr('checked', 'checked');
-			$('#posthover-delayon').parent().fadeTo("slow", 0.33);
-			$('#posthover-delayoff').parent().fadeTo("slow", 0.33);
+
+		if (localStorage.getItem('posthover_opt') === 'true') {
+			posthoverOptInput.checked = true;
+			fadeParentOpacity('posthover-delayon', 0.33);
+			fadeParentOpacity('posthover-delayoff', 0.33);
 		}
 	}
 	if (localStorage.posthover_opt === 'true') {
@@ -69,200 +92,214 @@ $(document).ready(function(){
 	} else {
 		PostHoverTree();
 	}
-	
+
 	function PostHoverTree() {
-	/* post-hover-tree.js - Post hover tree. Because post-hover.js isn't russian enough.
-	 * sauce: rfch.rocks/rfch.xyz + Some edits from me ^_^
-	 *
-	 * Known bugs:
-	 * 1) Re-fetch single thread for different posts;
-	 * 2) No right 'dead zone';
-	 */
-		//hovering time before opening preview (ms)
-		rollOnDelay = localStorage.posthover_delayon;
-		//timeout for closing inactive previews (ms)
-		rollOverDelay = localStorage.posthover_delayoff;
-		//minimal distance in pixels between post preview and the screen edge
-		deadZone = 20;
+		/* post-hover-tree.js - Post hover tree. Because post-hover.js isn't russian enough.
+		 * sauce: rfch.rocks/rfch.xyz + Some edits from me ^_^
+		 * thanks anon for helping me
+		 * 
+		 * Known bugs:
+		 * 1) No right 'dead zone';
+		 * Further things//TODO:
+		 * The regex can be removed by adding a data-board into cites
+		 */
+		const rollOnDelay = parseInt(localStorage.getItem('posthover_delayon'), 10) || 50;
+		const rollOverDelay = parseInt(localStorage.getItem('posthover_delayoff'), 10) || 200;
+		const deadZone = 20;
 
-		//end of 'settings'.
+		const toFetch = {}; // {url: [post id list]}
+		const threadCache = {}; // {url: DocumentFragment}
+		const nonExistentThreads = {}; // {url: true}
+		let rollOnTimer = null;
 
-		var hovering = false;
-		//var dont_fetch_again = [];
-		var toFetch = {}; //{url: [post id list]}
-		var rollOnTimer = null;
-		/*
-		function _debug(text) {
-			if (window.FUKURO_DEBUG) {
-				console.info(text);
-			}
-		}
-		*/
-		function Message(type, text) {
-			var className;
-			switch (type) {
-				case 'error':
-					className = 'bg-error'; break;
-				case 'warning':
-					className = 'bg-warning'; break;
-				default:
-					className = 'bg-info';
-			}
-			return $('<p class="'+className+'">'+text+'</p>');
-		}
+		const Message = (type, text) => {
+			const p = document.createElement('p');
+			p.className = `bg-${type}`;
+			p.textContent = text;
+			return p;
+		};
 
-		function PostStub(id, content) {
-			var $stub =
-				$('<div class="post reply row post-hover stub" id="hover_reply_' + id + '"></div>');
-			if (content) {
-				$stub.append(content);
-			}
-			return $stub;
-		}
+		const PostStub = (id, content) => {
+			const stub = document.createElement('div');
+			stub.className = 'post reply row post-hover stub';
+			stub.id = `hover_reply_${id}`;
+			if (content) stub.appendChild(content);
+			return stub;
+		};
 
-		function summonPost(link) {
-			var matches = $(link).text().match(/^>>(?:>\/([^\/]+)\/)?(\d+)$/);
-			var id = matches[2];
-			// _debug('Summoning '+id+"'s clone");
-			//first search for hover
-			var $hover = $("#hover_reply_"+id);
-			if ($hover.length !== 0) {
-				return $hover[0];
-			}
-			//then search for post in document
-			var $post = $('#reply_'+id);
-			var $op = $('#op_'+id);
-			if ($.contains($post, link)) {
-				return false;
-			}
-			if ($post.length !== 0) {
-				return $post.clone().removeClass('highlighted').addClass('post-hover').attr('id', 'hover_reply_'+id)[0];
-			}
-			else if ($op.length !== 0) {
-				var $opP = $op.clone();
-				$op.siblings('div.files').clone().insertAfter($opP.find('p.intro'));
-				if ($op.siblings('div.files').find('div.multifile').length) {
-					$opP.find('div.body').css( "clear", "both" );
+		const clonePost = (element, id) => {
+			const cloned = element.cloneNode(true);
+			cloned.classList.remove('highlighted');
+			cloned.classList.add('post-hover');
+			cloned.id = `hover_reply_${id}`;
+			return cloned;
+		};
+
+
+
+		const cloneOpPost = (op, id) => {
+			const opClone = op.cloneNode(true);
+			const files = op.parentElement.querySelector('.files');
+
+			if (files) {
+				const filesClone = files.cloneNode(true);
+				const intro = opClone.querySelector('p.intro');
+				if (intro) {
+					intro.insertAdjacentElement('afterend', filesClone);
 				}
-				return $opP.removeClass('op').addClass('post-hover').addClass('reply').attr('id', 'hover_reply_'+id)[0];
+				if (filesClone.querySelector('div.multifile')) {
+					const body = opClone.querySelector('div.body');
+					if (body) {
+						body.style.clear = 'both';
+					}
+				}
 			}
-			//then try to retrieve it via ajax
-			$post = PostStub(id);
-			var url = $(link).attr('href').replace(/#.*$/, '');
-			/*
-			if ($.inArray(url, dont_fetch_again) != -1) {
-				return $post.append(Message('warning', 'Š�Š¾Ń�Ń‚ Š½Šµ Š½Š°Š¹Š´ŠµŠ½.'));
+			opClone.querySelectorAll('.thread-buttons, .reply_view, .omitted')?.forEach(el => el.remove());
+			opClone.classList.remove('op');
+			opClone.classList.add('post-hover', 'reply');
+			opClone.id = `hover_reply_${id}`;
+			return opClone;
+		};
+
+		async function summonPost(link) {
+			const linkText = link.textContent;
+			const matches = linkText.match(/^>>(?:>\/([^/]+)\/)?(\d+)$/);
+			if (!matches) return null;
+			const id = matches[2];
+
+			let hover = document.getElementById(`hover_reply_${id}`);
+			if (hover) {
+				return hover;
 			}
-			dont_fetch_again.push(url);
-			*/
-			//push post id to fetch list if not already there
-			if (!toFetch[url]) {
-				toFetch[url] = [];
+
+			let post = document.getElementById(`reply_${id}`);
+			let op = document.getElementById(`op_${id}`);
+
+			if (post) {
+				return clonePost(post, id);
 			}
-			if ($.inArray(id, toFetch[url]) == -1) {
+			if (op) {
+				return cloneOpPost(op, id);
+			}
+
+			const url = link.getAttribute('href').replace(/#.*$/, '');
+			const postStub = PostStub(id, Message('info', _('Loading...')));
+
+			if (nonExistentThreads[url]) {
+				const message = Message('warning', _('The thread does not exist ;_;'));
+				postStub.innerHTML = '';
+				postStub.appendChild(message);
+				return postStub;
+			}
+
+			if (threadCache[url]) {
+				return fetchFromCache(threadCache[url], id, postStub);
+			}
+
+			if (!toFetch[url]) toFetch[url] = [];
+			if (!toFetch[url].includes(id)) {
 				toFetch[url].push(id);
 			}
-			// _debug('Fetching '+url+'...');
-			$.ajax({
-				url: url,
-				context: document.body,
-				success: function (data) {
-					// _debug('Successfully fetched ' + url);
-					/*
-					$(data).find('div.post.reply').each(function () {
-						if ($('#' + $(this).attr('id[1]')).length == 0)
-							$('body').prepend($(this).css('display', 'none'));
-					});
-					*/
-					var fetchList = toFetch[url];
-					var $thread = $(data);
-					for (var i= 0, l=fetchList.length; i<l; i++) {
-						var id = fetchList[i];
-						var $post = $thread.find('#reply_'+id);
-						var $op = $thread.find('#op_'+id);
-						var $pHolder = $('#hover_reply_' + id); //#placeholder?
-						if (!$pHolder.length) {
-							console.warn('No placeholder for ' + id + '! This is a bug.');
-							continue;
-						}
-						if ($post.length) {
-							if ($post.find('div.multifile').length) {
-								$post.find('div.body').css( "clear", "both" );
-							}
-							$('body').prepend($post.css('display', 'none'));
-							//replace placeholder with post clone
-							$pHolder.empty().append($post.clone().contents()).removeClass('stub');
-							position(null, $pHolder, null);
-						}
-						else if ($op.length) {
-							if ($op.siblings('div.files').find('div.multifile').length) {
-								$op.find('div.body').css( "clear", "both" );
-							}
-							$op.siblings('div.files').insertAfter($op.find('p.intro'));
-							$('body').prepend($op.css('display', 'none'));
-							$pHolder.empty().append($op.clone().contents()).removeClass('stub');
-							position(null, $pHolder, null);
-						}
-						else {
-							//replace placeholder with an error.
-							$pHolder.empty().append(Message('warning', 'Å½inutÄ— nerasta ;_;'));
-						}
-						$(document).trigger('rus_hover', $pHolder);
-					}
-					delete toFetch[url];
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					var message;
-					switch (jqXHR.status) {
-						case 404:
-							//TODO: keep non-existent thread ids or error messages.
-							message = Message('warning', _('The theme does not exist ;_;'));
-							break;
-						default:
-							message = Message('warning', _('Something went wrong ;_;'));
-					}
-					var fetchList = toFetch[url];
-					for (var i= 0, l=fetchList.length; i<l; i++) {
-						var id = fetchList[i];
-						var $pHolder = $('#hover_reply_' + id); //DRY?
-						if (!$pHolder.length) {
-							console.warn('No placeholder for ' + id + '! This is a bug.');
-							continue;
-						}
-						$pHolder.empty().append(message);
-					}
-					delete toFetch[url];
-				}
-			});
-			return $post.append(Message('info', _('Loading...')))[0];
+
+			try {
+				const response = await fetch(url);
+				if (!response.ok) throw new Error(response.status);
+				const data = await response.text();
+
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(data, 'text/html');
+				threadCache[url] = doc;
+
+				return handleFetchedPosts(doc, url, id, postStub);
+			} catch (error) {
+				handleFetchError(url, error);
+			}
+
+			return postStub;
 		}
 
-		var chainCtrl = {
+		function handleFetchedPosts(doc, url, id, postStub) {
+			const fetchList = toFetch[url];
+			for (const fetchId of fetchList) {
+				const fetchedPost = doc.getElementById(`reply_${fetchId}`);
+				const fetchedOp = doc.getElementById(`op_${fetchId}`);
+				const placeholder = document.getElementById(`hover_reply_${fetchId}`);
+
+				if (!placeholder) {
+					console.warn(`No placeholder for ${fetchId}! This is a bug.`);
+					continue;
+				}
+
+				placeholder.innerHTML = '';
+				if (fetchedPost) {
+					placeholder.appendChild(clonePost(fetchedPost, fetchId));
+				} else if (fetchedOp) {
+					placeholder.appendChild(cloneOpPost(fetchedOp, fetchId));
+				} else {
+					placeholder.appendChild(Message('warning', _('Message not found ;_;')));
+				}
+				placeholder.classList.remove('stub');
+				triggerCustomEvent('hover', document, { detail: placeholder });
+			}
+			delete toFetch[url];
+
+			const fetchedPost = doc.getElementById(`reply_${id}`);
+			const fetchedOp = doc.getElementById(`op_${id}`);
+			if (fetchedPost) return clonePost(fetchedPost, id);
+			if (fetchedOp) return cloneOpPost(fetchedOp, id);
+			return postStub;
+		}
+
+		function handleFetchError(url, error) {
+			let message;
+			if (error.message === '404') {
+				message = Message('warning', _('The thread does not exist ;_;'));
+				nonExistentThreads[url] = true;
+			} else {
+				message = Message('warning', _('Something went wrong ;_;'));
+			}
+
+			const fetchList = toFetch[url];
+			for (const fetchId of fetchList) {
+				const placeholder = document.getElementById(`hover_reply_${fetchId}`);
+				if (!placeholder) {
+					console.warn(`No placeholder for ${fetchId}! This is a bug.`);
+					continue;
+				}
+				placeholder.innerHTML = '';
+				placeholder.appendChild(message.cloneNode(true));
+			}
+			delete toFetch[url];
+		}
+
+		function fetchFromCache(doc, id, postStub) {
+			const fetchedPost = doc.getElementById(`reply_${id}`);
+			const fetchedOp = doc.getElementById(`op_${id}`);
+
+			if (fetchedPost) return clonePost(fetchedPost, id);
+			if (fetchedOp) return cloneOpPost(fetchedOp, id);
+
+			postStub.innerHTML = '';
+			postStub.appendChild(Message('warning', _('Message not found ;_;')));
+			return postStub;
+		}
+
+		const chainCtrl = {
 			tail: null,
 			activeTail: null,
-			_timeout: null,
+			timeoutId: null,
 
-			//appends post preview in correct place
-			//returns true if preview position in DOM changed
-			open: function(parent, post) {
-				//_debug('Opening preview '+parent.id+'->'+post.id);
-				var clearAfter = undefined;
-				var moved = false;
-				if ($(parent).is('.post-hover')) {
-					if ($(parent).next()[0] != post) {
-						clearAfter = parent;
-					}
-				}
-				else {
-					if ($('.post-hover')[0] != post) {
-						clearAfter = null; //All previews
-					}
-				}
-				if (clearAfter !== undefined) {
-					this._clear(clearAfter);
-				}
-				if (!this.tail || this.tail == parent) {
-					$('body').append(post);
+			open(parent, post) {
+				let clearAfter;
+				let moved = false;
+
+				if (parent.classList.contains('post-hover')) {
+					if (parent.nextElementSibling !== post) clearAfter = parent;
+				} else if (document.querySelector('.post-hover') !== post) clearAfter = null;
+
+				if (clearAfter !== undefined) this.clear(clearAfter);
+				if (!this.tail || this.tail === parent) {
+					document.body.appendChild(post);
 					this.tail = post;
 					moved = true;
 				}
@@ -270,379 +307,390 @@ $(document).ready(function(){
 				return moved;
 			},
 
-			inPost: function(post){
-				//set active tail
-				//_debug('Setting active post to '+(post?post.id:'null'));
+			inPost(post) {
 				this.activeTail = post;
-				//[re]launch the clear timer
-				clearTimeout(this._timeout);
-				if (post != this.tail) {
-					this._timeout = setTimeout(this._clear.bind(this), rollOverDelay);
+				clearTimeout(this.timeoutId);
+				if (post !== this.tail) {
+					this.timeoutId = setTimeout(() => this.clear(), rollOverDelay);
 				}
 			},
 
-			out: function() {
+			out() {
 				this.inPost(null);
 			},
-			//removes hover subchain beginning from clearRoot's child
-			_clear: function(clearAfter) {
-				//if root is unspecified, clear from active tail
-				if (clearAfter === undefined) {
-					clearAfter = this.activeTail;
-				}
+
+			clear(clearAfter) {
+				if (clearAfter === undefined) clearAfter = this.activeTail;
 				if (clearAfter !== null) {
-					// _debug('Removing chain after ' + clearAfter.id);
-					$(clearAfter).nextAll('.post-hover').fadeOut(160, function() {$(this).remove();});
+					let next = clearAfter.nextElementSibling;
+					while (next?.classList.contains('post-hover')) {
+						const toRemove = next;
+						next = next.nextElementSibling;
+						toRemove.style.transition = 'opacity 160ms';
+						toRemove.style.opacity = '0';
+						setTimeout(() => toRemove.remove(), 160);
+					}
 					this.tail = clearAfter;
-				}
-				else {
-					// _debug('Clearing entire chain.');
-					$('.post-hover').fadeOut(160, function() {$(this).remove();});
+				} else {
+					document.querySelectorAll('.post-hover').forEach(hover => {
+						hover.style.transition = 'opacity 160ms';
+						hover.style.opacity = '0';
+						setTimeout(() => hover.remove(), 160);
+					});
 					this.tail = null;
 				}
-			}
+			},
 		};
 
-		// Backup for 'frozen' previews (which should not appear normally)
-		// http://stackoverflow.com/a/7385673
-		$(document).mouseup(function (e) {
-			if (!$(".post-hover").is(e.target) && $(".post-hover").has(e.target).length === 0) {
-				setTimeout(function () {
-					$(".post-hover").fadeOut(160, function() {$(this).remove();});
+		document.addEventListener('mouseup', function (e) {
+			if (!e.target.closest('.post-hover')) {
+				setTimeout(() => {
+					document.querySelectorAll('.post-hover').forEach(hover => {
+						hover.style.transition = 'opacity 160ms';
+						hover.style.opacity = '0';
+						setTimeout(() => hover.remove(), 160);
+					});
 				}, 0);
-				hovering = false;
 			}
 		});
 
-
-		function init_hover_tree(target) {
-
-			$(target).delegate('div.body > a , .mentioned > a, .oekakinfo a:not(.neoreplay):not(.neocontinue)', 'mouseenter' , linkEnter);
-			$(target).delegate('div.body > a , .mentioned > a, .oekakinfo a:not(.neoreplay):not(.neocontinue)', 'mouseleave' , hoverLeave);
-			$(target).delegate('div.post.post-hover', 'mouseenter', hoverEnter);
-			$(target).delegate('div.post.post-hover', 'mouseleave', hoverLeave);
+		function initHoverTree(target) {
+			target.addEventListener('mouseover', handleMouseOver);
+			target.addEventListener('mouseout', handleMouseOut);
 		}
 
-		var linkEnter = function(evnt)
-		{
-			var link = this;
-			//if (!summon(id) { //retrieve url; //summonAjax(url, id) }
-			if (! /^>>(?:>\/([^\/]+)\/)?(\d+)$/.test($(this).text())) {
-				//Just regular link. Skip it.
-				return true;
+		function handleMouseOver(e) {
+			const target = e.target;
+			if (target.matches('div.body > a.highlight-link, .mentioned > a')) {
+				linkEnter(e);
+			} else if (target.matches('div.post.post-hover')) {
+				hoverEnter(e);
 			}
+		}
+
+		function handleMouseOut(e) {
+			const target = e.target;
+			if (target.matches('div.body > a.highlight-link, .mentioned > a') || target.matches('div.post.post-hover')) {
+				hoverLeave(e);
+			}
+		}
+
+		function linkEnter(e) {
+			const link = e.target;
 			clearTimeout(rollOnTimer);
-			rollOnTimer = setTimeout(function() {
-				var post = summonPost(link);
+			rollOnTimer = setTimeout(async () => {
+				const post = await summonPost(link);
 				if (post) {
-					var parent = $(link).closest('div.post')[0];
+					const parent = link.closest('div.post');
 					if (chainCtrl.open(parent, post)) {
-						position($(link), $(post).hide(), evnt);
-						$(post).fadeIn(160);
-						$(document).trigger('rus_hover', post);
+						position(link, post, e);
+						post.style.display = 'none';
+						post.style.opacity = '0';
+						setTimeout(() => {
+							post.style.transition = 'opacity 160ms';
+							post.style.display = 'block';
+							post.style.opacity = '1';
+						}, 0);
+						triggerCustomEvent('hover', document, { detail: post });
 					}
 				}
 			}, rollOnDelay);
-		};
+		}
 
-		var hoverEnter = function(evnt)
-		{
-			if (!$(evnt.target).is('div.body > a, .mentioned > a')) {
-				//links are handled by linkOver
-				chainCtrl.inPost(this);
+		function hoverEnter(e) {
+			if (!e.target.matches('div.body > a.highlight-link, .mentioned > a')) {
+				chainCtrl.inPost(e.target);
 			}
-		};
+		}
 
-		var hoverLeave = function(evnt)
-		{
+		function hoverLeave(e) {
 			clearTimeout(rollOnTimer);
-			//mouse move to links completely processed by linkOver
-			if (evnt.relatedTarget && !$(evnt.relatedTarget).is('div.body > a, .mentioned > a')) {
-				var $toPost = $(evnt.relatedTarget).closest('.post-hover');
-				if ($toPost.length != 0) {
-					chainCtrl.inPost($toPost[0]);
+			const related = e.relatedTarget;
+			if (related && !related.matches('div.body > a.highlight-link, .mentioned > a')) {
+				const toPost = related.closest('.post-hover');
+				if (toPost) {
+					chainCtrl.inPost(toPost);
 					return;
 				}
 			}
-			//else
 			chainCtrl.out();
-		};
+		}
 
-		//credits for original function to GhostPerson
-		var position = function(link, newPost, evnt) {
-			newPost.css({
-				//use jQuery .show() instead (less style-dependend)
-				//'display': 'block',
-				'position': 'absolute',
-				'border': '1px solid',
-				//margins prevent precise positioning
-				'margin-top': 0,
-				'margin-left': 0
-			});
+		function position(link, newPost, event) {
+			newPost.style.position = 'absolute';
+			newPost.style.border = '1px solid';
+			newPost.style.marginTop = '0';
+			newPost.style.marginLeft = '0';
 
-			//a bit more complex positioning
-			if (!position.direction)
-				position.direction = 'down';
-			//TODO: reset direction on preview clear?
+			if (!position.direction) position.direction = 'down';
 
-			//save data for delayed position
-			if (newPost.hasClass('stub')) {
-				newPost.data('positionInfo', {
-					evnt: evnt,
-					link: link
-				});
+			if (newPost.classList.contains('stub')) {
+				newPost.dataset.positionInfo = JSON.stringify({ event, link });
 			}
-			//recover data for delayed position
-			if (!evnt) {
-				var info = newPost.data('positionInfo');
-				evnt = info.evnt;
+
+			if (!event) {
+				const info = JSON.parse(newPost.dataset.positionInfo);
+				event = info.event;
 				link = info.link;
-				newPost.removeData('positionInfo');
+				delete newPost.dataset.positionInfo;
 			}
 
-			var viewportHigh = evnt.clientY;
-			var viewportLow = $(window).height() - viewportHigh;
+			const viewportHigh = event.clientY;
+			const viewportLow = window.innerHeight - viewportHigh;
 
-			function positionUp() {
-				newPost.css('top', link.offset().top - newPost.outerHeight());
-			}
-			function positionDown() {
-				newPost.css('top', link.offset().top + link.outerHeight());
-			}
+			const positionUp = () => {
+				newPost.style.top = `${link.getBoundingClientRect().top + window.scrollY - newPost.offsetHeight}px`;
+			};
 
-			switch (position.direction) {
-				case 'down':
-					if (newPost.outerHeight() + deadZone > viewportLow) {
-						position.direction = 'up';
-						positionUp();
-					}
-					else {
-						positionDown();
-					}
-					break;
+			const positionDown = () => {
+				newPost.style.top = `${link.getBoundingClientRect().top + window.scrollY + link.offsetHeight}px`;
+			};
 
-				case 'up':
-					if (newPost.outerHeight() + deadZone > viewportHigh) {
-						position.direction = 'down';
-						positionDown();
-					}
-					else {
-						positionUp();
-					}
-					break;
-
-				default:
-					console.error('now you fucked up');
+			if (position.direction === 'down') {
+				if (newPost.offsetHeight + deadZone > viewportLow) {
+					position.direction = 'up';
+					positionUp();
+				} else {
+					positionDown();
+				}
+			} else if (position.direction === 'up') {
+				if (newPost.offsetHeight + deadZone > viewportHigh) {
+					position.direction = 'down';
+					positionDown();
+				} else {
+					positionUp();
+				}
 			}
 
-			//simple horizontal positioning
-			function positionLeft() {
-				newPost.css({
-					'left': Math.max(
-						link.offset().left + link.outerWidth() - newPost.outerWidth(),
-						deadZone),
-					'right': 'auto'
-				});
-			}
-			function positionRight() {
-				newPost.css({
-					'left': Math.min(link.offset().left, $(window).width() - newPost.outerWidth()/* - deadZone*/),
-					'right': 'auto'
-				});
-			}
-
-			var viewportRight = $(window).width() - evnt.clientX;
-			var viewportLeft = $(window).width() - viewportRight;
+			const viewportRight = window.innerWidth - event.clientX;
+			const viewportLeft = window.innerWidth - viewportRight;
 
 			if (viewportRight > viewportLeft) {
-				positionRight();
+				newPost.style.left = `${Math.min(
+					link.getBoundingClientRect().left + window.scrollX,
+					window.innerWidth - newPost.offsetWidth
+				)}px`;
+				newPost.style.right = 'auto';
+			} else {
+				newPost.style.left = `${Math.max(
+					link.getBoundingClientRect().left + window.scrollX + link.offsetWidth - newPost.offsetWidth,
+					deadZone
+				)}px`;
+				newPost.style.right = 'auto';
 			}
-			else {
-				positionLeft();
-			}
-		};
+		}
 
-		init_hover_tree(document);
+		initHoverTree(document);
 
-		// allow to work with auto-reload.js, etc.
-		//no need in this now, "delegate" takes care of everything
-		
-		$(document).bind('new_post', function (e, post) {
-		init_hover_tree(post);
+		document.addEventListener('new_post_js', function (e) {
+			initHoverTree(e.detail.detail);
 		});
 	}
-	
-	function PostHover() {
-	/* post-hover.js
-	 * sauce: https://github.com/vichan-devel/vichan/blob/master/js/post-hover.js
-	 *
-	 * Released under the MIT license
-	 * Copyright (c) 2012 Michael Save <savetheinternet@tinyboard.org>
-	 * Copyright (c) 2013-2014 Marcin Å�abanowski <marcin@6irc.net>
-	 * Copyright (c) 2013 Macil Tech <maciltech@gmail.com>
-	 */
-		var dont_fetch_again = [];
-		init_hover = function() {
-			var $link = $(this);
-			
-			var id;
-			var matches;
 
-			if ($link.is('[data-thread]')) {
-					id = $link.attr('data-thread');
-			}
-			else if(matches = $link.text().match(/^>>(?:>\/([^\/]+)\/)?(\d+)$/)) {
+	function PostHover() {
+		const dontFetchAgain = [];
+
+		function initHover(link) {
+			let id;
+			let matches;
+
+			if (link.hasAttribute('data-thread')) {
+				id = link.getAttribute('data-thread');
+			} else {
+				// TODO: Add data-board to highlight-link
+				matches = link.textContent.match(/^>>(?:>\/([^/]+)\/)?(\d+)$/);
 				id = matches[2];
 			}
-			else {
-				return;
+			if (!id) return;
+
+			let boardElem = link;
+			while (boardElem && !boardElem.dataset.board) {
+				boardElem = boardElem.parentElement;
 			}
-			
-			var board = $(this);
-			while (board.data('board') === undefined) {
-				board = board.parent();
+			if (!boardElem) return;
+
+			let threadId;
+			if (link.hasAttribute('data-thread')) {
+				threadId = '0';
+			} else {
+				threadId = boardElem.id.split('_')[1];
 			}
-			var threadid;
-			if ($link.is('[data-thread]')) threadid = 0;
-			else threadid = board.attr('id').replace("thread_", "");
 
-			board = board.data('board');
+			let board = boardElem.dataset.board;
+			let parentBoard = board;
 
-			var parentboard = board;
-			
-			if ($link.is('[data-thread]')) parentboard = $('form[name="post"] input[name="board"]').val();
-			else if (matches[1] !== undefined) board = matches[1];
+			if (link.hasAttribute('data-thread')) {
+				const boardInput = document.querySelector('form[name="post"] input[name="board"]');
+				if (boardInput) {
+					parentBoard = boardInput.value;
+				}
+			} else if (matches[1] !== undefined) {
+				board = matches[1];
+			}
 
-			var $post = false;
-			var hovering = false;
-			var hovered_at;
-			$link.hover(function(e) {
+			let post = null;
+			let hovering = false;
+			let hoveredAt = { x: 0, y: 0 };
+
+			link.addEventListener('mouseenter', function (e) {
 				hovering = true;
-				hovered_at = {'x': e.pageX, 'y': e.pageY};
-				
-				var start_hover = function($link) {
-					if($.contains($post[0])) {
-						// link links to itself or to op; ignore
-					}
-					else if ($post.is(':visible') &&
-							$post.offset().top >= $(window).scrollTop() &&
-							$post.offset().top + $post.height() <= $(window).scrollTop() + $(window).height()) {
-						// post is in view
-						$post.addClass('highlighted');
-					} else {
-						var $newPost = $post.clone();
-						$newPost.find('>.reply, >br').remove();
-						//$newPost.find('span.mentioned').remove();
-						$newPost.find('a.post_anchor').remove();
+				hoveredAt = { x: e.pageX, y: e.pageY };
 
-						$newPost						
-							.attr('id', 'post-hover-' + id)
-							.attr('data-board', board)
-							.addClass('post-hover')
-							.css('border-style', 'solid')
-							.css('display', 'inline-block')
-							.css('position', 'absolute')
-							.css('font-style', 'normal')
-							.css('z-index', '29')
-							.css('margin-left', '1em')
-							.addClass('reply').addClass('post')
-							.insertAfter($link.parent())
+				function startHover() {
+					if (post?.contains(link)) {
+					} else if (
+						post &&
+						post.offsetParent !== null &&
+						post.getBoundingClientRect().top >= window.scrollY &&
+						post.getBoundingClientRect().top + post.offsetHeight <= window.scrollY + window.innerHeight
+					) {
+						post.classList.add('highlighted');
+					} else if (post) {
+						const newPost = post.cloneNode(true);
 
-						$link.trigger('mousemove');
+						newPost.querySelectorAll('>.reply, >br').forEach((el) => el.remove());
+						newPost.querySelectorAll('a.post_anchor').forEach((el) => el.remove());
+
+						newPost.id = `post-hover-${id}`;
+						newPost.dataset.board = board;
+						newPost.classList.add('post-hover', 'reply', 'post');
+						Object.assign(newPost.style, {
+							borderStyle: 'solid',
+							display: 'inline-block',
+							position: 'absolute',
+							fontStyle: 'normal',
+							zIndex: '29',
+							marginLeft: '1em',
+						});
+
+						link.parentElement.insertAdjacentElement('afterend', newPost);
+						link.dispatchEvent(new MouseEvent('mousemove', e));
 					}
-				};
-				
-				$post = $('[data-board="' + board + '"] div.post#reply_' + id + ', [data-board="' + board + '"]div#thread_' + id);
-				if($post.length > 0) {
-					start_hover($(this));
+				}
+
+				post = document.querySelector(
+					`[data-board="${board}"] div.post#reply_${id}, [data-board="${board}"] div#thread_${id}`
+				);
+
+				if (post) {
+					startHover();
 				} else {
-					var url = $link.attr('href').replace(/#.*$/, '');
-					
-					if($.inArray(url, dont_fetch_again) != -1) {
+					const url = link.getAttribute('href').replace(/#.*$/, '');
+
+					if (dontFetchAgain.includes(url)) {
 						return;
 					}
-					dont_fetch_again.push(url);
-					
-					$.ajax({
-						url: url,
-						context: document.body,
-						success: function(data) {
-							var mythreadid = $(data).find('div[id^="thread_"]').attr('id').replace("thread_", "");
+					dontFetchAgain.push(url);
 
-							if (mythreadid == threadid && parentboard == board) {
-								$(data).find('div.post.reply').each(function() {
-									if($('[data-board="' + board + '"] #' + $(this).attr('id')).length == 0) {
-										$('[data-board="' + board + '"]#thread_' + threadid + " .post.reply:first").before($(this).hide().addClass('hidden'));
-									}
-								});
-							}
-							else if ($('[data-board="' + board + '"]#thread_'+mythreadid).length > 0) {
-								$(data).find('div.post.reply').each(function() {
-									if($('[data-board="' + board + '"] #' + $(this).attr('id')).length == 0) {
-										$('[data-board="' + board + '"]#thread_' + mythreadid + " .post.reply:first").before($(this).hide().addClass('hidden'));
-									}
-								});
-							}
-							else {
-								$(data).find('div[id^="thread_"]').hide().attr('data-cached', 'yes').prependTo('form[name="postcontrols"]');
-							}
+					(async () => {
+						try {
+							const response = await fetch(url);
+							if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+							const data = await response.text();
+							const parser = new DOMParser();
+							const doc = parser.parseFromString(data, 'text/html');
+							const threadDiv = doc.querySelector('div[id^="thread_"]');
+							if (threadDiv) {
+								const fetchedThreadId = threadDiv.id.split('_')[1];
 
-							$post = $('[data-board="' + board + '"] div.post#reply_' + id + ', [data-board="' + board + '"]div#thread_' + id);
+								if (fetchedThreadId === threadId && parentBoard === board) {
+									doc.querySelectorAll('div.post.reply').forEach((replyPost) => {
+										if (!document.querySelector(`[data-board="${board}"] #${replyPost.id}`)) {
+											const threadElement = document.querySelector(
+												`[data-board="${board}"]#thread_${threadId} .post.reply:first-child`
+											);
+											if (threadElement) {
+												replyPost.style.display = 'none';
+												replyPost.classList.add('hidden');
+												threadElement.insertAdjacentElement('beforebegin', replyPost);
+											}
+										}
+									});
+								} else if (document.querySelector(`[data-board="${board}"]#thread_${fetchedThreadId}`)) {
+									doc.querySelectorAll('div.post.reply').forEach((replyPost) => {
+										if (!document.querySelector(`[data-board="${board}"] #${replyPost.id}`)) {
+											const threadElement = document.querySelector(
+												`[data-board="${board}"]#thread_${fetchedThreadId} .post.reply:first-child`
+											);
+											if (threadElement) {
+												replyPost.style.display = 'none';
+												replyPost.classList.add('hidden');
+												threadElement.insertAdjacentElement('beforebegin', replyPost);
+											}
+										}
+									});
+								} else {
+									const postControlsForm = document.querySelector('form[name="postcontrols"]');
+									doc.querySelectorAll('div[id^="thread_"]').forEach((threadElement) => {
+										threadElement.style.display = 'none';
+										threadElement.dataset.cached = 'yes';
+										if (postControlsForm) {
+											postControlsForm.prepend(threadElement);
+										}
+									});
+								}
 
-							if(hovering && $post.length > 0) {
-								start_hover($link);
+								post = document.querySelector(
+									`[data-board="${board}"] div.post#reply_${id}, [data-board="${board}"] div#thread_${id}`
+								);
+
+								if (hovering && post) {
+									startHover();
+								}
 							}
+						} catch (error) {
+							console.error('Error fetching post:', error);
 						}
-					});
+					})();
 				}
-			}, function() {
-				hovering = false;
-				if(!$post)
-					return;			
-				$post.removeClass('highlighted');
-				if($post.hasClass('hidden') || $post.data('cached') == 'yes')
-					$post.css('display', 'none');
-				$('.post-hover').remove();
-			}).mousemove(function(e) {
-				if(!$post)
-					return;
-				
-				var $hover = $('#post-hover-' + id + '[data-board="' + board + '"]');
-				if($hover.length == 0)
-					return;
-
-				var scrollTop = $(window).scrollTop();
-				if ($link.is("[data-thread]")) scrollTop = 0;
-				var epy = e.pageY;
-				if ($link.is("[data-thread]")) epy -= $(window).scrollTop();
-
-				var top = (epy ? epy : hovered_at['y']) - 10;
-				
-				if(epy < scrollTop + 15) {
-					top = scrollTop;
-				} else if(epy > scrollTop + $(window).height() - $hover.height() - 15) {
-					top = scrollTop + $(window).height() - $hover.height() - 15;
-				}
-				
-				/* 			
-				var hovery = e.pageY ? e.pageY : hovered_at['y'];
-				if ( ( hovery - top) > 20){
-					top = hovery;
-				}
-				*/
-				
-				$hover.css('left', (e.pageX ? e.pageX : hovered_at['x']) + 1).css('top', top);
 			});
-		};
-		
-		$('div.body a:not([rel="nofollow"])').each(init_hover);
-		$('.mentioned > a').each(init_hover);
-		// allow to work with auto-reload.js, etc.
-		$(document).on('new_post', function(e, post) {
-			$(post).find('div.body a:not([rel="nofollow"])').each(init_hover);
-			$(post).find('.mentioned > a').each(init_hover);
+
+			link.addEventListener('mouseleave', function () {
+				hovering = false;
+				if (!post) return;
+				post.classList.remove('highlighted');
+				if (post.classList.contains('hidden') || post.dataset.cached === 'yes') {
+					post.style.display = 'none';
+				}
+				document.querySelectorAll('.post-hover').forEach((el) => el.remove());
+			});
+
+			link.addEventListener('mousemove', function (e) {
+				if (!post) return;
+
+				const hover = document.querySelector(`#post-hover-${id}[data-board="${board}"]`);
+				if (!hover) return;
+
+				let scrollTop = window.scrollY;
+				if (link.hasAttribute('data-thread')) scrollTop = 0;
+				let epy = e.pageY;
+				if (link.hasAttribute('data-thread')) epy -= window.scrollY;
+
+				let top = (epy ? epy : hoveredAt.y) - 10;
+
+				if (epy < scrollTop + 15) {
+					top = scrollTop;
+				} else if (epy > scrollTop + window.innerHeight - hover.offsetHeight - 15) {
+					top = scrollTop + window.innerHeight - hover.offsetHeight - 15;
+				}
+
+				hover.style.left = `${(e.pageX ? e.pageX : hoveredAt.x) + 1}px`;
+				hover.style.top = `${top}px`;
+			});
+		}
+
+		document.querySelectorAll('div.body a.highlight-link, .mentioned > a').forEach((link) => {
+			initHover(link);
+		});
+
+		document.addEventListener('new_post_js', function (e) {
+			const post = e.detail.detail;
+			if (post) {
+				post.querySelectorAll('div.body a.highlight-link, .mentioned > a').forEach((link) => {
+					initHover(link);
+				});
+			}
 		});
 	}
+
 });
-
-

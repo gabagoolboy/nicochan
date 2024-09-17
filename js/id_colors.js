@@ -32,4 +32,5 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	document.addEventListener('new_post_js', e => e.detail.detail.querySelectorAll('.poster_id').forEach(colorPostId));
+	document.addEventListener('hover', e => e.detail.detail.querySelectorAll('.poster_id').forEach(colorPostId));
 });

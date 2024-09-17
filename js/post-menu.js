@@ -26,186 +26,225 @@
  *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/post-menu.js';
  */
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function () {
+	class Item {
+		constructor(itemId, text, title) {
+			this.id = itemId;
+			this.text = text;
+			if (typeof title !== 'undefined') {
+				this.title = title;
+			}
+		}
+	}
 
-var List = function (menuId, text) {
-	this.id = menuId;
-	this.text = text;
-	this.items = [];
+	class List {
+		constructor(menuId, text) {
+			this.id = menuId;
+			this.text = text;
+			this.items = [];
+		}
 
-	this.add_item = function (itemId, text, title) {
-		this.items.push(new Item(itemId, text, title));
-	};
-	this.list_items = function () {
-		var array = [];
-		var i, length, obj, $ele;
+		addItem(itemId, text, title) {
+			this.items.push(new Item(itemId, text, title));
+		}
 
-		if ($.isEmptyObject(this.items))
-			return;
+		listItems() {
+			if (this.items.length === 0) return;
 
-		length = this.items.length;
-		for (i = 0; i < length; i++) {
-			obj = this.items[i];
+			const array = [];
 
-			$ele = $('<li>', {id: obj.id}).text(obj.text);
-			if ('title' in obj) $ele.attr('title', obj.title);
+			for (const obj of this.items) {
+				const li = document.createElement('li');
+				li.id = obj.id;
 
-			if (obj instanceof Item) {
-				$ele.addClass('post-item');
-			} else {
-				$ele.addClass('post-submenu');
+				const textSpan = document.createElement('span');
+				textSpan.textContent = obj.text;
+				li.appendChild(textSpan);
 
-				$ele.prepend(obj.list_items());
-				$ele.append($('<span>', {class: 'post-menu-arrow'}).text('»'));
+				if ('title' in obj) {
+					li.setAttribute('title', obj.title);
+				}
+
+				if (obj instanceof Item) {
+					li.classList.add('post-item');
+				} else {
+					li.classList.add('post-submenu');
+
+					const submenuUl = obj.listItems();
+					if (submenuUl) {
+						submenuUl.style.display = 'none';
+						li.appendChild(submenuUl);
+					}
+
+					const arrowSpan = document.createElement('span');
+					arrowSpan.classList.add('post-menu-arrow');
+					arrowSpan.textContent = '»';
+					li.appendChild(arrowSpan);
+
+					textSpan.addEventListener('click', function (e) {
+						e.stopPropagation();
+						const submenu = li.querySelector('ul');
+						if (submenu) {
+							closeAllSubmenus(li.closest('.post-menu'), submenu);
+							submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+						}
+					});
+				}
+
+				array.push(li);
 			}
 
-			array.push($ele);
+			const ul = document.createElement('ul');
+			array.forEach(el => ul.appendChild(el));
+			return ul;
 		}
 
-		return $('<ul>').append(array);
-	};
-	this.add_submenu = function (menuId, text) {
-		var ele = new List(menuId, text);
-		this.items.push(ele);
-		return ele;
-	};
-	this.get_submenu = function (menuId) {
-		for (var i = 0; i < this.items.length; i++) {
-			if ((this.items[i] instanceof Item) || this.items[i].id != menuId) continue;
-			return this.items[i];
+		addSubmenu(menuId, text) {
+			const submenu = new List(menuId, text);
+			this.items.push(submenu);
+			return submenu;
 		}
+
+		getSubmenu(menuId) {
+			for (const item of this.items) {
+				if (item instanceof Item || item.id !== menuId) continue;
+				return item;
+			}
+		}
+	}
+
+	const Menu = {};
+	const mainMenu = new List();
+	const onclickCallbacks = [];
+
+	Menu.onclick = function (fnc) {
+		onclickCallbacks.push(fnc);
 	};
-};
 
-var Item = function (itemId, text, title) {
-	this.id = itemId;
-	this.text = text;
+	Menu.add_item = function (itemId, text, title) {
+		mainMenu.addItem(itemId, text, title);
+	};
 
-	// optional
-	if (typeof title != 'undefined') this.title = title;
-};
+	Menu.add_submenu = function (menuId, text) {
+		return mainMenu.addSubmenu(menuId, text);
+	};
 
-function buildMenu(e) {
-	var pos = $(e.target).offset();
-	var i, length;
+	Menu.get_submenu = function (id) {
+		return mainMenu.getSubmenu(id);
+	};
 
-	var $menu = $('<div class="post-menu"></div>').append(mainMenu.list_items());
+	window.Menu = Menu;
 
-	//  execute registered click handlers
-	length = onclick_callbacks.length;
-	for (i = 0; i < length; i++) {
-		onclick_callbacks[i](e, $menu);
+	function buildMenu(e) {
+		const pos = e.target.getBoundingClientRect();
+
+		const menuDiv = document.createElement('div');
+		menuDiv.classList.add('post-menu');
+		const menuContent = mainMenu.listItems();
+		if (menuContent) {
+			menuDiv.appendChild(menuContent);
+		}
+
+		onclickCallbacks.forEach(callback => callback(e, menuDiv));
+
+		menuDiv.style.top = `${window.scrollY + pos.top}px`;
+		menuDiv.style.left = `${window.scrollX + pos.left + 20}px`;
+
+		document.body.appendChild(menuDiv);
+
+		setTimeout(() => {
+			document.addEventListener('click', function onClickOutside(event) {
+				if (!menuDiv.contains(event.target)) {
+					menuDiv.remove();
+					document.querySelectorAll('.post-btn-open').forEach(btn => btn.classList.remove('post-btn-open'));
+					document.removeEventListener('click', onClickOutside);
+				}
+			});
+		}, 0);
 	}
 
-	//  set menu position and append to page
-	 $menu.css({top: pos.top, left: pos.left + 20});
-	 $('body').append($menu);
-}
-
-function addButton(post) {
-	var $ele = $(post);
-	$ele.find('input.delete').after(
-		$('<a>', {href: '#', class: 'post-btn fa fa-bars', title: 'Post menu'})
-	);
-}
-
-
-/* * * * * * * * * *
-    Public methods
- * * * * * * * * * */
-var Menu = {};
-var mainMenu = new List();
-var onclick_callbacks = [];
-
-Menu.onclick = function (fnc) {
-	onclick_callbacks.push(fnc);
-};
-
-Menu.add_item = function (itemId, text, title) {
-	mainMenu.add_item(itemId, text, title);
-};
-
-Menu.add_submenu = function (menuId, text) {
-	return mainMenu.add_submenu(menuId, text);
-};
-
-Menu.get_submenu = function (id) {
-	return mainMenu.get_submenu(id);
-};
-
-window.Menu = Menu;
-
-
-/* * * * * * * *
-    Initialize
- * * * * * * * */
-
-/*  Styling
- */
-var $ele, cssStyle, cssString;
-
-$ele = $('<div>').addClass('post reply').hide().appendTo('body');
-cssStyle = $ele.css(['border-top-color']);
-cssStyle.hoverBg = $('body').css('background-color');
-$ele.remove();
-
-cssString =
-	'\n/*** Generated by post-menu ***/\n' +
-	'.post-menu {position: absolute; font-size: 12px; line-height: 1.3em;}\n' +
-	'.post-menu ul {\n' +
-	'    background-color: '+ cssStyle['border-top-color'] +'; border: 1px solid #666;\n' +
-	'    list-style: none; padding: 0; margin: 0; white-space: nowrap;\n}\n' +
-	'.post-menu .post-submenu{white-space: normal; width: 90px;}' +
-	'.post-menu .post-submenu>ul{white-space: nowrap; width: auto;}' +
-	'.post-menu li {cursor: pointer; position: relative; padding: 4px 4px; vertical-align: middle;}\n' +
-	'.post-menu li:hover {background-color: '+ cssStyle.hoverBg +';}\n' +
-	'.post-menu ul ul {display: none; position: absolute;}\n' +
-	'.post-menu li:hover>ul {display: block; left: 100%; margin-top: -3px;}\n' +
-	'.post-menu-arrow {float: right}\n' +
-	'.post-menu.hidden, .post-menu .hidden {display: none;}\n' +
-	'.post-btn {width: 15px; text-align: center; font-size: 10pt; text-decoration: none; display: inline-block; margin-right: 10px;}';
-
-
-if (!$('style.generated-css').length) $('<style class="generated-css">').appendTo('head');
-$('style.generated-css').html($('style.generated-css').html() + cssString);
-
-/*  Add buttons
- */
-$('.reply:not(.hidden), .thread>.op').each(function () {
-	addButton(this);
- });
-
- /*  event handlers
-  */
-$('form[name=postcontrols]').on('click', '.post-btn', function (e) {
-	e.preventDefault();
-	var post = e.target.parentElement.parentElement;
-	$('.post-menu').remove();
-
-	if ($(e.target).hasClass('post-btn-open')) {
-		$('.post-btn-open').removeClass('post-btn-open');
-	} else {
-		//  close previous button
-		$('.post-btn-open').removeClass('post-btn-open');
-		$(post).find('.post-btn').addClass('post-btn-open');
-
-		buildMenu(e);
+	function closeAllSubmenus(menuElement, excludeSubmenu = null) {
+		const submenus = menuElement.querySelectorAll('ul ul');
+		submenus.forEach(submenu => {
+			if (submenu !== excludeSubmenu) {
+				submenu.style.display = 'none';
+			}
+		});
 	}
-});
 
-$(document).on('click', function (e){
-	if ($(e.target).hasClass('post-btn') || $(e.target).hasClass('post-submenu'))
-		return;
+	function addButton(post) {
+		const deleteInput = post.querySelector('input.delete');
+		if (deleteInput) {
+			const postBtn = document.createElement('a');
+			postBtn.href = '#';
+			postBtn.classList.add('post-btn', 'fa', 'fa-bars');
+			postBtn.title = 'Post menu';
+			deleteInput.insertAdjacentElement('afterend', postBtn);
+		}
+	}
 
-	$('.post-menu').remove();
-	$('.post-btn-open').removeClass('post-btn-open');
-});
+	const tempDiv = document.createElement('div');
+	tempDiv.classList.add('post', 'reply');
+	tempDiv.style.display = 'none';
+	document.body.appendChild(tempDiv);
 
-// on new posts
-$(document).on('new_post', function (e, post) {
-	addButton(post);
-});
+	const computedStyle = window.getComputedStyle(tempDiv);
+	const borderTopColor = computedStyle.borderTopColor;
+	const bodyStyle = window.getComputedStyle(document.body);
+	const hoverBg = bodyStyle.backgroundColor;
+	document.body.removeChild(tempDiv);
 
-$(document).trigger('menu_ready');
-triggerCustomEvent('menu_ready_js');
+	const cssString = `
+/*** Generated by post-menu ***/
+.post-menu {position: absolute; font-size: 12px; line-height: 1.3em;}
+.post-menu ul {
+    background-color: ${borderTopColor}; border: 1px solid #666;
+    list-style: none; padding: 0; margin: 0; white-space: nowrap;
+}
+.post-menu .post-submenu {white-space: normal; width: 90px;}
+.post-menu li {cursor: pointer; position: relative; padding: 4px 4px; vertical-align: middle;}
+.post-menu li:hover {background-color: ${hoverBg};}
+.post-menu ul ul {display: none; position: absolute; left: 100%; top: 0;}
+.post-menu-arrow {float: right;}
+.post-menu.hidden, .post-menu .hidden {display: none;}
+.post-btn {width: 15px; text-align: center; font-size: 10pt; text-decoration: none; display: inline-block; margin-right: 10px;}
+`;
+
+	let styleTag = document.querySelector('style.generated-css');
+	if (!styleTag) {
+		styleTag = document.createElement('style');
+		styleTag.classList.add('generated-css');
+		document.head.appendChild(styleTag);
+	}
+	styleTag.innerHTML += cssString;
+
+	document.querySelectorAll('.reply:not(.hidden), .thread > .op').forEach(post => {
+		addButton(post);
+	});
+
+	const postControlsForm = document.querySelector('form[name=postcontrols]');
+	if (postControlsForm) {
+		postControlsForm.addEventListener('click', function (e) {
+			if (!e.target.classList.contains('post-btn')) return;
+
+			e.preventDefault();
+			const post = e.target.closest('.post');
+			document.querySelectorAll('.post-menu').forEach(menu => menu.remove());
+
+			if (e.target.classList.contains('post-btn-open')) {
+				document.querySelectorAll('.post-btn-open').forEach(btn => btn.classList.remove('post-btn-open'));
+			} else {
+				document.querySelectorAll('.post-btn-open').forEach(btn => btn.classList.remove('post-btn-open'));
+				const postBtn = post.querySelector('.post-btn');
+				if (postBtn) postBtn.classList.add('post-btn-open');
+				buildMenu(e);
+			}
+		});
+	}
+
+	document.addEventListener('new_post_js', function (e) {
+		addButton(e.detail.detail);
+	});
+
+	triggerCustomEvent('menu_ready_js');
 });

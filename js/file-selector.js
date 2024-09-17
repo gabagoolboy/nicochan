@@ -2,200 +2,295 @@
  * file-selector.js - Add support for drag and drop file selection, and paste from clipboard on supported browsers.
  *
  * Usage:
- *   $config['additional_javascript'][] = 'js/jquery.min.js';
  *   $config['additional_javascript'][] = 'js/ajax.js';
  *   $config['additional_javascript'][] = 'js/file-selector.js';
  */
 
-var FileSelector = {};
-function init_file_selector(max_images) {
+const FileSelector = (() => {
+    let files = [];
+    let max_images = 1;
+	let max_filesize = 7 * 1024 * 1024;
+    let dragCounter = 0;
 
-$(document).ready(function () {
-	// add options panel item
-	if (window.Options && Options.get_tab('general')) {
-		Options.extend_tab('general', '<label id="file-drag-drop"><input type="checkbox">' + _('Drag and drop file selection') + '</label>');
+    const getFiles = () => files;
 
-		$('#file-drag-drop>input').on('click', function() {
-			if ($('#file-drag-drop>input').is(':checked')) {
-				localStorage.file_dragdrop = 'true';
-			} else {
-				localStorage.file_dragdrop = 'false';
-			}
-		});
+    const addFile = (file) => {
+        if (files.length >= max_images) {
+            return;
+        }
 
-		if (typeof localStorage.file_dragdrop === 'undefined') localStorage.file_dragdrop = 'true';
-		if (localStorage.file_dragdrop === 'true') $('#file-drag-drop>input').prop('checked', true);
-	}
-});
+		if (file.size > max_filesize) {
+            alert(`${_('File size exceeds the maximum allowed size of')} ${max_filesize / (1024 * 1024)} MB.`);
+			return;
+		}
+        if (files.some(f => f.name === file.name && f.size === file.size)) {
+            return;
+        }
+        files.push(file);
+        updateAllThumbnails();
+    };
 
-// disabled by user, or incompatible browser.
-if (localStorage.file_dragdrop == 'false' || !(window.URL.createObjectURL && window.File))
-	return;
+    const removeFile = (fileName, container = document) => {
+        const thumbElement = getThumbElement(fileName, container);
+        if (thumbElement) thumbElement.remove();
 
-// multipost not enabled
-if (typeof max_images == 'undefined') {
-	var max_images = 1;
-}
+        files = files.filter(f => f.name !== fileName);
+        updateAllThumbnails();
+    };
 
-$('<div class="dropzone-wrap" style="display: none;">'+
-	'<div class="dropzone" tabindex="0">'+
-		'<div class="file-hint">'+_('Select/drop/paste files here')+'</div>'+
-			'<div class="file-thumbs"></div>'+
-		'</div>'+
-	'</div>'+
-'</div>').prependTo('#upload td');
+    const getThumbElement = (fileName, container = document) => {
+        return [...container.querySelectorAll('.tmb-container')].find(el => el.dataset.fileRef === fileName);
+    };
 
-var files = [];
-$('#upload_file').remove();  // remove the original file selector
-$('.dropzone-wrap').css('user-select', 'none').show();  // let jquery add browser specific prefix
+    const addThumb = (file, container) => {
+        const fileName = file.name.length < 24 ? file.name : `${file.name.substr(0, 22)}…`;
+        const fileType = file.type.split('/')[0];
+        const fileExt = file.type.split('/')[1];
 
-FileSelector.addFile = function (file) {
-	if (files.length == max_images)
-		return;
+        const containerElement = Vichan.createElement('div', {
+            className: 'tmb-container',
+            attributes: { 'data-file-ref': file.name },
+            parent: container.querySelector('.file-thumbs')
+        });
 
-	files.push(file);
-	addThumb(file);
-}
+        Vichan.createElement('div', {
+            className: 'remove-btn',
+            innerHTML: '✖',
+            parent: containerElement
+        });
 
-FileSelector.removeFile = function (file) {
-	getThumbElement(file).remove();
-	files.splice(files.indexOf(file), 1);
-}
+        const fileTmb = Vichan.createElement('div', {
+            className: 'file-tmb',
+            parent: containerElement
+        });
 
-function getThumbElement(file) {
-	return $('.tmb-container').filter(function(){return($(this).data('file-ref')==file);});
-}
+        Vichan.createElement('div', {
+            className: 'tmb-filename',
+            text: fileName,
+            parent: containerElement
+        });
 
-function addThumb(file) {
+        if (fileType === 'image') {
+			fileTmb.style.backgroundImage = `url(${window.URL.createObjectURL(file)})`;
+		} else if (fileType === 'video' && localStorage.getItem('video_thumbfile') === 'true') {
+			const video = Vichan.createElement('video', { attributes: { src: window.URL.createObjectURL(file), muted: true } });
+			video.addEventListener('loadeddata', () => video.currentTime = 0.5);
+            video.addEventListener('seeked', () => {
+                const canvas = Vichan.createElement('canvas', { attributes: { width: 120, height: 90 } });
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                fileTmb.style.backgroundImage = `url(${canvas.toDataURL()})`;
+                window.URL.revokeObjectURL(video.src);
+            });
+        } else {
+            fileTmb.innerHTML = `<span>${fileExt.toUpperCase()}</span>`;
+        }
+    };
 
-	var fileName = (file.name.length < 24) ? file.name : file.name.substr(0, 22) + '…';
-	var fileType = file.type.split('/')[0];
-	var fileExt = file.type.split('/')[1];
-	var $container = $('<div>')
-		.addClass('tmb-container')
-		.data('file-ref', file)
-		.append(
-			$('<div>').addClass('remove-btn').html('✖'),
-			$('<div>').addClass('file-tmb'),
-			$('<div>').addClass('tmb-filename').html(fileName)
-		)
-		.appendTo('.file-thumbs');
+    const updateThumbsInContainer = (container) => {
+        const thumbsContainer = container.querySelector('.file-thumbs');
+        thumbsContainer.innerHTML = '';
 
-	var $fileThumb = $container.find('.file-tmb');
-	if (fileType == 'image') {
-		// if image file, generate thumbnail
-		var objURL = window.URL.createObjectURL(file);
-		$fileThumb.css('background-image', 'url('+ objURL +')');
-	} else {
-		$fileThumb.html('<span>' + fileExt.toUpperCase() + '</span>');
-	}
-}
+        for (const file of files) {
+            addThumb(file, container);
+        }
+    };
+
+    const updateAllThumbnails = () => {
+        const originalForm = document;
+        const quickReplyForm = document.querySelector('#quick-reply');
+
+        updateThumbsInContainer(originalForm);
+        if (quickReplyForm) {
+            updateThumbsInContainer(quickReplyForm);
+        }
+    };
+
+    const handleDrop = (e, container) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        dragCounter = 0;
+        container.querySelector('.dropzone').classList.remove('dragover');
+
+        const fileList = e.dataTransfer.files;
+
+        if (fileList.length > 0) {
+            for (const file of fileList) {
+                addFile(file);
+            }
+        } else {
+            console.log('No valid files were dropped.');
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDragEnter = (e, container) => {
+        e.preventDefault();
+        dragCounter++;
+        if (dragCounter === 1) {
+            container.querySelector('.dropzone').classList.add('dragover');
+        }
+    };
+
+    const handleDragLeave = (e, container) => {
+        e.preventDefault();
+        dragCounter--;
+        if (dragCounter === 0) {
+            container.querySelector('.dropzone').classList.remove('dragover');
+        }
+    };
+
+    const handleFileInput = (e) => {
+        const fileInput = e.target;
+        if (fileInput.files.length > 0) {
+            for (const file of fileInput.files) {
+                addFile(file);
+            }
+        }
+        fileInput.remove();
+    };
+
+    const handleFilePaste = (e) => {
+        const clipboard = e.clipboardData;
+        if (clipboard.items?.length) {
+            for (const item of clipboard.items) {
+                if (item.kind === 'file') {
+                    const file = new File([item.getAsFile()], 'ClipboardImage.png', { type: 'image/png' });
+                    addFile(file);
+                }
+            }
+        }
+    };
+
+    const attachHandlers = (container) => {
+        const dropzone = container.querySelector('.dropzone');
+
+        dropzone.addEventListener('dragenter', (e) => handleDragEnter(e, container));
+        dropzone.addEventListener('dragover', handleDragOver);
+        dropzone.addEventListener('dragleave', (e) => handleDragLeave(e, container));
+        dropzone.addEventListener('drop', (e) => handleDrop(e, container));
+
+        dropzone.addEventListener('click', (e) => {
+            if (e.target.className !== 'file-hint' && e.which !== 13) return;
+            const fileInput = Vichan.createElement('input', {
+				className: 'hidden',
+                attributes: { type: 'file', multiple: true },
+                parent: document.body
+            });
+
+            fileInput.addEventListener('change', (e) => handleFileInput(e));
+            fileInput.click();
+        });
+
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                const fileName = e.target.parentElement.dataset.fileRef;
+                removeFile(fileName, container);
+            }
+        });
+
+        container.addEventListener('paste', (e) => handleFilePaste(e));
+    };
+
+	const handleOptions = () => {
+      	Options.extend_tab(
+       		'general',
+        	`<fieldset><legend>${_('File Selector')}</legend>
+        	<label class='file-selector' id='file_dragdrop'><input type='checkbox' /> ${_('Drag and drop file selection')}</label>
+        	<label class='file-selector' id='video_thumbfile'><input type='checkbox' /> ${_('Enable video thumbnail')}</label>
+        	</fieldset>`
+      	);
+
+		document.querySelectorAll('#file_dragdrop, #video_thumbfile').forEach(element => {
+        	const checkbox = element.querySelector('input');
+        	const storageKey = element.id;
+
+        	if (storageKey === 'file_dragdrop' && !localStorage.getItem(storageKey)) {
+            	localStorage.setItem(storageKey, 'true');
+        	}
+
+        	checkbox.checked = localStorage.getItem(storageKey) === 'true';
+        	checkbox.addEventListener('change', () => localStorage.setItem(storageKey, checkbox.checked.toString()));
+    	});
+	};
+
+    const init = (maxImages, maxFilesize) => {
+        if (typeof maxImages !== 'undefined') {
+            max_images = maxImages;
+        }
+
+		if (typeof maxFilesize !== 'undefined') {
+			max_filesize = maxFilesize
+		}
+
+		if (window.Options && Options.get_tab('general')) {
+			handleOptions();
+		}
+
+		if (localStorage.file_dragdrop === 'false' || !(window.URL.createObjectURL && window.File)) return;
+
+		const uploadTd = document.querySelector('#upload td');
+		if (!uploadTd) return;
+
+        Vichan.createElement('div', {
+            className: 'dropzone-wrap',
+            attributes: { style: 'display: block;' },
+            innerHTML: `
+                <div class="dropzone" tabindex="0">
+                    <div class="file-hint">${_('Select/drop/paste files here')}</div>
+                    <div class="file-thumbs"></div>
+                </div>`,
+            parent: uploadTd 
+        });
+
+        document.querySelector('#upload_file')?.remove();
+
+        attachHandlers(document);
+    };
+
+    return {
+        init,
+        addFile,
+		getFiles,
+        removeFile,
+        attachHandlers,
+        updateAllThumbnails,
+    };
+})();
 
 document.addEventListener('ajax_before_post', function (e) {
-	const formData = e.detail.detail;
-	for (let i = 0; i < max_images; i++) {
-		let key = 'file';
-		if (i > 0) key += i + 1;
-		if (typeof files[i] === 'undefined') break;
-		formData.append(key, files[i]);
-	}
+    const formData = e.detail.detail;
+	const files = FileSelector.getFiles();
+
+    let index = 1;
+    for (const file of files) {
+        formData.append(`file${index}`, file);
+        index++;
+        if (index > max_images) break;
+    }
 });
 
 document.addEventListener('ajax_after_post', function () {
-	files = [];
-	document.querySelectorAll('.file-thumbs').forEach(element => {
-    	element.innerHTML = '';
-  });
+	const files = FileSelector.getFiles();
+	files.length = 0;
+    document.querySelectorAll('.file-thumbs').forEach(element => {
+        element.innerHTML = '';
+    });
 });
-
-
-var dragCounter = 0;
-var dropHandlers = {
-	dragenter: function (e) {
-		e.stopPropagation();
-		e.preventDefault();
-
-		if (dragCounter === 0) $('.dropzone').addClass('dragover');
-		dragCounter++;
-	},
-	dragover: function (e) {
-		// needed for webkit to work
-		e.stopPropagation();
-		e.preventDefault();
-	},
-	dragleave: function (e) {
-		e.stopPropagation();
-		e.preventDefault();
-
-		dragCounter--;
-		if (dragCounter === 0) $('.dropzone').removeClass('dragover');
-	},
-	drop: function (e) {
-		e.stopPropagation();
-		e.preventDefault();
-
-		$('.dropzone').removeClass('dragover');
-		dragCounter = 0;
-
-		var fileList = e.originalEvent.dataTransfer.files;
-		for (var i=0; i<fileList.length; i++) {
-			FileSelector.addFile(fileList[i]);
-		}
-	}
-};
-
-
-// attach handlers
-$(document).on(dropHandlers);
-
-$(document).on('click', '.dropzone .remove-btn', function (e) {
-	e.stopPropagation();
-
-	var file = $(e.target).parent().data('file-ref');
-
-	FileSelector.removeFile(file);
-});
-
-$(document).on('keypress click', '.dropzone', function (e) {
-	e.stopPropagation();
-
-	// accept mouse click or Enter
-	if ((e.which != 1 || e.target.className != 'file-hint') &&
-		 e.which != 13)
-		return;
-
-	var $fileSelector = $('<input type="file" multiple>');
-
-	$fileSelector.on('change', function (e) {
-		if (this.files.length > 0) {
-			for (var i=0; i<this.files.length; i++) {
-				FileSelector.addFile(this.files[i]);
-			}
-		}
-		$(this).remove();
-	});
-
-	$fileSelector.click();
-});
-
-$(document).on('paste', function (e) {
-	var clipboard = e.originalEvent.clipboardData;
-	if (typeof clipboard.items != 'undefined' && clipboard.items.length != 0) {
-		
-		//Webkit
-		for (var i=0; i<clipboard.items.length; i++) {
-			if (clipboard.items[i].kind != 'file')
-				continue;
-
-			//convert blob to file
-			var file = new File([clipboard.items[i].getAsFile()], 'ClipboardImage.png', {type: 'image/png'});
-			FileSelector.addFile(file);
-		}
-	}
-});
-
-}
 
 document.addEventListener('DOMContentLoaded', () => {
-	init_file_selector(max_images);
+    FileSelector.init(max_images, max_filesize);
+
+    window.addEventListener('quick-reply', () => {
+		if (localStorage.file_dragdrop === 'false' || !(window.URL.createObjectURL && window.File)) return;
+
+        const quickReplyContainer = document.querySelector('#quick-reply');
+        if (quickReplyContainer) {
+            FileSelector.attachHandlers(quickReplyContainer);
+            FileSelector.updateAllThumbnails();
+        }
+    });
 });

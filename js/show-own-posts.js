@@ -140,10 +140,9 @@
     Menu.add_item("add_you_menu", _("Add (You)"));
     Menu.add_item("remove_you_menu", _("Remove (You)"));
 
-    Menu.onclick((e, buf) => {
+    Menu.onclick((e, menuItem) => {
       const ele = e.target.closest('div.post');
       const postId = ele.querySelector('a.post_no').dataset.cite;
-      const [menuItem] = buf;
       const addMenu = menuItem.querySelector('#add_you_menu');
       const removeMenu = menuItem.querySelector('#remove_you_menu');
 

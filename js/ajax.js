@@ -136,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
 					const br = Vichan.createElement('br');
 					lastPost.parentNode.insertBefore(br, lastPost.nextSibling);
                     br.parentNode.insertBefore(reply, br.nextSibling);
-					$(document).trigger('new_post', reply);
                     triggerCustomEvent('new_post_js', document, { detail: reply });
                     setTimeout(() => triggerCustomEvent('scroll', window), 100);
                 }
