@@ -80,6 +80,7 @@ class ModalHandler {
         if (form) {
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
+		form.querySelector('input[name="report"]').setAttribute('disabled', 'disabled');
                 const formData = new FormData(form);
                 formData.append('json_response', '1');
                 const xhr = new XMLHttpRequest();
@@ -94,6 +95,7 @@ class ModalHandler {
                             setTimeout(() => this.closeModal(data?.redirect), 2000);
                         } else {
                             alert(data.error);
+                            setTimeout(() => this.closeModal(data?.redirect), 2000);
                         }
                     } else {
                         alert(_('An unexpected error occurred.'));
