@@ -446,7 +446,7 @@ function doreport (form) {
 }
 
 function handleArchiveMessage() {
-    handleSortable();
+    //handleSortable();
     const voteLink = document.querySelectorAll('.vote-link');
     if (voteLink) {
         voteLink.forEach((link) => {
@@ -499,6 +499,9 @@ var post_captcha = "{{ config.captcha.post_captcha ? 'true' : 'false' }}";
 var provider_captcha = "{{ config.captcha.provider_get }}";
 var post_date = "{{ config.post_date_js }}"
 var configRoot = "{{ config.root }}";
+var max_filesize = {{ config.max_filesize }};
+var max_body = {{ config.max_body }};
+var forced_anon = "{{ config.field_disable_name ? 'true' : 'false' }}";
 
 document.addEventListener("securitypolicyviolation", () => {
     console.log('(⇀‸↼‶) por que você está fazendo isso?');    
