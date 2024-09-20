@@ -52,10 +52,6 @@
                 <a title="{% trans %}Ban & Delete all posts by IP'{% endtrans %}" href="?/{{ board.dir }}ban&amp;deletebyip/{{ post.id }}">{{ config.mod.link_bandeletebyip }}</a>&nbsp;
             {% endif %}
 
-            {% if mod|hasPermission(config.mod.bandeletebycookies, board.uri) %}
-                <a title="{% trans %}Ban & Delete all posts by cookies{% endtrans %}" href="?/{{ board.dir }}ban&amp;deletebycookies/{{ post.id }}">{{ config.mod.link_deletebycookies }}</a>&nbsp;
-            {% endif %}
-
             {% if not post.thread %}
                 {% if mod|hasPermission(config.mod.sticky, board.uri) %}
                     <a title="{% if post.sticky %}{% trans %}Make thread not sticky{% endtrans %}{% else %}{% trans %}Make thread sticky{% endtrans %}{% endif %}" 
