@@ -110,9 +110,6 @@ ul {
         {% if mod|hasPermission(config.mod.edit_banners) %}
             <li><a href="?/banners/banners_priority"><i class="fa fa-upload"></i>&nbsp;{% trans %}Banners General{% endtrans %}</a></li>
         {% endif %}
-        {% if mod|hasPermission(config.mod.reset_all_reports) %}
-            <li><a href="?/reset_stuff"><i class="fa fa-undo"></i>&nbsp;{% trans %}Reset Stuff{% endtrans %}</a></li>
-        {% endif %}
         {% if mod|hasPermission(config.mod.reports) %}
             <li>
                 <a href="?/reports">
