@@ -4,9 +4,8 @@
 	<head>
 		<title>{{ settings.title }}</title>
 		<link rel="stylesheet" media="screen" href="{{ config.root ~ settings.css }}" />
-		<span id="active-page" data-page="index"></span>
-		{% include 'header.html' with {'nojavascript': true } %}
-		<script type="text/javascript" src="js/mobile-boardlist.js"></script>
+		<span id="active-page" data-page="page"></span>
+		{% include 'header.html' %}
 	</head>
 	<body>
 		<div class="bar top">{{ boardlist.top }}</div>
@@ -66,7 +65,7 @@
 				<ul>
 					<li>{% trans %}Posts total:{% endtrans %} {{ stats.total_posts }}</li>
 					<li>{% trans %}Unique posters:{% endtrans %} {{ stats.unique_posters }}</li>
-					<li>{% trans %}Active content:{% endtrans %} {{ stats.active_content|filesize }}</li>
+					<li>{% trans %}Active content:{% endtrans %} {{ stats.active_content }}</li>
 					<li>{% trans %}Files total:{% endtrans %} {{ stats.total_files }}</li>
 					<li>{% trans %}Active bans:{% endtrans %} {{ stats.total_bans }}</li>
 				</ul>

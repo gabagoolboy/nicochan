@@ -406,8 +406,7 @@ function rememberStuff() {
 }
 
 function triggerCustomEvent(eventName, target = document, detail = {}) {
-    console.log('new event: '+ eventName);
-	const event = new CustomEvent(eventName, { detail, bubbles: true });
+	const event = new CustomEvent(eventName, { detail });
 	target.dispatchEvent(event);
 }
 
@@ -499,6 +498,9 @@ var post_captcha = "{{ config.captcha.post_captcha ? 'true' : 'false' }}";
 var provider_captcha = "{{ config.captcha.provider_get }}";
 var post_date = "{{ config.post_date_js }}"
 var configRoot = "{{ config.root }}";
+var max_filesize = {{ config.max_filesize }};
+var max_body = {{ config.max_body }};
+var forced_anon = "{{ config.field_disable_name ? 'true' : 'false' }}";
 
 document.addEventListener("securitypolicyviolation", () => {
     console.log('(⇀‸↼‶) por que você está fazendo isso?');    

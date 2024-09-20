@@ -144,18 +144,23 @@ function hideModTools() {
     const ipInfo = document.querySelectorAll('span.mod-ip');
     const controls = document.querySelectorAll('span.controls')
     const rpt = document.querySelector('.countrpt');
+    const f = document.querySelectorAll('#f');
 
     const isChecked = document.getElementById('hide-mod-tools-checkbox').checked;
     
     ipInfo.forEach(i => {
         i.style.display = isChecked ? 'none' : '';
-    })
+    });
 
     controls.forEach(i => {
         i.style.display = isChecked ? 'none' : '';
-    })
+    });
 
     if (rpt) {
         rpt.style.display = isChecked ? 'none' : '';
     }
+
+    f.forEach(i => {
+        i.style.display = isChecked ? 'none' : '';
+    })
 }

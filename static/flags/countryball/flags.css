@@ -1,7 +1,6 @@
 .flag {
     max-width: 30px;
     max-height: 30px;
-    vertical-align: middle;
 	background:url(flags.png) no-repeat
 }
 

@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vichan\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-19 23:19-0300\n"
-"PO-Revision-Date: 2023-03-19 23:19-0300\n"
-"Last-Translator: weav <magalichan@insiberia.net>\n"
+"POT-Creation-Date: 2024-09-03 20:00-0300\n"
+"PO-Revision-Date: 2024-09-20 13:35-0300\n"
+"Last-Translator: Weav <magalichan@insiberia.net>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
 "tinyboard-vichan-devel/language/pt_BR/)\n"
 "Language: pt_BR\n"
@@ -21,340 +21,359 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ../../../..\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: js\n"
-"X-Poedit-SearchPathExcluded-1: vendor\n"
-"X-Poedit-SearchPathExcluded-2: *.js\n"
+"X-Poedit-SearchPath-0: inc\n"
+"X-Poedit-SearchPath-1: compiled_templates\n"
+"X-Poedit-SearchPath-2: post.php\n"
+"X-Poedit-SearchPath-3: banned.php\n"
+"X-Poedit-SearchPath-4: mod.php\n"
+"X-Poedit-SearchPath-5: history.php\n"
+"X-Poedit-SearchPath-6: search.php\n"
+"X-Poedit-SearchPath-7: banners.php\n"
+"X-Poedit-SearchPath-8: report.php\n"
+"X-Poedit-SearchPath-9: player.php\n"
+"X-Poedit-SearchPath-10: log.php\n"
+"X-Poedit-SearchPath-11: delete.php\n"
+"X-Poedit-SearchPathExcluded-0: inc/instance-config.php\n"
+"X-Poedit-SearchPathExcluded-1: inc/wordfilters.php\n"
+"X-Poedit-SearchPathExcluded-2: inc/secrets.php\n"
+"X-Poedit-SearchPathExcluded-3: inc/lib/jsgettext\n"
 
 #: banned.php:7 banned.php:13
 msgid "You are not banned!"
-msgstr "Você não está banido!"
+msgstr "Você não está banida!"
 
 #: banned.php:12
 msgid "Congratulations for not being terrible!"
-msgstr "Parabéns por ser um bom anão!"
+msgstr "Parabéns por ser uma boa anã!"
 
-#: compiled_templates/banned.html.php:45
+#: compiled_templates/banned.html.php:53
 msgid "You were banned! ;_;"
-msgstr "Você foi banido! ;_;"
+msgstr "Você estava banida! ;_;"
 
-#: compiled_templates/banned.html.php:51
+#: compiled_templates/banned.html.php:59
 msgid "You are banned! ;_;"
-msgstr "Você está banido! ;_;"
+msgstr "Você está banida! ;_;"
 
-#: compiled_templates/banned.html.php:62
+#: compiled_templates/banned.html.php:71
 msgid "You were banned from"
-msgstr "Você foi banido de"
+msgstr "Você foi banida da"
 
-#: compiled_templates/banned.html.php:68
+#: compiled_templates/banned.html.php:77
 msgid "You have been banned from"
-msgstr "Você foi banido de"
+msgstr "Você foi banida de"
 
-#: compiled_templates/banned.html.php:83
+#: compiled_templates/banned.html.php:94
 #: compiled_templates/mod_ban_appeals.html.php:132
-#: compiled_templates/mod_ban_form.html.php:301
-#: compiled_templates/mod_ban_history.html.php:134
-#: compiled_templates/mod_search_results.html.php:264
-#: compiled_templates/mod_users.html.php:116
+#: compiled_templates/mod_ban_form.html.php:306
+#: compiled_templates/mod_ban_history.html.php:135
+#: compiled_templates/mod_partials_ban_history.html.php:138
+#: compiled_templates/mod_search_results.html.php:233
+#: compiled_templates/mod_users.html.php:117
 msgid "all boards"
 msgstr "todas as boards"
 
-#: compiled_templates/banned.html.php:92 compiled_templates/warning.html.php:50
+#: compiled_templates/banned.html.php:105
+#: compiled_templates/warning.html.php:53
 msgid "for the following reason:"
 msgstr "pelo seguinte motivo:"
 
-#: compiled_templates/banned.html.php:98
+#: compiled_templates/banned.html.php:111
 msgid "for an unspecified reason."
 msgstr "por um motivo não especificado."
 
-#: compiled_templates/banned.html.php:119
+#: compiled_templates/banned.html.php:129
 msgid "Your ban was filed on"
 msgstr "Seu banimento foi realizado em"
 
-#: compiled_templates/banned.html.php:132
-#: compiled_templates/banned.html.php:140
-#: compiled_templates/mod_dashboard.html.php:202
-#: compiled_templates/mod_news.html.php:166
-#: compiled_templates/mod_noticeboard.html.php:138
-#: compiled_templates/themes_categories_news.html.php:104
-#: compiled_templates/warning.html.php:79
-#: compiled_templates/warning.html.php:87
+#: compiled_templates/banned.html.php:139
+#: compiled_templates/mod_dashboard.html.php:212
+#: compiled_templates/mod_news.html.php:167
+#: compiled_templates/mod_noticeboard_post.html.php:94
+#: compiled_templates/mod_partials_noticeboard_post.html.php:97
+#: compiled_templates/themes_categories_news.html.php:105
+#: compiled_templates/themes_index_index.html.php:166
+#: compiled_templates/warning.html.php:76
 msgid "by"
 msgstr "por"
 
-#: compiled_templates/banned.html.php:149
-#: compiled_templates/post_thread.html.php:319
-#: compiled_templates/post_thread.html.php:443
+#: compiled_templates/banned.html.php:160
+#: compiled_templates/post_thread.html.php:246
+#: compiled_templates/post_thread.html.php:401
 msgid "and"
 msgstr "e"
 
-#: compiled_templates/banned.html.php:156
-#: compiled_templates/banned.html.php:442
+#: compiled_templates/banned.html.php:168
 msgid "has since expired. Refresh the page to continue."
-msgstr "expirou desde então. Recarregue a página para continuar."
+msgstr "expirou desde então. Recarregue a pagina para continuar."
 
-#: compiled_templates/banned.html.php:162
+#: compiled_templates/banned.html.php:174
 msgid "expires"
 msgstr "expira em"
 
-#: compiled_templates/banned.html.php:166
+#: compiled_templates/banned.html.php:178
 msgid "from now, which is on"
 msgstr "que é em"
 
-#: compiled_templates/banned.html.php:174
+#: compiled_templates/banned.html.php:188
 msgid "will not expire"
 msgstr "não vai expirar"
 
-#: compiled_templates/banned.html.php:186
+#: compiled_templates/banned.html.php:201
 msgid "Your IP hash is"
 msgstr "Sua hash de IP é"
 
-#: compiled_templates/banned.html.php:194
-#: compiled_templates/warning.html.php:101
+#: compiled_templates/banned.html.php:211
+#: compiled_templates/warning.html.php:100
 msgid "Your IP address is"
 msgstr "Seu endereço de IP é"
 
-#: compiled_templates/banned.html.php:219
-msgid "You were banned for the following post on"
-msgstr "Você foi banido pelo seguinte post em"
+#: compiled_templates/banned.html.php:222
+msgid "Your ban ID is"
+msgstr "O ID do seu ban é"
 
-#: compiled_templates/banned.html.php:242
+#: compiled_templates/banned.html.php:257
+msgid "You were banned for the following post on"
+msgstr "Você foi banida pelo seguinte post em"
+
+#: compiled_templates/banned.html.php:277
 msgid "Ban appeal is <strong>deactivated</strong> for this ban."
 msgstr ""
 "Apelo de banimento está <strong>desativado</strong> para esse banimento."
 
-#: compiled_templates/banned.html.php:251
-msgid "You submitted an appeal for this ban on"
-msgstr "Você enviou um apelo para este banimento às"
-
-#: compiled_templates/banned.html.php:258
-msgid "It is still pending"
-msgstr "E ele ainda está pendente"
-
-#: compiled_templates/banned.html.php:270
-#: compiled_templates/banned.html.php:334
+#: compiled_templates/banned.html.php:285
 msgid "You appealed this ban on"
-msgstr "Você apelou seu ban às"
+msgstr "Você apelou seu ban as"
 
-#: compiled_templates/banned.html.php:278
-msgid "and it was denied. You may not appeal this ban again."
-msgstr "e foi rejeitado. Você não pode apelar para esse banimento novamente."
+#: compiled_templates/banned.html.php:290
+msgid "It is still pending."
+msgstr "E ele ainda está pendente."
 
-#: compiled_templates/banned.html.php:287
-#: compiled_templates/banned.html.php:310
-#: compiled_templates/banned.html.php:351
-#: compiled_templates/banned.html.php:385
-msgid "Mod response:"
-msgstr "Resposta do moderador:"
-
-#: compiled_templates/banned.html.php:302
+#: compiled_templates/banned.html.php:299
 msgid ""
 "You have submitted the maximum number of ban appeals allowed. You may not "
 "appeal this ban again."
 msgstr ""
-"Você atingiu o limite de apelos. Você não pode apelar este banimento "
+"Você atingiu o limite de apelos. Você não pode apelar por este banimento "
 "novamente."
 
-#: compiled_templates/banned.html.php:342
-#: compiled_templates/banned.html.php:376
+#: compiled_templates/banned.html.php:308
+#: compiled_templates/banned.html.php:341
+msgid "Mod response:"
+msgstr "Resposta da moderadora:"
+
+#: compiled_templates/banned.html.php:326
+msgid "You last appealed this ban on"
+msgstr "Seu ultimo apelo deste banimento foi em"
+
+#: compiled_templates/banned.html.php:332
 msgid "and it was denied."
 msgstr "e foi negado."
 
-#: compiled_templates/banned.html.php:363
-msgid "You may appeal this ban again. Please enter your reasoning below."
-msgstr ""
-"Você ainda pode apelar por este banimento. Digite abaixo suas razões para "
-"recorrer."
-
-#: compiled_templates/banned.html.php:370
-msgid "You last appealed this ban on"
-msgstr "Seu último apelo deste banimento foi em"
-
-#: compiled_templates/banned.html.php:403
+#: compiled_templates/banned.html.php:355
 msgid "You may appeal this ban. Please enter your reasoning below."
 msgstr "Você pode apelar por este banimento. Digite seus motivos abaixo."
 
-#: compiled_templates/banned.html.php:417 compiled_templates/report.html.php:88
+#: compiled_templates/banned.html.php:369
+#: compiled_templates/report.html.php:137
 msgid "Submit"
 msgstr "Enviar"
 
-#: compiled_templates/error.html.php:57 compiled_templates/thread.html.php:306
-#: compiled_templates/thread.html.php:372
-msgid "Back"
-msgstr "Voltar"
+#: compiled_templates/delete.html.php:61
+#: compiled_templates/partials_post_header.html.php:99
+#: compiled_templates/report_delete.html.php:45
+msgid "Delete Post"
+msgstr "Deletar Post"
 
-#: compiled_templates/error.html.php:71
-msgid "Error information"
-msgstr "Informações do erro"
+#: compiled_templates/delete.html.php:64
+#: compiled_templates/report_delete.html.php:49
+msgid "Delete files only"
+msgstr "Deletar apenas os arquivos"
 
-#: compiled_templates/fileboard.html.php:41
-msgid "No."
-msgstr "Não."
-
-#: compiled_templates/fileboard.html.php:44
-#: compiled_templates/mod_config-editor.html.php:90
-#: compiled_templates/mod_debug_recent_posts.html.php:163
-#: compiled_templates/mod_edit_post_form.html.php:46
-#: compiled_templates/mod_news.html.php:57
-#: compiled_templates/mod_news.html.php:63
-#: compiled_templates/mod_noticeboard.html.php:52
-#: compiled_templates/mod_search_results.html.php:538
-#: compiled_templates/mod_themes.html.php:54
-#: compiled_templates/post_form.html.php:143
-msgid "Name"
-msgstr "Nome"
-
-#: compiled_templates/fileboard.html.php:47
-#: compiled_templates/mod_debug_recent_posts.html.php:171
-#: compiled_templates/mod_search_results.html.php:546
-#: compiled_templates/post_form.html.php:378
-#: compiled_templates/report_delete.html.php:61
+#: compiled_templates/delete.html.php:67 compiled_templates/delete.html.php:84
+#: compiled_templates/fileboard.html.php:48
+#: compiled_templates/mod_debug_recent_posts.html.php:172
+#: compiled_templates/mod_search_results.html.php:482
+#: compiled_templates/post_form.html.php:403
+#: compiled_templates/report_delete.html.php:52
+#: compiled_templates/report_delete.html.php:55
+#: compiled_templates/report_delete.html.php:73
 msgid "File"
 msgstr "Arquivo"
 
-#: compiled_templates/fileboard.html.php:50
+#: compiled_templates/delete.html.php:72
+#: compiled_templates/report_delete.html.php:61
+msgid "All files"
+msgstr "Todos os arquivos"
+
+#: compiled_templates/delete.html.php:101
+#: compiled_templates/mod_login.html.php:63
+#: compiled_templates/mod_user.html.php:76
+#: compiled_templates/post_form.html.php:628
+#: compiled_templates/report_delete.html.php:86
+msgid "Password"
+msgstr "Senha"
+
+#: compiled_templates/delete.html.php:114
+#: compiled_templates/mod_archive_featured_list.html.php:148
+#: compiled_templates/mod_pages.html.php:88
+#: compiled_templates/mod_pages.html.php:124
+#: compiled_templates/post_post_controls.html.php:54
+#: compiled_templates/report_delete.html.php:91
+msgid "Delete"
+msgstr "Deletar"
+
+#: compiled_templates/error.html.php:55 compiled_templates/thread.html.php:251
+#: compiled_templates/thread.html.php:312
+msgid "Back"
+msgstr "Voltar"
+
+#: compiled_templates/error.html.php:70
+msgid "Error information"
+msgstr "Informações do erro"
+
+#: compiled_templates/fileboard.html.php:42
+msgid "No."
+msgstr "Não."
+
+#: compiled_templates/fileboard.html.php:45
+#: compiled_templates/mod_config-editor.html.php:98
+#: compiled_templates/mod_debug_recent_posts.html.php:164
+#: compiled_templates/mod_edit_post_form.html.php:47
+#: compiled_templates/mod_news.html.php:58
+#: compiled_templates/mod_news.html.php:64
+#: compiled_templates/mod_noticeboard_postform.html.php:61
+#: compiled_templates/mod_partials_noticeboard_postform.html.php:63
+#: compiled_templates/mod_search_results.html.php:474
+#: compiled_templates/mod_themes.html.php:55
+#: compiled_templates/post_form.html.php:169
+msgid "Name"
+msgstr "Nome"
+
+#: compiled_templates/fileboard.html.php:51
 msgid "Tag"
 msgstr "Tag"
 
-#: compiled_templates/fileboard.html.php:53
-#: compiled_templates/mod_debug_recent_posts.html.php:167
-#: compiled_templates/mod_edit_post_form.html.php:72
-#: compiled_templates/mod_news.html.php:90
-#: compiled_templates/mod_noticeboard.html.php:62
-#: compiled_templates/mod_search_results.html.php:542
-#: compiled_templates/post_form.html.php:223
+#: compiled_templates/fileboard.html.php:54
+#: compiled_templates/mod_debug_recent_posts.html.php:168
+#: compiled_templates/mod_edit_post_form.html.php:71
+#: compiled_templates/mod_news.html.php:91
+#: compiled_templates/mod_noticeboard_postform.html.php:71
+#: compiled_templates/mod_partials_noticeboard_postform.html.php:73
+#: compiled_templates/mod_search_results.html.php:478
+#: compiled_templates/post_form.html.php:269
 msgid "Subject"
 msgstr "Assunto"
 
-#: compiled_templates/fileboard.html.php:56
-#: compiled_templates/mod_debug_apc.html.php:56
+#: compiled_templates/fileboard.html.php:57
+#: compiled_templates/mod_debug_apc.html.php:57
 msgid "Size"
 msgstr "Tamanho"
 
-#: compiled_templates/fileboard.html.php:59
-#: compiled_templates/mod_inbox.html.php:56
-#: compiled_templates/mod_pm.html.php:96
-#: compiled_templates/mod_search_results.html.php:83
-#: compiled_templates/mod_view_ip.html.php:119
+#: compiled_templates/fileboard.html.php:60
+#: compiled_templates/mod_inbox.html.php:58
+#: compiled_templates/mod_pm.html.php:102
+#: compiled_templates/mod_search_results.html.php:84
+#: compiled_templates/mod_view_ip.html.php:146
 msgid "Date"
 msgstr "Data"
 
-#: compiled_templates/fileboard.html.php:62
+#: compiled_templates/fileboard.html.php:63
+#: compiled_templates/mod_noticeboard_thread.html.php:81
+#: compiled_templates/mod_partials_noticeboard_thread.html.php:81
 msgid "Replies"
 msgstr "Respostas"
 
-#: compiled_templates/generic_page.html.php:69
-#: compiled_templates/index.html.php:103 compiled_templates/page.html.php:77
-#: compiled_templates/thread.html.php:148
-msgid "You have"
-msgstr "Você tem"
+#: compiled_templates/history.html.php:55
+#: compiled_templates/mod_view_ip.html.php:469
+msgid "History"
+msgstr "Histórico"
 
-#: compiled_templates/generic_page.html.php:73
-#: compiled_templates/index.html.php:107 compiled_templates/page.html.php:81
-#: compiled_templates/thread.html.php:152
-msgid "an unread PM"
-msgstr "uma MP não lida"
+#: compiled_templates/history.html.php:59
+msgid "To view your message history on Magalichan, complete the captcha below."
+msgstr ""
+"Para visualizar seu histórico no Magalichan, complete o captcha abaixo."
 
-#: compiled_templates/generic_page.html.php:77
-#: compiled_templates/index.html.php:111 compiled_templates/page.html.php:85
-#: compiled_templates/thread.html.php:156
-msgid "plus"
-msgstr "e mais"
+#: compiled_templates/index.html.php:85 compiled_templates/index.html.php:107
+#: compiled_templates/index.html.php:138
+msgid "Page"
+msgstr "Página"
 
-#: compiled_templates/generic_page.html.php:81
-#: compiled_templates/index.html.php:115 compiled_templates/page.html.php:89
-#: compiled_templates/thread.html.php:160
-msgid "more waiting"
-msgstr "aguardando"
+#: compiled_templates/index.html.php:266
+#: compiled_templates/mod_ban_list.html.php:89
+#: compiled_templates/mod_dashboard.html.php:493
+#: compiled_templates/mod_partials_search_form.html.php:90
+#: compiled_templates/mod_search_form.html.php:98
+#: compiled_templates/mod_search_results.html.php:40
+#: compiled_templates/search_form.html.php:40
+#: compiled_templates/search_form.html.php:79 search.php:7 search.php:185
+msgid "Search"
+msgstr "Procurar"
 
-#: compiled_templates/generic_page.html.php:132
-#: compiled_templates/index.html.php:190 compiled_templates/page.html.php:114
-#: compiled_templates/themes_catalog_catalog.html.php:118
-#: compiled_templates/thread.html.php:237
-msgid "Return to dashboard"
-msgstr "Voltar à dashboard"
-
-#: compiled_templates/index.html.php:329
-msgid "Go to bottom"
-msgstr "Ir para o rodapé"
-
-#: compiled_templates/index.html.php:343 compiled_templates/index.html.php:410
-#: compiled_templates/thread.html.php:300
-#: compiled_templates/thread.html.php:364
+#: compiled_templates/index.html.php:300 compiled_templates/index.html.php:359
+#: compiled_templates/themes_catalog_catalog.html.php:68
+#: compiled_templates/thread.html.php:241
+#: compiled_templates/thread.html.php:304
 msgid "Catalog"
 msgstr "Catálogo"
 
-#: compiled_templates/index.html.php:357
-#: compiled_templates/themes_catalog_catalog.html.php:184
+#: compiled_templates/index.html.php:312
+#: compiled_templates/themes_catalog_catalog.html.php:151
 msgid "Reload"
 msgstr "Recarregar"
 
-#: compiled_templates/index.html.php:372
-#: compiled_templates/themes_catalog_catalog.html.php:202
-#: compiled_templates/thread.html.php:321
+#: compiled_templates/index.html.php:325
+#: compiled_templates/themes_catalog_catalog.html.php:166
+#: compiled_templates/thread.html.php:266
 msgid "Archive"
 msgstr "Arquivo"
 
-#: compiled_templates/index.html.php:387
-#: compiled_templates/mod_archive_list.html.php:191
-#: compiled_templates/mod_archive_list.html.php:236
-#: compiled_templates/themes_catalog_catalog.html.php:217
-#: compiled_templates/thread.html.php:336 inc/archive.php:350
-#: inc/mod/pages.php:3716
+#: compiled_templates/index.html.php:339
+#: compiled_templates/mod_archive_list.html.php:198
+#: compiled_templates/mod_archive_list.html.php:244
+#: compiled_templates/themes_catalog_catalog.html.php:179
+#: compiled_templates/thread.html.php:282 inc/archive.php:350
+#: inc/mod/pages.php:3877
 #, php-format
 msgid "Featured"
 msgstr "Destaque"
 
-#: compiled_templates/index.html.php:397 compiled_templates/thread.html.php:348
-msgid "Go to top"
-msgstr "Ir para o topo"
-
-#: compiled_templates/mod_archive_featured_list.html.php:53
+#: compiled_templates/mod_archive_featured_list.html.php:54
 msgid "Board Archive"
 msgstr "Arquivo da board"
 
-#: compiled_templates/mod_archive_featured_list.html.php:69
+#: compiled_templates/mod_archive_featured_list.html.php:70
 msgid ""
-"Please be curtious and don't delete the threads archived here as they were "
+"Please be courteous and don't delete the threads archived here as they were "
 "archived for a reason."
 msgstr ""
-"Por favor, seja cuidadoso e não delete os fios arquivados aqui porque eles "
-"foram arquivos por algum motivo."
+"Por favor, seja cuidadosa e não delete os tópicos arquivados aqui, porque "
+"eles foram arquivos por algum motivo."
 
 #: compiled_templates/mod_archive_featured_list.html.php:83
-#: compiled_templates/mod_archive_list.html.php:104
+#: compiled_templates/mod_archive_list.html.php:110
 msgid "Post #"
 msgstr "Post #"
 
 #: compiled_templates/mod_archive_featured_list.html.php:87
-#: compiled_templates/mod_archive_list.html.php:108
+#: compiled_templates/mod_archive_list.html.php:114
 msgid "Snippet"
 msgstr "Prévia"
 
 #: compiled_templates/mod_archive_featured_list.html.php:125
-#: compiled_templates/mod_archive_list.html.php:157
-#: compiled_templates/mod_pages.html.php:70
-#: compiled_templates/mod_pages.html.php:104
-#: compiled_templates/mod_recent_posts.html.php:63
+#: compiled_templates/mod_archive_list.html.php:163
+#: compiled_templates/mod_pages.html.php:92
+#: compiled_templates/mod_pages.html.php:132
+#: compiled_templates/mod_recent_posts.html.php:69
 msgid "View"
 msgstr "Visualizar"
 
-#: compiled_templates/mod_archive_featured_list.html.php:146
-#: compiled_templates/mod_archive_featured_list.html.php:174
+#: compiled_templates/mod_archive_featured_list.html.php:144
 msgid ""
 "Are you sure you want to permanently delete this thread from featured "
 "archive?"
 msgstr "Tem certeza que quer deletar permanentemente esse tópico destacado?"
-
-#: compiled_templates/mod_archive_featured_list.html.php:149
-#: compiled_templates/mod_archive_featured_list.html.php:177
-#: compiled_templates/mod_pages.html.php:68
-#: compiled_templates/mod_pages.html.php:95
-#: compiled_templates/report_delete.html.php:69
-msgid "Delete"
-msgstr "Deletar"
 
 #: compiled_templates/mod_archive_list.html.php:54
 msgid "View Mod Archive"
@@ -364,185 +383,205 @@ msgstr "Visualizar arquivo da moderação"
 msgid "Featured Thread Archive"
 msgstr "Tópicos em Destaque do Arquivo"
 
-#: compiled_templates/mod_archive_list.html.php:81
+#: compiled_templates/mod_archive_list.html.php:83
 msgid "Displaying"
 msgstr "Mostrando"
 
-#: compiled_templates/mod_archive_list.html.php:86
+#: compiled_templates/mod_archive_list.html.php:88
 msgid "expired threads"
 msgstr "tópicos expirados"
 
-#: compiled_templates/mod_archive_list.html.php:89
+#: compiled_templates/mod_archive_list.html.php:93
 msgid "from the past"
 msgstr "das últimas"
 
-#: compiled_templates/mod_archive_list.html.php:95
+#: compiled_templates/mod_archive_list.html.php:101
 msgid "Vote for a thread to be added to the featured archive"
-msgstr "Apelos"
+msgstr "Vote em uma thread para ser adicionada ao arquivo de destaques"
 
-#: compiled_templates/mod_archive_list.html.php:113
+#: compiled_templates/mod_archive_list.html.php:119
 msgid "Votes"
 msgstr "Votos"
 
-#: compiled_templates/mod_archive_list.html.php:183
+#: compiled_templates/mod_archive_list.html.php:190
 msgid "Press OK to vote for this thread to be added to featured archive."
 msgstr ""
-"Pressione OK para votar nesse tópico para que seja adicionado no arquivo "
+"Pressione OK para votar nesse tópico para que seja adcionado no arquivo "
 "destacado."
 
-#: compiled_templates/mod_archive_list.html.php:226
+#: compiled_templates/mod_archive_list.html.php:234
 msgid "Are you sure you want to add thread to featured archive?"
 msgstr ""
 "Você tem certeza que quer adicionar esse tópico para o arquivo destacado?"
 
-#: compiled_templates/mod_archive_list.html.php:229
+#: compiled_templates/mod_archive_list.html.php:237
 msgid "Feature"
 msgstr "Destaque"
 
-#: compiled_templates/mod_archive_list.html.php:264
+#: compiled_templates/mod_archive_list.html.php:273
 msgid "Are you sure you want to add thread to mod archive?"
 msgstr ""
 "Você tem certeza que quer adicionar esse tópico para o arquivo de "
 "moderadores?"
 
-#: compiled_templates/mod_archive_list.html.php:267 inc/mod/pages.php:3749
+#: compiled_templates/mod_archive_list.html.php:276 inc/mod/pages.php:3910
 #, php-format
 msgid "Mod Archive"
 msgstr "Arquivo de moderadores"
 
-#: compiled_templates/mod_archive_list.html.php:274
+#: compiled_templates/mod_archive_list.html.php:283
 msgid "Mod Archived"
 msgstr "Arquivo de moderadores"
 
 #: compiled_templates/mod_ban_appeals.html.php:50
-#: compiled_templates/mod_ban_history.html.php:40
+#: compiled_templates/mod_ban_history.html.php:41
+#: compiled_templates/mod_partials_ban_history.html.php:41
 msgid "Status"
 msgstr "Situação"
 
 #: compiled_templates/mod_ban_appeals.html.php:59
-#: compiled_templates/mod_ban_history.html.php:49
+#: compiled_templates/mod_ban_history.html.php:50
+#: compiled_templates/mod_partials_ban_history.html.php:50
 msgid "Expired"
 msgstr "Expirado"
 
 #: compiled_templates/mod_ban_appeals.html.php:65
-#: compiled_templates/mod_ban_history.html.php:55
+#: compiled_templates/mod_ban_history.html.php:56
+#: compiled_templates/mod_partials_ban_history.html.php:56
 msgid "Active"
 msgstr "Ativo"
 
 #: compiled_templates/mod_ban_appeals.html.php:78
-#: compiled_templates/mod_ban_form.html.php:130
-#: compiled_templates/mod_ban_history.html.php:64
-#: compiled_templates/mod_debug_recent_posts.html.php:159
-#: compiled_templates/mod_nicenotice_form.html.php:107
-#: compiled_templates/mod_search_results.html.php:534
-#: compiled_templates/mod_warning_form.html.php:119 inc/mod/pages.php:1023
+#: compiled_templates/mod_ban_form.html.php:143
+#: compiled_templates/mod_ban_history.html.php:65
+#: compiled_templates/mod_debug_recent_posts.html.php:160
+#: compiled_templates/mod_nicenotice_form.html.php:121
+#: compiled_templates/mod_partials_ban_history.html.php:65
+#: compiled_templates/mod_search_results.html.php:469
+#: compiled_templates/mod_warning_form.html.php:130
 msgid "IP"
 msgstr "IP"
 
 #: compiled_templates/mod_ban_appeals.html.php:93
-#: compiled_templates/mod_ban_form.html.php:187
-#: compiled_templates/mod_ban_form.html.php:377
-#: compiled_templates/mod_ban_history.html.php:95
-#: compiled_templates/mod_edit_ban.html.php:141
-#: compiled_templates/mod_nicenotice_form.html.php:133
-#: compiled_templates/mod_nicenotice_form.html.php:165
-#: compiled_templates/mod_report.html.php:49
-#: compiled_templates/mod_search_results.html.php:161
-#: compiled_templates/mod_warning_form.html.php:145
-#: compiled_templates/report_delete.html.php:79
+#: compiled_templates/mod_ban_form.html.php:200
+#: compiled_templates/mod_ban_form.html.php:380
+#: compiled_templates/mod_ban_history.html.php:96
+#: compiled_templates/mod_edit_ban.html.php:174
+#: compiled_templates/mod_nicenotice_form.html.php:145
+#: compiled_templates/mod_nicenotice_form.html.php:174
+#: compiled_templates/mod_partials_ban_history.html.php:99
+#: compiled_templates/mod_report.html.php:52
+#: compiled_templates/mod_search_results.html.php:158
+#: compiled_templates/mod_warning_form.html.php:156
+#: compiled_templates/mod_warning_form.html.php:217
+#: compiled_templates/report.html.php:91 compiled_templates/report.html.php:125
+#: compiled_templates/report_delete.html.php:103
 msgid "Reason"
 msgstr "Motivo"
 
 #: compiled_templates/mod_ban_appeals.html.php:108
-#: compiled_templates/mod_ban_history.html.php:110
+#: compiled_templates/mod_ban_history.html.php:111
+#: compiled_templates/mod_partials_ban_history.html.php:114
 msgid "no reason"
 msgstr "sem motivo especificado"
 
 #: compiled_templates/mod_ban_appeals.html.php:117
-#: compiled_templates/mod_ban_form.html.php:283
-#: compiled_templates/mod_ban_history.html.php:119
-#: compiled_templates/mod_debug_antispam.html.php:45
-#: compiled_templates/mod_debug_antispam.html.php:173
-#: compiled_templates/mod_debug_antispam.html.php:302
-#: compiled_templates/mod_debug_recent_posts.html.php:50
-#: compiled_templates/mod_debug_recent_posts.html.php:147
-#: compiled_templates/mod_log.html.php:52
-#: compiled_templates/mod_report.html.php:40
-#: compiled_templates/mod_search_results.html.php:165
-#: compiled_templates/mod_search_results.html.php:418
-#: compiled_templates/mod_search_results.html.php:522
-#: compiled_templates/mod_user.html.php:283
-#: compiled_templates/mod_view_ip.html.php:464
-#: compiled_templates/post_form.html.php:99
+#: compiled_templates/mod_ban_form.html.php:290
+#: compiled_templates/mod_ban_history.html.php:120
+#: compiled_templates/mod_debug_antispam.html.php:46
+#: compiled_templates/mod_debug_antispam.html.php:174
+#: compiled_templates/mod_debug_antispam.html.php:303
+#: compiled_templates/mod_debug_recent_posts.html.php:51
+#: compiled_templates/mod_debug_recent_posts.html.php:148
+#: compiled_templates/mod_log.html.php:54
+#: compiled_templates/mod_partials_ban_history.html.php:123
+#: compiled_templates/mod_report.html.php:41
+#: compiled_templates/mod_search_results.html.php:162
+#: compiled_templates/mod_search_results.html.php:370
+#: compiled_templates/mod_search_results.html.php:457
+#: compiled_templates/mod_statistics.html.php:58
+#: compiled_templates/mod_user.html.php:261
+#: compiled_templates/mod_view_ip.html.php:483
+#: compiled_templates/post_form.html.php:123
 msgid "Board"
 msgstr "Board"
 
 #: compiled_templates/mod_ban_appeals.html.php:141
-#: compiled_templates/mod_ban_history.html.php:143
-#: compiled_templates/mod_search_results.html.php:169
+#: compiled_templates/mod_ban_history.html.php:144
+#: compiled_templates/mod_partials_ban_history.html.php:147
+#: compiled_templates/mod_search_results.html.php:166
 msgid "Set"
 msgstr "Criado"
 
 #: compiled_templates/mod_ban_appeals.html.php:151
-#: compiled_templates/mod_ban_history.html.php:153
-#: compiled_templates/mod_debug_antispam.html.php:61
-#: compiled_templates/mod_debug_antispam.html.php:189
-#: compiled_templates/mod_debug_apc.html.php:52
-#: compiled_templates/mod_search_results.html.php:177
+#: compiled_templates/mod_ban_history.html.php:154
+#: compiled_templates/mod_debug_antispam.html.php:62
+#: compiled_templates/mod_debug_antispam.html.php:190
+#: compiled_templates/mod_debug_apc.html.php:53
+#: compiled_templates/mod_partials_ban_history.html.php:157
+#: compiled_templates/mod_search_results.html.php:174
 msgid "Expires"
 msgstr "Expira em"
 
 #: compiled_templates/mod_ban_appeals.html.php:166
-#: compiled_templates/mod_ban_history.html.php:168
-#: compiled_templates/mod_search_results.html.php:303
-#: compiled_templates/mod_users.html.php:171
+#: compiled_templates/mod_ban_history.html.php:169
+#: compiled_templates/mod_partials_ban_history.html.php:172
+#: compiled_templates/mod_search_results.html.php:261
+#: compiled_templates/mod_users.html.php:153
 msgid "never"
 msgstr "nunca"
 
 #: compiled_templates/mod_ban_appeals.html.php:175
-#: compiled_templates/mod_ban_history.html.php:177
-#: compiled_templates/mod_search_results.html.php:181
+#: compiled_templates/mod_ban_history.html.php:178
+#: compiled_templates/mod_partials_ban_history.html.php:181
+#: compiled_templates/mod_search_results.html.php:178
 msgid "Seen"
 msgstr "Visto"
 
 #: compiled_templates/mod_ban_appeals.html.php:184
-#: compiled_templates/mod_ban_history.html.php:186
-#: compiled_templates/mod_ban_history.html.php:236
-#: compiled_templates/mod_search_results.html.php:331
+#: compiled_templates/mod_ban_history.html.php:187
+#: compiled_templates/mod_ban_history.html.php:237
+#: compiled_templates/mod_partials_ban_history.html.php:190
+#: compiled_templates/mod_partials_ban_history.html.php:240
+#: compiled_templates/mod_search_results.html.php:290
 msgid "Yes"
 msgstr "Sim"
 
 #: compiled_templates/mod_ban_appeals.html.php:190
-#: compiled_templates/mod_ban_history.html.php:192
-#: compiled_templates/mod_ban_history.html.php:242
-#: compiled_templates/mod_search_results.html.php:337
+#: compiled_templates/mod_ban_history.html.php:193
+#: compiled_templates/mod_ban_history.html.php:243
+#: compiled_templates/mod_partials_ban_history.html.php:196
+#: compiled_templates/mod_partials_ban_history.html.php:246
+#: compiled_templates/mod_search_results.html.php:296
 msgid "No"
 msgstr "Não"
 
 #: compiled_templates/mod_ban_appeals.html.php:199
-#: compiled_templates/mod_ban_history.html.php:201
-#: compiled_templates/mod_log.html.php:40
-#: compiled_templates/mod_search_results.html.php:75
-#: compiled_templates/mod_search_results.html.php:185
-#: compiled_templates/mod_search_results.html.php:406
-#: compiled_templates/mod_view_ip.html.php:111
-#: compiled_templates/mod_view_ip.html.php:216
-#: compiled_templates/mod_view_ip.html.php:456
+#: compiled_templates/mod_ban_history.html.php:202
+#: compiled_templates/mod_log.html.php:42
+#: compiled_templates/mod_partials_ban_history.html.php:205
+#: compiled_templates/mod_search_results.html.php:76
+#: compiled_templates/mod_search_results.html.php:182
+#: compiled_templates/mod_search_results.html.php:358
+#: compiled_templates/mod_view_ip.html.php:138
+#: compiled_templates/mod_view_ip.html.php:239
+#: compiled_templates/mod_view_ip.html.php:475
 msgid "Staff"
 msgstr "Equipe"
 
 #: compiled_templates/mod_ban_appeals.html.php:214
-#: compiled_templates/mod_ban_history.html.php:218
-#: compiled_templates/mod_dashboard.html.php:216
-#: compiled_templates/mod_inbox.html.php:100
-#: compiled_templates/mod_log.html.php:109
-#: compiled_templates/mod_noticeboard.html.php:154
-#: compiled_templates/mod_pm.html.php:57 compiled_templates/mod_pm.html.php:85
-#: compiled_templates/mod_search_results.html.php:116
-#: compiled_templates/mod_search_results.html.php:381
-#: compiled_templates/mod_search_results.html.php:452
-#: compiled_templates/mod_view_ip.html.php:154
-#: compiled_templates/mod_view_ip.html.php:500
+#: compiled_templates/mod_ban_history.html.php:219
+#: compiled_templates/mod_dashboard.html.php:226
+#: compiled_templates/mod_inbox.html.php:101
+#: compiled_templates/mod_noticeboard_post.html.php:110
+#: compiled_templates/mod_partials_ban_history.html.php:222
+#: compiled_templates/mod_partials_log.html.php:71
+#: compiled_templates/mod_partials_noticeboard_post.html.php:113
+#: compiled_templates/mod_pm.html.php:60 compiled_templates/mod_pm.html.php:90
+#: compiled_templates/mod_search_results.html.php:117
+#: compiled_templates/mod_search_results.html.php:333
+#: compiled_templates/mod_search_results.html.php:406
+#: compiled_templates/mod_view_ip.html.php:181
 msgid "deleted?"
 msgstr "deletado?"
 
@@ -555,10 +594,10 @@ msgid "Appeal reason"
 msgstr "Motivo do apelo"
 
 #: compiled_templates/mod_ban_appeals.html.php:250
-#: compiled_templates/mod_log.html.php:56
-#: compiled_templates/mod_search_results.html.php:422
-#: compiled_templates/mod_user.html.php:287
-#: compiled_templates/mod_view_ip.html.php:468
+#: compiled_templates/mod_log.html.php:58
+#: compiled_templates/mod_search_results.html.php:374
+#: compiled_templates/mod_user.html.php:265
+#: compiled_templates/mod_view_ip.html.php:487
 msgid "Action"
 msgstr "Ação"
 
@@ -570,104 +609,98 @@ msgstr "Desbanir"
 msgid "Deny appeal"
 msgstr "Negar apelo"
 
-#: compiled_templates/mod_ban_appeals.html.php:269
-msgid "Denial Reason<br/>(Optional on Deny)"
+#: compiled_templates/mod_ban_appeals.html.php:270
+msgid "Denial Reason (Optional on Deny)"
 msgstr "Motivo da recusa<br/>(Opcional quando negar)"
 
-#: compiled_templates/mod_ban_appeals.html.php:272
-msgid "Add additional message that will be showed to the denied poster"
-msgstr "Adicionar mensagem adicional que vai ser exibida para o usuário banido"
+#: compiled_templates/mod_ban_appeals.html.php:275
+msgid "Add additional message that will be shown to the denied poster"
+msgstr "Adcionar mensagem adcional que vai ser exibida para a usuária banida"
 
-#: compiled_templates/mod_ban_form.html.php:133
+#: compiled_templates/mod_ban_form.html.php:146
 msgid "(or subnet)"
 msgstr "(ou subnet)"
 
-#: compiled_templates/mod_ban_form.html.php:148
-#: compiled_templates/mod_ban_form.html.php:174
-#: compiled_templates/mod_debug_recent_posts.html.php:276
-#: compiled_templates/mod_nicenotice_form.html.php:123
-#: compiled_templates/mod_search_results.html.php:642
-#: compiled_templates/mod_warning_form.html.php:135
+#: compiled_templates/mod_ban_form.html.php:161
+#: compiled_templates/mod_ban_form.html.php:187
+#: compiled_templates/mod_debug_recent_posts.html.php:277
+#: compiled_templates/mod_nicenotice_form.html.php:136
+#: compiled_templates/mod_partials_log.html.php:48
+#: compiled_templates/mod_partials_log.html.php:95
+#: compiled_templates/mod_search_results.html.php:546
+#: compiled_templates/mod_warning_form.html.php:146
 msgid "hidden"
 msgstr "oculto"
 
-#: compiled_templates/mod_ban_form.html.php:158
+#: compiled_templates/mod_ban_form.html.php:171
 msgid "Unique User Cookie"
 msgstr "Cookie Único de Usuário"
 
-#: compiled_templates/mod_ban_form.html.php:205
-#: compiled_templates/mod_bantz_form.html.php:75
-#: compiled_templates/mod_new_pm.html.php:71
-#: compiled_templates/mod_pm.html.php:111
-#: compiled_templates/mod_warning_form.html.php:163
+#: compiled_templates/mod_ban_form.html.php:218
+#: compiled_templates/mod_bantz_form.html.php:69
+#: compiled_templates/mod_new_pm.html.php:74
+#: compiled_templates/mod_pm.html.php:116
+#: compiled_templates/mod_warning_form.html.php:174
 msgid "Message"
 msgstr "Mensagem"
 
-#: compiled_templates/mod_ban_form.html.php:221
-#: compiled_templates/mod_bantz_form.html.php:85
-#: compiled_templates/mod_warning_form.html.php:179
+#: compiled_templates/mod_ban_form.html.php:232
+#: compiled_templates/mod_bantz_form.html.php:79
+#: compiled_templates/mod_warning_form.html.php:188
 msgid "public; attached to post"
 msgstr "público; anexado à mensagem"
 
-#: compiled_templates/mod_ban_form.html.php:238
-#: compiled_templates/mod_ban_form.html.php:373
-#: compiled_templates/mod_edit_ban.html.php:137
+#: compiled_templates/mod_ban_form.html.php:243
+#: compiled_templates/mod_ban_form.html.php:376
+#: compiled_templates/mod_edit_ban.html.php:170
 msgid "Length"
 msgstr "Tamanho"
 
-#: compiled_templates/mod_ban_form.html.php:249
-#: compiled_templates/post_form.html.php:440
+#: compiled_templates/mod_ban_form.html.php:250
+msgid "eg. \"2d1h30m\" or \"2 days\""
+msgstr "ex. \"2d1h30m\" ou \"2 days\""
+
+#: compiled_templates/mod_ban_form.html.php:258
+#: compiled_templates/post_form.html.php:466
 msgid "Options"
 msgstr "Opções"
 
-#: compiled_templates/mod_ban_form.html.php:259
+#: compiled_templates/mod_ban_form.html.php:268
 msgid "Do not show post in banlist"
 msgstr "Não mostrar post na banlist"
 
-#: compiled_templates/mod_ban_form.html.php:265
+#: compiled_templates/mod_ban_form.html.php:274
 msgid "Do not allow appeals"
 msgstr "Não permitir apelos"
 
-#: compiled_templates/mod_ban_form.html.php:272
+#: compiled_templates/mod_ban_form.html.php:281
 msgid "Lock Thread"
 msgstr "Trancar tópico"
 
-#: compiled_templates/mod_ban_form.html.php:353
-#: compiled_templates/mod_view_ip.html.php:400
+#: compiled_templates/mod_ban_form.html.php:356
+#: compiled_templates/mod_view_ip.html.php:419
 msgid "Edit Ban"
 msgstr "Editar banimento"
 
-#: compiled_templates/mod_ban_form.html.php:355
+#: compiled_templates/mod_ban_form.html.php:358
 msgid "New Ban"
 msgstr "Novo Banimento"
 
-#: compiled_templates/mod_ban_form.html.php:367
-#: compiled_templates/mod_edit_ban.html.php:131
-msgid "Predefined Ban Reasons:"
-msgstr "Motivos pré-definidos de banimento:"
+#: compiled_templates/mod_ban_form.html.php:370
+#: compiled_templates/mod_edit_ban.html.php:164
+msgid "Predefined Ban Reasons"
+msgstr "Motivos prédefinidos de Ban"
 
-#: compiled_templates/mod_ban_history.html.php:227
+#: compiled_templates/mod_ban_history.html.php:228
+#: compiled_templates/mod_partials_ban_history.html.php:231
 msgid "Appealable"
 msgstr "Apelável"
 
-#: compiled_templates/mod_ban_list.html.php:63
-msgid "Show only bans from boards I moderate"
-msgstr "Mostrar apenas banimentos de boards que eu modero"
+#: compiled_templates/mod_ban_list.html.php:76
+msgid "Select all bans"
+msgstr "Selecionar todos os bans"
 
-#: compiled_templates/mod_ban_list.html.php:69
-msgid "Show only active bans"
-msgstr "Mostrar apenas banimentos ativos"
-
-#: compiled_templates/mod_ban_list.html.php:74
-#: compiled_templates/mod_dashboard.html.php:458
-#: compiled_templates/mod_search_form.html.php:97
-#: compiled_templates/mod_search_results.html.php:39
-#: compiled_templates/search_form.html.php:39
-#: compiled_templates/search_form.html.php:80 search.php:7 search.php:184
-msgid "Search"
-msgstr "Procurar"
-
-#: compiled_templates/mod_ban_list.html.php:82
+#: compiled_templates/mod_ban_list.html.php:80
 msgid "Unban selected"
 msgstr "Remover bans selecionados"
 
@@ -677,632 +710,712 @@ msgstr "Upload de banners"
 
 #: compiled_templates/mod_banners.html.php:63
 msgid ""
-"Banners must be &lt; %banner_size% and have image dimensions %banner_width"
-"%px x %banner_height%px."
+"Banners must be &lt; %banner_size% and have image dimensions "
+"%banner_dimensions%"
 msgstr ""
-"Banners precisa ter &lt; %banner_size% e ter a dimensão de %banner_width%px "
-"x %banner_height%px."
+"Banners precisa ter &lt; %banner_size% e ter a dimensão de "
+"%banner_dimensions%"
 
-#: compiled_templates/mod_banners.html.php:67
+#: compiled_templates/mod_banners.html.php:69
 msgid "Upload"
 msgstr "Upload"
 
-#: compiled_templates/mod_banners.html.php:73
+#: compiled_templates/mod_banners.html.php:78
 msgid "Banners already in use"
 msgstr "Banners em uso"
 
-#: compiled_templates/mod_banners.html.php:125
+#: compiled_templates/mod_banners.html.php:121
 msgid "Delete selected"
 msgstr "Deletar selecionado"
 
-#: compiled_templates/mod_bantz_form.html.php:93
+#: compiled_templates/mod_bantz_form.html.php:87
 msgid "Text Size"
 msgstr "Tamanho do Texto"
 
-#: compiled_templates/mod_bantz_form.html.php:103
+#: compiled_templates/mod_bantz_form.html.php:97
 msgid "size of bantz text"
 msgstr "tamanho do texto bantz"
 
-#: compiled_templates/mod_bantz_form.html.php:114
+#: compiled_templates/mod_bantz_form.html.php:108
 msgid "New Bantz"
 msgstr "Novo Bantz"
 
-#: compiled_templates/mod_board.html.php:59
+#: compiled_templates/mod_board.html.php:52
 msgid "URI"
 msgstr "URI"
 
-#: compiled_templates/mod_board.html.php:81
-#: compiled_templates/mod_pages.html.php:64
-#: compiled_templates/mod_pages.html.php:134
+#: compiled_templates/mod_board.html.php:66
+#: compiled_templates/mod_pages.html.php:80
+#: compiled_templates/mod_pages.html.php:172
 msgid "Title"
 msgstr "Título"
 
-#: compiled_templates/mod_board.html.php:93
+#: compiled_templates/mod_board.html.php:78
 msgid "Subtitle"
 msgstr "Subtítulo"
 
-#: compiled_templates/mod_board.html.php:111
+#: compiled_templates/mod_board.html.php:95
 msgid "Create board"
 msgstr "Criar board"
 
-#: compiled_templates/mod_board.html.php:117
-#: compiled_templates/mod_config-editor-php.html.php:124
-#: compiled_templates/mod_config-editor.html.php:254
-#: compiled_templates/mod_user.html.php:248
+#: compiled_templates/mod_board.html.php:97
+#: compiled_templates/mod_config-editor-php.html.php:130
+#: compiled_templates/mod_config-editor.html.php:243
+#: compiled_templates/mod_user.html.php:221
 msgid "Save changes"
 msgstr "Salvar alterações"
 
-#: compiled_templates/mod_board.html.php:124
+#: compiled_templates/mod_board.html.php:108
 msgid "Are you sure you want to permanently delete this board?"
 msgstr "Você tem certeza que deseja deletar permanentemente essa board?"
 
-#: compiled_templates/mod_board.html.php:126
+#: compiled_templates/mod_board.html.php:112
 msgid "Delete board"
 msgstr "Deletar board"
 
-#: compiled_templates/mod_config-editor.html.php:39
+#: compiled_templates/mod_config-editor-php.html.php:41
 msgid ""
-"Any changes you make here will simply be appended to <code>%file%</code>. If "
-"you wish to make the most of Tinyboard's customizability, you can instead "
-"edit the file directly. This page is intended for making quick changes and "
-"for those who don't have a basic understanding of PHP code."
+"Any changes you make here will simply be appended to <code>%file%</code>. \n"
+"        If you wish to make the most of Tinyboard's customizability, you can "
+"instead edit the file directly. \n"
+"        This page is intended for making quick changes and for those who "
+"don't have a basic understanding of PHP code."
 msgstr ""
-"Qualquer mudança que você fizer aqui, vai ser acrescentada no <code>%file%</"
+"Qualquer mudança que você fizer aqui, vai ser acrescentado no <code>%file%</"
 "code>. Se você quiser aproveitar o máximo da customização do Tinyboard, você "
 "pode editar esse arquivo diretamente. Essa página foi feita para fazer "
 "mudanças rápidas e para aqueles que não sabem o básico de código PHP."
 
-#: compiled_templates/mod_config-editor.html.php:53
+#: compiled_templates/mod_config-editor-php.html.php:58
+#: compiled_templates/mod_config-editor.html.php:57
 msgid "Edit site-wide config"
 msgstr "Editar configuração global do site"
 
-#: compiled_templates/mod_config-editor.html.php:68
-msgid "Edit config for"
-msgstr "Editar config do"
+#: compiled_templates/mod_config-editor-php.html.php:76
+#: compiled_templates/mod_config-editor.html.php:75
+msgid "Edit config for %uri%"
+msgstr "Editar config do %uri%"
 
-#: compiled_templates/mod_config-editor.html.php:94
+#: compiled_templates/mod_config-editor-php.html.php:95
+msgid ""
+"Tinyboard does not have the required permissions to edit %file%. To make "
+"changes, you will need to change the file's permissions first or manually "
+"edit the code."
+msgstr ""
+"Tinyboard não tem as permissões para editar o arquivo %file%. Para aplicar "
+"as alterações, você precisa mudar as permissões do arquivo ou manualmente "
+"editar o código."
+
+#: compiled_templates/mod_config-editor.html.php:40
+msgid ""
+"Any changes you make here will simply be appended to <code>%file%</code>. \n"
+"    If you wish to make the most of Tinyboard's customizability, you can "
+"instead edit the file directly. \n"
+"    This page is intended for making quick changes and for those who don\\'t "
+"have a basic understanding of PHP code."
+msgstr ""
+"Qualquer mudança que você fizer aqui, vai ser acrescentado no <code>%file%</"
+"code>. Se você quiser aproveitar o máximo da customização do Tinyboard, você "
+"pode editar esse arquivo diretamente. Essa página foi feita para fazer "
+"mudanças rápidas e para aqueles que não sabem o básico de código PHP."
+
+#: compiled_templates/mod_config-editor.html.php:102
 msgid "Value"
 msgstr "Valor"
 
-#: compiled_templates/mod_config-editor.html.php:98
-#: compiled_templates/mod_users.html.php:48
+#: compiled_templates/mod_config-editor.html.php:106
+#: compiled_templates/mod_users.html.php:49
 msgid "Type"
 msgstr "Tipo"
 
-#: compiled_templates/mod_config-editor.html.php:102
-#: compiled_templates/mod_themes.html.php:74
+#: compiled_templates/mod_config-editor.html.php:110
+#: compiled_templates/mod_themes.html.php:75
 msgid "Description"
 msgstr "Descrição"
 
-#: compiled_templates/mod_confirm.html.php:39
+#: compiled_templates/mod_config-editor.html.php:209
+msgid "'Default:"
+msgstr "Padrão:"
+
+#: compiled_templates/mod_confirm.html.php:40
 msgid "Are you sure you want to do that?"
 msgstr "Tem certeza de que quer fazer isso?"
 
-#: compiled_templates/mod_confirm.html.php:46
+#: compiled_templates/mod_confirm.html.php:47
 msgid "Click to proceed to"
 msgstr "Clique para prosseguir à"
 
-#: compiled_templates/mod_confirm.html.php:53
+#: compiled_templates/mod_confirm.html.php:54
 msgid ""
-"You are probably seeing this message because Javascript being disabled. This "
-"is a necessary security measure to prevent CSRF attacks."
+"You are probably seeing this message because Javascript is disabled. This is "
+"a necessary security measure to prevent CSRF attacks."
 msgstr ""
-"Você provavelmente está vendo esta mensagem porque seu Javascript está "
-"desativado. Esta é uma medida de segurança necessária para evitar ataques "
+"Você provavelmente está vendo esta mensagem porque o Javascript está "
+"desativado. Esta é uma medida de segurança necessária para prevenir ataques "
 "CSRF."
 
-#: compiled_templates/mod_dashboard.html.php:46
+#: compiled_templates/mod_dashboard.html.php:49
 msgid "Logged in as:"
-msgstr "Logado como:"
+msgstr "Logada como:"
 
-#: compiled_templates/mod_dashboard.html.php:53
-#: compiled_templates/mod_user.html.php:157
-#: compiled_templates/mod_users.html.php:52
+#: compiled_templates/mod_dashboard.html.php:58
+#: compiled_templates/mod_user.html.php:150
+#: compiled_templates/mod_users.html.php:53
+#: compiled_templates/themes_index_index.html.php:99
 msgid "Boards"
 msgstr "Boards"
 
-#: compiled_templates/mod_dashboard.html.php:108
-#: compiled_templates/mod_users.html.php:231
+#: compiled_templates/mod_dashboard.html.php:111
+#: compiled_templates/mod_users.html.php:219
 msgid "edit"
 msgstr "editar"
 
-#: compiled_templates/mod_dashboard.html.php:119
+#: compiled_templates/mod_dashboard.html.php:122
 msgid "pages"
 msgstr "páginas"
 
-#: compiled_templates/mod_dashboard.html.php:130
+#: compiled_templates/mod_dashboard.html.php:133
 msgid "banners"
 msgstr "banners"
 
-#: compiled_templates/mod_dashboard.html.php:146
+#: compiled_templates/mod_dashboard.html.php:151
 msgid "Create new board"
 msgstr "Criar nova board"
 
-#: compiled_templates/mod_dashboard.html.php:155
+#: compiled_templates/mod_dashboard.html.php:164
 msgid "Messages"
 msgstr "Mensagens"
 
-#: compiled_templates/mod_dashboard.html.php:168 inc/mod/pages.php:534
+#: compiled_templates/mod_dashboard.html.php:177 inc/mod/pages.php:549
 msgid "Noticeboard"
 msgstr "Quadro de notícias interno"
 
-#: compiled_templates/mod_dashboard.html.php:194
-#: compiled_templates/mod_news.html.php:159
-#: compiled_templates/mod_noticeboard.html.php:131
-#: compiled_templates/themes_categories_news.html.php:98
+#: compiled_templates/mod_dashboard.html.php:204
+#: compiled_templates/mod_news.html.php:160
+#: compiled_templates/mod_noticeboard_post.html.php:87
+#: compiled_templates/mod_partials_noticeboard_post.html.php:90
+#: compiled_templates/themes_categories_news.html.php:99
+#: compiled_templates/themes_index_index.html.php:160
 msgid "no subject"
 msgstr "sem assunto"
 
-#: compiled_templates/mod_dashboard.html.php:222
-#: compiled_templates/mod_news.html.php:171
-#: compiled_templates/mod_noticeboard.html.php:160
-#: compiled_templates/themes_categories_news.html.php:108
+#: compiled_templates/mod_dashboard.html.php:232
+#: compiled_templates/mod_news.html.php:172
+#: compiled_templates/mod_noticeboard_post.html.php:116
+#: compiled_templates/mod_partials_noticeboard_post.html.php:119
+#: compiled_templates/themes_categories_news.html.php:109
+#: compiled_templates/themes_index_index.html.php:170
 msgid "at"
 msgstr "em"
 
-#: compiled_templates/mod_dashboard.html.php:242
+#: compiled_templates/mod_dashboard.html.php:254
 msgid "View all noticeboard entries"
-msgstr "Ver todas as entradas do quadro de notícias interno"
+msgstr "Ver todas as noticias do quadro interno"
 
-#: compiled_templates/mod_dashboard.html.php:248
-#: compiled_templates/themes_frameset_sidebar.html.php:72 inc/mod/pages.php:603
+#: compiled_templates/mod_dashboard.html.php:264
+#: compiled_templates/themes_frameset_sidebar.html.php:73 inc/mod/pages.php:671
 msgid "News"
-msgstr "Notícias globais"
+msgstr "Noticias globais"
 
-#: compiled_templates/mod_dashboard.html.php:253 inc/mod/pages.php:2832
+#: compiled_templates/mod_dashboard.html.php:272 inc/mod/pages.php:2991
 msgid "PM inbox"
 msgstr "Entrada de MP"
 
-#: compiled_templates/mod_dashboard.html.php:263
+#: compiled_templates/mod_dashboard.html.php:280
+#: compiled_templates/mod_dashboard.html.php:288
 msgid "unread"
 msgstr "não lida"
 
-#: compiled_templates/mod_dashboard.html.php:277
+#: compiled_templates/mod_dashboard.html.php:300
 msgid "Administration"
 msgstr "Administração"
 
-#: compiled_templates/mod_dashboard.html.php:287
+#: compiled_templates/mod_dashboard.html.php:327
 msgid "Banners General"
 msgstr "Banners Geral"
 
-#: compiled_templates/mod_dashboard.html.php:296 inc/mod/pages.php:4137
-msgid "Whitelist"
-msgstr "Whitelist"
-
-#: compiled_templates/mod_dashboard.html.php:312 inc/mod/pages.php:3039
+#: compiled_templates/mod_dashboard.html.php:347 inc/mod/pages.php:3199
 msgid "Report queue"
-msgstr "Fila de denúncias"
+msgstr "Fila de denuncias"
 
-#: compiled_templates/mod_dashboard.html.php:330 inc/mod/pages.php:1320
-#: templates/themes/public_banlist/theme.php:44
+#: compiled_templates/mod_dashboard.html.php:367 inc/mod/pages.php:1397
 msgid "Ban list"
 msgstr "Lista de banimentos"
 
-#: compiled_templates/mod_dashboard.html.php:346 inc/mod/pages.php:1426
+#: compiled_templates/mod_dashboard.html.php:378 inc/mod/pages.php:1499
 msgid "Ban appeals"
 msgstr "Apelos de banimentos"
 
-#: compiled_templates/mod_dashboard.html.php:364 inc/mod/pages.php:2714
+#: compiled_templates/mod_dashboard.html.php:398 inc/mod/pages.php:2873
 msgid "Manage users"
-msgstr "Administrar usuários"
+msgstr "Administrar usuárias"
 
-#: compiled_templates/mod_dashboard.html.php:373
+#: compiled_templates/mod_dashboard.html.php:407
 msgid "Change password"
 msgstr "Mudar senha"
 
-#: compiled_templates/mod_dashboard.html.php:382 inc/mod/pages.php:3260
+#: compiled_templates/mod_dashboard.html.php:416 inc/mod/pages.php:3420
 msgid "Manage themes"
 msgstr "Administrar temas"
 
-#: compiled_templates/mod_dashboard.html.php:391
-#: compiled_templates/mod_search_form.html.php:90 inc/mod/pages.php:643
-#: inc/mod/pages.php:670
+#: compiled_templates/mod_dashboard.html.php:425
+#: compiled_templates/mod_partials_search_form.html.php:83
+#: compiled_templates/mod_search_form.html.php:91 inc/mod/pages.php:711
+#: inc/mod/pages.php:738
 msgid "Moderation log"
 msgstr "Log da moderação"
 
-#: compiled_templates/mod_dashboard.html.php:400
+#: compiled_templates/mod_dashboard.html.php:434
 msgid "Global static pages"
 msgstr "Páginas estáticas globais"
 
-#: compiled_templates/mod_dashboard.html.php:409
-#: compiled_templates/mod_dashboard.html.php:516 inc/mod/pages.php:2208
+#: compiled_templates/mod_dashboard.html.php:443
+#: compiled_templates/mod_dashboard.html.php:555 inc/mod/pages.php:2394
 msgid "Recent posts"
 msgstr "Posts recentes"
 
-#: compiled_templates/mod_dashboard.html.php:418
+#: compiled_templates/mod_dashboard.html.php:452
 msgid "Recent shadow deleted posts"
 msgstr "Posts fantasmas recentes"
 
-#: compiled_templates/mod_dashboard.html.php:427
+#: compiled_templates/mod_dashboard.html.php:461
 msgid "View Statistics"
 msgstr "Visualizar Estatísticas"
 
-#: compiled_templates/mod_dashboard.html.php:436
-#: compiled_templates/mod_rebuild.html.php:157
-#: compiled_templates/mod_themes.html.php:138 inc/mod/pages.php:2949
-#: inc/mod/pages.php:2953
+#: compiled_templates/mod_dashboard.html.php:470
+#: compiled_templates/mod_rebuild.html.php:141
+#: compiled_templates/mod_themes.html.php:144 inc/mod/pages.php:3108
+#: inc/mod/pages.php:3112
 msgid "Rebuild"
 msgstr "Reconstruir"
 
-#: compiled_templates/mod_dashboard.html.php:445
+#: compiled_templates/mod_dashboard.html.php:479
 msgid "Configuration"
 msgstr "Configuração"
 
-#: compiled_templates/mod_dashboard.html.php:477
+#: compiled_templates/mod_dashboard.html.php:513
 msgid "Other"
 msgstr "Outro"
 
-#: compiled_templates/mod_dashboard.html.php:507
+#: compiled_templates/mod_dashboard.html.php:546
 msgid "Debug"
 msgstr "Debug"
 
-#: compiled_templates/mod_dashboard.html.php:512
+#: compiled_templates/mod_dashboard.html.php:551
 msgid "Anti-spam"
 msgstr "Anti-spam"
 
-#: compiled_templates/mod_dashboard.html.php:524
+#: compiled_templates/mod_dashboard.html.php:563
 msgid "APCU"
 msgstr "APCU"
 
-#: compiled_templates/mod_dashboard.html.php:533
+#: compiled_templates/mod_dashboard.html.php:572
 msgid "SQL"
 msgstr "SQL"
 
-#: compiled_templates/mod_dashboard.html.php:545
+#: compiled_templates/mod_dashboard.html.php:585
 msgid "User account"
-msgstr "Conta do usuário"
+msgstr "Conta da usuária"
 
-#: compiled_templates/mod_dashboard.html.php:554
+#: compiled_templates/mod_dashboard.html.php:593
 msgid "Logout"
 msgstr "Sair"
 
-#: compiled_templates/mod_debug_antispam.html.php:39
+#: compiled_templates/mod_debug_antispam.html.php:40
 msgid "Most recent:"
 msgstr "Mensagens recentes:"
 
-#: compiled_templates/mod_debug_antispam.html.php:49
-#: compiled_templates/mod_debug_antispam.html.php:177
-#: compiled_templates/mod_debug_antispam.html.php:306
-#: compiled_templates/mod_debug_recent_posts.html.php:155
-#: compiled_templates/mod_search_results.html.php:530
+#: compiled_templates/mod_debug_antispam.html.php:50
+#: compiled_templates/mod_debug_antispam.html.php:178
+#: compiled_templates/mod_debug_antispam.html.php:307
+#: compiled_templates/mod_debug_recent_posts.html.php:156
+#: compiled_templates/mod_noticeboard_thread.html.php:42
+#: compiled_templates/mod_partials_noticeboard_thread.html.php:42
+#: compiled_templates/mod_search_results.html.php:465
 msgid "Thread"
 msgstr "Tópico"
 
-#: compiled_templates/mod_debug_antispam.html.php:53
-#: compiled_templates/mod_debug_antispam.html.php:181
+#: compiled_templates/mod_debug_antispam.html.php:54
+#: compiled_templates/mod_debug_antispam.html.php:182
 msgid "Hash (SHA1)"
 msgstr "Hash (SHA1)"
 
-#: compiled_templates/mod_debug_antispam.html.php:57
-#: compiled_templates/mod_debug_antispam.html.php:185
-#: compiled_templates/mod_debug_apc.html.php:48
+#: compiled_templates/mod_debug_antispam.html.php:58
+#: compiled_templates/mod_debug_antispam.html.php:186
+#: compiled_templates/mod_debug_apc.html.php:49
 msgid "Created"
 msgstr "Criado"
 
-#: compiled_templates/mod_debug_antispam.html.php:65
-#: compiled_templates/mod_debug_antispam.html.php:193
+#: compiled_templates/mod_debug_antispam.html.php:66
+#: compiled_templates/mod_debug_antispam.html.php:194
 msgid "Passed"
 msgstr "Passou"
 
-#: compiled_templates/mod_debug_antispam.html.php:116
-#: compiled_templates/mod_debug_antispam.html.php:244
-#: compiled_templates/mod_debug_recent_posts.html.php:85
-#: compiled_templates/mod_debug_recent_posts.html.php:198
-#: compiled_templates/mod_pm.html.php:105
-#: compiled_templates/mod_search_results.html.php:566
+#: compiled_templates/mod_debug_antispam.html.php:117
+#: compiled_templates/mod_debug_antispam.html.php:245
+#: compiled_templates/mod_debug_recent_posts.html.php:86
+#: compiled_templates/mod_debug_recent_posts.html.php:199
+#: compiled_templates/mod_pm.html.php:111
+#: compiled_templates/mod_search_results.html.php:246
+#: compiled_templates/mod_search_results.html.php:501
 msgid "ago"
 msgstr "atrás"
 
-#: compiled_templates/mod_debug_antispam.html.php:166
+#: compiled_templates/mod_debug_antispam.html.php:167
 msgid "Most used (in active):"
 msgstr "Mais usado (ativos):"
 
-#: compiled_templates/mod_debug_antispam.html.php:294
+#: compiled_templates/mod_debug_antispam.html.php:295
 msgid ""
 "Total: <strong>%total%</strong> (<strong>%expiring%</strong> set to expire)"
 msgstr ""
 "Total: <strong>%total%</strong> (<strong>%expiring%</strong> prester a "
 "expirar)"
 
-#: compiled_templates/mod_debug_antispam.html.php:326
+#: compiled_templates/mod_debug_antispam.html.php:327
 msgid "Filter"
 msgstr "Filtro"
 
-#: compiled_templates/mod_debug_antispam.html.php:330
+#: compiled_templates/mod_debug_antispam.html.php:331
 msgid "Purge"
 msgstr "Eliminar"
 
-#: compiled_templates/mod_debug_apc.html.php:40
+#: compiled_templates/mod_debug_apc.html.php:41
 msgid "Key"
 msgstr "Chave"
 
-#: compiled_templates/mod_debug_apc.html.php:44
+#: compiled_templates/mod_debug_apc.html.php:45
 msgid "Hits"
 msgstr "Acertos"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:39
+#: compiled_templates/mod_debug_recent_posts.html.php:40
 msgid "Flood prevention cache:"
 msgstr "Cache de prevenção de flood:"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:46
-#: compiled_templates/mod_debug_recent_posts.html.php:143
-#: compiled_templates/mod_log.html.php:48
-#: compiled_templates/mod_search_results.html.php:414
-#: compiled_templates/mod_search_results.html.php:518
-#: compiled_templates/mod_user.html.php:279
-#: compiled_templates/mod_view_ip.html.php:460
+#: compiled_templates/mod_debug_recent_posts.html.php:47
+#: compiled_templates/mod_debug_recent_posts.html.php:144
+#: compiled_templates/mod_log.html.php:50
+#: compiled_templates/mod_search_results.html.php:366
+#: compiled_templates/mod_search_results.html.php:453
+#: compiled_templates/mod_user.html.php:257
+#: compiled_templates/mod_view_ip.html.php:479
 msgid "Time"
 msgstr "Tempo"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:54
+#: compiled_templates/mod_debug_recent_posts.html.php:55
 msgid "Post hash"
 msgstr "Hash do Post"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:58
+#: compiled_templates/mod_debug_recent_posts.html.php:59
 msgid "File hash"
 msgstr "Hash do arquivo"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:77
-#: compiled_templates/mod_debug_recent_posts.html.php:190
+#: compiled_templates/mod_debug_recent_posts.html.php:78
+#: compiled_templates/mod_debug_recent_posts.html.php:191
 msgid "Still in flood prevention cache."
 msgstr "Presente no cache de prevenção de flood."
 
-#: compiled_templates/mod_debug_recent_posts.html.php:115
+#: compiled_templates/mod_debug_recent_posts.html.php:116
 msgid "No file"
 msgstr "Sem arquivos"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:132
+#: compiled_templates/mod_debug_recent_posts.html.php:133
 msgid "Most recent"
 msgstr "Mensagens recentes"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:137
-#: compiled_templates/mod_recent_posts.html.php:60
+#: compiled_templates/mod_debug_recent_posts.html.php:138
+#: compiled_templates/mod_recent_posts.html.php:65
+#: compiled_templates/mod_recent_posts.html.php:149
 msgid "posts"
 msgstr "posts"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:151
-#: compiled_templates/mod_inbox.html.php:48
-#: compiled_templates/mod_search_results.html.php:526
-#: compiled_templates/mod_users.html.php:40
-#: compiled_templates/mod_whitelist_tokens.html.php:45
+#: compiled_templates/mod_debug_recent_posts.html.php:152
+#: compiled_templates/mod_inbox.html.php:50
+#: compiled_templates/mod_search_results.html.php:461
+#: compiled_templates/mod_users.html.php:41
 msgid "ID"
 msgstr "ID"
 
-#: compiled_templates/mod_debug_recent_posts.html.php:175
-#: compiled_templates/mod_search_results.html.php:550
+#: compiled_templates/mod_debug_recent_posts.html.php:176
+#: compiled_templates/mod_search_results.html.php:486
 msgid "Body (snippet)"
 msgstr "Mensagem (prévia)"
 
-#: compiled_templates/mod_debug_sql.html.php:53
+#: compiled_templates/mod_debug_sql.html.php:54
 msgid "Query successful (no result)."
 msgstr "Consulta executou com sucesso (sem resultado)."
 
-#: compiled_templates/mod_edit_ban.html.php:74
+#: compiled_templates/mod_edit_ban.html.php:101
 msgid ""
-"The pior ban will be removed and the changes will be a new ban. The previous "
-"ban will be replaced by the edited ban and the ban duration will start from "
-"the time of the edit.\n"
-"The ban public message will <strong>not</strong> be changed."
+"The prior ban will be removed and the changes will be a new ban. \n"
+"    The previous ban will be replaced by the edited ban and the ban duration "
+"will start from the time of the edit. \n"
+"    The ban public message will <strong>not</strong> be changed."
 msgstr ""
-"O banimento anterior será removido e as edições serão como um banimento "
-"novo. Ou seja, o tempo de banimento anterior será desconsiderado pelo novo "
-"tempo a partir da data de edição.\n"
-"A mensagem de banimento no post NÃO será alterada."
+"O banimento anterior será removido e as alterações resultarão em um novo "
+"banimento. O banimento anterior será substituído pelo banimento editado, e a "
+"duração do banimento começará a partir do momento da edição. A mensagem "
+"pública do banimento <strong>não</strong> será alterada."
 
-#: compiled_templates/mod_edit_ban.html.php:99
+#: compiled_templates/mod_edit_ban.html.php:129
 msgid "Current ban"
 msgstr "Banimento Atual"
 
-#: compiled_templates/mod_edit_ban.html.php:109
-#: compiled_templates/mod_view_ip.html.php:429 inc/mod/pages.php:1269
-#: inc/mod/pages.php:2037
+#: compiled_templates/mod_edit_ban.html.php:139
+#: compiled_templates/mod_view_ip.html.php:448 inc/mod/pages.php:1346
+#: inc/mod/pages.php:2223
 msgid "New ban"
 msgstr "Novo banimento"
 
-#: compiled_templates/mod_edit_page.html.php:46
+#: compiled_templates/mod_edit_page.html.php:48
 msgid "Markup method"
 msgstr "Método de markup"
 
 #: compiled_templates/mod_edit_page.html.php:52
-msgid ""
-"<p class=\"unimportant\">\"html\" allows the following tags:<br/>"
-"%allowed_html%</p>\n"
-"\t\t\t<p class=\"unimportant\">\"infinity\" is the same as what is used in "
-"posts.</p>\n"
-"\t\t\t<p class=\"unimportant\">This page will not convert between formats,"
-"<br/>choose it once or do the conversion yourself!</p>"
-msgstr ""
-"<p class=\"unimportant\">\"html\" permite as seguintes tags:<br/>"
-"%allowed_html%</p>\n"
-"\t\t\t<p class=\"unimportant\">\"infinity\" é o mesmo método usado em posts."
-"</p>\n"
-"\t\t\t<p class=\"unimportant\">Essa página não vai converter entre os "
-"formatos,<br/>escolha uma vez ou formate você mesmo!</p>"
+msgid "html allows the following tags:"
+msgstr "html permite as seguintes tags:"
 
-#: compiled_templates/mod_edit_page.html.php:85
+#: compiled_templates/mod_edit_page.html.php:62
+msgid "infinity is the same as what is used in posts."
+msgstr "inifity é o mesmo padrão dos posts."
+
+#: compiled_templates/mod_edit_page.html.php:67
+msgid ""
+"This page will not convert between formats, choose it once or do the "
+"conversion yourself!"
+msgstr ""
+"Essa página não vai converter entre formatos, escolha uma vez ou faça a "
+"conversão você mesmo!"
+
+#: compiled_templates/mod_edit_page.html.php:103
 msgid "Page content"
 msgstr "Conteúdo da Página"
 
-#: compiled_templates/mod_edit_page.html.php:89
+#: compiled_templates/mod_edit_page.html.php:108
 msgid "Page will appear at:"
 msgstr "Página vai aparecer em:"
 
-#: compiled_templates/mod_edit_page.html.php:132
+#: compiled_templates/mod_edit_page.html.php:166
 msgid "Save page"
 msgstr "Salvar página"
 
 #: compiled_templates/mod_edit_post_form.html.php:59
-#: compiled_templates/post_form.html.php:165
+#: compiled_templates/post_form.html.php:216
 msgid "Email"
 msgstr "E-mail"
 
-#: compiled_templates/mod_edit_post_form.html.php:81
+#: compiled_templates/mod_edit_post_form.html.php:80
 msgid "Update"
 msgstr "Atualizar"
 
-#: compiled_templates/mod_edit_post_form.html.php:89
-#: compiled_templates/post_form.html.php:421
+#: compiled_templates/mod_edit_post_form.html.php:87
+#: compiled_templates/post_form.html.php:422
 msgid "Embed"
 msgstr "Inserir"
 
-#: compiled_templates/mod_edit_post_form.html.php:102
-#: compiled_templates/post_form.html.php:247
+#: compiled_templates/mod_edit_post_form.html.php:99
+#: compiled_templates/post_form.html.php:290
 msgid "Comment"
 msgstr "Comentar"
 
-#: compiled_templates/mod_edit_post_form.html.php:123
+#: compiled_templates/mod_edit_post_form.html.php:131
 msgid "Currently editing raw HTML."
 msgstr "Editando em HTML puro."
 
-#: compiled_templates/mod_edit_post_form.html.php:130
+#: compiled_templates/mod_edit_post_form.html.php:138
 msgid "Edit markup instead?"
 msgstr "Editar markup em vez disso?"
 
-#: compiled_templates/mod_edit_post_form.html.php:140
+#: compiled_templates/mod_edit_post_form.html.php:148
 msgid "Edit raw HTML instead?"
 msgstr "Editar em HTML puro em vez disso?"
 
-#: compiled_templates/mod_inbox.html.php:40
+#: compiled_templates/mod_themes.html.php:105
+#: compiled_templates/mod_view_ip.html.php:154
+msgid "Actions"
+msgstr "Ações"
+
+#: compiled_templates/mod_view_ip.html.php:207
+msgid "remove"
+msgstr "remover"
+
+#: compiled_templates/mod_inbox.html.php:41
 msgid "No private messages for you."
 msgstr "Sem mensagens privadas para você."
 
-#: compiled_templates/mod_inbox.html.php:52
-#: compiled_templates/mod_pm.html.php:41
+#: compiled_templates/mod_inbox.html.php:54
+#: compiled_templates/mod_pm.html.php:42
 msgid "From"
 msgstr "De"
 
-#: compiled_templates/mod_inbox.html.php:60
+#: compiled_templates/mod_inbox.html.php:62
 msgid "Message snippet"
 msgstr "Prévia da mensagem"
 
-#: compiled_templates/mod_log.html.php:44
-#: compiled_templates/mod_search_results.html.php:71
-#: compiled_templates/mod_search_results.html.php:410
-#: compiled_templates/mod_user.html.php:275
+#: compiled_templates/mod_log.html.php:46
+#: compiled_templates/mod_search_results.html.php:72
+#: compiled_templates/mod_search_results.html.php:362
+#: compiled_templates/mod_user.html.php:253
 msgid "IP address"
 msgstr "Endereço de IP"
 
-#: compiled_templates/mod_login.html.php:48
-#: compiled_templates/mod_user.html.php:59
-#: compiled_templates/mod_users.html.php:44
+#: compiled_templates/mod_login.html.php:51
+#: compiled_templates/mod_user.html.php:52
+#: compiled_templates/mod_users.html.php:45
 msgid "Username"
 msgstr "Usuário"
 
-#: compiled_templates/mod_login.html.php:61
-#: compiled_templates/mod_user.html.php:83
-#: compiled_templates/post_form.html.php:578
-#: compiled_templates/report_delete.html.php:64
-msgid "Password"
-msgstr "Senha"
-
-#: compiled_templates/mod_login.html.php:72
-#: compiled_templates/whitelist.html.php:60
+#: compiled_templates/mod_login.html.php:74
 msgid "Continue"
 msgstr "Prosseguir"
 
-#: compiled_templates/mod_merge.html.php:50
-#: compiled_templates/mod_move.html.php:50
+#: compiled_templates/mod_merge.html.php:51
+#: compiled_templates/mod_move.html.php:51
 msgid "Thread ID"
 msgstr "ID do tópico"
 
-#: compiled_templates/mod_merge.html.php:63
-#: compiled_templates/mod_move.html.php:77
-#: compiled_templates/mod_move_reply.html.php:63
+#: compiled_templates/mod_merge.html.php:64
+#: compiled_templates/mod_move.html.php:78
+#: compiled_templates/mod_move_base.html.php:68
+#: compiled_templates/mod_move_reply.html.php:64
 msgid "Target board"
 msgstr "Board alvo"
 
-#: compiled_templates/mod_merge.html.php:108
-#: compiled_templates/mod_move_reply.html.php:109
+#: compiled_templates/mod_merge.html.php:109
+#: compiled_templates/mod_move_base.html.php:117
+#: compiled_templates/mod_move_reply.html.php:110
 msgid "Target thread"
 msgstr "Tópico alvo"
 
-#: compiled_templates/mod_merge.html.php:113
+#: compiled_templates/mod_merge.html.php:114
 msgid ""
 "Please specify the thread you want to merge the thread with, if you specify "
 "a post, the thread of that post will be used.:"
 msgstr ""
 "Por favor, especifique qual tópico você vai unir. Se você especificar um "
-"post, o tópico daquela resposta vai ser usado.:"
+"post, o tópico daquela resposta vai ser usada.:"
 
-#: compiled_templates/mod_merge.html.php:123 inc/mod/pages.php:4129
+#: compiled_templates/mod_merge.html.php:124
+#: compiled_templates/mod_partials_merge.html.php:52 inc/mod/pages.php:4301
 msgid "Merge thread"
 msgstr "Unir tópico"
 
-#: compiled_templates/mod_move.html.php:64
+#: compiled_templates/mod_move.html.php:65
+#: compiled_templates/mod_partials_move.html.php:67
 msgid "Leave shadow thread"
 msgstr "Deixar tópico fantasma"
 
-#: compiled_templates/mod_move.html.php:70
+#: compiled_templates/mod_move.html.php:71
+#: compiled_templates/mod_partials_move.html.php:73
 msgid "locks thread; replies to it with a link."
 msgstr "tranca o tópico; responde-a com o link do novo tópico."
 
-#: compiled_templates/mod_move.html.php:130 inc/mod/pages.php:1926
+#: compiled_templates/mod_move.html.php:131 inc/mod/pages.php:2004
 msgid "Move thread"
 msgstr "Mover tópico"
 
-#: compiled_templates/mod_move_reply.html.php:50
+#: compiled_templates/mod_move_reply.html.php:51
 msgid "Post ID"
 msgstr "ID do post"
 
-#: compiled_templates/mod_move_reply.html.php:114
+#: compiled_templates/mod_move_reply.html.php:115
+#: compiled_templates/mod_partials_move_reply.html.php:47
 msgid ""
 "If you do not want to make the post into a new thread, please specify the "
 "thread you want to move the reply to:"
 msgstr ""
-"Se você não quer fazer um tópico novo com a resposta, especifique para qual "
+"Se você não quer fazer um tópico novo com a resposta, especifique qual o "
 "tópico você quer mover essa resposta:"
 
-#: compiled_templates/mod_move_reply.html.php:124 inc/mod/pages.php:1673
+#: compiled_templates/mod_move_reply.html.php:125
+#: compiled_templates/mod_partials_move_reply.html.php:52
+#: inc/mod/pages.php:1750
 msgid "Move reply"
 msgstr "Mover resposta"
 
-#: compiled_templates/mod_new_pm.html.php:47
-#: compiled_templates/mod_pm.html.php:69
+#: compiled_templates/mod_new_pm.html.php:48
+#: compiled_templates/mod_pm.html.php:73
 msgid "To"
 msgstr "Para"
 
-#: compiled_templates/mod_new_pm.html.php:82
+#: compiled_templates/mod_new_pm.html.php:87
 msgid "Send message"
 msgstr "Enviar mensagem"
 
-#: compiled_templates/mod_news.html.php:41
-#: compiled_templates/mod_noticeboard.html.php:41
+#: compiled_templates/mod_news.html.php:42
+#: compiled_templates/mod_noticeboard_postform.html.php:42
+#: compiled_templates/mod_partials_noticeboard_postform.html.php:42
 msgid "New post"
 msgstr "Novo post"
 
-#: compiled_templates/mod_news.html.php:97
-#: compiled_templates/mod_noticeboard.html.php:69
+#: compiled_templates/mod_news.html.php:98
+#: compiled_templates/mod_noticeboard_postform.html.php:78
+#: compiled_templates/mod_partials_noticeboard_postform.html.php:80
 msgid "Body"
 msgstr "Mensagem"
 
-#: compiled_templates/mod_news.html.php:105
+#: compiled_templates/mod_news.html.php:106
 msgid "Post news entry"
 msgstr "Publicar notícia"
 
-#: compiled_templates/mod_news.html.php:133
-#: compiled_templates/mod_noticeboard.html.php:105
+#: compiled_templates/mod_news.html.php:134
+#: compiled_templates/mod_noticeboard_post.html.php:60
+#: compiled_templates/mod_partials_noticeboard_post.html.php:62
 msgid "delete"
 msgstr "deletar"
 
-#: compiled_templates/mod_nicenotice_form.html.php:147
+#: compiled_templates/mod_nicenotice_form.html.php:156
 msgid "New Nicenotice"
 msgstr "Novo Nicenotice"
 
-#: compiled_templates/mod_nicenotice_form.html.php:159
+#: compiled_templates/mod_nicenotice_form.html.php:168
 msgid "Predefined Nicenotice Reasons:"
-msgstr "Motivos pré-definidos de Nicenotice:"
+msgstr "Motivos prédefinidos de Nicenotice:"
 
-#: compiled_templates/mod_noticeboard.html.php:77
+#: compiled_templates/mod_noticeboard_post.html.php:46
+#: compiled_templates/mod_noticeboard_post.html.php:142
+#: compiled_templates/mod_noticeboard_post.html.php:153
+#: compiled_templates/mod_partials_noticeboard_post.html.php:47
+#: compiled_templates/mod_partials_noticeboard_post.html.php:146
+#: compiled_templates/mod_partials_noticeboard_post.html.php:157
+msgid "View internal thread"
+msgstr "Ver tópico interno"
+
+#: compiled_templates/mod_noticeboard_post.html.php:48
+#: compiled_templates/mod_partials_noticeboard_post.html.php:49
+#: compiled_templates/post_thread.html.php:275
+msgid "Open"
+msgstr "Abrir"
+
+#: compiled_templates/mod_noticeboard_post.html.php:144
+#: compiled_templates/mod_partials_noticeboard_post.html.php:148
+msgid "See 1 reply"
+msgid_plural "See %count% replies"
+msgstr[0] "Ver 1 resposta"
+msgstr[1] "Ver %count% respostas"
+
+#: compiled_templates/mod_noticeboard_post.html.php:155
+#: compiled_templates/mod_partials_noticeboard_post.html.php:159
+msgid "See thread"
+msgstr "Abrir tópico"
+
+#: compiled_templates/mod_noticeboard_postform.html.php:88
+#: compiled_templates/mod_partials_noticeboard_postform.html.php:93
 msgid "Post to noticeboard"
 msgstr "Postar no quadro de notícias interno"
 
-#: compiled_templates/mod_pages.html.php:45
+#: compiled_templates/mod_noticeboard_postform.html.php:90
+#: compiled_templates/mod_partials_noticeboard_postform.html.php:90
+msgid "Replying to:"
+msgstr "Respondendo para:"
+
+#: compiled_templates/mod_pages.html.php:48
 msgid ""
 "This page allows you to create static pages for your board. The limit is "
-"%page_max% pages per board. You will still have to link to your pages "
-"somewhere in your board, for example in a sticky or in the board's "
-"announcement. To make links in the board's announcement, use &lt;a&gt; HTML "
-"tags."
+"%page_max% pages per board. \n"
+"                You will still have to link to your pages somewhere in your "
+"board, for example in a sticky or in the board's announcement. \n"
+"                To make links in the board's announcement, use <a> HTML tags."
 msgstr ""
 "Essa página permite que você cria páginas estáticas para sua board. O limite "
 "é %page_max% páginas por board. Você ainda vai precisar linkar a sua página "
@@ -1310,920 +1423,1155 @@ msgstr ""
 "da board. Para postar links no anúncio da board, use as tags de HTML: &lt;"
 "a&gt;."
 
-#: compiled_templates/mod_pages.html.php:48
+#: compiled_templates/mod_pages.html.php:56
 msgid "This page allows you to create static pages for your imageboard."
 msgstr ""
 "Essa página permite que você crie páginas estáticas para seu imageboard."
 
-#: compiled_templates/mod_pages.html.php:52
+#: compiled_templates/mod_pages.html.php:64
 msgid "Existing pages"
 msgstr "Página existentes"
 
-#: compiled_templates/mod_pages.html.php:61
-#: compiled_templates/mod_pages.html.php:131
-#: compiled_templates/post_form.html.php:401
+#: compiled_templates/mod_pages.html.php:76
+#: compiled_templates/mod_pages.html.php:168
 msgid "URL"
 msgstr "URL"
 
-#: compiled_templates/mod_pages.html.php:66
-#: compiled_templates/mod_pages.html.php:85
+#: compiled_templates/mod_pages.html.php:84
+#: compiled_templates/mod_pages.html.php:115
 msgid "Edit"
 msgstr "Editar"
 
-#: compiled_templates/mod_pages.html.php:121
+#: compiled_templates/mod_pages.html.php:147
+msgid "No pages yet!"
+msgstr "Sem páginas ainda!"
+
+#: compiled_templates/mod_pages.html.php:156
 msgid "Create a new page"
 msgstr "Criar nova página"
 
-#: compiled_templates/mod_pages.html.php:139
+#: compiled_templates/mod_pages.html.php:182
 msgid "Create"
 msgstr "Criar"
 
-#: compiled_templates/mod_pm.html.php:124
-msgid "Delete forever"
-msgstr "Deletar permanentemente"
+#: compiled_templates/mod_partials_ban_history.html.php:75
+#: compiled_templates/mod_search_results.html.php:154
+msgid "Cookie"
+msgstr "Cookie"
 
-#: compiled_templates/mod_pm.html.php:138
-msgid "Reply with quote"
-msgstr "Responde com quote"
+#: compiled_templates/mod_partials_log.html.php:65
+#: compiled_templates/mod_search_results.html.php:327
+#: compiled_templates/mod_search_results.html.php:400
+msgid "system"
+msgstr "sistema"
 
-#: compiled_templates/mod_rebuild.html.php:46
-msgid "Toggle all"
-msgstr "Habilitar todos"
+#: compiled_templates/mod_partials_merge.html.php:47
+msgid ""
+"Please specify the thread you want to merge the thread with, if you specify "
+"a post, the thread of that post will be used."
+msgstr ""
+"Por favor, especifique qual tópico você vai unir. Se você especificar um "
+"post, o tópico daquele post vai ser usado."
 
-#: compiled_templates/mod_rebuild.html.php:62
-msgid "Flush cache"
-msgstr "Limpar cache"
+#: compiled_templates/mod_partials_move.html.php:50
+msgid "Move Thread"
+msgstr "Mover tópico"
 
-#: compiled_templates/mod_rebuild.html.php:69
-msgid "Rebuild Javascript"
-msgstr "Reconstruir Javascript"
-
-#: compiled_templates/mod_rebuild.html.php:76
-msgid "Rebuild index pages"
-msgstr "Reconstruir páginas index"
-
-#: compiled_templates/mod_rebuild.html.php:83
-msgid "Rebuild thread pages"
-msgstr "Reconstruir páginas de tópicos"
-
-#: compiled_templates/mod_rebuild.html.php:90
-msgid "Rebuild themes"
-msgstr "Reconstruir temas"
-
-#: compiled_templates/mod_rebuild.html.php:97
-msgid "Rebuild replies"
-msgstr "Reconstruir respostas"
-
-#: compiled_templates/mod_rebuild.html.php:109
-#: compiled_templates/mod_user.html.php:179
-msgid "All boards"
-msgstr "Todas as boards"
-
-#: compiled_templates/mod_rebuilt.html.php:39
-msgid "Rebuilt"
-msgstr "Reconstruir"
-
-#: compiled_templates/mod_rebuilt.html.php:44
-msgid "Go back and rebuild again"
-msgstr "Voltar e reconstruir novamente"
-
-#: compiled_templates/mod_recent_posts.html.php:50
-msgid "There are no active posts."
-msgstr "Não há posts ativos."
-
-#: compiled_templates/mod_recent_posts.html.php:56
-msgid "Viewing last"
-msgstr "Visualizando último"
-
-#: compiled_templates/mod_recent_posts.html.php:67
-msgid "Erase local data"
-msgstr "Apagar dados locais"
-
-#: compiled_templates/mod_report.html.php:56
-msgid "Report date"
-msgstr "Data do Report"
-
-#: compiled_templates/mod_report.html.php:67
-msgid "Reported by"
-msgstr "Denunciado por"
-
-#: compiled_templates/mod_report.html.php:86
-msgid "Discard abuse report"
-msgstr "Descartar denúncia"
-
-#: compiled_templates/mod_report.html.php:92
-#: compiled_templates/mod_report.html.php:114
-msgid "Dismiss"
-msgstr "Descartar"
-
-#: compiled_templates/mod_report.html.php:108
-msgid "Discard all abuse reports by this IP address"
-msgstr "Descartar todas denúncias deste IP"
-
-#: compiled_templates/mod_report.html.php:130
-msgid "Discard all reports for this post"
-msgstr "Descartar todas as denúncias deste post"
-
-#: compiled_templates/mod_report.html.php:136
-msgid "Dismiss Post"
-msgstr "Descartar Post"
-
-#: compiled_templates/mod_reports.html.php:46
-msgid "There are no reports."
-msgstr "Não há denúncias no momento."
-
-#: compiled_templates/mod_search_form.html.php:39
-#: compiled_templates/search_form.html.php:45
+#: compiled_templates/mod_partials_search_form.html.php:40
+#: compiled_templates/mod_search_form.html.php:40
+#: compiled_templates/search_form.html.php:46
 msgid "Phrase:"
 msgstr "Frase:"
 
-#: compiled_templates/mod_search_form.html.php:53
+#: compiled_templates/mod_partials_search_form.html.php:52
+#: compiled_templates/mod_search_form.html.php:54
 msgid "Posts"
 msgstr "Posts"
 
-#: compiled_templates/mod_search_form.html.php:64
+#: compiled_templates/mod_partials_search_form.html.php:61
+#: compiled_templates/mod_search_form.html.php:65
 msgid "IP address notes"
 msgstr "Notas de IP"
 
-#: compiled_templates/mod_search_form.html.php:77
+#: compiled_templates/mod_partials_search_form.html.php:72
+#: compiled_templates/mod_search_form.html.php:78
 msgid "Bans"
 msgstr "Banimentos"
 
-#: compiled_templates/mod_search_form.html.php:102
+#: compiled_templates/mod_partials_search_form.html.php:95
+#: compiled_templates/mod_search_form.html.php:103
 msgid ""
 "(Search is case-insensitive and based on keywords. To match exact phrases, "
 "use \"quotes\". Use an asterisk (*) for wildcard.)"
 msgstr ""
-"(A pesquisa não diferencia maiúsculas de minúsculas e é baseada em palavras-"
-"chave. Use \"aspas\" para procurar frases exatas. Use asterisco (*) como "
+"(A pesquisa não diferencia maiúsculas de minusculas, é baseado em palavras "
+"chave. Use \"aspas\" para procurar frases exatas e Use asterisco (*) como "
 "coringa.)"
 
-#: compiled_templates/mod_search_results.html.php:54
+#: compiled_templates/mod_pm.html.php:129
+msgid "Delete forever"
+msgstr "Deletar permanentemente"
+
+#: compiled_templates/mod_pm.html.php:143
+msgid "Reply with quote"
+msgstr "Responde com quote"
+
+#: compiled_templates/mod_rebuild.html.php:48
+msgid "Toggle all"
+msgstr "Habilitar todos"
+
+#: compiled_templates/mod_rebuild.html.php:55
+msgid "Flush cache"
+msgstr "Limpar cache"
+
+#: compiled_templates/mod_rebuild.html.php:62
+msgid "Rebuild Javascript"
+msgstr "Reconstruir Javascript"
+
+#: compiled_templates/mod_rebuild.html.php:69
+msgid "Rebuild index pages"
+msgstr "Reconstruir páginas index"
+
+#: compiled_templates/mod_rebuild.html.php:76
+msgid "Rebuild thread pages"
+msgstr "Reconstruir páginas de tópicos"
+
+#: compiled_templates/mod_rebuild.html.php:83
+msgid "Rebuild themes"
+msgstr "Reconstruir temas"
+
+#: compiled_templates/mod_rebuild.html.php:90
+msgid "Rebuild replies"
+msgstr "Reconstruir respostas"
+
+#: compiled_templates/mod_rebuild.html.php:102
+#: compiled_templates/mod_user.html.php:166
+msgid "All boards"
+msgstr "Todas as boards"
+
+#: compiled_templates/mod_rebuilt.html.php:40
+msgid "Rebuilt"
+msgstr "Reconstruir"
+
+#: compiled_templates/mod_rebuilt.html.php:45
+msgid "Go back and rebuild again"
+msgstr "Voltar e reconstruir novamente"
+
+#: compiled_templates/mod_recent_posts.html.php:55
+msgid "There are no active posts."
+msgstr "Não há posts ativos."
+
+#: compiled_templates/mod_recent_posts.html.php:61
+msgid "Viewing last"
+msgstr "Visualizando último"
+
+#: compiled_templates/mod_recent_posts.html.php:86
+msgid "Erase local data"
+msgstr "Apagar dados locais"
+
+#: compiled_templates/mod_recent_posts.html.php:144 inc/functions.php:1730
+#: inc/functions.php:1739
+msgid "Next"
+msgstr "Proximo"
+
+#: compiled_templates/mod_report.html.php:59
+msgid "Report date"
+msgstr "Data do Report"
+
+#: compiled_templates/mod_report.html.php:70
+msgid "Reported by"
+msgstr "Denunciado por"
+
+#: compiled_templates/mod_report.html.php:103
+msgid "Discard abuse report"
+msgstr "Descartar denúncia"
+
+#: compiled_templates/mod_report.html.php:109
+msgid "Dismiss"
+msgstr "Descartar"
+
+#: compiled_templates/mod_report.html.php:118
+msgid "Discard all abuse reports by this IP address"
+msgstr "Descartar todas denúncias deste IP"
+
+#: compiled_templates/mod_report.html.php:124
+msgid "Dismiss+"
+msgstr "Descartar+"
+
+#: compiled_templates/mod_report.html.php:133
+msgid "Discard all abuse reports for this post"
+msgstr "Descartar todas denúncias deste post"
+
+#: compiled_templates/mod_report.html.php:139
+msgid "Dismiss Post"
+msgstr "Descartar Post"
+
+#: compiled_templates/mod_reports.html.php:47
+msgid "There are no reports."
+msgstr "Não há denúncias no momento."
+
+#: compiled_templates/mod_search_results.html.php:55
 msgid "Showing"
 msgstr "Mostrando"
 
-#: compiled_templates/mod_search_results.html.php:58
+#: compiled_templates/mod_search_results.html.php:60
 msgid "result"
 msgstr "resultado"
 
-#: compiled_templates/mod_search_results.html.php:79
-#: compiled_templates/mod_view_ip.html.php:115
-#: compiled_templates/mod_view_ip.html.php:227
+#: compiled_templates/mod_search_results.html.php:80
+#: compiled_templates/mod_view_ip.html.php:142
+#: compiled_templates/mod_view_ip.html.php:249
 msgid "Note"
 msgstr "Nota"
 
-#: compiled_templates/mod_search_results.html.php:153
+#: compiled_templates/mod_search_results.html.php:150
 msgid "IP address/mask"
-msgstr "Endereço de IP/máscara"
+msgstr "Endereço de IP/mascara"
 
-#: compiled_templates/mod_search_results.html.php:157
-msgid "Cookie"
-msgstr "Cookie"
-
-#: compiled_templates/mod_search_results.html.php:173
+#: compiled_templates/mod_search_results.html.php:170
 msgid "Duration"
 msgstr "Duração"
 
-#: compiled_templates/mod_shadow_recent_posts.html.php:45
-msgid "There are no posts pending moderation."
-msgstr "Não há nenhum post fantasma nesse momento."
+#: compiled_templates/mod_search_results.html.php:274
+msgid "in"
+msgstr "em"
 
-#: compiled_templates/mod_statistics.html.php:48
-msgid "Hourly Statistic"
+#: compiled_templates/mod_statistics.html.php:62
+msgid "Posts Per Hour"
+msgstr "Posts Por Hora"
+
+#: compiled_templates/mod_statistics.html.php:66
+msgid "IPs last hour"
+msgstr "IPs na úiltima hora"
+
+#: compiled_templates/mod_statistics.html.php:70
+msgid "IPs last day"
+msgstr "IPs último dia"
+
+#: compiled_templates/mod_statistics.html.php:74
+msgid "IPs last week"
+msgstr "IPs última semana"
+
+#: compiled_templates/mod_statistics.html.php:82
+msgid "Total"
+msgstr "Total"
+
+#: compiled_templates/mod_statistics.html.php:152
+msgid "Hourly Statistics"
 msgstr "Estatísticas por hora"
 
-#: compiled_templates/mod_statistics.html.php:58
+#: compiled_templates/mod_statistics.html.php:162
 msgid "Weekly Statistics for this (and prev) week"
 msgstr "Estatísticas semanais para essa e semana anterior"
 
-#: compiled_templates/mod_statistics.html.php:67
+#: compiled_templates/mod_statistics.html.php:170
 msgid "View Board Specific Stats"
-msgstr "Visualizar Estatísticas por Board"
+msgstr "Visualizar Estátisticas por Board"
 
-#: compiled_templates/mod_statistics.html.php:76
-#: compiled_templates/mod_statistics.html.php:103
+#: compiled_templates/mod_statistics.html.php:179
+#: compiled_templates/mod_statistics.html.php:206
 msgid "Full Statistics"
-msgstr "Todas as Estatísticas"
+msgstr "Todas as Estátisticas"
 
-#: compiled_templates/mod_theme_config.html.php:47
+#: compiled_templates/mod_theme_config.html.php:49
 msgid "(No configuration required.)"
 msgstr "(Nenhuma configuração é necessária.)"
 
-#: compiled_templates/mod_theme_config.html.php:158
+#: compiled_templates/mod_theme_config.html.php:130
 msgid "Install theme"
 msgstr "Instalar tema"
 
-#: compiled_templates/mod_theme_installed.html.php:51
+#: compiled_templates/mod_theme_installed.html.php:52
 msgid "Successfully installed and built theme."
 msgstr "Tema foi construído e instalado com sucesso."
 
-#: compiled_templates/mod_theme_installed.html.php:58
-#: compiled_templates/mod_theme_rebuilt.html.php:41
+#: compiled_templates/mod_theme_installed.html.php:59
+#: compiled_templates/mod_theme_rebuilt.html.php:42
 msgid "Go back to themes"
 msgstr "Voltar para a lista de temas"
 
-#: compiled_templates/mod_themes.html.php:40
+#: compiled_templates/mod_theme_rebuilt.html.php:39
+msgid "Successfully rebuilt the <strong>%theme_name%</strong> theme."
+msgstr "Tema <strong>%theme_name%</strong> reconstruído com sucesso."
+
+#: compiled_templates/mod_themes.html.php:41
 msgid "There are no themes available."
 msgstr "Não há temas disponíveis."
 
-#: compiled_templates/mod_themes.html.php:64
+#: compiled_templates/mod_themes.html.php:65
 msgid "Version"
 msgstr "Versão"
 
-#: compiled_templates/mod_themes.html.php:84
+#: compiled_templates/mod_themes.html.php:85
 msgid "Thumbnail"
 msgstr "Miniatura"
 
-#: compiled_templates/mod_themes.html.php:102
-#: compiled_templates/mod_view_ip.html.php:127
-#: compiled_templates/mod_whitelist_tokens.html.php:99
-msgid "Actions"
-msgstr "Ações"
-
-#: compiled_templates/mod_themes.html.php:107
+#: compiled_templates/mod_themes.html.php:112
 msgid "Use theme"
 msgstr "Usar tema"
 
-#: compiled_templates/mod_themes.html.php:117
+#: compiled_templates/mod_themes.html.php:122
 msgid "Reconfigure"
 msgstr "Reconfigurar"
 
-#: compiled_templates/mod_themes.html.php:123
+#: compiled_templates/mod_themes.html.php:128
 msgid "Install"
 msgstr "Instalar"
 
-#: compiled_templates/mod_themes.html.php:146
+#: compiled_templates/mod_themes.html.php:154
 msgid "Are you sure you want to uninstall this theme?"
 msgstr "Você tem certeza que deseja desinstalar esse tema?"
 
-#: compiled_templates/mod_themes.html.php:148
+#: compiled_templates/mod_themes.html.php:158
 msgid "Uninstall"
 msgstr "Desinstalar"
 
-#: compiled_templates/mod_user.html.php:87
+#: compiled_templates/mod_user.html.php:80
 msgid "new; optional"
 msgstr "novo; opcional"
 
-#: compiled_templates/mod_user.html.php:112
+#: compiled_templates/mod_user.html.php:105
 msgid "Group"
 msgstr "Grupo"
 
-#: compiled_templates/mod_user.html.php:242
+#: compiled_templates/mod_user.html.php:219
 msgid "Create user"
-msgstr "Criar usuário"
+msgstr "Criar usuária"
 
-#: compiled_templates/mod_user.html.php:255
+#: compiled_templates/mod_user.html.php:232
 msgid "Are you sure you want to permanently delete this user?"
-msgstr "Você tem certeza que deseja deletar permanentemente esse usuário?"
+msgstr "Você tem certeza que deseja deletar permanentemente essa usuária?"
 
-#: compiled_templates/mod_user.html.php:257
+#: compiled_templates/mod_user.html.php:236
 msgid "Delete user"
-msgstr "Deletar usuário"
+msgstr "Deletar usuária"
 
-#: compiled_templates/mod_user.html.php:352
+#: compiled_templates/mod_user.html.php:315
 msgid "View more logs for this user."
-msgstr "Ver mais logs deste usuário."
+msgstr "Ver mais logs desta usuária."
 
-#: compiled_templates/mod_users.html.php:60
+#: compiled_templates/mod_users.html.php:61
 msgid "Last action"
-msgstr "Última ação"
+msgstr "Ultima ação"
 
-#: compiled_templates/mod_users.html.php:95
+#: compiled_templates/mod_users.html.php:96
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: compiled_templates/mod_users.html.php:109
+#: compiled_templates/mod_users.html.php:110
 msgid "none"
 msgstr "nenhum"
 
-#: compiled_templates/mod_users.html.php:190
+#: compiled_templates/mod_users.html.php:172
 msgid "Promote"
 msgstr "Promover"
 
-#: compiled_templates/mod_users.html.php:203
+#: compiled_templates/mod_users.html.php:186
 msgid "Demote"
 msgstr "Rebaixar"
 
-#: compiled_templates/mod_users.html.php:207
+#: compiled_templates/mod_users.html.php:194
 msgid "Are you sure you want to demote yourself?"
 msgstr "Tem certeza que quer se rebaixar?"
 
-#: compiled_templates/mod_users.html.php:220
+#: compiled_templates/mod_users.html.php:208
 msgid "log"
 msgstr "log"
 
-#: compiled_templates/mod_users.html.php:242
+#: compiled_templates/mod_users.html.php:230
 msgid "PM"
 msgstr "MP"
 
-#: compiled_templates/mod_users.html.php:263
+#: compiled_templates/mod_users.html.php:251
 msgid "Create a new user"
-msgstr "Criar novo usuário"
+msgstr "Criar nova usuária"
 
-#: compiled_templates/mod_view_ip.html.php:47
-msgid "There are none posts."
+#: compiled_templates/mod_view_ip.html.php:49
+msgid "There are no posts."
 msgstr "Não há nenhum post."
 
-#: compiled_templates/mod_view_ip.html.php:100
+#: compiled_templates/mod_view_ip.html.php:125
 msgid "note on record"
-msgid_plural "notes on record"
-msgstr[0] "nota registrada"
-msgstr[1] "notas registradas"
+msgstr "nota registrada"
 
-#: compiled_templates/mod_view_ip.html.php:184
-#: compiled_templates/mod_whitelist_tokens.html.php:84
-msgid "remove"
-msgstr "remover"
+#: compiled_templates/mod_view_ip.html.php:127
+msgid "notes on record"
+msgstr "notas registradas"
 
-#: compiled_templates/mod_view_ip.html.php:238
+#: compiled_templates/mod_view_ip.html.php:257
 msgid "New note"
 msgstr "Nova nota"
 
-#: compiled_templates/mod_view_ip.html.php:260
+#: compiled_templates/mod_view_ip.html.php:277
 msgid "Set custom user flag"
 msgstr "Definir bandeira customizada"
 
-#: compiled_templates/mod_view_ip.html.php:271
+#: compiled_templates/mod_view_ip.html.php:287
 msgid "Fucking"
 msgstr "Fodendo"
 
-#: compiled_templates/mod_view_ip.html.php:281
+#: compiled_templates/mod_view_ip.html.php:297
 msgid "Remove"
 msgstr "Remover"
 
-#: compiled_templates/mod_view_ip.html.php:286
-#: compiled_templates/post_form.html.php:343
+#: compiled_templates/mod_view_ip.html.php:302
+#: compiled_templates/post_form.html.php:367
 msgid "Flag"
 msgstr "Bandeira"
 
-#: compiled_templates/mod_view_ip.html.php:299
-msgid "Make IP fucking "
-msgstr "Fazer o IP ser do "
+#: compiled_templates/mod_view_ip.html.php:314
+msgid "Make IP fucking"
+msgstr "Fazer o IP ser do"
 
-#: compiled_templates/mod_view_ip.html.php:323
+#: compiled_templates/mod_view_ip.html.php:319
+msgid "Choose one"
+msgstr "Escolha um"
+
+#: compiled_templates/mod_view_ip.html.php:341
 msgid "Make it so"
 msgstr "Enviar"
 
-#: compiled_templates/mod_view_ip.html.php:349
+#: compiled_templates/mod_view_ip.html.php:365
 msgid "ban on record"
-msgid_plural "bans on record"
-msgstr[0] "banimento registrado"
-msgstr[1] "banimentos registrados"
+msgstr "banimento registrado"
 
-#: compiled_templates/mod_view_ip.html.php:388
+#: compiled_templates/mod_view_ip.html.php:367
+msgid "bans on record"
+msgstr "banimentos registrados"
+
+#: compiled_templates/mod_view_ip.html.php:407
 msgid "Ban Cookie"
 msgstr "Banir Cookie"
 
-#: compiled_templates/mod_view_ip.html.php:392
+#: compiled_templates/mod_view_ip.html.php:411
 msgid "Change appeal status"
 msgstr "Mudar status do apelo"
 
-#: compiled_templates/mod_view_ip.html.php:396
+#: compiled_templates/mod_view_ip.html.php:415
 msgid "Remove ban"
 msgstr "Remover banimento"
 
-#: compiled_templates/mod_view_ip.html.php:450
-msgid "History"
-msgstr "Histórico"
-
-#: compiled_templates/mod_view_ip.html.php:494
-msgid "system"
-msgstr "sistema"
-
-#: compiled_templates/mod_warning_form.html.php:196
+#: compiled_templates/mod_warning_form.html.php:199
 msgid "New Warning"
 msgstr "Novo Warning"
 
-#: compiled_templates/mod_whitelist_tokens.html.php:39
-msgid "All Tokens"
-msgstr "Todos os Tokens"
+#: compiled_templates/mod_warning_form.html.php:211
+msgid "Predefined Warning Reasons:"
+msgstr "Motivos prédefinidos de Warning:"
 
-#: compiled_templates/mod_whitelist_tokens.html.php:108
-msgid "Token (leave empty to generate)"
-msgstr "Token (deixe em branco para gerar)"
-
-#: compiled_templates/mod_whitelist_tokens.html.php:112
-msgid "Create New Whitelist"
-msgstr "Criar Nova Whitelist"
-
-#: compiled_templates/nicenotice.html.php:40
+#: compiled_templates/nicenotice.html.php:41
 msgid "We wanted to show we cared."
 msgstr "Nós queremos te mostrar que nos importamos."
 
-#: compiled_templates/nicenotice.html.php:71
+#: compiled_templates/nicenotice.html.php:72
 msgid "We were concerned, and wanted to say we cared when we saw your post on"
 msgstr ""
-"Ficamos preocupados e queremos te dizer que nos importamos quando vimos o "
+"Ficamos preocupadas e queremos te dizer que nos importamos quando vimos o "
 "seu post em"
 
-#: compiled_templates/post_fileinfo.html.php:102
-#: compiled_templates/post_form.html.php:452
-msgid "Spoiler Image"
-msgstr "Imagem Spoiler"
+#: compiled_templates/page.html.php:94
+#: compiled_templates/partials_header.html.php:55
+msgid "Return to dashboard"
+msgstr "Voltar à dashboard"
 
-#: compiled_templates/post_fileinfo.html.php:146
-#: compiled_templates/post_fileinfo.html.php:162
+#: compiled_templates/partials_latest.html.php:40
+msgid "Recent Posts"
+msgstr "Posts recentes"
+
+#: compiled_templates/partials_post_header.html.php:111
+msgid "Report Post"
+msgstr "Denuncie o Post"
+
+#: compiled_templates/partials_top_notice.html.php:40
+msgid "You have"
+msgstr "Você tem"
+
+#: compiled_templates/partials_top_notice.html.php:45
+msgid "an unread PM"
+msgstr "uma MP não lida"
+
+#: compiled_templates/partials_top_notice.html.php:51
+msgid "plus"
+msgstr "e mais"
+
+#: compiled_templates/partials_top_notice.html.php:55
+msgid "more waiting"
+msgstr "aguardando"
+
+#: compiled_templates/post_file_controls.html.php:51
+msgid "Delete file"
+msgstr "Deletar arquivo"
+
+#: compiled_templates/post_file_controls.html.php:57
+msgid "Are you sure you want to delete this file?"
+msgstr "Você tem certeza de que quer deletar esse arquivo?"
+
+#: compiled_templates/post_file_controls.html.php:74
+msgid "Spoiler file"
+msgstr "Arquivo spoiler"
+
+#: compiled_templates/post_file_controls.html.php:80
+msgid "Are you sure you want to spoiler this file?"
+msgstr "Você tem certeza de que quer ativar spoiler para esse arquivo?"
+
+#: compiled_templates/post_file_controls.html.php:93
+msgid "Remove spoiler"
+msgstr "Remover spoiler"
+
+#: compiled_templates/post_file_controls.html.php:99
+msgid "Are you sure you want to remove spoiler on this file?"
+msgstr "Você tem certeza de que quer remover spoiler desse arquivo?"
+
+#: compiled_templates/post_fileinfo.html.php:83
+msgid "File:"
+msgstr "Arquivo:"
+
+#: compiled_templates/post_fileinfo.html.php:117
 msgid "Save as original filename"
 msgstr "Salvar com o filename original"
 
-#: compiled_templates/post_form.html.php:50
+#: compiled_templates/post_form.html.php:52
 msgid "Start a new thread"
 msgstr "Criar um tópico"
 
-#: compiled_templates/post_form.html.php:105
+#: compiled_templates/post_form.html.php:129
 msgid "Choose a board"
 msgstr "Escolha a board"
 
-#: compiled_templates/post_form.html.php:290
-#: compiled_templates/post_form.html.php:316
+#: compiled_templates/post_form.html.php:178
+msgid "Select a capcode"
+msgstr "Selecione um capcode"
+
+#: compiled_templates/post_form.html.php:313
+#: compiled_templates/post_form.html.php:341
 msgid "Verification"
 msgstr "Verificação"
 
-#: compiled_templates/post_form.html.php:349
+#: compiled_templates/post_form.html.php:373
 msgid "None"
 msgstr "Nenhum"
 
-#: compiled_templates/post_form.html.php:461
+#: compiled_templates/post_form.html.php:441
+msgid "Tegaki"
+msgstr "Tegaki"
+
+#: compiled_templates/post_form.html.php:479
+msgid "Spoiler Image"
+msgstr "Imagem Spoiler"
+
+#: compiled_templates/post_form.html.php:491
 msgid "Countryball"
 msgstr "Estadobola"
 
-#: compiled_templates/post_form.html.php:468
+#: compiled_templates/post_form.html.php:498
 msgid "Do not show countryball"
 msgstr "Não mostrar estadobola"
 
-#: compiled_templates/post_form.html.php:477
+#: compiled_templates/post_form.html.php:509
 msgid "Remove EXIF"
 msgstr "Remover EXIF"
 
-#: compiled_templates/post_form.html.php:488
+#: compiled_templates/post_form.html.php:521
 msgid "Hide Poster IDs in Thread"
 msgstr "Ocultar IDs nesse tópico"
 
-#: compiled_templates/post_form.html.php:506
+#: compiled_templates/post_form.html.php:540
 msgid "Flags"
 msgstr ""
 "Opções de<br/>\n"
 "Moderador"
 
-#: compiled_templates/post_form.html.php:515
-#: compiled_templates/post_form.html.php:519
+#: compiled_templates/post_form.html.php:550
+#: compiled_templates/post_form.html.php:554
+#: compiled_templates/post_thread.html.php:95
+#: compiled_templates/post_thread.html.php:101
+#: compiled_templates/post_thread.html.php:105
+#: compiled_templates/themes_catalog_catalog.html.php:298
+#: compiled_templates/themes_catalog_catalog.html.php:304
+#: compiled_templates/themes_catalog_catalog.html.php:308
 msgid "Sticky"
 msgstr "Fixar"
 
-#: compiled_templates/post_form.html.php:529
-#: compiled_templates/post_form.html.php:533
+#: compiled_templates/post_form.html.php:568
+#: compiled_templates/post_form.html.php:572
 msgid "Lock"
 msgstr "Trancar"
 
-#: compiled_templates/post_form.html.php:543
-#: compiled_templates/post_form.html.php:547
+#: compiled_templates/post_form.html.php:586
+#: compiled_templates/post_form.html.php:590
 msgid "Raw HTML"
 msgstr "HTML Puro"
 
-#: compiled_templates/post_form.html.php:561
+#: compiled_templates/post_form.html.php:608
 msgid "IP change"
 msgstr "Mudança de IP"
 
-#: compiled_templates/post_form.html.php:587
+#: compiled_templates/post_form.html.php:637
 msgid "(For file deletion.)"
 msgstr "(Para excluir arquivos.)"
 
-#: compiled_templates/post_form.html.php:602
+#: compiled_templates/post_form.html.php:655
 msgid "Files bigger than"
 msgstr "Arquivos maiores que"
 
-#: compiled_templates/post_form.html.php:614
-msgid "&nbsp;pixels will be resized."
-msgstr "&nbsp;pixels serão redimensionados."
+#: compiled_templates/post_form.html.php:677
+msgid "pixels will be resized."
+msgstr "pixels serão redimensionados."
 
-#: compiled_templates/post_form.html.php:617
+#: compiled_templates/post_form.html.php:682
 msgid "Allowed file types:"
 msgstr "Tipo de arquivo permitido:"
 
-#: compiled_templates/post_form.html.php:631
+#: compiled_templates/post_form.html.php:711
 msgid "Maximum size per file:"
 msgstr "Tamanho máximo por arquivo:"
 
-#: compiled_templates/post_form.html.php:636
+#: compiled_templates/post_form.html.php:719
 msgid "with maximum dimension of"
 msgstr "com a dimensão máxima de"
 
-#: compiled_templates/post_form.html.php:646
+#: compiled_templates/post_form.html.php:735
 msgid "You may upload <strong>%max_images%</strong> images/files per post."
 msgstr ""
 "Você pode fazer upload de <strong>%max_images%</strong> images/arquivos por "
 "post."
 
-#: compiled_templates/post_form.html.php:649
+#: compiled_templates/post_form.html.php:740
 msgid "Valid embeds are:"
 msgstr "Embed válidos são:"
 
-#: compiled_templates/post_form.html.php:688
+#: compiled_templates/post_form.html.php:786
 msgid "There are <strong>%postcount%</strong> posters in this thread."
-msgstr "Há <strong>%postcount%</strong> usuários nesse tópico."
+msgstr "Há <strong>%postcount%</strong> usuárias nesse tópico."
+
+#: compiled_templates/post_form.html.php:813
+msgid "WARNING: Countryballs are enabled to ALL posts"
+msgstr "AVISO: Estadobolas estão habilitadas em TODOS os posts"
+
+#: compiled_templates/post_post_controls.html.php:60
+msgid "Are you sure you want to delete this?"
+msgstr "Tem certeza de que quer deletar isso?"
+
+#: compiled_templates/post_post_controls.html.php:73
+msgid "Are you sure you want to shadow delete this?"
+msgstr "Tem certeza de que quer shadow deletar isso?"
+
+#: compiled_templates/post_post_controls.html.php:79
+msgid "Shadow Delete"
+msgstr "Shadow Delete"
 
 #: compiled_templates/post_post_controls.html.php:99
-msgid "Add Bantz"
-msgstr "Adicionar Bantz"
+msgid "Delete all posts by IP"
+msgstr "Deletar todos os posts do IP"
 
-#: compiled_templates/post_post_controls.html.php:114
+#: compiled_templates/post_post_controls.html.php:105
+msgid "Are you sure you want to delete all posts by this IP address?"
+msgstr "Você tem certeza que deseja deletar todos os posts deste IP?"
+
+#: compiled_templates/post_post_controls.html.php:122
+msgid "Delete all posts by IP across all boards"
+msgstr "Deletar todos os posts deste IP em todas as boards"
+
+#: compiled_templates/post_post_controls.html.php:128
+msgid ""
+"Are you sure you want to delete all posts by this IP address, across all "
+"boards?"
+msgstr ""
+"Tem certeza que quer deletar todos os posts deste IP em todas as boards?"
+
+#: compiled_templates/post_post_controls.html.php:144
+msgid "Add Bantz"
+msgstr "Adcionar Bantz"
+
+#: compiled_templates/post_post_controls.html.php:161
 msgid "Issue Nicenotice / Notice of Concern"
 msgstr "Criar Nicenotice / Notice of Concern"
 
-#: compiled_templates/post_post_controls.html.php:129
-#: compiled_templates/post_post_controls.html.php:144
+#: compiled_templates/post_post_controls.html.php:178
 msgid "Issue Warning"
 msgstr "Criar Warning"
 
-#: compiled_templates/post_post_controls.html.php:159
+#: compiled_templates/post_post_controls.html.php:191
+msgid "Issue Warning and Delete"
+msgstr "Criar Warning e Deletar"
+
+#: compiled_templates/post_post_controls.html.php:211
 msgid "Ban"
 msgstr "Banir"
 
-#: compiled_templates/post_post_controls.html.php:174
+#: compiled_templates/post_post_controls.html.php:228
 msgid "Ban & Delete"
 msgstr "Banir & Deletar"
 
-#: compiled_templates/post_post_controls.html.php:189
-msgid "Ban & Delete all post by IP"
+#: compiled_templates/post_post_controls.html.php:245
+msgid "Ban & Delete all posts by IP'"
 msgstr "Banir & Deletar todos os posts do IP"
 
-#: compiled_templates/post_post_controls.html.php:214
+#: compiled_templates/post_post_controls.html.php:262
+msgid "Ban & Delete all posts by cookies"
+msgstr "Banir & Deletar todos os posts do Cookie"
+
+#: compiled_templates/post_post_controls.html.php:284
 msgid "Make thread not sticky"
 msgstr "Desfixar tópico"
 
-#: compiled_templates/post_post_controls.html.php:224
+#: compiled_templates/post_post_controls.html.php:286
 msgid "Make thread sticky"
 msgstr "Fixar tópico"
 
-#: compiled_templates/post_post_controls.html.php:243
+#: compiled_templates/post_post_controls.html.php:305
 msgid "Allow thread to be bumped"
 msgstr "Retirar limite de bump"
 
-#: compiled_templates/post_post_controls.html.php:253
+#: compiled_templates/post_post_controls.html.php:307
 msgid "Prevent thread from being bumped"
 msgstr "Adicionar limite de bump"
 
-#: compiled_templates/post_post_controls.html.php:272
+#: compiled_templates/post_post_controls.html.php:326
 msgid "Unlock thread"
 msgstr "Destrancar tópico"
 
-#: compiled_templates/post_post_controls.html.php:282
+#: compiled_templates/post_post_controls.html.php:328
 msgid "Lock thread"
 msgstr "Trancar tópico"
 
-#: compiled_templates/post_post_controls.html.php:315
+#: compiled_templates/post_post_controls.html.php:347
+msgid "Send thread to archive"
+msgstr "Enviar thread para o arquivo"
+
+#: compiled_templates/post_post_controls.html.php:353
+msgid ""
+"Are you sure you want to send thread to archive and delete it from the "
+"catalog?"
+msgstr "Você tem certeza que quer adicionar esse tópico para o arquivo?"
+
+#: compiled_templates/post_post_controls.html.php:373
 msgid "Move thread to another board"
 msgstr "Mover tópico para outra board"
 
-#: compiled_templates/post_post_controls.html.php:327
+#: compiled_templates/post_post_controls.html.php:375
 msgid "Move reply to another board"
 msgstr "Mover resposta para outra board"
 
-#: compiled_templates/post_post_controls.html.php:351
+#: compiled_templates/post_post_controls.html.php:399
 msgid "Make thread not cycle"
 msgstr "Desfazer tópico cíclico"
 
-#: compiled_templates/post_post_controls.html.php:361
+#: compiled_templates/post_post_controls.html.php:401
 msgid "Make thread cycle"
 msgstr "Fazer tópico cíclico"
 
-#: compiled_templates/post_post_controls.html.php:383
+#: compiled_templates/post_post_controls.html.php:425
 msgid "Merge thread with another thread"
 msgstr "Unir tópico com outro tópico"
 
-#: compiled_templates/post_post_controls.html.php:407
+#: compiled_templates/post_post_controls.html.php:449
 msgid "Show Poster IDs in thread"
 msgstr "Mostrar IDs nesse tópico"
 
-#: compiled_templates/post_post_controls.html.php:417
+#: compiled_templates/post_post_controls.html.php:451
 msgid "Hide Poster IDs in thread"
 msgstr "Ocultar IDs nesse tópico"
 
-#: compiled_templates/post_post_controls.html.php:436 inc/mod/pages.php:2127
+#: compiled_templates/post_post_controls.html.php:472 inc/mod/pages.php:2313
 msgid "Edit post"
 msgstr "Editar mensagem"
 
-#: compiled_templates/post_post_controls.html.php:459
+#: compiled_templates/post_post_controls.html.php:495
 msgid "Restore Shadow Deleted Post"
 msgstr "Restaurar tópico fantasma"
 
-#: compiled_templates/post_post_controls.html.php:474
+#: compiled_templates/post_post_controls.html.php:512
 msgid "Permanent Delete Shadow Deleted Post"
 msgstr "Deletar permanentemente o tópico fantastama"
 
-#: compiled_templates/post_thread.html.php:213
-#: compiled_templates/post_thread_fileboard.html.php:163
-msgid "Reply"
-msgstr "Responder"
+#: compiled_templates/post_thread.html.php:122
+#: compiled_templates/post_thread.html.php:128
+#: compiled_templates/post_thread.html.php:132
+#: compiled_templates/themes_catalog_catalog.html.php:323
+#: compiled_templates/themes_catalog_catalog.html.php:329
+#: compiled_templates/themes_catalog_catalog.html.php:333
+msgid "Locked"
+msgstr "Trancado"
 
-#: compiled_templates/post_thread.html.php:230
-#: compiled_templates/post_thread.html.php:424
-msgid "View All"
-msgstr "Ver todos"
+#: compiled_templates/post_thread.html.php:149
+msgid "Bumplocked'"
+msgstr "Bumplocked"
 
-#: compiled_templates/post_thread.html.php:247
-#: compiled_templates/post_thread.html.php:481
-msgid "Last 1 Post"
-msgid_plural "Last %count% Posts"
-msgstr[0] "Última mensagem"
-msgstr[1] "Últimas %count% Mensagens"
+#: compiled_templates/post_thread.html.php:155
+#: compiled_templates/post_thread.html.php:159
+#: compiled_templates/themes_catalog_catalog.html.php:348
+#: compiled_templates/themes_catalog_catalog.html.php:354
+#: compiled_templates/themes_catalog_catalog.html.php:358
+msgid "Bumplocked"
+msgstr "Bumplocked"
 
-#: compiled_templates/post_thread.html.php:312
-#: compiled_templates/post_thread.html.php:436
+#: compiled_templates/post_thread.html.php:176
+#: compiled_templates/post_thread.html.php:182
+#: compiled_templates/post_thread.html.php:186
+#: compiled_templates/themes_catalog_catalog.html.php:373
+#: compiled_templates/themes_catalog_catalog.html.php:379
+#: compiled_templates/themes_catalog_catalog.html.php:383
+msgid "Cyclical"
+msgstr "Cyclical"
+
+#: compiled_templates/post_thread.html.php:239
+#: compiled_templates/post_thread.html.php:394
 msgid "1 post"
 msgid_plural "%count% posts"
 msgstr[0] "1 mensagem"
 msgstr[1] "%count% mensagens"
 
-#: compiled_templates/post_thread.html.php:331
-#: compiled_templates/post_thread.html.php:455
-msgid "1 image reply"
-msgid_plural "%count% image replies"
-msgstr[0] "1 resposta com imagem"
-msgstr[1] "%count% respostas com imagem"
+#: compiled_templates/post_thread.html.php:258
+#: compiled_templates/post_thread.html.php:413
+msgid "1 image reply."
+msgid_plural "%count% image replies omitted."
+msgstr[0] "1 resposta com imagem."
+msgstr[1] "%count% respostas com imagens omitidas."
 
-#: compiled_templates/post_thread.html.php:337
-msgid "omitted. Click reply to view."
-msgstr "omitidas. Clique em responder para visualizar."
+#: compiled_templates/post_thread.html.php:292
+#: compiled_templates/post_thread.html.php:435
+msgid "Last 1 Post"
+msgid_plural "Last %count% Posts"
+msgstr[0] "Ultima mensagem"
+msgstr[1] "Últimas %count% Mensagens"
 
-#: compiled_templates/post_thread.html.php:461
-msgid "omitted"
-msgstr "omitidas"
+#: compiled_templates/post_thread.html.php:302
+msgid "Click reply to view."
+msgstr "Clique em responder para visualizar."
 
-#: compiled_templates/report.html.php:61
-msgid "Enter reason below..."
-msgstr "Digite o motivo abaixo..."
+#: compiled_templates/post_thread.html.php:382
+msgid "View All"
+msgstr "Ver todos"
 
-#: compiled_templates/report.html.php:73
+#: compiled_templates/post_thread_fileboard.html.php:164
+msgid "Reply"
+msgstr "Responder"
+
+#: compiled_templates/report.html.php:63
 msgid "To submit your report, please fill out the CAPTCHA below."
 msgstr "Para enviar a denúncia, preencha o captcha abaixo."
 
-#: compiled_templates/report_delete.html.php:41
+#: compiled_templates/report.html.php:96
+msgid "Select a reason"
+msgstr "Selecione um motivo"
+
+#: compiled_templates/report_delete.html.php:108
+msgid "Report"
+msgstr "Denunciar"
+
+#: compiled_templates/reports_count.html.php:42
 msgid "(%reports%) Report"
 msgid_plural "(%reports%) Reports"
 msgstr[0] "(%reports%) Denúncia"
 msgstr[1] "(%reports%) Denúncias"
 
-#: compiled_templates/report_delete.html.php:55
-msgid "Delete Post"
-msgstr "Deletar Post"
-
-#: compiled_templates/report_delete.html.php:58
-msgid "Delete file only"
-msgstr "Deletar apenas os arquivos"
-
-#: compiled_templates/report_delete.html.php:84
-msgid "Report"
-msgstr "Denunciar"
-
-#: compiled_templates/search_form.html.php:54
+#: compiled_templates/search_form.html.php:55
 msgid "Select board"
 msgstr "Selecionar board"
 
-#: compiled_templates/search_form.html.php:87
+#: compiled_templates/search_form.html.php:86
 msgid ""
 "Search is case-insensitive and based on keywords. To match exact phrases, "
-"use \"quotes\". Use an asterisk (*) for wildcard.</p><p style=\"font-"
-"size:8pt;margin:5px\">You may apply the following filters to your searches: "
-"<strong>id</strong>, <strong>thread</strong>, <strong>subject</strong>, and "
-"<strong>name</strong>. To apply a filter, simply add to your query, for "
-"example, <em>name:Anonymous</em> or <em>subject:\"Some Thread\"</em>. "
-"Wildcards cannot be used in filters."
+"use \"quotes\". Use an asterisk (*) for wildcard."
 msgstr ""
-"A pesquisa diferencia maiúsculas de minúsculas e é baseada em palavras-"
-"chave. Para buscar as frases exatas, use \"aspas\". Use um asterisco (*) "
-"para curinga </p> <p style=\"font-size:8pt;margin:5px\"> Você pode aplicar "
-"os seguintes filtros para suas pesquisas:. <strong>ID <strong>, <strong> "
-"tópico </strong>, <strong> assunto </strong>, e <strong> nome </strong>. "
-"Para aplicar um filtro, basta adicionar à sua consulta, por exemplo, <em> "
-"nome: Anônimo </em> ou assunto <em>: \"Algum Tópico\" </em>. Caracteres "
-"especiais não podem ser utilizados em filtros."
+"A pesquisa não diferencia maiúsculas de minusculas, é baseado em palavras "
+"chave. Use \"aspas\" para procurar frases exatas e Use asterisco (*) como "
+"coringa."
 
-#: compiled_templates/themes_catalog_catalog.html.php:131
+#: compiled_templates/search_form.html.php:91
+msgid ""
+"You may apply the following filters to your searches: <strong>id</strong>, "
+"<strong>thread</strong>, <strong>subject</strong>, and <strong>name</"
+"strong>. To apply a filter, simply add to your query, for example, <em>name:"
+"Anonymous</em> or <em>subject:\"Some Thread\"</em>. Wildcards cannot be used "
+"in filters."
+msgstr ""
+"Você pode aplicar os seguintes filtros às suas pesquisas: <strong>id</"
+"strong>, <strong>thread</strong>, <strong>assunto</strong> e <strong>nome</"
+"strong>. Para aplicar um filtro, basta adicioná-lo à sua consulta, por "
+"exemplo, <em>nome: Anônimo</em> ou <em>assunto:\"Algum Tópico\"</em>. "
+"Caracteres curinga não podem ser usados nos filtros."
+
+#: compiled_templates/themes_catalog_catalog.html.php:106
 msgid "Sort by"
 msgstr "Ordenar por"
 
-#: compiled_templates/themes_catalog_catalog.html.php:136
+#: compiled_templates/themes_catalog_catalog.html.php:111
 msgid "Bump order"
 msgstr "Ordernar por bump"
 
-#: compiled_templates/themes_catalog_catalog.html.php:140
+#: compiled_templates/themes_catalog_catalog.html.php:115
 msgid "Creation date"
 msgstr "Data de criação"
 
-#: compiled_templates/themes_catalog_catalog.html.php:144
+#: compiled_templates/themes_catalog_catalog.html.php:119
 msgid "Reply count"
 msgstr "Contagem de respostas"
 
-#: compiled_templates/themes_catalog_catalog.html.php:148
+#: compiled_templates/themes_catalog_catalog.html.php:123
 msgid "Random"
 msgstr "Aleatório"
 
-#: compiled_templates/themes_catalog_catalog.html.php:154
+#: compiled_templates/themes_catalog_catalog.html.php:129
 msgid "Image size"
 msgstr "Tamanho da imagem"
 
-#: compiled_templates/themes_catalog_catalog.html.php:159
+#: compiled_templates/themes_catalog_catalog.html.php:134
 msgid "Very small"
 msgstr "Muito pequeno"
 
-#: compiled_templates/themes_catalog_catalog.html.php:163
+#: compiled_templates/themes_catalog_catalog.html.php:138
 msgid "Small"
 msgstr "Pequeno"
 
-#: compiled_templates/themes_catalog_catalog.html.php:167
+#: compiled_templates/themes_catalog_catalog.html.php:142
 msgid "Large"
 msgstr "Médio"
 
-#: compiled_templates/themes_catalog_catalog.html.php:322
+#: compiled_templates/themes_catalog_catalog.html.php:280
 msgid "(R)eply / (I)mages / (P)age"
 msgstr "(R)espostas / (I)magens / (P)ágina"
 
-#: compiled_templates/themes_categories_news.html.php:74
+#: compiled_templates/themes_categories_news.html.php:75
+#: compiled_templates/themes_index_index.html.php:136
 msgid "(No news to show.)"
-msgstr "(Sem notícias para mostrar.)"
+msgstr "(Sem noticias para mostrar.)"
 
-#: compiled_templates/thread.html.php:245
+#: compiled_templates/themes_index_index.html.php:91
+msgid "Rules"
+msgstr "Regras"
+
+#: compiled_templates/themes_index_index.html.php:192 inc/mod/pages.php:3930
+msgid "Statistics"
+msgstr "Estatísticas"
+
+#: compiled_templates/themes_index_index.html.php:195
+msgid "Updated on:"
+msgstr "Atualizado em:"
+
+#: compiled_templates/themes_index_index.html.php:202
+msgid "Posts total:"
+msgstr "Quantidade de posts:"
+
+#: compiled_templates/themes_index_index.html.php:208
+msgid "Unique posters:"
+msgstr "Usuárias únicas:"
+
+#: compiled_templates/themes_index_index.html.php:214
+msgid "Active content:"
+msgstr "Conteúdo ativo:"
+
+#: compiled_templates/themes_index_index.html.php:220
+msgid "Files total:"
+msgstr "Quantidade de arquivos:"
+
+#: compiled_templates/themes_index_index.html.php:226
+msgid "Active bans:"
+msgstr "Quantidade de bans ativos:"
+
+#: compiled_templates/thread.html.php:180
 msgid "Posting mode: Reply"
 msgstr "Modo de postagem: Resposta"
 
-#: compiled_templates/thread.html.php:378
+#: compiled_templates/thread.html.php:318
 msgid "Post a Reply"
 msgstr "Enviar uma resposta"
 
-#: compiled_templates/warning.html.php:41
-msgid "You were issued an warning! ;_;"
+#: compiled_templates/warning.html.php:45
+msgid "You were issued a warning! ;_;"
 msgstr "Você recebeu um warning! ;_;"
 
 #: compiled_templates/warning.html.php:64
 msgid "Your warning was filed on"
 msgstr "Seu warning foi realizado em"
 
-#: compiled_templates/warning.html.php:126
-msgid "You were issued an warning for the following post on"
-msgstr "Você tomou um warning pelo seguinte post em"
+#: compiled_templates/warning.html.php:125
+msgid "You were issued a warning for the following post on"
+msgstr "Você recebeu um warning pelo seguinte post em"
 
-#: compiled_templates/whitelist.html.php:39
-msgid "Solve this captcha in order to proceed."
-msgstr "Resolva esse captcha para continuar."
+#: delete.php:13 delete.php:16 report.php:12 report.php:15
+msgid "Post not found"
+msgstr "Post não foi encontrado"
 
-#: inc/archive.php:294 inc/mod/pages.php:3685
+#: delete.php:24 delete.php:27 inc/config.php:1345 report.php:23 report.php:26
+msgid "Invalid board!"
+msgstr "Board inválida!"
+
+#: delete.php:35 delete.php:38
+msgid "Invalid request"
+msgstr "Requisição inválida"
+
+#: delete.php:44
+#, php-format
+msgid "Deleting Post %d from %s"
+msgstr "Deletando o Post %d do %s"
+
+#: history.php:9 history.php:33 inc/mod/pages.php:4490
+msgid "Post History"
+msgstr "Histórico de Postagens"
+
+#: history.php:14
+msgid "Public history is disabled."
+msgstr "O histórico público está desativado."
+
+#: inc/archive.php:294 inc/mod/pages.php:3846
 #, php-format
 msgid "Archived"
 msgstr "Arquivado"
 
-#: inc/archive.php:294 inc/archive.php:350 inc/mod/pages.php:3685
-#: inc/mod/pages.php:3716 inc/mod/pages.php:3749
+#: inc/archive.php:294 inc/archive.php:350 inc/mod/pages.php:3846
+#: inc/mod/pages.php:3877 inc/mod/pages.php:3910
 msgid "threads"
 msgstr "tópicos"
 
-#: inc/config.php:663
+#: inc/config.php:673
 msgid "You have been muted for unoriginal content."
 msgstr "Você foi silenciado por conteúdo repetido."
 
-#: inc/config.php:1119
+#: inc/config.php:1129
 msgid "New Topic"
 msgstr "Novo tópico"
 
-#: inc/config.php:1120
+#: inc/config.php:1130
 msgid "New Reply"
 msgstr "Responder"
 
-#: inc/config.php:1131
+#: inc/config.php:1141
 msgid ""
 "All trademarks, copyrights, comments, and images on this page are owned by "
 "and are the responsibility of their respective parties."
 msgstr ""
 "Todas as marcas, registros de copyright, comentários e imagens nesta pagina "
-"pertencem e são responsabilidade de seus respectivos criadores."
+"pertencem e são responsabilidade de suas respectivas donas."
 
-#: inc/config.php:1340
+#: inc/config.php:1336
 msgid "You look like a bot."
 msgstr "Você não parece humano."
 
-#: inc/config.php:1341
+#: inc/config.php:1337
 msgid "Your browser sent an invalid or no HTTP referer."
 msgstr ""
 "Seu browser enviou um referial HTTP inválido ou não enviou o referencial."
 
-#: inc/config.php:1342
+#: inc/config.php:1338
 #, php-format
 msgid "The %s field was too long."
 msgstr "O campo %s é longo demais."
 
-#: inc/config.php:1343
+#: inc/config.php:1339
 msgid "The body was too long."
 msgstr "O corpo do texto é longo demais."
 
-#: inc/config.php:1344
+#: inc/config.php:1340
 msgid "The body was too short or empty."
 msgstr "O corpo do texto é pequeno demais ou inexistente."
 
-#: inc/config.php:1345
+#: inc/config.php:1341
 msgid "You must upload an image."
 msgstr "Você deve fazer upload de uma imagem."
 
-#: inc/config.php:1346
+#: inc/config.php:1342
 msgid "You have attempted to upload too many images!"
 msgstr "Você tentou fazer upload de muitas imagens!"
 
-#: inc/config.php:1347
+#: inc/config.php:1343
 msgid "The server failed to handle your upload."
 msgstr "O servidor não conseguiu processar seu upload."
 
-#: inc/config.php:1348
+#: inc/config.php:1344
 #, php-format
 msgid "Unsupported image format: %s"
 msgstr "Formato de imagem não suportado: %s"
 
-#: inc/config.php:1349
-msgid "Invalid board!"
-msgstr "Board inválida!"
-
-#: inc/config.php:1350
+#: inc/config.php:1346
 msgid "Thread specified does not exist."
-msgstr "O tópico especificado não existe.."
+msgstr "O tópico especificado não existe."
 
-#: inc/config.php:1351
+#: inc/config.php:1347
 msgid "Thread locked. You may not reply at this time."
 msgstr "Tópico trancado, você não pode responde-lo."
 
-#: inc/config.php:1352
+#: inc/config.php:1348
 msgid "Thread has reached its maximum reply limit."
 msgstr "O tópico atingiu o limite de respostas."
 
-#: inc/config.php:1353
+#: inc/config.php:1349
 msgid "Thread has reached its maximum image limit."
 msgstr "O tópico alcançou o limite máximo de imagens."
 
-#: inc/config.php:1354
+#: inc/config.php:1350
 msgid "You didn't make a post."
 msgstr "Você não escreveu uma mensagem."
 
-#: inc/config.php:1355
+#: inc/config.php:1351
 msgid "Flood detected; Post discarded."
 msgstr "Flood detectado; Sua mensagem foi descartada."
 
-#: inc/config.php:1356
+#: inc/config.php:1352
 msgid "Your request looks automated; Post discarded."
 msgstr "Sua requisição parece automatizada; Mensagem descartada."
 
-#: inc/config.php:1357
+#: inc/config.php:1353
 msgid "Unoriginal content!"
 msgstr "Conteudo não original!"
 
-#: inc/config.php:1358
+#: inc/config.php:1354
 #, php-format
 msgid "Unoriginal content! You have been muted for %d seconds."
 msgstr "Conteudo não original! Você está impedido de postar por %d segundos."
 
-#: inc/config.php:1359
+#: inc/config.php:1355
 #, php-format
 msgid "You are muted! Expires in %d seconds."
 msgstr "Você está impedido de postar! Expira em %d segundos."
 
-#: inc/config.php:1360
+#: inc/config.php:1356
 #, php-format
 msgid "Your IP address is listed in %s."
 msgstr "Seu IP está listado em %s."
 
-#: inc/config.php:1361
+#: inc/config.php:1357
 msgid "Too many links; flood detected."
 msgstr "Links demais; Flood detectado."
 
-#: inc/config.php:1362
+#: inc/config.php:1358
 msgid "Too many cites; post discarded."
 msgstr "Muitas citações; Post descartado."
 
-#: inc/config.php:1363
+#: inc/config.php:1359
 msgid "Too many cross-board links; post discarded."
 msgstr "Links entre boards demais; Post descartado."
 
-#: inc/config.php:1364
+#: inc/config.php:1360
 msgid "You didn't select anything to delete."
 msgstr "Você não selecionou nada para deletar."
 
-#: inc/config.php:1365
+#: inc/config.php:1361
 msgid "You didn't select anything to report."
 msgstr "Você não selecionou nada para denunciar."
 
-#: inc/config.php:1366
+#: inc/config.php:1362
 msgid "Invalid reason."
 msgstr "Motivo inválido."
 
-#: inc/config.php:1367
+#: inc/config.php:1363
 msgid "You can't report that many posts at once."
 msgstr "Você não pode denunciar tantos post ao mesmo tempo."
 
-#: inc/config.php:1368
+#: inc/config.php:1364
+msgid "You can't report the same post many times"
+msgstr "Você não pode reportar o mesmo post muitas vezes"
+
+#: inc/config.php:1365
 msgid "Wrong password…"
 msgstr "Senha incorreta…"
 
-#: inc/config.php:1369
+#: inc/config.php:1366
 msgid "Invalid image."
 msgstr "Imagem inválida."
 
-#: inc/config.php:1370
+#: inc/config.php:1367
 msgid ""
 "Upload failure (file #%index%): Error code %code%. Refer to <a href=\"http://"
 "php.net/manual/en/features.file-upload.errors.php\">http://php.net/manual/en/"
@@ -2233,69 +2581,69 @@ msgstr ""
 "href=\"http://php.net/manual/en/features.file-upload.errors.php\">http://php."
 "net/manual/en/features.file-upload.errors.php</a>; post descartado."
 
-#: inc/config.php:1371
+#: inc/config.php:1368
 msgid "Unknown file extension."
 msgstr "Extensão de arquivo desconhecida."
 
-#: inc/config.php:1372
+#: inc/config.php:1369
 msgid "Maximum file size: %maxsz% bytes<br>Your file's size: %filesz% bytes"
 msgstr ""
 "Tamanho maximo de arquivos: %maxsz% bytes<br>O tamanho do seu arquivo: "
 "%filesz% bytes"
 
-#: inc/config.php:1373
+#: inc/config.php:1370
 msgid "The file was too big."
 msgstr "O arquivo é grande demais."
 
-#: inc/config.php:1374
+#: inc/config.php:1371
 msgid "There was a problem processing your webm."
 msgstr "Houve um problema no processamento do seu webm."
 
-#: inc/config.php:1375
+#: inc/config.php:1372
 msgid "Invalid webm uploaded."
 msgstr "Webm inválido."
 
-#: inc/config.php:1376
+#: inc/config.php:1373
 msgid ""
 "The uploaded webm contains an audio or another type of additional stream."
 msgstr "O webm contém um áudio ou outro tipo de stream adicional."
 
-#: inc/config.php:1377
+#: inc/config.php:1374
 msgid "The uploaded webm is longer than "
 msgstr "O webm é maior que "
 
-#: inc/config.php:1378
+#: inc/config.php:1375
 #, php-format
 msgid "The file (%s) <a href=\"%s\">already exists</a>!"
 msgstr "O arquivo (%s) <a href=\"%s\">já existe</a>!"
 
-#: inc/config.php:1379
+#: inc/config.php:1376
 msgid "You can't add duplicates of same file!"
 msgstr "Você não pode adicionar arquivos duplicados!"
 
-#: inc/config.php:1380
+#: inc/config.php:1377
 #, php-format
 msgid "The file (%s) <a href=\"%s\">already exists</a> in this thread!"
 msgstr "O arquivo (%s) <a href=\"%s\">já existe</a> neste tópico!"
 
-#: inc/config.php:1381
+#: inc/config.php:1378
 #, php-format
 msgid "You'll have to wait another %s before deleting that."
 msgstr "Você terá que esperar %s segundos antes de deletar isso."
 
-#: inc/config.php:1382
+#: inc/config.php:1379
 msgid "MIME type detection XSS exploit (IE) detected; post discarded."
 msgstr "Exploit XSS do tipo MIME (IE) detectado; mensagem descartada."
 
-#: inc/config.php:1383
+#: inc/config.php:1380
 msgid "Couldn't make sense of the URL of the video you tried to embed."
 msgstr "Não foi possivel processar a URL do video que você tentou integrar."
 
-#: inc/config.php:1384
+#: inc/config.php:1381
 msgid "You seem to have mistyped the verification."
-msgstr "Você errou o código de verificação."
+msgstr "Você errou o codigo de verificação."
 
-#: inc/config.php:1385
+#: inc/config.php:1382
 msgid ""
 "To prevent raids, the maximum number of threads has been limited per hour. "
 "Please check back later or post in an existing thread."
@@ -2303,7 +2651,7 @@ msgstr ""
 "Para prevenir raids, o limite de tópicos por hora foi habilitado. Por favor, "
 "tente novamente mais tarde ou faça a postagem em um tópico existente."
 
-#: inc/config.php:1386
+#: inc/config.php:1383
 msgid ""
 "To prevent raids, the maximum number of posts in given interval has been "
 "limited. Please try again in a short while."
@@ -2311,92 +2659,96 @@ msgstr ""
 "Para prevenir raids, o número de posts foi limitado. Por favor, tente "
 "novamente mais tarde."
 
-#: inc/config.php:1387
+#: inc/config.php:1384
 msgid "You have already voted for this thread to be featured."
 msgstr "Você já votou nesse tópico para ser destacado."
 
-#: inc/config.php:1388
-msgid "You're already whitelisted!"
-msgstr "Você já está na whitelist!"
-
-#: inc/config.php:1389
+#: inc/config.php:1385
 #, php-format
 msgid "The flag %s is undefined, your PHP version is too old!"
-msgstr ""
+msgstr "A flag %s não está definida. Sua versão do PHP é muito antiga!"
 
-#: inc/config.php:1390
+#: inc/config.php:1386
 #, php-format
 msgid "defined_flags_accumulate(): The flag %s is of the wrong type!"
-msgstr ""
+msgstr "defined_flags_accumulate(): A flag %s é do tipo errado!"
 
-#: inc/config.php:1393
+#: inc/config.php:1387
+msgid "Post specified does not exist."
+msgstr "O post especificado não existe."
+
+#: inc/config.php:1390
 #, php-format
 msgid ""
 "You are only allowed to unban %s users at a time. You tried to unban %u "
 "users."
 msgstr ""
-"Você só tem permissão para retirar o ban de %s usuários por vez, e você "
+"Você só tem permissão para retirar o ban de %s usuárias por vez, e você "
 "tentou retirar o ban de %u usuários."
 
-#: inc/config.php:1394
+#: inc/config.php:1391
 msgid "Invalid username and/or password."
 msgstr "Login e/ou senha inválido(s)."
 
-#: inc/config.php:1395
+#: inc/config.php:1392
+msgid "Login on insecure connections is disabled."
+msgstr "Não é possível fazer login em conexões inseguras."
+
+#: inc/config.php:1393
 msgid "You are not a mod…"
 msgstr "Você não é mod…"
 
-#: inc/config.php:1396
+#: inc/config.php:1394
 msgid ""
 "Invalid username and/or password. Your user may have been deleted or changed."
 msgstr ""
 "Login e/ou senha inválido(s). Seu login deve ter sido mudado ou removido."
 
-#: inc/config.php:1397
+#: inc/config.php:1395
 msgid "Your browser didn't submit an input when it should have."
 msgstr "Seu browser não enviou nada quando ele deveria."
 
-#: inc/config.php:1398
+#: inc/config.php:1396
 #, php-format
 msgid "The %s field is required."
 msgstr "O campo %s é necessário."
 
-#: inc/config.php:1399
+#: inc/config.php:1397
 #, php-format
 msgid "The %s field was invalid."
 msgstr "O campo %s é inválido."
 
-#: inc/config.php:1400
+#: inc/config.php:1398
 #, php-format
 msgid "There is already a %s board."
 msgstr "A board %s já existe."
 
-#: inc/config.php:1401
+#: inc/config.php:1399
 msgid "You don't have permission to do that."
 msgstr "Você não tem permissão para fazer isso."
 
-#: inc/config.php:1402
+#: inc/config.php:1400
 msgid "That post doesn't exist…"
 msgstr "Esse post não existe…"
 
-#: inc/config.php:1403
+#: inc/config.php:1401
 msgid "Page not found."
 msgstr "Pagina não encontrada."
 
-#: inc/config.php:1404
+#: inc/config.php:1402
 #, php-format
 msgid "That mod <a href=\"?/users/%d\">already exists</a>!"
 msgstr "Este mod <a href=\"?/users/%d\">já existe</a>!"
 
-#: inc/config.php:1405
+#: inc/config.php:1403
 msgid "That theme doesn't exist!"
 msgstr "Este tema não existe!"
 
-#: inc/config.php:1406
+#: inc/config.php:1404
 msgid "Invalid security token! Please go back and try again."
 msgstr "Token de segurança inválido! Retorne e tente novamente."
 
-#: inc/config.php:1407
+#: inc/config.php:1405
 msgid ""
 "Your code contained PHP syntax errors. Please go back and correct them. PHP "
 "says: "
@@ -2404,43 +2756,55 @@ msgstr ""
 "Seu código contém erros de sintaxe PHP. Por favor volte e corrija-os. PHP "
 "diz: "
 
-#: inc/config.php:1408
+#: inc/config.php:1406
 msgid "The provided Country ID is not allowed"
-msgstr "O ID da bandeira não é permitido"
+msgstr "O ID da bandeira não é permitida"
 
-#: inc/config.php:1409
+#: inc/config.php:1407
 msgid "This image has already been deleted"
 msgstr "Essa imagem já foi deletada"
 
-#: inc/config.php:1650
+#: inc/config.php:1408
+msgid "You cannot restore a single post from a shadow thread"
+msgstr "Você não pode restaurar um único post de um tópico fantasma"
+
+#: inc/config.php:1657
 msgid "USER WAS BANNED FOR THIS POST"
 msgstr "O USUÁRIO FOI BANIDO POR ESTA MENSAGEM"
 
-#: inc/config.php:1658
+#: inc/config.php:1665
 msgid "user was warned for this post"
-msgstr "usuário tomou uma advertência por esse post"
+msgstr "usuária tomou uma advertência por esse post"
 
-#: inc/config.php:1663
+#: inc/config.php:1670
 msgid "user was owned with this text"
 msgstr "usuário foi ownado por esse texto"
 
-#: inc/config.php:1676
+#: inc/config.php:1683
 #, php-format
 msgid "Moved to %s."
 msgstr "Movido para %s."
 
-#: inc/config.php:2194
+#: inc/config.php:2184
 #, php-format
 msgid ""
 "It's not allowed to post from a foreign country.</br></br>Do you think this "
 "was a mistake?</br>Send us an email with your IP (%s) to:</"
-"br><strong>your@email.com</strong>"
+"br><strong>magalichan@insiberia.net</strong>"
 msgstr ""
 "Posts de outro país não são permitidos.</br></br>Acha que isso foi um engano?"
-"</br>Mande um e-mail com o seu IP (%s) para:</br><strong>your@email.com</"
-"strong>"
+"</br>Mande um email com o seu IP (%s) para:</br><strong>magalichan@insiberia."
+"net</strong>"
 
-#: inc/config.php:2244
+#: inc/config.php:2268
+msgid "This image is banned"
+msgstr "Essa imagem foi banida"
+
+#: inc/config.php:2272
+msgid "This function doesn't work with this type of file"
+msgstr "Essa função não funciona com esse tipo de arquivo"
+
+#: inc/config.php:2307
 msgid "You tried to sign in way too many times..."
 msgstr "Você tentou logar muitas vezes..."
 
@@ -2448,268 +2812,276 @@ msgstr "Você tentou logar muitas vezes..."
 msgid "Database error: "
 msgstr "Erro no banco de dados: "
 
-#: inc/display.php:122
+#: inc/display.php:105
 msgid "Error"
 msgstr "Erro"
 
-#: inc/display.php:123
+#: inc/display.php:106
 msgid "An error has occured."
 msgstr "Um erro ocorreu."
 
-#: inc/display.php:162 inc/mod/pages.php:65
+#: inc/display.php:145 inc/mod/pages.php:70
 msgid "Login"
 msgstr "Login"
 
-#: inc/display.php:281
+#: inc/display.php:264
 #, php-format
 msgid "Post too long. Click <a href=\"%s\">here</a> to view the full text."
 msgstr ""
 "Mensagem muito longa. Clique <a href=\"%s\">aqui</a> para ver o texto "
 "completo."
 
-#: inc/functions.php:867 inc/functions.php:885
+#: inc/functions.php:782
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "segundo"
 msgstr[1] "segundos"
 
-#: inc/functions.php:869 inc/functions.php:887
+#: inc/functions.php:785
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minuto"
 msgstr[1] "minutos"
 
-#: inc/functions.php:871 inc/functions.php:889
+#: inc/functions.php:788
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "hora"
 msgstr[1] "horas"
 
-#: inc/functions.php:873 inc/functions.php:891
+#: inc/functions.php:791
 msgid "day"
 msgid_plural "days"
 msgstr[0] "dia"
 msgstr[1] "dias"
 
-#: inc/functions.php:875 inc/functions.php:893
+#: inc/functions.php:794
 msgid "week"
 msgid_plural "weeks"
 msgstr[0] "semana"
 msgstr[1] "semanas"
 
-#: inc/functions.php:877 inc/functions.php:895
+#: inc/functions.php:797
 msgid "year"
 msgid_plural "years"
 msgstr[0] "ano"
 msgstr[1] "anos"
 
-#: inc/functions.php:940
+#: inc/functions.php:853
 msgid "Banned!"
-msgstr "Banido!"
+msgstr "Banida!"
 
-#: inc/functions.php:1053
+#: inc/functions.php:965
 msgid "Warning!"
 msgstr "Warning!"
 
-#: inc/functions.php:1341
+#: inc/functions.php:1278
 msgid "That post has no files."
 msgstr "Esse post não tem arquivos."
 
-#: inc/functions.php:1773 inc/functions.php:1787
+#: inc/functions.php:1401 inc/functions.php:1402
+msgid "[deleted]"
+msgstr "[deletado]"
+
+#: inc/functions.php:1711 inc/functions.php:1725
 msgid "Previous"
 msgstr "Anterior"
 
-#: inc/functions.php:1792 inc/functions.php:1801
-msgid "Next"
-msgstr "Próximo"
-
-#: inc/image.php:24 inc/image.php:62
+#: inc/image.php:30 inc/image.php:75
 msgid "Unsupported file format: "
 msgstr "Formato de arquivo não suportado: "
 
-#: inc/image.php:282 inc/image.php:288
+#: inc/image.php:295 inc/image.php:301
 msgid "Failed to redraw image!"
 msgstr "Falha ao redesenhar a imagem!"
 
-#: inc/image.php:325 inc/image.php:344 inc/image.php:371 inc/image.php:375
+#: inc/image.php:364
+msgid "Failed to resize GIF!"
+msgstr "Falha ao redimensionar GIF!"
+
+#: inc/image.php:388
+msgid "Failed to convert GIF to WebP!"
+msgstr "A conversão de GIF para WebP falhou!"
+
+#: inc/image.php:414
+msgid "Failed to resize animated WebP!"
+msgstr "Falha ao redimensionar WebP!"
+
+#: inc/image.php:442 inc/image.php:446
 msgid "Failed to resize image!"
 msgstr "Falha ao redimensionar a imagem!"
 
-#: inc/image.php:371
+#: inc/image.php:442
 msgid "Details: "
 msgstr "Detalhes: "
 
-#: inc/mod/pages.php:69
+#: inc/mod/pages.php:74
 msgid "Confirm action"
 msgstr "Confirmar ação"
 
-#: inc/mod/pages.php:118
+#: inc/mod/pages.php:123
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: inc/mod/pages.php:221
+#: inc/mod/pages.php:226
 msgid "There are no boards to search!"
 msgstr "Não há boards para procurar!"
 
-#: inc/mod/pages.php:290
+#: inc/mod/pages.php:295
 msgid "Search results"
 msgstr "Resultados da pesquisa"
 
-#: inc/mod/pages.php:397
+#: inc/mod/pages.php:402
 msgid "Edit board"
 msgstr "Editar board"
 
-#: inc/mod/pages.php:460
+#: inc/mod/pages.php:465
 msgid "Couldn't open board after creation."
 msgstr "Não foi possivel abrir a board após a criação."
 
-#: inc/mod/pages.php:483
+#: inc/mod/pages.php:488
 msgid "New board"
 msgstr "Nova board"
 
-#: inc/mod/pages.php:706
+#: inc/mod/pages.php:619
+msgid "Noticeboard Thread "
+msgstr "Tópico do quadro de notícias "
+
+#: inc/mod/pages.php:774
 msgid "Board log"
 msgstr "Board log"
 
-#: inc/mod/pages.php:793 inc/mod/pages.php:817 inc/mod/pages.php:845
-#: inc/mod/pages.php:861
+#: inc/mod/pages.php:860 inc/mod/pages.php:884 inc/mod/pages.php:912
+#: inc/mod/pages.php:928 inc/mod/pages.php:4439
 msgid "Invalid IP address."
 msgstr "Endereço de IP inválido."
 
-#: inc/mod/pages.php:975
-msgid "No lookup for hashed ip"
-msgstr "Sem pesquisa para IP hasheado"
-
-#: inc/mod/pages.php:1083
+#: inc/mod/pages.php:1160
 msgid "Edit ban"
 msgstr "Editar banimento"
 
-#: inc/mod/pages.php:1140
+#: inc/mod/pages.php:1217
 msgid "New bantz"
 msgstr "Novo bantz"
 
-#: inc/mod/pages.php:1184
+#: inc/mod/pages.php:1261
 msgid "New nicenotice"
 msgstr "Novo nicenotice"
 
-#: inc/mod/pages.php:1259
+#: inc/mod/pages.php:1336
 msgid "New warning"
 msgstr "Novo Warning"
 
-#: inc/mod/pages.php:1358
+#: inc/mod/pages.php:1431
 msgid "Ban appeal not found!"
 msgstr "Apelo do banimento não encontrado!"
 
-#: inc/mod/pages.php:1699
+#: inc/mod/pages.php:1776
 msgid "Target and source board are the same."
 msgstr "Board alvo e fonte são as mesmas."
 
-#: inc/mod/pages.php:1922
+#: inc/mod/pages.php:2000
 msgid "Impossible to move thread; there is only one board."
 msgstr "Impossivel de mover o tópico; só existe uma board."
 
-#: inc/mod/pages.php:1984
-msgid "permanently"
-msgstr "permanentemente"
-
-#: inc/mod/pages.php:2206
+#: inc/mod/pages.php:2392
 msgid "Shadow Deleted Posts"
 msgstr "Posts Fantamas"
 
-#: inc/mod/pages.php:2569
+#: inc/mod/pages.php:2728
 msgid "Password too long"
 msgstr "Senha muito longa"
 
-#: inc/mod/pages.php:2629
+#: inc/mod/pages.php:2788
 msgid "Edit user"
 msgstr "Editar usuária"
 
-#: inc/mod/pages.php:2693
+#: inc/mod/pages.php:2852
 msgid "New user"
-msgstr "Novo usuário"
+msgstr "Nova usuária"
 
-#: inc/mod/pages.php:2747
+#: inc/mod/pages.php:2906
 msgid "Impossible to promote/demote user."
-msgstr "Impossível promover/rebaixar usuário."
+msgstr "Impossível promover/rebaixar usuária."
 
-#: inc/mod/pages.php:2804 inc/mod/pages.php:2879
+#: inc/mod/pages.php:2963 inc/mod/pages.php:3038
 msgid "New PM for"
 msgstr "Nova MP para"
 
-#: inc/mod/pages.php:2811
+#: inc/mod/pages.php:2970
 msgid "Private message"
 msgstr "Mensagem pessoal"
 
-#: inc/mod/pages.php:2901
+#: inc/mod/pages.php:3060
 msgid "Flushing cache"
 msgstr "Limpando cache"
 
-#: inc/mod/pages.php:2905
+#: inc/mod/pages.php:3064
 msgid "Clearing template cache"
 msgstr "Limpando cache de templates"
 
-#: inc/mod/pages.php:2911
+#: inc/mod/pages.php:3070
 msgid "Regenerating theme files"
 msgstr "Reconstruindo temas"
 
-#: inc/mod/pages.php:2916 inc/mod/pages.php:2935
+#: inc/mod/pages.php:3075 inc/mod/pages.php:3094
 msgid "Rebuilding"
 msgstr "Reconstruindo"
 
-#: inc/mod/pages.php:2931
+#: inc/mod/pages.php:3090
 msgid "Creating index pages"
 msgstr "Criando páginas index"
 
-#: inc/mod/pages.php:2943
+#: inc/mod/pages.php:3102
 msgid "Rebuilding thread"
 msgstr "Reconstruindo tópico"
 
-#: inc/mod/pages.php:3122 inc/mod/pages.php:3222
+#: inc/mod/pages.php:3282 inc/mod/pages.php:3382
 msgid "Config editor"
 msgstr "Editor de configurações"
 
-#: inc/mod/pages.php:3241
+#: inc/mod/pages.php:3401
 msgid "Cannot open themes directory; check permissions."
-msgstr "Não é possível abrir diretório de temas; verifique suas permissões."
+msgstr "Não é possivel abrir diretorio de temas; verifique suas permissões."
 
-#: inc/mod/pages.php:3329
+#: inc/mod/pages.php:3489
 #, php-format
 msgid "Installed theme: %s"
 msgstr "Tema instalado: %s"
 
-#: inc/mod/pages.php:3340
+#: inc/mod/pages.php:3500
 #, php-format
 msgid "Configuring theme: %s"
 msgstr "Configurando tema: %s"
 
-#: inc/mod/pages.php:3373
+#: inc/mod/pages.php:3533
 #, php-format
 msgid "Rebuilt theme: %s"
 msgstr "Reconstruir tema: %s"
 
-#: inc/mod/pages.php:3423
+#: inc/mod/pages.php:3583
 msgid "Could not find the page you are trying to edit."
 msgstr "Não foi possível achar a página que você está editando."
 
-#: inc/mod/pages.php:3440
+#: inc/mod/pages.php:3600
 msgid "Unrecognized page markup method."
 msgstr "Metódo de markup não reconhecido."
 
-#: inc/mod/pages.php:3457
+#: inc/mod/pages.php:3618
 msgid "Failed to mark up your input for some reason..."
 msgstr "Não foi possível formatar seu texto por algum motivo..."
 
-#: inc/mod/pages.php:3483
+#: inc/mod/pages.php:3644
 #, php-format
 msgid "Editing static page: %s"
 msgstr "Editando página estática: %s"
 
-#: inc/mod/pages.php:3512
+#: inc/mod/pages.php:3673
 #, php-format
 msgid "Sorry, this site only allows %d pages per board."
 msgstr "Desculpe, esse site só permite %d páginas por board."
 
-#: inc/mod/pages.php:3515
+#: inc/mod/pages.php:3676
 msgid ""
 "Page names must be < 255 chars and may only contain lowercase letters A-Z "
 "and digits 1-9."
@@ -2717,463 +3089,160 @@ msgstr ""
 "Nome de página devem ter < 255 caracteres e só deve ter letra minúscula de A-"
 "Z e dígitos de 1-9."
 
-#: inc/mod/pages.php:3519
+#: inc/mod/pages.php:3680
 msgid "Refusing to create a new page with the same name as an existing one."
 msgstr "Não foi possível criar uma nova página com o mesmo nome de outra."
 
-#: inc/mod/pages.php:3537
+#: inc/mod/pages.php:3698
 msgid "Pages"
 msgstr "Páginas"
 
-#: inc/mod/pages.php:3574
+#: inc/mod/pages.php:3735
 msgid "Debug: Anti-spam"
 msgstr "Debug: Anti-spam"
 
-#: inc/mod/pages.php:3608
+#: inc/mod/pages.php:3769
 msgid "Debug: Recent posts"
 msgstr "Debug: Mensagens recentes"
 
-#: inc/mod/pages.php:3632
+#: inc/mod/pages.php:3793
 msgid "Debug: SQL"
 msgstr "Debug: SQL"
 
-#: inc/mod/pages.php:3642
+#: inc/mod/pages.php:3803
 msgid "APCU is not enabled."
 msgstr "APCU não está habilitado."
 
-#: inc/mod/pages.php:3653
+#: inc/mod/pages.php:3814
 msgid "Debug: APCU"
 msgstr "Debug: APCU"
 
-#: inc/mod/pages.php:3769 tools/public_statistics_cli.php:62
-msgid "Statistics"
-msgstr "Estatísticas"
-
-#: inc/mod/pages.php:3793
+#: inc/mod/pages.php:3955
 msgid "Statistics for "
 msgstr "Estatísticas para "
 
-#: inc/mod/pages.php:3861
+#: inc/mod/pages.php:4019
 msgid "Wrong image size!"
 msgstr "Tamanho da imagem inválida!"
 
-#: inc/mod/pages.php:3870
+#: inc/mod/pages.php:4031
 msgid "Nice try."
 msgstr "Boa tentativa."
 
-#: inc/mod/pages.php:3877
+#: inc/mod/pages.php:4041
 msgid "Edit banners"
 msgstr "Editar banners"
 
-#: inc/mod/pages.php:3954
+#: inc/mod/pages.php:4123
 msgid "Impossible to merge thread to different board; there is only one board."
 msgstr ""
 "Impossivel de unir os tópicos para uma board diferente; só existe uma board."
 
-#: inc/mod/pages.php:4157
+#: inc/mod/pages.php:4369 inc/mod/pages.php:4429
 msgid "Fields are not set"
 msgstr "Campos estão em branco"
 
-#: inc/region.php:24
-msgid "This function requires a valid IP"
-msgstr "Essa função requer um IP"
+#: inc/mod/pages.php:4498
+msgid "Invalid"
+msgstr "Inválido"
 
-#: inc/region.php:47
-msgid "Token must have, at least, 1 character to 12 charaters"
-msgstr "Token deve ter, pelo menos, 1 caractere até 12 caracteres"
+#: inc/mod/pages.php:4607
+msgid "No lookup for hashed IP"
+msgstr "Sem pesquisa para IP hasheado"
 
-#: inc/region.php:58
-msgid "This IP already has a token"
-msgstr "Esse IP já tem um token"
-
-#: install.php:16 lel.php:10
-msgid "Misconfigured system: OpenSSL returning weak salts. Cannot continue."
-msgstr ""
-
-#: post.php:38 post.php:170 post.php:278
+#: post.php:123 post.php:266 post.php:424
 msgid "Board is locked"
 msgstr "Essa board está trancada"
 
-#: post.php:42
+#: post.php:128
 msgid "Post deletion is not allowed!"
 msgstr "Exclusão de post não é permitida!"
 
-#: post.php:92
+#: post.php:189
 msgid "Uknown file specified."
 msgstr "Arquivo especificado não existe."
 
-#: post.php:105
-msgid "Deletion of this thread is not allowed!"
-msgstr "Exclusão desse tópico não é permitida!"
-
-#: post.php:210
-msgid "Post not found"
-msgstr "Post não foi encontrado"
-
-#: post.php:257
-msgid "Close window"
-msgstr "Fechar janela"
-
-#: post.php:257
+#: post.php:389
 msgid "Index"
 msgstr "Index"
 
-#: post.php:257
+#: post.php:390
 msgid "Go to thread"
 msgstr "Ir para o tópico"
 
-#: post.php:257
+#: post.php:394
 msgid "Report submitted!"
 msgstr "Denúncia enviada!"
 
-#: post.php:569
+#: post.php:709
 msgid "Unrecognized file size determination method."
 msgstr "Método de determinação de tamanho de arquivo não reconhecido."
 
-#: post.php:673
+#: post.php:824
 #, php-format
 msgid "OP must be at least %d chars."
 msgstr "OP deve ter, pelo menos, %d caracteres."
 
-#: post.php:707
+#: post.php:858
 msgid "Invalid flag selection!"
 msgstr "Seleção inválida de bandeira!"
 
-#: post.php:826
+#: post.php:985
 msgid "exiftool failed!"
 msgstr "falha no exiftool!"
 
-#: post.php:836
+#: post.php:996
 msgid "Could not auto-orient image!"
 msgstr "Não foi possível auto-orientar a imagem!"
 
-#: post.php:896
+#: post.php:1057
 msgid "Could not strip EXIF metadata!"
 msgstr "Não foi possível extrair os metadados EXIF!"
 
-#: post.php:1180
+#: post.php:1062
+msgid "Could not calculate file size!"
+msgstr "Não foi possível calcular o tamanho do arquivo!"
+
+#: post.php:1359
 msgid "That ban doesn't exist or is not for you."
 msgstr "Este banimento não existe, ou não é pra você."
 
-#: post.php:1187
+#: post.php:1368
 msgid "You cannot appeal a ban of this length."
 msgstr "Você não pode apelar um banimento desta duração."
 
-#: post.php:1194
+#: post.php:1378
 msgid "You cannot appeal this ban again."
 msgstr "Você não pode apelar novamente."
 
-#: post.php:1199
+#: post.php:1384
 msgid "There is already a pending appeal for this ban."
 msgstr "Já existe um apelo pendente a este ban."
 
-#: report.php:10
-msgid "Bad request."
-msgstr "Requisição inválida."
+#: report.php:31
+#, php-format
+msgid "Reporting Post %d from %s"
+msgstr "Denunciando o Post %d do %s"
 
 #: search.php:12
 msgid "Post search is disabled"
 msgstr "A pesquisa de mensagens está desativada"
 
-#: search.php:41 search.php:47
+#: search.php:42 search.php:48
 msgid "Wait a while before searching again, please."
 msgstr "Aguarde um momento antes de pesquisar novamente, por favor."
 
-#: search.php:147
+#: search.php:148
 msgid "Query too broad."
 msgstr "Pesquisa pouco especifica."
 
-#: search.php:168
+#: search.php:169
 #, php-format
 msgid "%d result in"
 msgid_plural "%d results in"
 msgstr[0] "%d resultado em"
 msgstr[1] "%d resultados em"
 
-#: search.php:179
+#: search.php:180
 msgid "No results."
 msgstr "Sem resultados."
-
-#: templates/themes/catalog/theme.php:118
-#, php-format
-msgid "Board %s doesn't exist"
-msgstr "Board %s não existe"
-
-#: templates/themes/index/theme.php:50
-msgid "Can't build the Index theme, because there are no boards to be fetched."
-msgstr ""
-"Não posso construir o tema Index porque não há board algum para ser "
-"utilizado."
-
-#: templates/themes/index/theme.php:101 templates/themes/recent/theme.php:101
-msgid "(no comment)"
-msgstr "(sem comentário)"
-
-#: templates/themes/recent/theme.php:50
-msgid ""
-"Can't build the RecentPosts theme, because there are no boards to be fetched."
-msgstr ""
-"Não posso construir o tema RecentPosts porque não há board algum para ser "
-"utilizado."
-
-#: tools/public_statistics_cli.php:63
-msgid "Last Updated : "
-msgstr "Atualizado em: "
-
-#~ msgid "Hashban Reason:"
-#~ msgstr "Motivo de hashban:"
-
-#~ msgid "Predefined Hashban Reasons:"
-#~ msgstr "Motivos prédefinidos de Hashban:"
-
-#~ msgid "All Hashbans"
-#~ msgstr "Todos as Hashbans"
-
-#~ msgid "Hash"
-#~ msgstr "Hash"
-
-#~ msgid "Reset reports"
-#~ msgstr "Resetar reports"
-
-#~ msgid "Reset ban appeals"
-#~ msgstr "Resetar apelos de banimento"
-
-#~ msgid "Delete all Shadow Deleted posts"
-#~ msgstr "Deletar todos os posts fantamas"
-
-#, fuzzy
-#~| msgid "second"
-#~| msgid_plural "seconds"
-#~ msgid "second(s)"
-#~ msgstr "segundo"
-
-#, fuzzy
-#~| msgid "minute"
-#~| msgid_plural "minutes"
-#~ msgid "minute(s)"
-#~ msgstr "minuto"
-
-#, fuzzy
-#~| msgid "hour"
-#~| msgid_plural "hours"
-#~ msgid "hour(s)"
-#~ msgstr "hora"
-
-#, fuzzy
-#~| msgid "week"
-#~| msgid_plural "weeks"
-#~ msgid "week(s)"
-#~ msgstr "semana"
-
-#, fuzzy
-#~| msgid "year"
-#~| msgid_plural "years"
-#~ msgid "year(s)"
-#~ msgstr "ano"
-
-#, fuzzy
-#~| msgid "Featured"
-#~ msgid "Saturday"
-#~ msgstr "Destaque"
-
-#, fuzzy
-#~| msgid "at"
-#~ msgid "Sat"
-#~ msgstr "em"
-
-#, fuzzy
-#~| msgid "Search"
-#~ msgid "March"
-#~ msgstr "Procurar"
-
-#, fuzzy
-#~| msgid "day"
-#~| msgid_plural "days"
-#~ msgid "May"
-#~ msgstr "dia"
-
-#, fuzzy
-#~| msgid "and"
-#~ msgid "Jan"
-#~ msgstr "e"
-
-#, fuzzy
-#~| msgid "Set"
-#~ msgid "Sep"
-#~ msgstr "Criado"
-
-#, fuzzy
-#~| msgid "No"
-#~ msgid "Nov"
-#~ msgstr "Não"
-
-#, fuzzy
-#~| msgid "Name"
-#~ msgid "am"
-#~ msgstr "Nome"
-
-#, fuzzy
-#~| msgid "Move thread to another board"
-#~ msgid "(hide threads from this board)"
-#~ msgstr "Mover tópico para outra board"
-
-#, fuzzy
-#~| msgid "Move thread to another board"
-#~ msgid "(show threads from this board)"
-#~ msgstr "Mover tópico para outra board"
-
-#~ msgid "Delete files"
-#~ msgstr "Deletar arquivos"
-
-#~ msgid "All files"
-#~ msgstr "Todos os arquivos"
-
-#~ msgid "Hashban list"
-#~ msgstr "Lista de hashs banidas"
-
-#~ msgid "Reset Stuff"
-#~ msgstr "Resetar Coisas"
-
-#~ msgid "Posts Per Hour"
-#~ msgstr "Posts Por Hora"
-
-#~ msgid "PPH"
-#~ msgstr "PPH"
-
-#~ msgid "IPs last hour"
-#~ msgstr "IPs na última hora"
-
-#~ msgid "IPs last day"
-#~ msgstr "IPs no último dia"
-
-#~ msgid "IPs last week"
-#~ msgstr "IPs na última semana"
-
-#~ msgid "Total"
-#~ msgstr "Total"
-
-#~ msgid "Are you sure you want to hashban this file?"
-#~ msgstr "Você tem certeza de que quer hashbanir esse arquivo?"
-
-#~ msgid "WARNING: Countryballs are enabled to ALL posts"
-#~ msgstr "AVISO: Estadobolas estão habilitadas em TODOS os posts"
-
-#~ msgid "Ban & Delete all post by cookies"
-#~ msgstr "Banir & Deletar todos os posts do Cookie"
-
-#~ msgid "Report Post"
-#~ msgstr "Denuncie o Post"
-
-#~ msgid "Select a reason"
-#~ msgstr "Selecione um motivo"
-
-#~ msgid "Total posts:"
-#~ msgstr "Post totais:"
-
-#~ msgid "Unique posters:"
-#~ msgstr "Usuários únicos:"
-
-#~ msgid "Active content:"
-#~ msgstr "Conteúdo ativo:"
-
-#~ msgid "Total files:"
-#~ msgstr "Totais de arquivos:"
-
-#~ msgid "Post History"
-#~ msgstr "Histórico de Postagens"
-
-#~ msgid "Public history is disabled."
-#~ msgstr "O histórico público está desativado."
-
-#, php-format
-#~ msgid ""
-#~ "We<strong>do not</strong> allow posting from proxy/VPN.</br></br>Do you "
-#~ "think this was a mistake?<br/>Send us an email with your IP (%s) to:</"
-#~ "br><strong>magalichan@insiberia.net</strong>"
-#~ msgstr ""
-#~ "<strong>Não</strong> permitimos postagens de proxies.</br></br>Acha que "
-#~ "isso foi um engano?<br/>Mande um e-mail com o seu IP (%s) para:</"
-#~ "br><strong>dev@minechan.org</strong>"
-
-#~ msgid "This image is banned"
-#~ msgstr "Essa imagem foi banida"
-
-#~ msgid "This function doesn't work with this type of file"
-#~ msgstr "Essa função não funciona com esse tipo de arquivo"
-
-#~ msgid "Couldn't calculate hash of given file"
-#~ msgstr "Não foi possível calcular a hash deste arquivo"
-
-#~ msgid "This hash is already banned"
-#~ msgstr "Essa hash já foi banida"
-
-#~ msgid "Hash Ban"
-#~ msgstr "Banimento de Hash"
-
-#~ msgid "Invalid"
-#~ msgstr "Inválido"
-
-#, php-format
-#~ msgid "Reporting Post %d from %s"
-#~ msgstr "Denunciando o Post %d do %s"
-
-#, fuzzy
-#~| msgid "Body (snippet)"
-#~ msgid "Body (snippet"
-#~ msgstr "Mensagem (prévia)"
-
-#~ msgid "Public History"
-#~ msgstr "Histórico Público"
-
-#~ msgid "Spoiler File"
-#~ msgstr "Arquivo spoiler"
-
-#~ msgid "Are you sure you want to delete all posts by this IP address?"
-#~ msgstr "Você tem certeza que deseja deletar todos os posts deste IP?"
-
-#~ msgid "Delete all posts by IP across all boards"
-#~ msgstr "Deletar todos os posts deste IP em todas as boards"
-
-#~ msgid ""
-#~ "Are you sure you want to delete all posts by this IP address, across all "
-#~ "boards?"
-#~ msgstr ""
-#~ "Tem certeza que quer deletar todos os posts deste IP em todas as boards?"
-
-#~ msgid "Lurk some more before posting."
-#~ msgstr "Lurke mais antes de postar."
-
-#~ msgid "Invalid/malformed cookies."
-#~ msgstr "Cookies inválidos ou mal formados."
-
-#~ msgid "Could not find current version! (Check .installed)"
-#~ msgstr "Não foi possivel encontrar a versão atual! (Cheque o .installed)"
-
-#~ msgid "Themes directory doesn't exist!"
-#~ msgstr "Diretório de temas não existe!"
-
-#~ msgid "Banned?"
-#~ msgstr "Banida?"
-
-#~ msgid "Go back"
-#~ msgstr "Voltar"
-
-#~ msgid "Return"
-#~ msgstr "Voltar"
-
-#~ msgid "1 reply"
-#~ msgid_plural "%count% replies"
-#~ msgstr[0] "1 resposta"
-#~ msgstr[1] "%count% respostas"
-
-#~ msgid "File:"
-#~ msgstr "Arquivo:"
-
-#~ msgid "There are no active bans."
-#~ msgstr "Não existem expulsões ativas."
-
-#~ msgid "Last reply"
-#~ msgstr "Última resposta"
-
-#~ msgid "Don't show my flag"
-#~ msgstr "Não mostre meu sinal"

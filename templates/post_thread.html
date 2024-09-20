@@ -97,32 +97,8 @@
     {% endfor %}
     <br class="clear"/>
     {% if not post_shadow %}
-        {% if isnoko50 %}
-            {% if post_omitted or post_omitted_images %}
-                <span class="omitted">
-            {% endif %}
+        {% if isnoko50 or index %}
             <a href="{{ post.link('', false, true) }}">[{% trans %}View All{% endtrans %}]</a>
-            {% if post_omitted or post_omitted_images %}
-                 (
-                {% if post_omitted %}
-                    {% trans %}
-                        1 post
-                    {% plural post_omitted %}
-                        {{ count }} posts
-                    {% endtrans %}
-                    {% if post_omitted_images %}
-                        {% trans %}and{% endtrans %}
-                    {% endif %}
-                {% endif %}
-                {% if post_omitted_images %}
-                    {% trans %}
-                        1 image reply.
-                    {% plural post_omitted_images %}
-                        {{ count }} image replies omitted.
-                    {% endtrans %}
-                {% endif %})
-                </span>
-            {% endif %}
         {% endif %}
         {% if hasnoko50 and not isnoko50 %}
             {% set lastcount = config.noko50_count %}

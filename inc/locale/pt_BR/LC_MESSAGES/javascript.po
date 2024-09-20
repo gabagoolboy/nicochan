@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vichan\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-18 20:52-0300\n"
-"PO-Revision-Date: 2023-03-11 18:55-0400\n"
-"Last-Translator: weav <magalichan@insiberia.net>\n"
+"POT-Creation-Date: 2024-09-18 16:55-0300\n"
+"PO-Revision-Date: 2024-09-18 16:55-0300\n"
+"Last-Translator: Weav <magalichan@insiberia.net>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
 "tinyboard-vichan-devel/language/pt_BR/)\n"
 "Language: pt_BR\n"
@@ -29,128 +29,154 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: js/code_tags\n"
 "X-Poedit-SearchPathExcluded-1: js/twemoji\n"
 "X-Poedit-SearchPathExcluded-2: js/longtable\n"
+"X-Poedit-SearchPathExcluded-3: js/ag-grid\n"
+"X-Poedit-SearchPathExcluded-4: js/tegaki\n"
 
-#: js/8chcatalog-updater.js:32 js/auto-reload.js:107
-msgid "Update"
-msgstr "Atualizar"
-
-#: js/8chcatalog-updater.js:32 js/auto-reload.js:107
-msgid "Auto"
-msgstr ""
-
-#: js/8chcatalog-updater.js:66 js/auto-reload.js:222
-msgid "Updating..."
-msgstr "Atualizando..."
-
-#: js/ajax-post-controls.js:43
-msgid "Reported post(s)."
-msgstr "Post(s) denunciado(s)."
-
-#: js/ajax-post-controls.js:53
-msgid "An unknown error occured!"
-msgstr "Ocorreu um erro desconhecido!"
-
-#: js/ajax-post-controls.js:60
-msgid "Something went wrong... An unknown error occured!"
-msgstr "Algo deu errado... Ocorreu um erro desconhecido!"
-
-#: js/ajax-post-controls.js:68
-msgid "Working..."
-msgstr "Trabalhando..."
-
-#: js/ajax.js:45
-msgid "Posting... (#%)"
-msgstr "Enviando... (#%)"
-
-#: js/ajax.js:130
-msgid "Posted..."
-msgstr "Enviado..."
-
-#: js/ajax.js:133
-msgid "An unknown error occured when posting!"
+#: js/ajax.js:56
+msgid "An unknown error occurred when posting!"
 msgstr "Ocorreu um erro desconhecido ao postar!"
 
-#: js/ajax.js:140
+#: js/ajax.js:60
 msgid ""
 "The server took too long to submit your post. Your post was probably still "
 "submitted. If it wasn't, we might be experiencing issues right now -- please "
-"try your post again later. Error information: "
+"try your post again later."
 msgstr ""
-"O servidor demorou demais para enviar seu post. O post provavelmente foi "
-"enviado. Se não foi, estamos tendo problemas agora — teste novamente mais "
-"tarde. Informação do erro: "
+"O servidor demorou muito para enviar seu post. Seu post provavelmente foi "
+"enviado. Se não foi, podemos estar enfrentando problemas no momento — por "
+"favor, tente enviar seu post novamente mais tarde."
 
-#: js/ajax.js:150
-msgid "Posting..."
-msgstr "Enviando..."
+#: js/ajax.js:83
+msgid "Failed to parse response"
+msgstr "Falha ao analisar a resposta do servidor"
 
-#: js/auto-reload.js:52
+#: js/ajax.js:87
+msgid "Network error"
+msgstr "Erro de rede"
+
+#: js/ajax.js:95
+msgid "You're banned. <a href='/banned'>Click here to view.</a>"
+msgstr "Você está banida. <a href='/banned'>Clique aqui para ver.</a>"
+
+#: js/ajax.js:115
+msgid "Posted..."
+msgstr "Enviado..."
+
+#: js/auto-reload.js:42
 msgid "Auto update"
 msgstr "Atualização automática"
 
-#: js/auto-reload.js:53
+#: js/auto-reload.js:44
 msgid "Auto update thread"
 msgstr "Atualização automática do tópico"
 
-#: js/auto-reload.js:54
+#: js/auto-reload.js:47
 msgid "Show desktop notifications when users quote me"
 msgstr "Mostrar notificações de desktop quando me mencionarem"
 
-#: js/auto-reload.js:55
+#: js/auto-reload.js:50
 msgid "Show desktop notifications on all replies"
-msgstr "Mostrar notificações de desktop de todas as repostas"
+msgstr "Mostrar notificações de desktop de todos as repostas"
 
-#: js/auto-reload.js:236
-msgid "New reply to "
-msgstr "Nova resposta para "
+#: js/auto-reload.js:122 js/catalog-updater.js:33
+msgid "Update"
+msgstr "Atualizar"
 
-#: js/auto-reload.js:269
+#: js/auto-reload.js:123 js/catalog-updater.js:36
+msgid "Auto"
+msgstr "Automático"
+
+#: js/auto-reload.js:184 js/catalog-updater.js:70
+msgid "Updating..."
+msgstr "Atualizando..."
+
+#: js/auto-reload.js:219
 msgid "Thread updated with {0} new post(s)"
 msgstr "Tópico atualizado com {0} novos post(s)"
 
-#: js/auto-reload.js:271
+#: js/auto-reload.js:220
 msgid "No new posts found"
 msgstr "Nenhum post novo foi encontrado"
 
-#: js/auto-reload.js:277
+#: js/auto-reload.js:226
 msgid "Thread deleted or pruned"
 msgstr "Tópico deletado ou expirado"
 
-#: js/auto-reload.js:282 js/auto-reload.js:285
+#: js/auto-reload.js:230
 msgid "Error: "
 msgstr "Erro: "
 
-#: js/auto-reload.js:287
-msgid "Unknown error"
-msgstr "Erro desconhecido"
+#: js/auto-reload.js:269
+msgid "New reply to "
+msgstr "Nova resposta para "
 
-#: js/auto-scroll.js:4
-msgid " Scroll to new posts"
-msgstr " Ir para novos posts"
+#: js/ban.js:16
+msgid "has since expired. Refresh the page to continue."
+msgstr "expirou desde então. Recarregue a pagina para continuar."
 
-#: js/auto-scroll.js:18
-msgid "Scroll to new posts"
-msgstr ""
+#: js/ban.js:20
+msgid "second"
+msgstr "segundo"
 
-#: js/boardlist-catalog-links.js:19
-msgid "Use catalog links for the board list"
-msgstr "Usar links do catálogo na boardlist"
+#: js/ban.js:20
+msgid "seconds"
+msgstr "segundos"
 
-#: js/captcha.js:30
+#: js/ban.js:22
+msgid "minute"
+msgstr "minutos"
+
+#: js/ban.js:22
+msgid "minutes"
+msgstr "minutos"
+
+#: js/ban.js:24
+msgid "hour"
+msgstr "hora"
+
+#: js/ban.js:24
+msgid "hours"
+msgstr "hora"
+
+#: js/ban.js:26
+msgid "day"
+msgstr "dia"
+
+#: js/ban.js:26
+msgid "days"
+msgstr "dias"
+
+#: js/ban.js:28
+msgid "week"
+msgstr "semana"
+
+#: js/ban.js:28
+msgid "weeks"
+msgstr "semanas"
+
+#: js/ban.js:30
+msgid "year"
+msgstr "ano"
+
+#: js/ban.js:30
+msgid "years"
+msgstr "anos"
+
+#: js/captcha.js:68
 msgid "Verification"
 msgstr "Verificação"
 
-#: js/catalog-link.js:28 js/catalog-link.js:39 js/catalog-link.js:47
-msgid "Catalog"
-msgstr "Catálogo"
-
-#: js/catalog-search.js:41
+#: js/catalog-search.js:35
 msgid "Close"
 msgstr "Fechar"
 
-#: js/catalog-search.js:46
+#: js/catalog-search.js:44 js/catalog-search.js:58
 msgid "Search"
 msgstr "Pesquisar"
+
+#: js/catalog-updater.js:89
+msgid "Error updating"
+msgstr "Erro ao atualizar"
 
 #: js/comment-toolbar.js:16
 msgid "Spoiler"
@@ -160,10 +186,7 @@ msgstr "Spoiler"
 msgid "Italics"
 msgstr "Itálico"
 
-#: js/comment-toolbar.js:32 js/wPaint/2ch.js:2580 js/wPaint/8ch.js:2561
-#: js/wPaint/lib/plugins.js:356 js/wPaint/oekaki.js:2
-#: js/wPaint/plugins/text/src/wPaint.menu.text.js:9
-#: js/wPaint/plugins/text/text.js:9
+#: js/comment-toolbar.js:32
 msgid "Bold"
 msgstr "Negrito"
 
@@ -197,7 +220,7 @@ msgstr "Habilitar atalhos de formatação"
 
 #: js/comment-toolbar.js:271 js/comment-toolbar.js:277
 msgid "Show formatting toolbar"
-msgstr "Mostrar barra de ferramentas de formatação"
+msgstr "Mostrar barra de ferramentas de formação"
 
 #: js/comment-toolbar.js:282
 msgid "Customize Formatting"
@@ -219,13 +242,17 @@ msgstr "Reverter"
 msgid "Reset to Default"
 msgstr "Redefinir para o padrão"
 
-#: js/download-original.js:33
-msgid "Save as original filename"
-msgstr "Salvar como filename original"
+#: js/embed-button.js:23 js/embed-button.js:84 js/upload-selection.js:83
+msgid "Embed"
+msgstr "Embutir"
 
-#: js/embed-button.js:15
+#: js/embed-button.js:23
 msgid "Disable link embeds"
 msgstr "Desabilitar embed em links"
+
+#: js/embed-button.js:79 js/post-filter.js:589
+msgid "Remove"
+msgstr "Remover"
 
 #: js/expand-all-images.js:23
 msgid "Expand all images"
@@ -235,92 +262,75 @@ msgstr "Expandir todas as imagens"
 msgid "Shrink all images"
 msgstr "Diminuir todas as imagens"
 
-#: js/expand-video.js:48
+#: js/expand-video.js:39
 msgid "Your browser does not support HTML5 video."
 msgstr "Seu navegador não suporta video HTML5."
 
-#: js/expand-video.js:193
+#: js/expand-video.js:44
+msgid "Collapse video"
+msgstr "Fechar vídeo"
+
+#: js/expand-video.js:151
 msgid "[play once]"
 msgstr "[ver uma vez]"
 
-#: js/expand-video.js:194
+#: js/expand-video.js:156
 msgid "[loop]"
 msgstr "[vez repetidamente]"
 
-#: js/expand.js:22 js/own-board.js:97
-msgid "Click reply to view."
-msgstr "Clique em responder para vistualizar."
-
-#: js/expand.js:22 js/live-index.js:72 js/live-index.js:83
+#: js/expand.js:27
 msgid "Click to expand"
 msgstr "Clique para expandir"
 
-#: js/expand.js:50
+#: js/expand.js:103
 msgid "Hide expanded replies"
 msgstr "Ocultar respostas expandidas"
 
-#: js/file-selector.js:14
+#: js/file-selector.js:23
+msgid "File size exceeds the maximum allowed size of"
+msgstr "O tamanho do arquivo excede o tamanho máximo permitido de"
+
+#: js/file-selector.js:201
+msgid "File Selector"
+msgstr "Seleção de Arquivos"
+
+#: js/file-selector.js:202
 msgid "Drag and drop file selection"
 msgstr "Seleção de arquivos de arrastar e soltar"
 
-#: js/file-selector.js:40
+#: js/file-selector.js:203
+msgid "Enable video thumbnail"
+msgstr "Habilitar thumbnail para vídeos"
+
+#: js/file-selector.js:243
 msgid "Select/drop/paste files here"
 msgstr "Selecionar/arrastar/colar os arquivos aqui"
 
-#: js/fix-report-delete-submit.js:17
+#: js/fix-report-delete-submit2.js:17
 msgid "Delete post"
 msgstr "Deletar post"
 
-#: js/fix-report-delete-submit.js:18
-msgid "Delete file(s)"
-msgstr "Deletar arquivo(s)"
+#: js/fix-report-delete-submit2.js:20
+msgid "Delete all images"
+msgstr "Deletar todas as imagens"
 
-#: js/fix-report-delete-submit.js:90 js/quick-post-controls.js:39
+#: js/fix-report-delete-submit2.js:23
+msgid "Delete File"
+msgstr "Deletar arquivo"
+
+#: js/fix-report-delete-submit2.js:93 js/quick-post-controls.js:39
 msgid "Report"
 msgstr "Denunciar"
 
-#: js/forced-anon.js:31
-msgid "Anonymous"
-msgstr "Anônimo"
-
-#: js/forced-anon.js:73 js/forced-anon.js:78
-msgid "Hide IDs"
-msgstr "Esconder IDs"
-
-#: js/forced-anon.js:74 js/forced-anon.js:80 js/forced-anon.js:97
-#: js/forced-anon.js:101
-msgid "Forced anonymity"
-msgstr "Forçar anonimato"
-
-#: js/forced-anon.js:80 js/forced-anon.js:97
-msgid "enabled"
-msgstr "habilitado"
-
-#: js/forced-anon.js:80 js/forced-anon.js:101
-msgid "disabled"
-msgstr "desabilitado"
-
-#: js/gallery-view.js:7 js/gallery-view.js:9
-msgid "Disable gallery mode"
-msgstr "Desabilitar modo galeria"
-
-#: js/gallery-view.js:7 js/gallery-view.js:9
-msgid "Enable gallery mode"
-msgstr "Habilitar modo galeria"
-
-#: js/hide-images.js:51 js/quick-post-controls.js:32 js/upload-selection.js:73
-msgid "File"
-msgstr "Arquivo"
-
-#: js/hide-images.js:51
-msgid "hide"
-msgstr "ocultar"
-
-#: js/hide-images.js:63
+#: js/hide-images.js:52
 msgid "show"
 msgstr "mostrar"
 
-#: js/id_colors.js:6 js/id_colors.js:12
+#: js/id_colors.js:4
+msgid "IDs"
+msgstr "IDs"
+
+#: js/id_colors.js:4
 msgid "Color IDs"
 msgstr "IDs coloridas"
 
@@ -336,20 +346,7 @@ msgstr "Imagem flutuante no catálogo"
 msgid "Image hover should follow cursor"
 msgstr "Imagem flutuante deve seguir o cursor"
 
-#: js/infinite-scroll.js:47 js/thread-stats.js:20
-msgid "Page"
-msgstr "Página"
-
-#: js/infinite-scroll.js:48 js/mod/recent-posts.js:69 js/post-fade.js:237
-#: templates/themes/ukko2/ukko.js:80
-msgid "Loading..."
-msgstr "Carregando..."
-
-#: js/infinite-scroll.js:83
-msgid "All"
-msgstr "Tudo"
-
-#: js/inline-expanding.js:193
+#: js/inline-expanding.js:130
 msgid "Number of simultaneous image downloads (0 to disable): "
 msgstr "Número de downloads simultâneos de imagens (0 para desabilitar): "
 
@@ -365,167 +362,147 @@ msgstr ""
 msgid "Hide inlined backlinked posts"
 msgstr ""
 
-#: js/live-index.js:30 js/live-index.js:73
-msgid "No new threads."
-msgstr "Sem novos fios."
+#: js/local-time.js:54
+msgid "Just now"
+msgstr "Agora"
 
-#: js/live-index.js:72
-msgid "There are {0} new threads."
-msgstr "Tem {0} novos fios."
-
-#: js/live-index.js:83
-msgid "There are {0} new posts in this thread."
-msgstr "Tem {0} novas respostas nesse tópico."
-
-#: js/live-index.js:84
-msgid "No new posts."
-msgstr "Sem novos posts."
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Sun"
-msgstr "Dom"
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Mon"
-msgstr "Seg"
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Tue"
-msgstr "Ter"
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Wed"
-msgstr "Qua"
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Thu"
-msgstr "Qui"
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Fri"
-msgstr "Sex"
-
-#: js/local-time.js:28 templates/main.js:69
-msgid "Sat"
-msgstr "Sáb"
-
-#: js/local-time.js:49
+#: js/local-time.js:56
 msgid " minute ago"
 msgstr " minuto atrás"
 
-#: js/local-time.js:49
+#: js/local-time.js:56
 msgid " minutes ago"
 msgstr " minutos atrás"
 
-#: js/local-time.js:51
+#: js/local-time.js:58
 msgid " hour ago"
 msgstr " hora atrás"
 
-#: js/local-time.js:51
+#: js/local-time.js:58
 msgid " hours ago"
 msgstr " horas atrás"
 
-#: js/local-time.js:53
+#: js/local-time.js:60
 msgid " day ago"
 msgstr " dia atrás"
 
-#: js/local-time.js:53
+#: js/local-time.js:60
 msgid " days ago"
 msgstr " dias atrás"
 
-#: js/local-time.js:55
+#: js/local-time.js:62
 msgid " month ago"
 msgstr " mês atrás"
 
-#: js/local-time.js:55
+#: js/local-time.js:62
 msgid " months ago"
 msgstr " meses atrás"
 
-#: js/local-time.js:57
+#: js/local-time.js:64
 msgid " year ago"
 msgstr " ano atrás"
 
-#: js/local-time.js:57
+#: js/local-time.js:64
 msgid " years ago"
 msgstr " anos atrás"
 
-#: js/local-time.js:85
+#: js/local-time.js:137
+msgid "Dates"
+msgstr "Datas"
+
+#: js/local-time.js:137
 msgid "Show relative time"
 msgstr "Mostrar tempo relativo"
 
-#: js/mod/ban-list.js:29
-msgid "IP address"
+#: js/microModal.js:93
+msgid "Action completed successfully!"
+msgstr "Ação concluída com sucesso!"
+
+#: js/microModal.js:99 js/microModal.js:104
+msgid "An unexpected error occurred."
+msgstr "Ocorreu um erro desconhecido."
+
+#: js/mod/ban-list.js:44
+msgid "Unban"
+msgstr "Desbanir"
+
+#: js/mod/ban-list.js:51 js/post-filter.js:180 js/post-filter.js:186
+msgid "ID"
+msgstr "ID"
+
+#: js/mod/ban-list.js:65
+msgid "Mask"
 msgstr "Endereço de IP"
 
-#: js/mod/ban-list.js:42 js/quick-post-controls.js:37
+#: js/mod/ban-list.js:83 js/quick-post-controls.js:37
 msgid "Reason"
 msgstr "Motivo"
 
-#: js/mod/ban-list.js:44
+#: js/mod/ban-list.js:90
+msgid "Message for which user was banned is included. Click to see."
+msgstr "Mensagem pela qual a usuária foi banida é incluído. Clique para ver."
+
+#: js/mod/ban-list.js:91
 msgid "Seen"
 msgstr "Visto"
 
-#: js/mod/ban-list.js:46
-msgid "Message for which user was banned is included"
-msgstr "Mensagem pela qual o usuário foi banido é incluída"
+#: js/mod/ban-list.js:92
+msgid "Not Seen"
+msgstr "Não visto"
 
-#: js/mod/ban-list.js:47
-msgid "Message:"
-msgstr "Mensagem:"
-
-#: js/mod/ban-list.js:55
+#: js/mod/ban-list.js:98
 msgid "Board"
 msgstr "Board"
 
-#: js/mod/ban-list.js:57
+#: js/mod/ban-list.js:109
 msgid "all"
 msgstr "tudo"
 
-#: js/mod/ban-list.js:59
+#: js/mod/ban-list.js:113
 msgid "Set"
 msgstr "Criado"
 
-#: js/mod/ban-list.js:60
+#: js/mod/ban-list.js:117
 msgid " ago"
 msgstr " atrás"
 
-#: js/mod/ban-list.js:63
+#: js/mod/ban-list.js:121
 msgid "Expires"
 msgstr "Expira"
 
-#: js/mod/ban-list.js:64
+#: js/mod/ban-list.js:125
 msgid "never"
 msgstr "nunca"
 
-#: js/mod/ban-list.js:66
+#: js/mod/ban-list.js:126
 msgid "in "
 msgstr "em "
 
-#: js/mod/ban-list.js:68
+#: js/mod/ban-list.js:130
 msgid "Staff"
-msgstr ""
+msgstr "Equipe"
 
-#: js/mod/ban-list.js:75
+#: js/mod/ban-list.js:144
 msgid "system"
 msgstr "sistema"
 
-#: js/mod/ban-list.js:80
+#: js/mod/ban-list.js:149 js/tegaki.js:20
 msgid "Edit"
 msgstr "Editar"
+
+#: js/mod/ban-list.js:222
+msgid "Are you sure you want to unban the selected IPs?"
+msgstr "Você tem certeza que desejar desbanir os IPs selecionados?"
 
 #: js/mod/recent-posts.js:51
 msgid "Dismiss"
 msgstr "Descartar"
 
-#: js/no-animated-gif.js:45
-msgid "Animate GIFs"
-msgstr "Animar GIFs"
+#: js/mod/recent-posts.js:69 js/post-fade.js:186
+msgid "Loading..."
+msgstr "Carregando..."
 
-#: js/no-animated-gif.js:57 js/no-animated-gif.js:74 js/no-animated-gif.js:79
-msgid "Unanimate GIFs"
-msgstr "Desanimar GIFs"
-
-#: js/options.js:106
+#: js/options.js:105
 msgid "Options"
 msgstr "Opções"
 
@@ -535,53 +512,53 @@ msgstr "Favoritos"
 
 #: js/options/fav.js:42
 msgid "Drag the boards to sort them."
-msgstr "Arraste as boards para ordenar."
+msgstr "Arraste as board para ordenar."
 
-#: js/options/general.js:15
+#: js/options/general.js:14
 msgid "General"
 msgstr "Geral"
 
-#: js/options/general.js:18
+#: js/options/general.js:23
 msgid "Storage: "
 msgstr "Armazenamento: "
 
-#: js/options/general.js:21
+#: js/options/general.js:28
 msgid "Export"
 msgstr "Exportar"
 
-#: js/options/general.js:27
+#: js/options/general.js:47
 msgid "Import"
 msgstr "Importar"
 
-#: js/options/general.js:28
+#: js/options/general.js:49
 msgid "Paste your storage data"
 msgstr "Colar seus dados do armazenamento"
 
-#: js/options/general.js:40
+#: js/options/general.js:66
 msgid "Erase"
 msgstr "Apagar"
 
-#: js/options/general.js:41
+#: js/options/general.js:68
 msgid ""
 "Are you sure you want to erase your storage? This involves your hidden "
 "threads, watched threads, post password and many more."
 msgstr ""
-"Você tem certeza que quer apagar o seu armazenamento? Isso incluí seus fios "
-"ocultados, fios acompanhados, sua senha e muito mais."
+"Você tem certeza que quer apagar o seu armazenamento? Isso incluí seus "
+"tópicos ocultados, tópicos acompanhados, sua senha e muito mais."
 
 #: js/options/user-css.js:14
 msgid "User CSS"
 msgstr "CSS de usuário"
 
-#: js/options/user-css.js:23
+#: js/options/user-css.js:28
 msgid "Update custom CSS"
 msgstr "Atualizar CSS customizado"
 
-#: js/options/user-css.js:45
+#: js/options/user-css.js:49
 msgid "Enter here your own CSS rules..."
 msgstr "Digite aqui suas regras de CSS..."
 
-#: js/options/user-css.js:46
+#: js/options/user-css.js:50
 msgid ""
 "If you want to make a redistributable style, be sure to\n"
 "have a Yotsuba B theme selected."
@@ -606,126 +583,134 @@ msgid ""
 "Have a backup of your storage somewhere, as messing here\n"
 "may render you this website unusable."
 msgstr ""
-"Tenha um backup do seu armazenamento em algum lugar, porque mexer aqui\n"
+"Tenha um backup do seu armazemento em algum lugar, porque mexendo aqui\n"
 "pode deixar o site instável."
 
-#: js/orange-colored-quotes.js:13
-msgid "Orange colored quotes"
-msgstr "Citações em laranja"
-
-#: js/own-board.js:97
-msgid "{0} posts and {1} images omitted."
-msgstr "{0} posts e {1} imagens ocultadas."
-
-#: js/own-board.js:103
-msgid "Reply"
-msgstr "Resposta"
-
-#: js/pepe-colored-quotes.js:13
-msgid "Pepe colored quotes"
-msgstr ""
-
-#: js/post-fade.js:21
+#: js/post-fade.js:23
 msgid "Post Hover"
 msgstr "Post Flutuante"
 
-#: js/post-fade.js:22
+#: js/post-fade.js:24
 msgid "Delay until the message preview is shown:"
 msgstr "Atraso até que a pré-visualização do post seja mostrada:"
 
-#: js/post-fade.js:24
+#: js/post-fade.js:26
 msgid "Not"
 msgstr "Não"
 
-#: js/post-fade.js:32
+#: js/post-fade.js:34
 msgid "Delay until the view of the message is closed:"
 msgstr "Atraso até que a visualização do post feche:"
 
-#: js/post-fade.js:43
+#: js/post-fade.js:46
 msgid "Use the old message preview method"
 msgstr "Usar o modo antigo de visualização de posts"
 
-#: js/post-fade.js:219
-msgid "The theme does not exist ;_;"
-msgstr "Este tema não existe ;_;"
+#: js/post-fade.js:189 js/post-fade.js:256
+msgid "The thread does not exist ;_;"
+msgstr "Este fio não existe ;_;"
 
-#: js/post-fade.js:222
+#: js/post-fade.js:239 js/post-fade.js:283
+msgid "Message not found ;_;"
+msgstr "Mensagem não encontrada ;_;"
+
+#: js/post-fade.js:259
 msgid "Something went wrong ;_;"
 msgstr "Algo deu errado ;_;"
 
-#: js/post-filter.js:207
+#: js/post-filter.js:175
 msgid "Hide post"
 msgstr "Ocultar post"
 
-#: js/post-filter.js:208
+#: js/post-filter.js:176
 msgid "Unhide post"
 msgstr "Desocultar post"
 
-#: js/post-filter.js:210
+#: js/post-filter.js:178
 msgid "Add filter"
 msgstr "Adicionar filtro"
 
-#: js/post-filter.js:211
+#: js/post-filter.js:179
 msgid "Post +"
-msgstr ""
+msgstr "Post +"
 
-#: js/post-filter.js:211
+#: js/post-filter.js:179
 msgid "Hide post and all replies"
 msgstr "Ocultar post e todas as respostas"
 
-#: js/post-filter.js:212 js/post-filter.js:218
-msgid "ID"
-msgstr ""
-
-#: js/post-filter.js:213
+#: js/post-filter.js:181
 msgid "ID +"
-msgstr ""
+msgstr "ID +"
 
-#: js/post-filter.js:213
+#: js/post-filter.js:181
 msgid "Hide ID and all replies"
 msgstr "Ocultar ID e todas as repostas"
 
-#: js/post-filter.js:214 js/post-filter.js:219 js/post-filter.js:659
+#: js/post-filter.js:182 js/post-filter.js:187 js/post-filter.js:610
 msgid "Name"
 msgstr "Nome"
 
-#: js/post-filter.js:215 js/post-filter.js:220 js/post-filter.js:660
+#: js/post-filter.js:183 js/post-filter.js:188 js/post-filter.js:611
 msgid "Tripcode"
 msgstr "Tripcode"
 
-#: js/post-filter.js:217
+#: js/post-filter.js:185
 msgid "Remove filter"
 msgstr "Remover filtro"
 
-#: js/post-filter.js:655
+#: js/post-filter.js:580
+msgid "name"
+msgstr "nome"
+
+#: js/post-filter.js:581
+msgid "tripcode"
+msgstr "tripcode"
+
+#: js/post-filter.js:582
+msgid "subject"
+msgstr "assunto"
+
+#: js/post-filter.js:583
+msgid "comment"
+msgstr "comentário"
+
+#: js/post-filter.js:589
+msgid "Type"
+msgstr "Tipo"
+
+#: js/post-filter.js:589
+msgid "Content"
+msgstr "Conteúdo"
+
+#: js/post-filter.js:606
 msgid "Filters"
 msgstr "Filtros"
 
-#: js/post-filter.js:661
+#: js/post-filter.js:612 js/quick-reply.js:176
 msgid "Subject"
 msgstr "Assunto"
 
-#: js/post-filter.js:662 js/quick-reply.js:290
+#: js/post-filter.js:613 js/quick-reply.js:175
 msgid "Comment"
 msgstr "Comentário"
 
-#: js/post-filter.js:667
+#: js/post-filter.js:617
 msgid "Add"
 msgstr "Adicionar"
 
-#: js/post-filter.js:668
+#: js/post-filter.js:618
 msgid "Clear all filters"
 msgstr "Limpar filtros"
 
-#: js/post-filter.js:670
+#: js/post-filter.js:620
 msgid "This will clear all filtering rules including hidden posts."
 msgstr "Isso vai limpar todas as regras de filtro, incluindo posts ocultados."
 
-#: js/post-filter.js:670
+#: js/post-filter.js:620
 msgid "yes"
 msgstr "sim"
 
-#: js/post-filter.js:670
+#: js/post-filter.js:620
 msgid "no"
 msgstr "não"
 
@@ -737,327 +722,109 @@ msgstr "Senha"
 msgid "Delete file only"
 msgstr "Deletar apenas o arquivo"
 
+#: js/quick-post-controls.js:32 js/upload-selection.js:81
+msgid "File"
+msgstr "Arquivo"
+
 #: js/quick-post-controls.js:33
 msgid "Delete"
 msgstr "Deletar"
 
-#: js/quick-reply.js:237
-msgid "Upload URL"
-msgstr "URL de upload"
-
-#: js/quick-reply.js:298 js/quick-reply.js:439
+#: js/quick-reply.js:186 js/quick-reply.js:509
 msgid "Quick Reply"
 msgstr "Resposta rápida"
 
-#: js/show-own-posts.js:36 js/show-own-posts.js:49
+#: js/show-own-posts.js:29 js/show-own-posts.js:82 js/show-own-posts.js:97
 msgid "(You)"
-msgstr ""
+msgstr "(You)"
 
-#: js/style-select.js:41
+#: js/show-own-posts.js:140
+msgid "Add (You)"
+msgstr "Adicionar (You)"
+
+#: js/show-own-posts.js:141
+msgid "Remove (You)"
+msgstr "Remover (You)"
+
+#: js/style-select.js:58
 msgid "Style: "
 msgstr "Estilo: "
 
-#: js/thread-stats.js:24
-msgid "images"
-msgstr "imagens"
+#: js/tegaki.js:17
+msgid "Width"
+msgstr "Largura"
 
-#: js/thread-stats.js:25
-msgid "replies"
-msgstr "respostas"
+#: js/tegaki.js:18
+msgid "Height"
+msgstr "Altura"
 
-#: js/thread-watcher.js:32
-msgid "Thread #"
-msgstr "Tópico #"
+#: js/tegaki.js:19
+msgid "Draw"
+msgstr "Desenhar"
 
-#: js/thread-watcher.js:47
-msgid "Clear List"
-msgstr "Limpar Lista"
-
-#: js/thread-watcher.js:48
-msgid "Clear Ghosts"
-msgstr "Limpar Fantasmas"
-
-#: js/thread-watcher.js:96
-msgid "Functionality not yet implemented for this type of page."
-msgstr "Funcionalidade ainda não foi implementada para esse tipo de página."
-
-#: js/thread-watcher.js:152
-msgid "watchlist"
-msgstr "lista de tópicos acompanhados"
-
-#: js/thread-watcher.js:154
-msgid "Watch Thread"
-msgstr "Acompanhar Tópico"
-
-#: js/toggle-images.js:45
-msgid "hidden"
-msgstr "ocultado"
-
-#: js/toggle-images.js:63 js/toggle-images.js:70 js/toggle-images.js:86
-msgid "Hide images"
-msgstr "Ocultar imagens"
-
-#: js/toggle-images.js:70 js/toggle-images.js:86
-msgid "Show images"
-msgstr "Mostrar imagens"
-
-#: js/toggle-locked-threads.js:44 js/toggle-locked-threads.js:53
-#: js/toggle-locked-threads.js:70
-msgid "Hide locked threads"
-msgstr "Ocultar fios trancados"
-
-#: js/toggle-locked-threads.js:53 js/toggle-locked-threads.js:70
-msgid "Show locked threads"
-msgstr "Mostrar fios trancados"
-
-#: js/token_for.js:19
-msgid "Token"
-msgstr ""
-
-#: js/token_for.js:20
-msgid "Token:"
-msgstr ""
-
-#: js/token_for.js:21
-msgid "Set Token"
-msgstr "Definir Token"
-
-#: js/token_for.js:22
-msgid "Remove Token"
-msgstr "Remover Token"
-
-#: js/treeview.js:18
-msgid "Use tree view by default"
-msgstr "Usar lista em árvore por padrão"
-
-#: js/treeview.js:68
-msgid "Tree view"
-msgstr "Lista em árvore"
-
-#: js/update_boards.js:6
-msgid "Show top boards"
-msgstr "Mostras top boards"
-
-#: js/upload-selection.js:57
-msgid "URL"
-msgstr ""
-
-#: js/upload-selection.js:72
-msgid "Select"
-msgstr "Selecionar"
-
-#: js/upload-selection.js:75
-msgid "Remote"
-msgstr "Remoto"
-
-#: js/upload-selection.js:78
-msgid "Embed"
-msgstr ""
-
-#: js/upload-selection.js:81
-msgid "Oekaki"
-msgstr ""
-
-#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
-#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
-msgid "R"
-msgstr ""
-
-#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
-#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
-msgid "G"
-msgstr ""
-
-#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
-#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
-msgid "B"
-msgstr ""
-
-#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
-#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
-msgid "Both"
-msgstr "Ambos"
-
-#: js/wPaint/2ch.js:428 js/wPaint/8ch.js:409 js/wPaint/lib/wColorPicker.js:28
-#: js/wPaint/oekaki.js:1 js/wPaint/wPaint.min.js:409
-msgid "Flip"
-msgstr "Virar"
-
-#: js/wPaint/2ch.js:2233 js/wPaint/8ch.js:2214 js/wPaint/lib/plugins.js:9
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:9
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:9
-msgid "Undo"
-msgstr "Desfazer"
-
-#: js/wPaint/2ch.js:2240 js/wPaint/8ch.js:2221 js/wPaint/lib/plugins.js:16
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:16
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:16
-msgid "Redo"
-msgstr "Refazer"
-
-#: js/wPaint/2ch.js:2247 js/wPaint/8ch.js:2228 js/wPaint/lib/plugins.js:23
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:23
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:23
+#: js/tegaki.js:21
 msgid "Clear"
 msgstr "Limpar"
 
-#: js/wPaint/2ch.js:2254 js/wPaint/8ch.js:2235 js/wPaint/lib/plugins.js:30
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:30
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:30
-msgid "Rectangle"
-msgstr "Retângulo"
+#: js/thread-stats.js:23
+msgid "images"
+msgstr "imagens"
 
-#: js/wPaint/2ch.js:2260 js/wPaint/8ch.js:2241 js/wPaint/lib/plugins.js:36
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:36
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:36
-msgid "Ellipse"
-msgstr ""
+#: js/thread-stats.js:24
+msgid "replies"
+msgstr "respostas"
 
-#: js/wPaint/2ch.js:2266 js/wPaint/8ch.js:2247 js/wPaint/lib/plugins.js:42
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:42
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:42
-msgid "Line"
-msgstr "Linha"
+#: js/thread-stats.js:25
+msgid "Page"
+msgstr "Página"
 
-#: js/wPaint/2ch.js:2273 js/wPaint/8ch.js:2254 js/wPaint/lib/plugins.js:49
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:49
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:49
-msgid "Pencil"
-msgstr "Lápis"
+#: js/thread-watcher.js:33
+msgid "Thread #"
+msgstr "Tópico #"
 
-#: js/wPaint/2ch.js:2280 js/wPaint/8ch.js:2261 js/wPaint/lib/plugins.js:56
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:56
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:56
-msgid "Eraser"
-msgstr "Borracha"
+#: js/thread-watcher.js:48
+msgid "Clear List"
+msgstr "Limpar Lista"
 
-#: js/wPaint/2ch.js:2287 js/wPaint/8ch.js:2268 js/wPaint/lib/plugins.js:63
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:63
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:63
-msgid "Bucket"
-msgstr "Balde"
+#: js/thread-watcher.js:49
+msgid "Clear Ghosts"
+msgstr "Limpar apagados"
 
-#: js/wPaint/2ch.js:2293 js/wPaint/8ch.js:2274 js/wPaint/lib/plugins.js:69
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:69
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:69
-msgid "Fill Color"
-msgstr "Preencher cor"
+#: js/thread-watcher.js:99
+msgid "Functionality not yet implemented for this type of page."
+msgstr "Funcionalidade ainda não foi implementada para esse tipo de página."
 
-#: js/wPaint/2ch.js:2299 js/wPaint/8ch.js:2280 js/wPaint/lib/plugins.js:75
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:75
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:75
-msgid "Stroke Width"
-msgstr ""
+#: js/thread-watcher.js:158
+msgid "Watch Thread"
+msgstr "Acompanhar Tópico"
 
-#: js/wPaint/2ch.js:2306 js/wPaint/8ch.js:2287 js/wPaint/lib/plugins.js:82
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/main/main.js:82
-#: js/wPaint/plugins/main/src/wPaint.menu.main.js:82
-msgid "Stroke Color"
-msgstr ""
+#: js/token_for.js:13
+msgid "Token"
+msgstr "Token"
 
-#: js/wPaint/2ch.js:2586 js/wPaint/8ch.js:2567 js/wPaint/lib/plugins.js:362
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/text/src/wPaint.menu.text.js:15
-#: js/wPaint/plugins/text/text.js:15
-msgid "Italic"
-msgstr "Itálico"
+#: js/token_for.js:14
+msgid "Token:"
+msgstr "Token:"
 
-#: js/wPaint/2ch.js:2597 js/wPaint/8ch.js:2578 js/wPaint/lib/plugins.js:373
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/text/src/wPaint.menu.text.js:26
-#: js/wPaint/plugins/text/text.js:26
-msgid "Font Size"
-msgstr "Tamanho da Fonte"
+#: js/token_for.js:15
+msgid "Set Token"
+msgstr "Definir Token"
 
-#: js/wPaint/2ch.js:2605 js/wPaint/8ch.js:2586 js/wPaint/lib/plugins.js:381
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/text/src/wPaint.menu.text.js:34
-#: js/wPaint/plugins/text/text.js:34
-msgid "Font Family"
-msgstr "Nome da Fonte"
+#: js/token_for.js:16
+msgid "Remove Token"
+msgstr "Remover Token"
 
-#: js/wPaint/2ch.js:2811 js/wPaint/8ch.js:2792 js/wPaint/lib/plugins.js:587
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:12
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:12
-msgid "Rounded Rectangle"
-msgstr "Retângulo arredondado"
+#: js/upload-selection.js:64
+msgid "URL"
+msgstr "URL"
 
-#: js/wPaint/2ch.js:2819 js/wPaint/8ch.js:2800 js/wPaint/lib/plugins.js:595
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:20
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:20
-msgid "Square"
-msgstr "Quadrado"
+#: js/upload-selection.js:74
+msgid "Select"
+msgstr "Selecionar"
 
-#: js/wPaint/2ch.js:2827 js/wPaint/8ch.js:2808 js/wPaint/lib/plugins.js:603
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:28
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:28
-msgid "Rounded Square"
-msgstr "Quadrado arredondado"
-
-#: js/wPaint/2ch.js:2835 js/wPaint/8ch.js:2816 js/wPaint/lib/plugins.js:611
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:36
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:36
-msgid "Diamond"
-msgstr "Diamante"
-
-#: js/wPaint/2ch.js:2847 js/wPaint/8ch.js:2828 js/wPaint/lib/plugins.js:623
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:48
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:48
-msgid "Circle"
-msgstr "Círculo"
-
-#: js/wPaint/2ch.js:2855 js/wPaint/8ch.js:2836 js/wPaint/lib/plugins.js:631
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:56
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:56
-msgid "Pentagon"
-msgstr "Pentágono"
-
-#: js/wPaint/2ch.js:2863 js/wPaint/8ch.js:2844 js/wPaint/lib/plugins.js:639
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/shapes/shapes.js:64
-#: js/wPaint/plugins/shapes/src/wPaint.menu.main.shapes.js:64
-msgid "Hexagon"
-msgstr "Hexágono"
-
-#: js/wPaint/2ch.js:3016 js/wPaint/8ch.js:2997 js/wPaint/lib/plugins.js:792
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/file/file.js:8
-#: js/wPaint/plugins/file/src/wPaint.menu.main.file.js:8
-msgid "Save Image"
-msgstr "Salvar Imagem"
-
-#: js/wPaint/2ch.js:3026 js/wPaint/8ch.js:3007 js/wPaint/lib/plugins.js:802
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/file/file.js:18
-#: js/wPaint/plugins/file/src/wPaint.menu.main.file.js:18
-msgid "Load Image to Foreground"
-msgstr "Carregar imagem para primeiro plano"
-
-#: js/wPaint/2ch.js:3036 js/wPaint/8ch.js:3017 js/wPaint/lib/plugins.js:812
-#: js/wPaint/oekaki.js:2 js/wPaint/plugins/file/file.js:28
-#: js/wPaint/plugins/file/src/wPaint.menu.main.file.js:28
-msgid "Load Image to Background"
-msgstr "Carregar imagem para o fundo"
-
-#: js/wPaint/2ch.js:3101 js/wPaint/src/oekaki8.js:17
-msgid "Post my oekaki"
-msgstr "Postar meu oekaki"
-
-#: js/wPaint/2ch.js:3101 js/wPaint/src/oekaki8.js:17
-msgid "Check image size"
-msgstr "Verificar tamanho da imagem"
-
-#: js/wPaint/2ch.js:3134 js/wPaint/src/oekaki8.js:50
-msgid "Your image size is %size%/%maxsize%."
-msgstr "O tamanho da sua imagem é %size%/%maxsize%."
-
-#: js/wPaint/2ch.js:3141 js/wPaint/src/oekaki8.js:57
-msgid "Image must be 500x250 to be uploaded. Please resize it."
-msgstr "A imagem deve ter 500x250 para ser enviada. Por favor, redimensione."
-
-#: js/wPaint/2ch.js:3145 js/wPaint/src/oekaki8.js:61
-msgid "Your image is too large, it needs to be 128KB or less."
-msgstr "Sua imagem é muito grande, ela precisa ter 128KB ou menos."
-
-#: js/wPaint/2ch.js:3161 js/wPaint/src/oekaki8.js:77
-msgid "Click on any image on this site to load it into oekaki applet."
-msgstr ""
-"Clique em qualquer imagem neste site para carregá-la no mini aplicativo "
-"oekaki."
+#: js/upload-selection.js:82
+msgid "Remote"
+msgstr "Remoto"
 
 #: js/watch.js:364 js/watch.js:365
 msgid "Stop watching this thread"
@@ -1083,208 +850,232 @@ msgstr "Parar de acomapanhar essa board"
 msgid "Watch this board"
 msgstr "Acompanhar essa board"
 
-#: js/webm-settings.js:41
+#: js/webm-settings.js:40
 msgid "WebM"
-msgstr ""
+msgstr "WebM"
 
-#: js/webm-settings.js:45
+#: js/webm-settings.js:43
 msgid "WebM Settings"
 msgstr "Configurações do webM"
 
-#: js/webm-settings.js:54
+#: js/webm-settings.js:52
 msgid "Expand videos inline"
 msgstr "Expandir vídeos no lugar da miniatura"
 
-#: js/webm-settings.js:55
+#: js/webm-settings.js:53
 msgid "Play videos on hover"
 msgstr "Reproduz vídeos em foco"
 
-#: js/webm-settings.js:56
+#: js/webm-settings.js:54
 msgid "Default volume"
 msgstr "Volume padrão"
 
-#: js/wpaint.js:108
-msgid "Click on any image on this site to load it into oekaki applet"
-msgstr ""
-"Clique em qualquer imagem neste site para carregá-la no mini aplicativo "
-"oekaki"
-
-#: templates/main.js:35 templates/main.js:53
+#: templates/main.js:80
 msgid "second(s)"
 msgstr "segundo(s)"
 
-#: templates/main.js:37 templates/main.js:55
+#: templates/main.js:83
 msgid "minute(s)"
 msgstr "minutos(s)"
 
-#: templates/main.js:39 templates/main.js:57
+#: templates/main.js:86
 msgid "hour(s)"
 msgstr "hora(s)"
 
-#: templates/main.js:41 templates/main.js:59
+#: templates/main.js:89
 msgid "day(s)"
 msgstr "dia(s)"
 
-#: templates/main.js:43 templates/main.js:61
+#: templates/main.js:92
 msgid "week(s)"
 msgstr "semana(s)"
 
-#: templates/main.js:45 templates/main.js:63
+#: templates/main.js:95
 msgid "year(s)"
 msgstr "ano(s)"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Sunday"
 msgstr "Domingo"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Monday"
 msgstr "Segunda-feira"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Tuesday"
 msgstr "Terça-feira"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Wednesday"
 msgstr "Quarta-feira"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Thursday"
 msgstr "Quinta-feira"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Friday"
 msgstr "Sexta-feira"
 
-#: templates/main.js:68
+#: templates/main.js:109
 msgid "Saturday"
 msgstr "Sabádo"
 
-#: templates/main.js:70
+#: templates/main.js:110
+msgid "Sun"
+msgstr "Dom"
+
+#: templates/main.js:110
+msgid "Mon"
+msgstr "Seg"
+
+#: templates/main.js:110
+msgid "Tue"
+msgstr "Ter"
+
+#: templates/main.js:110
+msgid "Wed"
+msgstr "Qua"
+
+#: templates/main.js:110
+msgid "Thu"
+msgstr "Qui"
+
+#: templates/main.js:110
+msgid "Fri"
+msgstr "Sex"
+
+#: templates/main.js:110
+msgid "Sat"
+msgstr "Sáb"
+
+#: templates/main.js:111
 msgid "January"
 msgstr "Janeiro"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "February"
 msgstr "Fevereiro"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "March"
 msgstr "Março"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "April"
 msgstr "Abril"
 
-#: templates/main.js:70 templates/main.js:71
+#: templates/main.js:111 templates/main.js:112
 msgid "May"
 msgstr "Maio"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "June"
 msgstr "Junho"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "July"
 msgstr "Julho"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "August"
 msgstr "Agosto"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "September"
 msgstr "Setembro"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "October"
-msgstr "Outrubro"
+msgstr "Outubro"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "November"
 msgstr "Novembro"
 
-#: templates/main.js:70
+#: templates/main.js:111
 msgid "December"
 msgstr "Dezembro"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Jan"
 msgstr "Jan"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Feb"
 msgstr "Fev"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Mar"
 msgstr "Mar"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Apr"
 msgstr "Abr"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Jun"
 msgstr "Jun"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Jul"
 msgstr "Jul"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Aug"
 msgstr "Ago"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Sep"
 msgstr "Set"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Oct"
 msgstr "Out"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Nov"
 msgstr "Nov"
 
-#: templates/main.js:71
+#: templates/main.js:112
 msgid "Dec"
 msgstr "Dez"
 
-#: templates/main.js:72
+#: templates/main.js:113
 msgid "AM"
-msgstr ""
+msgstr "AM"
 
-#: templates/main.js:73
+#: templates/main.js:114
 msgid "PM"
-msgstr ""
+msgstr "MP"
 
-#: templates/main.js:74
+#: templates/main.js:115
 msgid "am"
-msgstr ""
+msgstr "am"
 
-#: templates/main.js:75
+#: templates/main.js:116
 msgid "pm"
-msgstr ""
+msgstr "pm"
 
-#: templates/main.js:96
+#: templates/main.js:151
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
-#: templates/main.js:102
+#: templates/main.js:166
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: templates/themes/ukko2/ukko.js:29 templates/themes/ukko2/ukko.js:40
-msgid "(hide threads from this board)"
-msgstr "(ocultar tópicos desta board)"
-
-#: templates/themes/ukko2/ukko.js:33 templates/themes/ukko2/ukko.js:45
+#: templates/themes/ukko2/ukko.js:28 templates/themes/ukko2/ukko.js:63
 msgid "(show threads from this board)"
 msgstr "(mostrar tópicos desta board)"
 
-#: templates/themes/ukko2/ukko.js:58
-msgid "No more threads to display"
-msgstr "Não há mais fios para mostrar"
+#: templates/themes/ukko2/ukko.js:36 templates/themes/ukko2/ukko.js:60
+msgid "(hide threads from this board)"
+msgstr "(ocultar tópicos desta board)"
+
+#~ msgid "Unknown error"
+#~ msgstr "Erro desconhecido"
+
+#~ msgid "Upload URL"
+#~ msgstr "URL de upload"

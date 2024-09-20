@@ -1,5 +1,3 @@
-<script src='/js/jquery.tablesorter.min.js?v={{ config.resource_version }}'></script>
-
 {% if config.mod_archive.threads and mod and mod|hasPermission(config.view_mod_archive) %}
 	<p style="text-align: center">
 		<a id="unimportant" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.mod_archive }}">[{% trans %}View Mod Archive{% endtrans %}]</a>
