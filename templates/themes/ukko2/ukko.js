@@ -160,7 +160,6 @@
         thread.setAttribute('data-cached', 'no');
         thread.before(boardheader);
         addUkkohide(boardheader);
-        $(document).trigger('new_post', thread);
         triggerCustomEvent('new_post_js', document, { detail: thread });
     };
 

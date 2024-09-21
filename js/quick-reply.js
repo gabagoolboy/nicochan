@@ -85,6 +85,10 @@
 			box-sizing: border-box;
 			margin: unset !important;
 		}
+		#quick-reply #pwd-field, #quick-reply #upload_selection,
+		#quick-reply #mod-flags, #quick-reply #tegaki-form {
+			display: none;
+		}
 		@media screen and (max-width: 400px) {
 			#quick-reply {
 				display: none !important;
@@ -118,7 +122,7 @@
 
 		if (document.getElementById('quick-reply')) {
 			const quickReply = document.getElementById('quick-reply');
-			if (quickReply.dataset.threadId !== target_id) {
+			if (inIndex && quickReply.dataset.threadId !== target_id) {
 				quickReply.querySelector('input[name="thread"]').value = thread_id;
 				quickReply.querySelector('.handle #thread-id-number').textContent = ` (${thread_id})`;
 				quickReply.setAttribute('data-thread-id', thread_id);
@@ -148,8 +152,8 @@
 				td.setAttribute('colspan', '2');
 
 				const fragment = document.createDocumentFragment();
-				th.querySelectorAll('input[type="hidden"], [style*="display:none"], [style*="display: none"]').forEach((el) => {
-					el.style.display = 'none';
+				th.querySelectorAll('input[type="hidden"], [style*="display:none"], [style*="display: none"], textarea:not([name="body"])')
+				.forEach((el) => {
 					fragment.appendChild(el);
 				})
 				dummyStuff.appendChild(fragment);
@@ -162,16 +166,11 @@
 					submitTd.appendChild(td.querySelector('.form_submit'));
 					td.parentNode.insertBefore(submitTd, td.nextSibling);
 				}
-
-				if (['upload_selection', 'mod-flags', 'tegaki-buttons', 'pwd-field'].includes(td.id)) row.remove();
 			}
 		});
 
 		postForm.querySelector('textarea[name="body"]').setAttribute('placeholder', _('Comment'));
 		postForm.querySelector('input[name="subject"]').setAttribute('placeholder', _('Subject'));
-
-		const nonBodyTextareas = postForm.querySelectorAll('textarea:not([name="body"]), input[type="hidden"]');
-		nonBodyTextareas.forEach(element => dummyStuff.appendChild(element));
 
 		postForm.querySelectorAll('br').forEach(br => br.remove());
 
@@ -216,7 +215,7 @@
 			});
 			postForm.setAttribute('data-thread-id', thread_id);
 			postForm.querySelector('.form_submit').value = button_reply;
-			postForm.querySelectorAll('input#hideposterid, label[for="hideposterid"]').forEach(el => el.remove());
+			postForm.querySelectorAll('input#hideposterid, label[for="hideposterid"]')?.forEach(el => el.remove());
 
 			if (getActivePage() === 'ukko') {
 				postForm.querySelector('select[name="board"]').remove();
@@ -228,28 +227,6 @@
 			}
 		}
 
-		const origBodyTextarea = origPostForm.querySelector('textarea[name="body"]');
-		const quickReplyBodyTextarea = postForm.querySelector('textarea[name="body"]');
-
-		if (origBodyTextarea && quickReplyBodyTextarea) {
-			origBodyTextarea.addEventListener('input', function () {
-				quickReplyBodyTextarea.value = this.value;
-			});
-
-			quickReplyBodyTextarea.addEventListener('input', function () {
-				origBodyTextarea.value = this.value;
-			});
-
-			quickReplyBodyTextarea.addEventListener('focus', function () {
-				origBodyTextarea.removeAttribute('id');
-				this.id = 'body';
-			});
-
-			origBodyTextarea.addEventListener('focus', function () {
-				quickReplyBodyTextarea.removeAttribute('id');
-				this.id = 'body';
-			});
-		}
 
 		const syncInputs = function (selector) {
 			const origInputs = origPostForm.querySelectorAll(selector);
@@ -267,15 +244,25 @@
 						origInput.addEventListener('input', function () {
 							quickReplyInput.value = this.value;
 						});
+
 						quickReplyInput.addEventListener('input', function () {
 							origInput.value = this.value;
 						});
+
+						if (origInput.tagName === 'TEXTAREA') {
+							origInput.addEventListener('change', function () {
+								quickReplyInput.value = this.value;
+							});
+							quickReplyInput.addEventListener('change', function () {
+								origInput.value = this.value;
+							});
+						}
 					}
 				}
 			});
 		};
 
-		syncInputs('input[type="text"], select, input[type="checkbox"]');
+		syncInputs('input[type="text"], select, input[type="checkbox"], textarea[name="body"]');
 		if (!document.querySelector('.dropzone-wrap')) {
 			syncInputs('input[type="file"]');
 		}

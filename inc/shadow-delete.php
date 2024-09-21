@@ -285,10 +285,7 @@ class ShadowDelete
 
             // If thread
             if (!$post['thread']) {
-                deleteThread($board['dir'], $config['dir']['res'], $post);
-
                 self::dbUpdateAntispam($board['uri'], $post['id'], 1);
-
             } elseif ($query->rowCount() == 1) {
                 // Rebuild thread
                 $rebuild = &$post['thread'];
@@ -342,6 +339,7 @@ class ShadowDelete
             if (isset($rebuild)) {
                 buildThread($rebuild);
             } else {
+                deleteThread($board['dir'], $config['dir']['res'], ['id' => $id, 'thread' => null]);
                 buildIndex();
                 rebuildThemes('post-delete', $board['uri']);
             }

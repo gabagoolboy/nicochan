@@ -406,8 +406,7 @@ function rememberStuff() {
 }
 
 function triggerCustomEvent(eventName, target = document, detail = {}) {
-    console.log('new event: '+ eventName);
-	const event = new CustomEvent(eventName, { detail, bubbles: true });
+	const event = new CustomEvent(eventName, { detail });
 	target.dispatchEvent(event);
 }
 

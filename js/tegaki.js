@@ -14,8 +14,8 @@ function initialize_tegaki() {
                 Tegaki
             </th>
             <td id="tegaki-buttons">
-                <input type="text" id="width-tegaki" class="tegaki-input" size="4" maxlength="4" value="400"> x 
-                <input type="text" id="height-tegaki" class="tegaki-input" size="4" maxlength="4" value="400">
+                <input type="text" id="width-tegaki" title="${_('Width')}" class="tegaki-input" size="4" maxlength="4" value="800"> x 
+                <input type="text" id="height-tegaki" title="${_('Height')}" class="tegaki-input" size="4" maxlength="4" value="800">
                 <input type="button" id="tegaki-start" value="${_('Draw')}">
                 <input type="button" id="tegaki-edit" style="display: none;" value="${_('Edit')}" disabled>&nbsp;
                 <input type="button" id="tegaki-clear" style="display: none;" value="${_('Clear')}" disabled>

@@ -1731,9 +1731,6 @@
 
 	// Set any of the below to "DISABLED" to make them unavailable for everyone.
 
-	// Don't worry about per-board moderators. Let all mods moderate any board.
-	$config['mod']['skip_per_board'] = false;
-
 	/* Post Controls */
 	// View IP addresses
 	$config['mod']['show_ip'] = DEVELOPER;
@@ -2006,7 +2003,7 @@
  */
 
 	// Public post search settings
-	$config['search'] = array();
+	$config['search'] = [];
 
 	// Enable the search form
 	$config['search']['enable'] = false;
@@ -2015,10 +2012,10 @@
 	$config['board_search'] = false;
 
 	// Maximal number of queries per IP address per minutes
-	$config['search']['queries_per_minutes'] = Array(15, 2);
+	$config['search']['queries_per_minutes'] = [15, 2];
 
 	// Global maximal number of queries per minutes
-	$config['search']['queries_per_minutes_all'] = Array(50, 2);
+	$config['search']['queries_per_minutes_all'] = [50, 2];
 
 	// Limit of search results
 	$config['search']['search_limit'] = 100;
@@ -2078,16 +2075,6 @@
 
 	// Meta keywords. It's probably best to include these in per-board configurations.
 	// $config['meta_keywords'] = 'chan,anonymous discussion,imageboard,tinyboard';
-
-	// Link imageboard to your Google Analytics account to track users and provide traffic insights.
-	// $config['google_analytics'] = 'UA-xxxxxxx-yy';
-	// Keep the Google Analytics cookies to one domain -- ga._setDomainName()
-	// $config['google_analytics_domain'] = 'www.example.org';
-
-	// Link imageboard to your Statcounter.com account to track users and provide traffic insights without the Google botnet.
-	// Extract these values from Statcounter's JS tracking code:
-	// $config['statcounter_project'] = '1234567';
-	// $config['statcounter_security'] = 'acbd1234';
 
 	// If you use Varnish, Squid, or any similar caching reverse-proxy in front of Tinyboard, you can
 	// configure Tinyboard to PURGE files when they're written to.
@@ -2160,7 +2147,6 @@
 	// IP change permission
 	$config['mod']['ip_change_name'] = MOD;
 
-
 	// Show youtube titles instead of url
 	$config['youtube_show_title'] = false;
 	// Same, but with vimeo
@@ -2207,9 +2193,6 @@
 
 	// Filter public banlist. This is done via regex
 	$config['banlist_filters'] = '';
-
-	// Permission for mod to view password history
-	$config['mod']['show_password_less'] = MOD;
 
 	// Securimage options
 	$config['securimage_options'] = ['send_headers' => false, 'no_exit' => true];
