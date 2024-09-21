@@ -3206,7 +3206,7 @@ function mod_config($board_config = false) {
 
 				$config_append .= ' = ';
 				if (@$var['permissions'] && isset($config['mod']['groups'][$value])) {
-					$config_append .= $config['mod']['groups'][$value];
+					$config_append .= strtoupper($config['mod']['groups'][$value]);
 				} else {
 					$config_append .= var_export($value, true);
 				}
