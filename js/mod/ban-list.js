@@ -165,7 +165,7 @@ const banlist_init = (token, inMod) => {
       suppressHorizontalScroll: false,
       selection: {
         mode: 'multiRow',
-        checkboxes: true,
+        checkboxes: inMod,
         enableClickSelection: false
       },
       onGridReady: ({ api }) => {
