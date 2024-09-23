@@ -733,7 +733,7 @@ function hasPermission($action = null, $board = null, $_mod = null) {
 	if (isset($action) && $mod['type'] < $action)
 		return false;
 
-	if (!isset($board) || $config['mod']['skip_per_board'])
+	if (!isset($board))
 		return true;
 
 	if (!isset($mod['boards']))

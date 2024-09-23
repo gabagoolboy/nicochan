@@ -33,11 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
             }
 
-			let mentioned = targetPost.querySelector('p.intro span.mentioned');
+			let mentioned = targetPost.querySelector('div.intro span.mentioned');
 			if (!mentioned) {
 				mentioned = Vichan.createElement('span', {
 					className: 'mentioned unimportant',
-					parent: targetPost.querySelector('p.intro')
+					parent: targetPost.querySelector('div.intro')
 				});
 			}
 

@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 			if (files) {
 				const filesClone = files.cloneNode(true);
-				const intro = opClone.querySelector('p.intro');
+				const intro = opClone.querySelector('div.intro');
 				if (intro) {
 					intro.insertAdjacentElement('afterend', filesClone);
 				}

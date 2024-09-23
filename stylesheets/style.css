@@ -43,7 +43,7 @@ a.post_no {
   color: inherit;
 }
 
-.intro a.post_no, p.intro a.email, p.intro a.post_anchor {
+.intro a.post_no, div.intro a.email, div.intro a.post_anchor {
   margin: 0;
 }
 
@@ -59,7 +59,7 @@ a.post_no {
   display: inline;
 }
 
-.intro time, p.intro a.ip-link, p.intro a.capcode {
+.intro time, div.intro a.ip-link, div.intro a.capcode {
   direction: ltr;
   unicode-bidi: embed;
 }
@@ -447,7 +447,7 @@ input.delete {
   font-weight: bold;
 }
 
-.intro span.capcode, p.intro a.capcode, p.intro a.nametag {
+.intro span.capcode, div.intro a.capcode, div.intro a.nametag {
   color: #F00000;
   margin-left: 0;
 }

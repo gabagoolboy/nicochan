@@ -35,11 +35,11 @@ $(document).ready(function() {
 	};
 		
 	var enable_fa = function() {
-		$('p.intro label').each(force_anon);
+		$('div.intro label').each(force_anon);
 	};
 	
 	var disable_fa = function() {
-		$('p.intro label').each(function() {
+		$('div.intro label').each(function() {
 			if ($(this).children('a.capcode').length == 0) {
 				var id = $(this).parent().children('a.post_no:eq(1)').text();
 				
@@ -120,7 +120,7 @@ $(document).ready(function() {
 	
 	$(document).on('new_post', function(e, post) {
 		if (forced_anon)
-			$(post).find('p.intro label').each(force_anon);
+			$(post).find('div.intro label').each(force_anon);
 		if (localStorage.hideids == 'true') 
 			$(post).find('.poster_id').each(toggle_id);
 	});
