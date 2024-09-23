@@ -26,6 +26,7 @@
 {% endif %}
 
 {% if mod %}
+    <link rel="stylesheet" href="{{ config.uri_stylesheets }}mod/menu.css?v={{ config.resource_version }}">
     <script type="text/javascript" src="js/expand-filename.js?v={{ config.resource_version }}"></script>
     <script type="text/javascript" src="js/mod/mod-scripts.js?v={{ config.resource_version }}"></script>
 {% endif %}

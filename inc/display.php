@@ -313,14 +313,16 @@ function bidi_cleanup($data) {
 	return $data;
 }
 
-function secure_link_confirm($text, $title, $confirm_message, $href) {
+function secure_link_confirm($text, $title, $confirm_message, $href, $data_action, $append_title = false) {
     $secure_url = htmlspecialchars('?/' . $href . '/' . make_secure_link_token($href), ENT_QUOTES, 'UTF-8');
 
 	$title = htmlentities($title);
 
 	$confirm_message = htmlentities($confirm_message);
-    
-	return "<a title='{$title}' data-href='{$secure_url}' href='?/{$href}' data-confirm='{$confirm_message}'>{$text}</a>";
+	$data_action = htmlentities($data_action);
+	$innerhtml = $append_title ? "{$text} - {$title}" : $text;
+
+	return "<a title='{$title}' data-href='{$secure_url}' data-action='{$data_action}' href='?/{$href}' data-confirm='{$confirm_message}'>{$innerhtml}</a>";
 }
 
 function secure_link($href) {

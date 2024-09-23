@@ -33,7 +33,7 @@ function setupExpand(span) {
 async function handleExpandClick(event, span) {
 	event.preventDefault();
 	const thread = span.closest('[id^="thread_"]');
-	const threadUrl = thread.querySelector('div.post.op > p.intro > a.cite-link').href;
+	const threadUrl = thread.querySelector('div.post.op > div.intro > a.cite-link').href;
 
 	try {
 		const data = await fetchThreadData(threadUrl);

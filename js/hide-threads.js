@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	const createUnhideLink = (threadContainer, board, id) => {
-		const hiddenDiv = threadContainer.querySelector('div.post.op > p.intro').cloneNode(true);
+		const hiddenDiv = threadContainer.querySelector('div.post.op > div.intro').cloneNode(true);
 		hiddenDiv.classList.add('thread-hidden');
 		hiddenDiv.querySelectorAll('a[href]:not([href$=".html"]), input').forEach(el => el.remove());
 		hiddenDiv.innerHTML = hiddenDiv.innerHTML.replace(/ \[\] /g, ' ');
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	const hideThread = thread => {
-		const id = thread.querySelector('p.intro > a.cite-link').dataset.cite;
+		const id = thread.querySelector('div.intro > a.cite-link').dataset.cite;
 		const threadContainer = thread.closest('div');
 		const board = threadContainer.dataset.board;
 

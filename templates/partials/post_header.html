@@ -20,3 +20,11 @@
 <a class="report_post" target="_blank" href="/report/board/{{ board.uri|url_encode }}/post/{{ post.id|url_encode }}/format/html" title="{% trans %}Report Post{% endtrans %}">
     <i class="fa fa-flag" style="color: #d81159 !important;"></i>
 </a>
+{% if mod %}
+    <div class="hamburger-menu-container">
+        <a class="mod-controls" href="#">
+            <i class="fa fa-gear"></i>
+        </a>
+        {% include 'post/post_controls.html' %}
+    </div>
+{% endif %}

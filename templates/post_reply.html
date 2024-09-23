@@ -1,14 +1,13 @@
 {% apply spaceless %}
     <div class="post reply {% if post.shadow %}shadow-post{% endif %}" id="reply_{{ post.id }}">
-        <p class="intro">
+        <div class="intro">
             {% if not index %}
                 <a id="{{ post.id }}" class="post_anchor"></a>
             {% endif %}
             {% include 'partials/post_header.html' %}
-        </p>
+        </div>
 
         {% include 'post/fileinfo.html' %}
-        {% include 'post/post_controls.html' %}
 
         <div class="body" {% if post.files|length > 1 %}style="clear:both"{% endif %}>
             {% endapply %}
