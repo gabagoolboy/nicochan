@@ -1,6 +1,9 @@
 {% if mod %}
     <div class="menu-content" id="menu-content">
         <div class="menu-header">
+            <span class="post-header center">
+                {% trans %}Moderating Post #{% endtrans %}{{ post.id }}
+            </span>
             <input type="text" class="search-input" placeholder="{% trans %}Search...{% endtrans %}">
         </div>
         {% if not post.shadow %}

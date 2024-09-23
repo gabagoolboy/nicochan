@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: vichan\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-23 11:11-0300\n"
-"PO-Revision-Date: 2024-09-23 11:19-0300\n"
+"POT-Creation-Date: 2024-09-23 14:47-0300\n"
+"PO-Revision-Date: 2024-09-23 14:48-0300\n"
 "Last-Translator: Weav <magalichan@insiberia.net>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/"
 "tinyboard-vichan-devel/language/pt_BR/)\n"
@@ -96,7 +96,7 @@ msgid "by"
 msgstr "por"
 
 #: compiled_templates/banned.html.php:164
-#: compiled_templates/post_thread.html.php:242
+#: compiled_templates/post_thread.html.php:235
 msgid "and"
 msgstr "e"
 
@@ -219,13 +219,13 @@ msgstr "Senha"
 #: compiled_templates/mod_pages.html.php:88
 #: compiled_templates/mod_pages.html.php:124
 #: compiled_templates/partials_report_delete.html.php:91
-#: compiled_templates/post_post_controls.html.php:73
+#: compiled_templates/post_post_controls.html.php:80
 #: compiled_templates/report_delete.html.php:70
 msgid "Delete"
 msgstr "Deletar"
 
 #: compiled_templates/error.html.php:55
-#: compiled_templates/partials_buttons.html.php:69
+#: compiled_templates/partials_buttons.html.php:76
 #: compiled_templates/thread.html.php:260
 msgid "Back"
 msgstr "Voltar"
@@ -371,7 +371,7 @@ msgstr ""
 
 #: compiled_templates/mod_archive_list.html.php:192
 #: compiled_templates/mod_archive_list.html.php:238
-#: compiled_templates/partials_buttons.html.php:102
+#: compiled_templates/partials_buttons.html.php:113
 #: compiled_templates/themes_catalog_catalog.html.php:179 inc/archive.php:350
 #: inc/mod/pages.php:3745
 #, php-format
@@ -1836,18 +1836,18 @@ msgstr ""
 msgid "Return to dashboard"
 msgstr "Voltar à dashboard"
 
-#: compiled_templates/partials_buttons.html.php:47
+#: compiled_templates/partials_buttons.html.php:52
 #: compiled_templates/themes_catalog_catalog.html.php:68
 #: compiled_templates/thread.html.php:250
 msgid "Catalog"
 msgstr "Catálogo"
 
-#: compiled_templates/partials_buttons.html.php:67
+#: compiled_templates/partials_buttons.html.php:74
 #: compiled_templates/themes_catalog_catalog.html.php:151
 msgid "Reload"
 msgstr "Recarregar"
 
-#: compiled_templates/partials_buttons.html.php:84
+#: compiled_templates/partials_buttons.html.php:93
 #: compiled_templates/themes_catalog_catalog.html.php:166
 msgid "Archive"
 msgstr "Arquivo"
@@ -1969,9 +1969,9 @@ msgstr ""
 
 #: compiled_templates/post_form.html.php:525
 #: compiled_templates/post_form.html.php:529
-#: compiled_templates/post_thread.html.php:95
-#: compiled_templates/post_thread.html.php:101
-#: compiled_templates/post_thread.html.php:105
+#: compiled_templates/post_thread.html.php:88
+#: compiled_templates/post_thread.html.php:94
+#: compiled_templates/post_thread.html.php:98
 #: compiled_templates/themes_catalog_catalog.html.php:298
 #: compiled_templates/themes_catalog_catalog.html.php:304
 #: compiled_templates/themes_catalog_catalog.html.php:308
@@ -2034,247 +2034,251 @@ msgstr "Há <strong>%postcount%</strong> usuárias nesse tópico."
 msgid "WARNING: Countryballs are enabled to ALL posts"
 msgstr "AVISO: Estadobolas estão habilitadas em TODOS os posts"
 
-#: compiled_templates/post_post_controls.html.php:43
+#: compiled_templates/post_post_controls.html.php:44
+msgid "Moderating Post #"
+msgstr "Moderando Post #"
+
+#: compiled_templates/post_post_controls.html.php:50
 msgid "Search..."
 msgstr "Procurar..."
 
-#: compiled_templates/post_post_controls.html.php:54
+#: compiled_templates/post_post_controls.html.php:61
 msgid "Frequently Used"
 msgstr "Usados com Frequência"
 
-#: compiled_templates/post_post_controls.html.php:61
+#: compiled_templates/post_post_controls.html.php:68
 msgid "Deletion"
 msgstr "Exclusão"
 
-#: compiled_templates/post_post_controls.html.php:79
+#: compiled_templates/post_post_controls.html.php:86
 msgid "Are you sure you want to delete this?"
 msgstr "Tem certeza de que quer deletar isso?"
 
-#: compiled_templates/post_post_controls.html.php:95
-#: compiled_templates/post_post_controls.html.php:646
+#: compiled_templates/post_post_controls.html.php:102
+#: compiled_templates/post_post_controls.html.php:653
 msgid "Shadow Delete"
 msgstr "Shadow Delete"
 
-#: compiled_templates/post_post_controls.html.php:101
+#: compiled_templates/post_post_controls.html.php:108
 msgid "Are you sure you want to shadow delete this?"
 msgstr "Tem certeza de que quer shadow deletar isso?"
 
-#: compiled_templates/post_post_controls.html.php:122
+#: compiled_templates/post_post_controls.html.php:129
 msgid "Delete all posts by IP"
 msgstr "Deletar todos os posts do IP"
 
-#: compiled_templates/post_post_controls.html.php:128
+#: compiled_templates/post_post_controls.html.php:135
 msgid "Are you sure you want to delete all posts by this IP address?"
 msgstr "Você tem certeza que deseja deletar todos os posts deste IP?"
 
-#: compiled_templates/post_post_controls.html.php:146
+#: compiled_templates/post_post_controls.html.php:153
 msgid "Delete all posts by IP across all boards"
 msgstr "Deletar todos os posts deste IP em todas as boards"
 
-#: compiled_templates/post_post_controls.html.php:152
+#: compiled_templates/post_post_controls.html.php:159
 msgid ""
 "Are you sure you want to delete all posts by this IP address, across all "
 "boards?"
 msgstr ""
 "Tem certeza que quer deletar todos os posts deste IP em todas as boards?"
 
-#: compiled_templates/post_post_controls.html.php:168
-#: compiled_templates/post_post_controls.html.php:177
+#: compiled_templates/post_post_controls.html.php:175
+#: compiled_templates/post_post_controls.html.php:184
 msgid "Ban & Delete"
 msgstr "Banir & Deletar"
 
-#: compiled_templates/post_post_controls.html.php:188
-#: compiled_templates/post_post_controls.html.php:197
+#: compiled_templates/post_post_controls.html.php:195
+#: compiled_templates/post_post_controls.html.php:204
 msgid "Ban & Delete all post by IP"
 msgstr "Banir & Deletar todos os posts por IP"
 
-#: compiled_templates/post_post_controls.html.php:208
-#: compiled_templates/post_post_controls.html.php:217
+#: compiled_templates/post_post_controls.html.php:215
+#: compiled_templates/post_post_controls.html.php:224
 msgid "Issue Warning & Delete"
 msgstr "Dar Warning & Deletar"
 
-#: compiled_templates/post_post_controls.html.php:227
+#: compiled_templates/post_post_controls.html.php:234
 msgid "Bans and Warnings"
 msgstr "Painel de Ban"
 
-#: compiled_templates/post_post_controls.html.php:237
-#: compiled_templates/post_post_controls.html.php:246
+#: compiled_templates/post_post_controls.html.php:244
+#: compiled_templates/post_post_controls.html.php:253
 msgid "Ban"
 msgstr "Banir"
 
-#: compiled_templates/post_post_controls.html.php:257
-#: compiled_templates/post_post_controls.html.php:266
+#: compiled_templates/post_post_controls.html.php:264
+#: compiled_templates/post_post_controls.html.php:273
 msgid "Issue Warning"
 msgstr "Criar Warning"
 
-#: compiled_templates/post_post_controls.html.php:277
-#: compiled_templates/post_post_controls.html.php:286
+#: compiled_templates/post_post_controls.html.php:284
+#: compiled_templates/post_post_controls.html.php:293
 msgid "Issue Nicenotice / Notice of Concern"
 msgstr "Criar Nicenotice / Notice of Concern"
 
-#: compiled_templates/post_post_controls.html.php:300
+#: compiled_templates/post_post_controls.html.php:307
 msgid "Thread Management"
 msgstr "Gerenciamento do Tópico"
 
-#: compiled_templates/post_post_controls.html.php:310
-#: compiled_templates/post_post_controls.html.php:319
+#: compiled_templates/post_post_controls.html.php:317
+#: compiled_templates/post_post_controls.html.php:326
 msgid "Move thread to another board"
 msgstr "Mover tópico para outra board"
 
-#: compiled_templates/post_post_controls.html.php:333
 #: compiled_templates/post_post_controls.html.php:340
+#: compiled_templates/post_post_controls.html.php:347
 msgid "Make thread not sticky"
 msgstr "Desfixar tópico"
 
-#: compiled_templates/post_post_controls.html.php:348
 #: compiled_templates/post_post_controls.html.php:355
+#: compiled_templates/post_post_controls.html.php:362
 msgid "Make thread sticky"
 msgstr "Fixar tópico"
 
-#: compiled_templates/post_post_controls.html.php:372
 #: compiled_templates/post_post_controls.html.php:379
+#: compiled_templates/post_post_controls.html.php:386
 msgid "Allow thread to be bumped"
 msgstr "Retirar limite de bump"
 
-#: compiled_templates/post_post_controls.html.php:387
 #: compiled_templates/post_post_controls.html.php:394
+#: compiled_templates/post_post_controls.html.php:401
 msgid "Prevent thread from being bumped"
 msgstr "Adicionar limite de bump"
 
-#: compiled_templates/post_post_controls.html.php:411
 #: compiled_templates/post_post_controls.html.php:418
+#: compiled_templates/post_post_controls.html.php:425
 msgid "Unlock thread"
 msgstr "Destrancar tópico"
 
-#: compiled_templates/post_post_controls.html.php:426
 #: compiled_templates/post_post_controls.html.php:433
+#: compiled_templates/post_post_controls.html.php:440
 msgid "Lock thread"
 msgstr "Trancar tópico"
 
-#: compiled_templates/post_post_controls.html.php:449
+#: compiled_templates/post_post_controls.html.php:456
 msgid "Send thread to archive"
 msgstr "Enviar thread para o arquivo"
 
-#: compiled_templates/post_post_controls.html.php:455
+#: compiled_templates/post_post_controls.html.php:462
 msgid ""
 "Are you sure you want to send thread to archive and delete it from the "
 "catalog?"
 msgstr "Você tem certeza que quer adicionar esse tópico para o arquivo?"
 
-#: compiled_templates/post_post_controls.html.php:474
 #: compiled_templates/post_post_controls.html.php:481
+#: compiled_templates/post_post_controls.html.php:488
 msgid "Make thread not cycle"
 msgstr "Desfazer tópico cíclico"
 
-#: compiled_templates/post_post_controls.html.php:489
 #: compiled_templates/post_post_controls.html.php:496
+#: compiled_templates/post_post_controls.html.php:503
 msgid "Make thread cycle"
 msgstr "Fazer tópico cíclico"
 
-#: compiled_templates/post_post_controls.html.php:510
-#: compiled_templates/post_post_controls.html.php:519
+#: compiled_templates/post_post_controls.html.php:517
+#: compiled_templates/post_post_controls.html.php:526
 msgid "Merge thread with another thread"
 msgstr "Unir tópico com outro tópico"
 
-#: compiled_templates/post_post_controls.html.php:533
 #: compiled_templates/post_post_controls.html.php:540
+#: compiled_templates/post_post_controls.html.php:547
 msgid "Show Poster IDs in thread"
 msgstr "Mostrar IDs nesse tópico"
 
-#: compiled_templates/post_post_controls.html.php:548
 #: compiled_templates/post_post_controls.html.php:555
+#: compiled_templates/post_post_controls.html.php:562
 msgid "Hide Poster IDs in thread"
 msgstr "Ocultar IDs nesse tópico"
 
-#: compiled_templates/post_post_controls.html.php:571
+#: compiled_templates/post_post_controls.html.php:578
 msgid "Post Management"
 msgstr "Gerenciamento do Post"
 
-#: compiled_templates/post_post_controls.html.php:577
-#: compiled_templates/post_post_controls.html.php:586
+#: compiled_templates/post_post_controls.html.php:584
+#: compiled_templates/post_post_controls.html.php:593
 msgid "Move reply to another board"
 msgstr "Mover resposta para outra board"
 
-#: compiled_templates/post_post_controls.html.php:596
+#: compiled_templates/post_post_controls.html.php:603
 msgid "Misc"
 msgstr "Misc."
 
-#: compiled_templates/post_post_controls.html.php:602
-#: compiled_templates/post_post_controls.html.php:615 inc/mod/pages.php:2190
+#: compiled_templates/post_post_controls.html.php:609
+#: compiled_templates/post_post_controls.html.php:622 inc/mod/pages.php:2190
 msgid "Edit post"
 msgstr "Editar mensagem"
 
-#: compiled_templates/post_post_controls.html.php:624
-#: compiled_templates/post_post_controls.html.php:633
+#: compiled_templates/post_post_controls.html.php:631
+#: compiled_templates/post_post_controls.html.php:640
 msgid "Add Bantz"
 msgstr "Adcionar Bantz"
 
-#: compiled_templates/post_post_controls.html.php:656
-#: compiled_templates/post_post_controls.html.php:667
+#: compiled_templates/post_post_controls.html.php:663
+#: compiled_templates/post_post_controls.html.php:674
 msgid "Restore Shadow Deleted Post"
 msgstr "Restaurar tópico fantasma"
 
-#: compiled_templates/post_post_controls.html.php:678
-#: compiled_templates/post_post_controls.html.php:687
+#: compiled_templates/post_post_controls.html.php:685
+#: compiled_templates/post_post_controls.html.php:694
 msgid "Permanent Delete Shadow Deleted Post"
 msgstr "Deletar permanentemente o tópico fantastama"
 
-#: compiled_templates/post_thread.html.php:122
-#: compiled_templates/post_thread.html.php:128
-#: compiled_templates/post_thread.html.php:132
+#: compiled_templates/post_thread.html.php:115
+#: compiled_templates/post_thread.html.php:121
+#: compiled_templates/post_thread.html.php:125
 #: compiled_templates/themes_catalog_catalog.html.php:323
 #: compiled_templates/themes_catalog_catalog.html.php:329
 #: compiled_templates/themes_catalog_catalog.html.php:333
 msgid "Locked"
 msgstr "Trancado"
 
-#: compiled_templates/post_thread.html.php:149
+#: compiled_templates/post_thread.html.php:142
 msgid "Bumplocked'"
 msgstr "Bumplocked"
 
-#: compiled_templates/post_thread.html.php:155
-#: compiled_templates/post_thread.html.php:159
+#: compiled_templates/post_thread.html.php:148
+#: compiled_templates/post_thread.html.php:152
 #: compiled_templates/themes_catalog_catalog.html.php:348
 #: compiled_templates/themes_catalog_catalog.html.php:354
 #: compiled_templates/themes_catalog_catalog.html.php:358
 msgid "Bumplocked"
 msgstr "Bumplocked"
 
-#: compiled_templates/post_thread.html.php:176
-#: compiled_templates/post_thread.html.php:182
-#: compiled_templates/post_thread.html.php:186
+#: compiled_templates/post_thread.html.php:169
+#: compiled_templates/post_thread.html.php:175
+#: compiled_templates/post_thread.html.php:179
 #: compiled_templates/themes_catalog_catalog.html.php:373
 #: compiled_templates/themes_catalog_catalog.html.php:379
 #: compiled_templates/themes_catalog_catalog.html.php:383
 msgid "Cyclical"
 msgstr "Cyclical"
 
-#: compiled_templates/post_thread.html.php:235
+#: compiled_templates/post_thread.html.php:228
 msgid "1 post"
 msgid_plural "%count% posts"
 msgstr[0] "1 mensagem"
 msgstr[1] "%count% mensagens"
 
-#: compiled_templates/post_thread.html.php:254
+#: compiled_templates/post_thread.html.php:247
 msgid "1 image reply."
 msgid_plural "%count% image replies omitted."
 msgstr[0] "1 resposta com imagem."
 msgstr[1] "%count% respostas com imagens omitidas."
 
-#: compiled_templates/post_thread.html.php:271
+#: compiled_templates/post_thread.html.php:264
 #: compiled_templates/post_thread_fileboard.html.php:164
 msgid "Reply"
 msgstr "Responder"
 
-#: compiled_templates/post_thread.html.php:278
+#: compiled_templates/post_thread.html.php:271
 msgid "Click reply to view."
 msgstr "Clique em responder para visualizar."
 
-#: compiled_templates/post_thread.html.php:351
+#: compiled_templates/post_thread.html.php:344
 msgid "View All"
 msgstr "Ver todos"
 
-#: compiled_templates/post_thread.html.php:365
+#: compiled_templates/post_thread.html.php:358
 msgid "Last 1 Post"
 msgid_plural "Last %count% Posts"
 msgstr[0] "Ultima mensagem"
@@ -3233,85 +3237,3 @@ msgstr[1] "%d resultados em"
 #: search.php:179
 msgid "No results."
 msgstr "Sem resultados."
-
-#, fuzzy
-#~| msgid "Report"
-#~ msgid "Reset reports"
-#~ msgstr "Denunciar"
-
-#, fuzzy
-#~| msgid "Ban appeals"
-#~ msgid "Reset ban appeals"
-#~ msgstr "Apelos de banimentos"
-
-#, fuzzy
-#~| msgid "Restore Shadow Deleted Post"
-#~ msgid "Delete all Shadow Deleted posts"
-#~ msgstr "Restaurar tópico fantasma"
-
-#, fuzzy
-#~| msgid "All files"
-#~ msgid "All Tokens"
-#~ msgstr "Todos os arquivos"
-
-#~ msgid ""
-#~ "To view your message history on Magalichan, complete the captcha below."
-#~ msgstr ""
-#~ "Para visualizar seu histórico no Magalichan, complete o captcha abaixo."
-
-#, fuzzy
-#~| msgid "Predefined Ban Reasons"
-#~ msgid "Predefined Hashban Reasons:"
-#~ msgstr "Motivos prédefinidos de Ban"
-
-#, fuzzy
-#~| msgid "All boards"
-#~ msgid "All Hashbans"
-#~ msgstr "Todas as boards"
-
-#, fuzzy
-#~| msgid "Shadow Delete"
-#~ msgid "Show only deleted"
-#~ msgstr "Shadow Delete"
-
-#, fuzzy
-#~| msgid "Delete"
-#~ msgid "Deleted"
-#~ msgstr "Deletar"
-
-#~ msgid "Tegaki"
-#~ msgstr "Tegaki"
-
-#~ msgid "Ban & Delete all posts by cookies"
-#~ msgstr "Banir & Deletar todos os posts do Cookie"
-
-#~ msgid "Post History"
-#~ msgstr "Histórico de Postagens"
-
-#~ msgid "Public history is disabled."
-#~ msgstr "O histórico público está desativado."
-
-#, php-format
-#~ msgid ""
-#~ "It's not allowed to post from a foreign country.</br></br>Do you think "
-#~ "this was a mistake?</br>Send us an email with your IP (%s) to:</"
-#~ "br><strong>magalichan@insiberia.net</strong>"
-#~ msgstr ""
-#~ "Posts de outro país não são permitidos.</br></br>Acha que isso foi um "
-#~ "engano?</br>Mande um email com o seu IP (%s) para:</"
-#~ "br><strong>magalichan@insiberia.net</strong>"
-
-#~ msgid "This image is banned"
-#~ msgstr "Essa imagem foi banida"
-
-#~ msgid "This function doesn't work with this type of file"
-#~ msgstr "Essa função não funciona com esse tipo de arquivo"
-
-#~ msgid "Fields are not set"
-#~ msgstr "Campos estão em branco"
-
-#~ msgid "Invalid"
-#~ msgstr "Inválido"
-
-#~ msgid "No lookup for hashed IP"
-#~ msgstr "Sem pesquisa para IP hasheado"

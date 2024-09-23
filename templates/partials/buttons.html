@@ -1,17 +1,23 @@
-{% if config.catalog_link %}
-    &nbsp;&nbsp;<a id="unimportant" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">
+<span class="dir-links">
+    {% if config.catalog_link %}
+    &nbsp;&nbsp;<a id="unimportant"
+        href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">
         [{% trans %}Catalog{% endtrans %}]</a>
-{% endif %}
+    {% endif %}
 
-&nbsp;&nbsp;<a id="unimportant{% if isukko %} last-link{% endif %}" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}">
-    [{% if index %}{% trans %}Reload{% endtrans %}{% else %}{% trans %}Back{% endtrans %}{% endif %}]</a>
+    &nbsp;&nbsp;<a id="unimportant{% if isukko %} last-link{% endif %}"
+        href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}">
+        [{% if index %}{% trans %}Reload{% endtrans %}{% else %}{% trans %}Back{% endtrans %}{% endif %}]</a>
 
-{% if config.archive.threads %}
-    &nbsp;&nbsp;<a id="unimportant" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">
+    {% if config.archive.threads %}
+    &nbsp;&nbsp;<a id="unimportant"
+        href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">
         [{% trans %}Archive{% endtrans %}]</a>
-{% endif %}
+    {% endif %}
 
-{% if config.feature.threads and config.feature.link_post_page %}
-    &nbsp;&nbsp;<a id="unimportant last-link" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">
+    {% if config.feature.threads and config.feature.link_post_page %}
+    &nbsp;&nbsp;<a id="unimportant last-link"
+        href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">
         [{% trans %}Featured{% endtrans %}]</a>
-{% endif %}
+    {% endif %}
+</span>
