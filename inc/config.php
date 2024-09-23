@@ -1571,6 +1571,7 @@
 	$config['mod']['link_ban'] = '[B]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
 	$config['mod']['link_bandeletebyip'] = '[B&amp;D+]';
+	$config['mod']['link_bandeletebyipglobal'] = '[B&amp;D++]';
 	$config['mod']['link_deletefile'] = '[F]';
 	$config['mod']['link_spoilerimage'] = '[S]';
 	$config['mod']['link_unspoilerimage'] = '<s>[S]</s>';
