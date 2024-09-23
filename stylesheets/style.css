@@ -1568,7 +1568,6 @@ table.archive-list tr:hover td {
   cursor: pointer;
   text-decoration: none;
   background: none;
-  color: #ff477e !important;
   z-index: 10;
 }
 
