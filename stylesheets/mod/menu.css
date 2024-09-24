@@ -10,7 +10,6 @@
     display: none;
     position: absolute;
     background-color: #fff;
-    border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     width: 250px;
@@ -19,11 +18,21 @@
     margin-top: 5px;
     transition: opacity 0.3s ease, visibility 0.3s ease;
     box-sizing: border-box;
+    right: 0;
+    left: auto;
 }
 .menu-content.visible {
     display: block;
     opacity: 1;
     visibility: visible;
+}
+.left-aligned {
+    right: 0;
+    left: auto;
+}
+.right-aligned {
+    left: 0;
+    right: auto;
 }
 .menu-header {
     padding: 0;
