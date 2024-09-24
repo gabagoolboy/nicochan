@@ -5,8 +5,13 @@ require dirname(__FILE__) . '/inc/cli.php';
 load_twig();
 $tplDir = $config['dir']['template'];
 $tmpDir =  getcwd() . '/compiled_templates/';
-if (!is_dir($tmpDir))
+
+if (!is_dir($tmpDir)) {
 	mkdir($tmpDir, 0777);
+} else {
+	array_map('unlink', glob("{$tmpDir}*"));
+}
+
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tplDir), RecursiveIteratorIterator::LEAVES_ONLY) as $file)
 {
 	if ($file->isFile() && $file->getExtension() === 'html') {
