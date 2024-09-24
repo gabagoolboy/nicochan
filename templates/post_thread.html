@@ -1,7 +1,4 @@
 {% apply spaceless %}
-    {% if config.halloween %}
-        <img id="skel" src="/static/spooky.gif">
-    {% endif %}
     <div class="thread {% if post.shadow %}shadow-thread{% endif %}" id="thread_{{ post.id }}" data-board="{{ board.uri }}">
         {% if not index %}
             <a id="{{ post.id }}" class="post_anchor"></a>
