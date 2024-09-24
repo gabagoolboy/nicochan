@@ -97,6 +97,14 @@
 
 	$config['nicenotice_reasons'][] = "We care, and we hope you feel better soon. We don't want to loose you.";
 
+/*
+ * =======================
+ *  List of Hashban Reasons
+ * =======================
+ */
+
+	$config['hashban_reasons'][] = "CP";
+
 
 /*
  * =======================
@@ -1565,6 +1573,7 @@
 	$config['mod']['link_warning'] = '[W]';
 	$config['mod']['link_warningdelete'] = '[W&amp;D]';
 	$config['mod']['link_ban'] = '[B]';
+	$config['mod']['link_hash'] = '[H]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
 	$config['mod']['link_bandeletebyip'] = '[B&amp;D+]';
 	$config['mod']['link_deletefile'] = '[F]';
@@ -2192,7 +2201,29 @@
 	$config['country_flags_condensed_css'] = 'static/flags/flags.css';
 
 	// Filter public banlist. This is done via regex
-	$config['banlist_filters'] = '';
+	$config['banlist_filters'] = '/Teste/';
+
+	// Activate blockhash function
+	$config['blockhash']['hashban'] = false;
+
+	// How much an image can be similar
+	$config['blockhash']['nearness_threshold'] = 15;
+
+	// Ban user who posts banned hash?
+	$config['blockhash']['ban_user'] = true;
+
+	// Blockhash error message
+	$config['error']['blockhash'] = _('This image is banned');
+
+	// Blochash webm/webp error
+
+	$config['error']['blockhash_unkownext'] = _('This function doesn\'t work with this type of file');
+
+	// Permission delete hash from banned images
+	$config['mod']['delete_hashlist'] = ADMIN;
+
+	// Permission view hash from banned images
+	$config['mod']['view_hashlist'] = MOD;
 
 	// Securimage options
 	$config['securimage_options'] = ['send_headers' => false, 'no_exit' => true];

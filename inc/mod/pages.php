@@ -4267,3 +4267,159 @@ function processPost($post, $boardUri, &$args)
     }
     $args['posts'][$boardUri]['posts'][] = $po->build(true);
 }
+
+function mod_ban_hash(string $board, int $post_no, int|null $index = null, bool $redirect = true)
+{
+    global $config;
+
+    if (!openBoard($board)) {
+        error($config['error']['noboard']);
+    }
+
+    if ($index > $config['max_images']) {
+        error($config['error']['invalidpost']);
+    }
+
+    $query = prepare(sprintf("SELECT `files`, `thread`, `shadow` FROM ``posts_%s`` WHERE id = :id", $board));
+    $query->bindValue(':id', $post_no, PDO::PARAM_INT);
+    $query->execute() or error(db_error($query));
+
+    if (!$post = $query->fetch(PDO::FETCH_ASSOC)) {
+        error($config['error']['invalidpost']);
+    }
+
+    if (isset($post['shadow']) && $post['shadow']) {
+        $post['files'] = ShadowDelete::hashShadowDelFilenamesDBJSON($post['files'], $config['shadow_del']['filename_seed']);
+    }
+
+    $files = json_decode($post['files']);
+
+    if ($files[$index]->file === 'deleted') {
+        error($config['error']['already_deleted']);
+    }
+
+    if (!array_key_exists(0, $files) || !array_key_exists($index, $files)) {
+        error($config['error']['invalidpost']);
+    }
+
+    if (count($files) === 1 && !$post['thread']) {
+        $toDelete = false;
+    }
+
+    if (!$files[$index]->is_an_image) {
+        error(sprintf($config['error']['fileext'], $files[$index]->extension));
+    }
+
+    if (isset($_POST['reason'])) {
+
+        if (empty($_POST['reason'])) {
+            error(sprintf($config['error']['required'], 'reason'));
+        }
+
+        if (isset($post['shadow']) && $post['shadow']) {
+            $config['dir']['img'] = $config['dir']['shadow_del'] . $config['dir']['img'];
+        }
+
+		if (!isset($files[$index]->blockhash)) {
+        	$hash = blockhash_hash_of_file(sprintf($config['board_path'], $board) . $config['dir']['img'] . $files[$index]->file, true);
+		} else {
+			$hash = $files[$index]->blockhash;
+		}
+
+        try {
+            $query = prepare("INSERT INTO ``hashlist`` (`hash`, `reason`) VALUES (:filehash, :reason)");
+            $query->bindValue(':filehash', hex2bin($hash));
+            $query->bindValue(':reason', $_POST['reason'], PDO::PARAM_STR);
+            $query->execute();
+        } catch(PDOException $e) {
+            error(_('This hash is already banned'));
+        }
+
+        if (!isset($toDelete)) {
+            deleteFile($post_no, true, $index, $board);
+        }
+
+        // Rebuild board
+        buildIndex();
+        // Rebuild themes
+        rebuildThemes('post-delete', $board);
+
+		if ($config['cache']['enabled']) {
+			Cache::delete('hashlist');
+		}
+
+        if ($redirect) {
+            header('Location: ?/' . sprintf($config['board_path'], $board) . $config['file_index'], true, $config['redirect_http']);
+        }
+
+    }
+    mod_page(_('Hash Ban'), 'mod/hash_form.html', [
+        'post' => $post_no,
+        'board' => $board,
+        'file' => $index,
+        'reasons' => $config['hashban_reasons'],
+        'token' => make_secure_link_token($board . '/hash/' . $post_no . '/' . $index)
+		]
+    );
+}
+
+function mod_hashlist()
+{
+	global $config;
+
+	if (!hasPermission($config['mod']['view_hashlist'])) {
+		error($config['error']['noaccess']);
+	}
+
+	if (!$config['cache']['enabled'] || !$hash = Cache::get('hashlist')) {
+		$query = query('SELECT * FROM ``hashlist``');
+		$hash = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        $hash = array_map(function($row) {
+            $row['bin_hash'] = base64_encode($row['hash']);
+            $row['hash'] = bin2hex($row['hash']);
+            return $row;
+        }, $hash);
+
+		if ($config['cache']['enabled']) {
+			Cache::set('hashlist', $hash);
+			Cache::set('hashlistpost', array_column($hash, 'bin_hash'));
+		}
+	} else {
+        $hash = array_map(function($row) {
+            $row['hash'] = bin2hex(base64_decode($row['bin_hash']));
+            return $row;
+        }, $hash);
+	}
+
+	mod_page(_('Hashban list'), 'mod/hash_list.html', [
+		'token' => make_secure_link_token('hashlist/'),
+		'hashlist' => $hash
+		]
+	);
+}
+
+function mod_change_hashlist(int $id)
+{
+	global $config;
+
+	if (!hasPermission($config['mod']['delete_hashlist'])) {
+		error($config['error']['noaccess']);
+	}
+
+	if (isset($id) && $id) {
+		$query = prepare('DELETE FROM ``hashlist`` WHERE `id` = :id');
+		$query->bindValue(':id', $id, PDO::PARAM_INT);
+		$query->execute() or error(db_error($query));
+
+		if ($config['cache']['enabled']) {
+			Cache::delete('hashlist');
+		}
+
+		modLog('Removed a hash');
+	} else {
+		error(_('Fields are not set'));
+	}
+
+	header('Location: ?/hashlist', true, $config['redirect_http']);
+}

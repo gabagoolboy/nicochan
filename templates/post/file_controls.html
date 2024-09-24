@@ -19,5 +19,9 @@
             {% endif %}
         {% endif %}
 
+        {% if file.file|extension not in ['mp4', 'webm'] and mod|hasPermission(config.mod.bandeletehash, board.uri) %}
+            {% if post.shadow %}&nbsp;&nbsp;{% endif %}
+            <a href="?/{{ board.dir ~ 'hash/' ~ post.id ~ '/' ~ index }}" data-action="hashbanfile" title="{% trans %}Are you sure you want to hashban this file?{% endtrans %}">{{ config.mod.link_hash }}</a>&nbsp;
+        {% endif %}
     </span>
 {% endif %}

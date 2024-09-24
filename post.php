@@ -888,6 +888,14 @@ function handle_post()
             // Add list of filenames
             $post['allhashes_filenames'][] = $file['filename'];
 
+            if ($file['is_an_image'] && $config['blockhash']['hashban'] && $blockhash = blockhash_hash_of_file($upload)) {
+                if (!verifyUnbannedHash($config, $blockhash)) {
+                    undoImage($post);
+                    error($config['error']['blockhash']);
+                }
+                $file['blockhash'] = $blockhash;
+            }
+
         }
 
 
