@@ -224,10 +224,10 @@ function doModMenu(postElement = document) {
 
 		if (spaceOnRight >= 0 && (spaceOnRight > spaceOnLeft || spaceOnLeft < 0)) {
 			menuContent.style.right = '0';
-			menuContent.classList.add('right-aligned');
+			menuContent.classList.add('left-aligned');
 		} else if (spaceOnLeft >= 0 && spaceOnRight < 0) {
 			menuContent.style.left = '0';
-			menuContent.classList.add('left-aligned');
+			menuContent.classList.add('right-aligned');
 		}
 
 		if (menuRect.width > windowWidth) {
@@ -240,7 +240,6 @@ function doModMenu(postElement = document) {
 			menuContent.style.right = `${windowWidth - updatedRect.right}px`;
 		}
 		if (updatedRect.left < 0) {
-			menuContent.style.left = '0';
 			menuContent.style.width = '160px';
 		}
 	}
