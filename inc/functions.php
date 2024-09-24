@@ -1222,9 +1222,14 @@ function bumpThread($id) {
 }
 
 // Remove file from post
-function deleteFile($id, $remove_entirely_if_already = true, $file = null)
+function deleteFile($id, $remove_entirely_if_already = true, $file = null, $optBoard = null)
 {
 	global $board, $config;
+
+	if (!is_null($optBoard)) {
+		$board = getBoardInfo($optBoard);
+		$board['dir'] = sprintf($config['board_path'], $board['uri']);
+	}
 
     $query = prepare(sprintf(
         "SELECT `thread`, `files`, `num_files` FROM ``posts_%s`` WHERE `id` = :id LIMIT 1", 
