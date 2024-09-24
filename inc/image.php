@@ -695,3 +695,47 @@ class ImageProcessing {
 	}
 
 }
+
+class Blockhash
+{
+	/**
+ 	* This function compares two binary hashes by calculating the Hamming distance
+ 	* between them and determining if the number of differing bits is less than the specified threshold.
+ 	* The comparison is performed directly on the binary data for maximum efficiency.
+ 	*
+ 	* @param int    $threshold       The maximum number of differing bits allowed for the hashes to be considered near.
+ 	* @param string $given_hash      The first binary hash to compare.
+ 	* @param string $comparison_hash The second binary hash to compare.
+ 	* @return bool Returns true if the total number of differing bits is less than the threshold, false otherwise.
+ 	*/
+	public static function evaluateBlockhashNearness(int $threshold, string $given_hash, string $comparison_hash): bool
+	{
+
+		$diff = $given_hash ^ $comparison_hash;
+
+		$total_difference_value = 0;
+
+    	for ($i = 0, $len = strlen($diff); $i < $len; $i++) {
+			$total_difference_value += self::count_bits(ord($diff[$i]));
+
+        	if ($total_difference_value >= $threshold) {
+            	return false;
+        	}
+    	}
+    	return $total_difference_value < $threshold;
+	}
+
+	/**
+ 	* Counts the number of 1 bits in the binary representation of a byte.
+ 	*
+ 	* This helper function is used to determine the number of differing bits between two bytes.
+ 	*
+ 	* @param int $byte The byte whose 1 bits are to be counted.
+ 	* @return int The number of 1 bits in the byte.
+ 	*/
+	private static function count_bits(int $byte): int
+	{
+    	return substr_count(decbin($byte), '1');
+	}
+
+}

@@ -18,7 +18,8 @@ Requirements
 7.	[PHP Intl](https://www.php.net/manual/en/book.intl.php)
 8. 	[PHP curl](https://www.php.net/manual/en/book.curl.php)
 9. 	[Composer](https://getcomposer.org/download/)
-10.	A Unix-like OS, preferrably FreeBSD or Linux
+10. [Blockhash](https://github.com/commonsmachinery/blockhash) - for hashing images
+11.	A Unix-like OS, preferrably FreeBSD or Linux
 
 We try to make sure vichan is compatible with all major web servers. vichan does not include an Apache ```.htaccess``` file nor does it need one.
 

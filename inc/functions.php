@@ -1244,9 +1244,14 @@ function bumpThread($id) {
 }
 
 // Remove file from post
-function deleteFile($id, $remove_entirely_if_already = true, $file = null)
+function deleteFile($id, $remove_entirely_if_already = true, $file = null, $optBoard = null)
 {
 	global $board, $config;
+
+	if (!is_null($optBoard)) {
+		$board = getBoardInfo($optBoard);
+		$board['dir'] = sprintf($config['board_path'], $board['uri']);
+	}
 
     $query = prepare(sprintf(
         "SELECT `thread`, `files`, `num_files` FROM ``posts_%s`` WHERE `id` = :id LIMIT 1", 
@@ -3563,4 +3568,57 @@ function getLatestReplies($config): array
     }
 
     return $recent;
+}
+
+/**
+ * Get the blockhash hash of the image.
+ *
+ * @param string $file image to get blockhash hash.
+ * @param bool $show_error condition to display error.
+ * @return string|false
+ */
+function blockhash_hash_of_file(string $file, bool $show_error = false)
+{
+	$output = shell_exec_error("blockhash " . escapeshellarg($file));
+    $output_arr = explode(' ', $output);
+    $hash = $output_arr[0];
+	if ($hash === 'Error') {
+		if ($show_error) {
+            error(_('Couldn\'t calculate hash of given file'));
+		}
+		return false;
+	} else {
+		return $hash;
+	}
+}
+
+function verifyUnbannedHash(array $config, string $filehash)
+{
+
+	if (!$config['cache']['enabled'] || !$hashlist = Cache::get('hashlistpost')) {
+		$query = query("SELECT `hash` FROM ``hashlist``");
+		$hashlist = $query->fetchAll(PDO::FETCH_COLUMN);
+
+		if ($config['cache']['enabled']) {
+			Cache::set('hashlistpost', array_map('base64_encode', $hashlist));
+		}
+
+	} else {
+		$hashlist = array_map('base64_decode', $hashlist);
+	}
+
+	$filehash = hex2bin($filehash);
+
+	foreach ($hashlist as $bannedhash) {
+		$difference = Blockhash::evaluateBlockhashNearness($config['blockhash']['nearness_threshold'], $bannedhash, $filehash);
+		if ($difference) {
+			if ($config['blockhash']['ban_user']) {
+				Bans::new_ban(get_ip_hash($_SERVER['REMOTE_ADDR']), get_uuser_cookie(), 'SPAM', '7d');
+			}
+
+			return false;
+		}
+	}
+
+	return true;
 }

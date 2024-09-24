@@ -522,6 +522,19 @@ CREATE TABLE IF NOT EXISTS `warnings` (
 
 -- --------------------------------------------------------
 
+--
+-- Table structure for table `hashlist`
+--
+
+CREATE TABLE IF NOT EXISTS `hashlist` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `hash` binary(64) DEFAULT NULL,
+  `reason` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hashfile_UN` (`hash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `modlogins`
