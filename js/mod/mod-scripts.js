@@ -111,7 +111,7 @@ function handleMoveForm() {
 }
 
 function hideModTools() {
-	const modStuff = document.querySelectorAll('span.mod-ip, #f, .mod-controls, .countrpt, .shadow-thread, .shadow-post');
+	const modStuff = document.querySelectorAll('span.mod-ip, #f, .mod-controls, .countrpt, .shadow-thread, .shadow-post, span.controls');
 	const isChecked = document.getElementById('hide-mod-tools-checkbox').checked;
 
 	modStuff.forEach(i => {
