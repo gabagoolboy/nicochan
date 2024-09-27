@@ -198,6 +198,9 @@ function doModMenu(postElement = document) {
 			if (link) {
 				const listItem = document.createElement('li');
 				const clonedLink = link.cloneNode(true);
+				clonedLink.addEventListener('click', (event) => {
+					handleActionClick(event, clonedLink, clickCounts, [post]);
+				});
 				listItem.appendChild(clonedLink);
 				frequentlyUsedList.appendChild(listItem);
 			}
@@ -263,8 +266,11 @@ function doModMenu(postElement = document) {
 			incrementClickCount(clickCounts, action);
 			renderAllFrequentlyUsed(clickCounts, posts);
 		}
-
-		window.location.href = href || link.href;
+		if (confirmMessage) {
+			window.location.href = href;
+		} else {
+			window.open(link.href, '_blank');
+		}
 	}
 
 	function attachActionListeners(menuLinks, clickCounts, posts) {
