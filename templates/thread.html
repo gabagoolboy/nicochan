@@ -71,10 +71,7 @@
         {{ body }}
         <div id="thread-interactions">
             <span id="thread-links">
-                {% if config.catalog_link %}
-			        <a id="thread-catalog" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">[{% trans %}Catalog{% endtrans %}]</a>
-                {% endif %}
-                <a id="thread-return" href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}">[{% trans %}Back{% endtrans %}]</a>
+                {% include 'partials/buttons.html' with { bottom: true } %}
             </span>
 
             <span id="thread-quick-reply">
