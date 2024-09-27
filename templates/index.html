@@ -81,12 +81,12 @@
 		{% include 'partials/buttons.html' with { index: true, bottom: true } %}
 	</form>
 
-	<a href="#top" class="elevadorCima">△</a>
+	<a href="#top" class="elevadorCima elevador">△</a>
     
 	{% if not isukko %}
 		{% include 'partials/page.html' %}
 		<a name="bottom"></a>
-		<a href="#bottom" class="elevadorBaixo">▽</a>
+		<a href="#bottom" class="elevadorBaixo elevador">▽</a>
 	{% endif %}
     
 	{{ boardlist.bottom }}
