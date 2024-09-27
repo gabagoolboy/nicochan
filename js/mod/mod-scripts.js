@@ -1,4 +1,5 @@
 let isMod;
+const checkboxes = [];
 
 document.addEventListener("DOMContentLoaded", function () {
 	toggleMessageField();
@@ -10,11 +11,16 @@ document.addEventListener("DOMContentLoaded", function () {
 		handlePremade(formId, `${formId.toLowerCase()}-reasons-data`);
 	});
 
-	const lastLink = document.querySelector('.dir-links a:last-of-type');
-	if (lastLink) {
-		const hideCheckbox = createCheckboxHide(lastLink);
+	const lastLinks = document.querySelectorAll('.dir-links a:last-of-type');
+	lastLinks?.forEach(el => {
+		const hideCheckbox = createCheckboxHide(el);
+		checkboxes.push(hideCheckbox);
 		hideCheckbox.addEventListener('change', hideModTools);
-	}
+	});
+
+	checkboxes.forEach(checkbox => {
+		checkbox.checked = false;
+	});
 
 	isMod = true;
 
@@ -26,25 +32,48 @@ document.addEventListener('new_post_js', (event) => {
 
 function createCheckboxHide(lastLink) {
 	const hideModDiv = document.createElement('div');
-	hideModDiv.id = 'hide-mod-check';
+	hideModDiv.className = 'hide-mod-check';
 	hideModDiv.style.textAlign = 'right';
 	hideModDiv.style.display = 'inline-block';
 	hideModDiv.style.float = 'right';
 
 	const hideCheckbox = document.createElement('input');
 	hideCheckbox.type = 'checkbox';
-	hideCheckbox.id = 'hide-mod-tools-checkbox';
+	hideCheckbox.className = 'hide-mod-tools-checkbox';
 	hideCheckbox.value = 'hide_mode_tools';
 
 	const hideLabel = document.createElement('label');
-	hideLabel.htmlFor = 'hide-mod-tools-checkbox';
 	hideLabel.textContent = ' Esconder Ferramentas';
 
-	hideModDiv.appendChild(hideCheckbox);
+	hideLabel.insertBefore(hideCheckbox, hideLabel.firstChild);
 	hideModDiv.appendChild(hideLabel);
 
 	lastLink.insertAdjacentElement('afterend', hideModDiv);
 	return hideCheckbox;
+}
+
+function hideModTools(event) {
+	const isChecked = event.target.checked;
+
+	checkboxes.forEach(checkbox => {
+		if (checkbox !== event.target) {
+			checkbox.checked = isChecked;
+		}
+	});
+
+	if (isChecked) {
+		const styleHide = document.createElement('style');
+		styleHide.id = 'mod-hide-controls';
+		styleHide.textContent = `
+			span.mod-ip, #f, .mod-controls, .countrpt, .shadow-thread, .shadow-post, .controls {
+				display: none;
+			}
+		`;
+		document.head.appendChild(styleHide);
+	} else {
+		const styleHide = document.getElementById('mod-hide-controls');
+		styleHide?.remove();
+	}
 }
 
 function rebuildPageEvents() {
@@ -108,15 +137,6 @@ function handleMoveForm() {
 			submitButton.disabled = true;
 		});
 	}
-}
-
-function hideModTools() {
-	const modStuff = document.querySelectorAll('span.mod-ip, #f, .mod-controls, .countrpt, .shadow-thread, .shadow-post, span.controls');
-	const isChecked = document.getElementById('hide-mod-tools-checkbox').checked;
-
-	modStuff.forEach(i => {
-		i.style.display = isChecked ? 'none' : '';
-	});
 }
 
 function doModMenu(postElement = document) {
