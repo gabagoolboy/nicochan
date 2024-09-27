@@ -5,17 +5,17 @@
         [{% trans %}Catalog{% endtrans %}]</a>
     {% endif %}
 
-    &nbsp;&nbsp;<a id="unimportant{% if isukko %} last-link{% endif %}"
+    &nbsp;&nbsp;<a id="unimportant"
         href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}">
         [{% if index %}{% trans %}Reload{% endtrans %}{% else %}{% trans %}Back{% endtrans %}{% endif %}]</a>
 
-    {% if config.archive.threads %}
+    {% if config.archive.threads and not bottom %}
     &nbsp;&nbsp;<a id="unimportant"
         href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.archive }}">
         [{% trans %}Archive{% endtrans %}]</a>
     {% endif %}
 
-    {% if config.feature.threads and config.feature.link_post_page %}
+    {% if config.feature.threads and config.feature.link_post_page and not bottom %}
     &nbsp;&nbsp;<a id="unimportant last-link"
         href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.dir.featured }}">
         [{% trans %}Featured{% endtrans %}]</a>
