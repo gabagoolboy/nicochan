@@ -125,6 +125,19 @@ document.addEventListener('menu_ready_js', function () {
 		}
 	}
 
+	function updateIconAfter(ele) {
+		const hideLink = ele.querySelector('.hide-thread-link');
+		if (hideLink) {
+			if (ele.dataset.hidden) {
+				hideLink.innerHTML = '<i class="fa fa-plus-square" style="color: #9e0059 !important"></i>';
+				hideLink.title = _('Unhide post');
+			} else {
+				hideLink.innerHTML = '<i class="fa fa-minus-square" style="color: #9e0059 !important"></i>';
+				hideLink.title = _('Hide post');
+			}
+		}
+	}
+
 	function hide(ele) {
 		if (ele.dataset.hidden) return;
 
@@ -148,6 +161,7 @@ document.addEventListener('menu_ready_js', function () {
 				el.style.display = 'none';
 			});
 		}
+		updateIconAfter(ele);
 	}
 
 	function show(ele) {
@@ -167,6 +181,7 @@ document.addEventListener('menu_ready_js', function () {
 				el.style.display = '';
 			});
 		}
+		updateIconAfter(ele);
 	}
 
 	function initPostMenu(pageData) {
@@ -366,14 +381,15 @@ document.addEventListener('menu_ready_js', function () {
 	}
 
 	function quickToggle(ele, threadId) {
-		if (ele.classList.contains('op') && !ele.querySelector('.hide-thread-link')) {
+		if (!ele.querySelector('.hide-thread-link')) {
 			const hideLink = Vichan.createElement('a', {
 				className: 'hide-thread-link',
 				innerHTML: ele.dataset.hidden
 					? '<i class="fa fa-plus-square" style="color: #9e0059 !important"></i>'
 					: '<i class="fa fa-minus-square" style="color: #9e0059 !important"></i>',
 				attributes: {
-					style: 'float: left; margin-right: 5px'
+					style: 'margin-right: 5px',
+					title: ele.dataset.hidden ? _('Unhide post') : _('Hide post')
 				},
 				onClick: function () {
 					const postId = ele.querySelector('a.post_no').dataset.cite;
@@ -383,17 +399,17 @@ document.addEventListener('menu_ready_js', function () {
 					if (hidden) {
 						blacklist.remove.post(boardId, threadId, postId, false);
 						this.innerHTML = '<i class="fa fa-minus-square" style="color: #9e0059 !important"></i>';
+						show(ele);
 					} else {
 						blacklist.add.post(boardId, threadId, postId, false);
 						this.innerHTML = '<i class="fa fa-plus-square" style="color: #9e0059 !important"></i>';
+						hide(ele);
 					}
 				}
 			});
 
-			const firstChild = ele.querySelector(':not(h2,h2 *)');
-			if (firstChild) {
-				firstChild.insertAdjacentElement('beforebegin', hideLink);
-			}
+			const postBtn = ele.querySelector('.intro .post-btn');
+			postBtn?.insertAdjacentElement('beforebegin', hideLink);
 		}
 	}
 
@@ -530,6 +546,7 @@ document.addEventListener('menu_ready_js', function () {
 				if (!op.dataset.hidden || activePage === 'thread') {
 					thread.querySelectorAll('.reply:not(.hidden)').forEach(reply => {
 						filter(reply, threadId, pageData);
+						quickToggle(reply, threadId);
 					});
 				}
 			});
@@ -743,6 +760,8 @@ document.addEventListener('menu_ready_js', function () {
 
 			if (post.classList.contains('reply')) {
 				threadId = post.closest('.thread').id.split('_')[1];
+				filter(post, threadId, pageData);
+				quickToggle(post, threadId);
 			} else {
 				threadId = post.id.split('_')[1];
 				const opPost = post.querySelector('.op');
