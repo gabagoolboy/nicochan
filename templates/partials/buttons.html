@@ -5,9 +5,11 @@
         [{% trans %}Catalog{% endtrans %}]</a>
     {% endif %}
 
+    {% if not isukko %}
     &nbsp;&nbsp;<a id="unimportant"
         href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}">
         [{% if index %}{% trans %}Reload{% endtrans %}{% else %}{% trans %}Back{% endtrans %}{% endif %}]</a>
+    {% endif %}
 
     {% if config.archive.threads and not bottom %}
     &nbsp;&nbsp;<a id="unimportant"
