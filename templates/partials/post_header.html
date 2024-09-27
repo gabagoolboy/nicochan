@@ -14,11 +14,11 @@
 
 {% if config.allow_delete %}
     <a class="delete_post" target="_blank" href="/delete.php?board={{ board.uri|url_encode }}&post={{ post.id|url_encode }}&nf={{ post.num_files|url_encode }}&format=html" title="{% trans %}Delete Post{% endtrans %}">
-        <i class="fa fa-trash" style="color: #d81159 !important;"></i>
+        <i class="fa fa-trash"></i>
     </a>
 {% endif %}
-<a class="report_post" target="_blank" href="/report/board/{{ board.uri|url_encode }}/post/{{ post.id|url_encode }}/format/html" title="{% trans %}Report Post{% endtrans %}">
-    <i class="fa fa-flag" style="color: #d81159 !important;"></i>
+<a class="report_post" target="_blank" href="/report.php?board={{ board.uri|url_encode }}&post={{ post.id|url_encode }}&format=html" title="{% trans %}Report Post{% endtrans %}">
+    <i class="fa fa-flag"></i>
 </a>
 {% if mod %}
     <div class="hamburger-menu-container">

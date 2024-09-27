@@ -1805,3 +1805,19 @@ input[type="text"] {
     color: red;
     font-weight: bold;
 }
+
+ul#postList li,
+.menu-content ul li:not(.menu-section) {
+  padding: 8px 16px;
+  border-bottom: 1px solid #ccc;
+}
+
+ul li:last-child {
+  border-bottom: none;
+}
+
+div.post i.fa,
+div.thread i.fa {
+    margin: 0 4px;
+    font-size: 16px;
+}
