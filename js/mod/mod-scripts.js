@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		handlePremade(formId, `${formId.toLowerCase()}-reasons-data`);
 	});
 
+	if (typeof localStorage.is_mod === 'undefined') {
+		localStorage.setItem('is_mod', 'true');
+	}
+
 	const lastLinks = document.querySelectorAll('.dir-links a:last-of-type');
 	lastLinks?.forEach(el => {
 		const hideCheckbox = createCheckboxHide(el);

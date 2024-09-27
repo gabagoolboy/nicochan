@@ -423,6 +423,8 @@ class ScriptSettings {
 
 function init() {
 	initStylechooser();
+	rememberStuff();
+    handleArchiveMessage();
 
 	{% endverbatim %}
 	{% if config.allow_delete %}
@@ -488,6 +490,21 @@ function getModRoot() {
     return configRoot + (document.querySelector('input[name="mod"]') ? 'mod.php?/' : '');
 }
 
+function createModRedirectButton() {
+    if (typeof localStorage.is_mod === 'undefined' || window.location.pathname === '/mod.php') return;
+
+    const dirLinks = document.querySelectorAll('span.dir-links');
+    dirLinks?.forEach(dirLink => {
+        Vichan.createElement('a', {
+            innerHTML: `&nbsp;&nbsp;${_('[Moderate]')}`,
+            attributes: {
+                href: `/mod.php?${window.location.pathname}${window.location.hash}`
+            },
+            parent: dirLink
+        });
+    });
+}
+
 
 {% endverbatim %}
 
@@ -511,6 +528,5 @@ onready(init);
 document.addEventListener('DOMContentLoaded', () => {
     console.log('(づ｡◕‿‿◕｡)づ');
 	executeReadyCallbacks();
-	rememberStuff();
-    handleArchiveMessage();
+    createModRedirectButton();
 });
