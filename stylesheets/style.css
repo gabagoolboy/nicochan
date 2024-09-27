@@ -1807,12 +1807,13 @@ input[type="text"] {
 }
 
 ul#postList li,
-.menu-content ul li:not(.menu-section) {
+.menu-content > ul li:not(.menu-section) {
   padding: 8px 16px;
   border-bottom: 1px solid #ccc;
 }
 
-ul li:last-child {
+ul#postList li:last-child 
+.menu-content > ul li:not(.menu-section):last-child {
   border-bottom: none;
 }
 
