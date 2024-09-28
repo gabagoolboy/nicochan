@@ -515,6 +515,16 @@
 		});
 	};
 
+	const threadButtonQr = () => {
+		if (getActivePage() !== 'thread') return;
+
+		const bt = document.getElementById('link-quick-reply');
+		bt.addEventListener('click', (e) => {
+			e.preventDefault();
+			show_quick_reply();
+		});
+	}
+
 	const indexButtonQr = () => {
 		document.querySelectorAll('a#reply-button')?.forEach((link) => {
 			link.addEventListener('click', (e) => {
@@ -527,6 +537,7 @@
 	document.addEventListener('DOMContentLoaded', () => {
 		floatingLink();
 		indexButtonQr();
+		threadButtonQr();
 	});
 
 	document.addEventListener('ajax_after_post', () => {
