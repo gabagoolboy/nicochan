@@ -489,6 +489,7 @@
 						quickReplyButton.style.display = 'none';
 					} else {
 						quickReplyButton.style.display = 'block';
+						triggerCustomEvent('quick-reply-shown', window);
 					}
 				}
 				window.addEventListener('scroll', scrollHandler);

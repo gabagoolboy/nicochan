@@ -1819,6 +1819,19 @@ ul#postList li:last-child
 
 div.post i.fa,
 div.thread i.fa {
-    margin: 0 4px;
-    font-size: 16px;
+  margin: 0 4px;
+  font-size: 16px;
+}
+
+.textarea-container {
+  position: relative;
+  display: inline-block;
+}
+.textarea-container .countdown {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  font-size: 12px;
+  color: #999;
+  pointer-events: none;
 }

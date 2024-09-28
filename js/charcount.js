@@ -12,31 +12,32 @@ document.addEventListener("DOMContentLoaded", () => {
 	const maxChars = max_body;
 	const warningThreshold = 100;
 
-	const initializeCountdown = (textareaId, countdownSelector) => {
-		const inputArea = document.getElementById(textareaId);
+	const initializeCountdown = (textareaId) => {
+		const inputArea = document.querySelector(textareaId);
 		if (!inputArea) return;
 
-		const countdownElements = document.querySelectorAll(countdownSelector);
-		if (!countdownElements) return;
+		const container = inputArea.closest('.textarea-container');
+		if (!container) return;
+
+		const countdownElement = document.querySelector('.countdown');
+		if (!countdownElement) return;
 
 		const updateCountdown = () => {
 			const charCount = maxChars - inputArea.value.length;
-			countdownElements.forEach(elem => {
-				elem.textContent = charCount;
+			countdownElement.textContent = charCount;
 
-				if (charCount <= warningThreshold) {
-					elem.classList.add('warning');
-				} else {
-					elem.classList.remove('warning');
-				}
-			});
+			if (charCount <= warningThreshold) {
+				countdownElement.classList.add('warning');
+			} else {
+				countdownElement.classList.remove('warning');
+			}
 		};
 
 		updateCountdown();
 
 		inputArea.addEventListener('input', updateCountdown);
 		inputArea.addEventListener('selectionchange', updateCountdown);
-
+		window.addEventListener('quick-reply-shown', updateCountdown);
 		inputArea.addEventListener('input', () => {
 			if (inputArea.value.length > maxChars) {
 				inputArea.value = inputArea.value.substring(0, maxChars);
@@ -45,10 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	};
 
-	initializeCountdown('body', '.countdown');
+	initializeCountdown('#post-form #body');
 
 	const handleQuickReply = () => {
-		initializeCountdown('body', '#quick-reply .countdown');
+		initializeCountdown('#quick-reply #body');
 	};
 
 	window.addEventListener('quick-reply', handleQuickReply);
