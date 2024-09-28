@@ -349,6 +349,19 @@ function citeReply(id) {
     return false;
 }
 
+function togglePassword() {
+    const togglePassword = document.querySelector("#togglePassword");
+    if (!togglePassword) return;
+
+    const password = document.querySelector("#pwd-field #password");
+    togglePassword.addEventListener("click", function () {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        this.classList.toggle("fa-eye");
+        this.classList.toggle("fa-eye-slash");
+    });
+}
+
 function rememberStuff() {
 	const postForm = document.forms.post;
 
@@ -425,6 +438,7 @@ function init() {
 	initStylechooser();
 	rememberStuff();
     handleArchiveMessage();
+    togglePassword();
 
 	{% endverbatim %}
 	{% if config.allow_delete %}
