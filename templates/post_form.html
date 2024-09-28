@@ -108,8 +108,10 @@
                     {{ antibot.html() }}
                 </th>
                 <td>
-                    <textarea name="body" id="body" rows="5" cols="35"></textarea><br/>
-                    <span id="countchar" class="countdown"></span>
+                    <div class="textarea-container">
+                        <textarea name="body" id="body" rows="5" cols="35"></textarea>
+                        <span id="countchar" class="countdown"></span>
+                    </div>
                     {{ antibot.html() }}
                 </td>
             </tr>
@@ -253,7 +255,10 @@
                         {{ antibot.html() }}
                     </th>
                     <td id="pwd-field">
-                        <input type="text" name="password" size="12" maxlength="18" autocomplete="off">
+                        <div class="password-container">
+                            <input type="text" id="password" name="password" size="12" maxlength="18" autocomplete="off">
+                            <i class="fa fa-eye-slash" id="togglePassword"></i>
+                        </div>
                         <span class="unimportant">{% trans %}(For file deletion.){% endtrans %}</span>
                         {{ antibot.html() }}
                     </td>

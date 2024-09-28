@@ -1835,3 +1835,21 @@ div.thread i.fa {
   color: #999;
   pointer-events: none;
 }
+
+.password-container {
+  position: relative;
+  display: inline-block;
+}
+.password-container input[type="password"],
+.password-container input[type="text"] {
+  padding-right: 30px;
+  width: 75% !important;
+}
+.password-container #togglePassword {
+  position: absolute;
+  right: 5px;
+  top: 56%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+}
