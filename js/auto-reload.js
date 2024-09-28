@@ -30,6 +30,8 @@ function scrollStopped(element, callback) {
 
 (function () {
 	let notify = false;
+	let isPolling = false;
+	const faviconUrl = favicon_url;
 
 	document.addEventListener('DOMContentLoaded', function () {
 		if (typeof localStorage.auto_thread_update === 'undefined') {
@@ -118,7 +120,7 @@ function scrollStopped(element, callback) {
 		const threadLinks = document.querySelector('span#thread-links');
 		threadLinks.insertAdjacentHTML(
 			'beforeend',
-			`<span id="updater">
+			`<span id="updater">&nbsp;
 			<a href="#" id="update_thread">[${_('Update')}]</a>
 			(<input type="checkbox" id="auto_update_status"> ${_('Auto')})
 			<span id="update_secs"></span>
@@ -180,6 +182,10 @@ function scrollStopped(element, callback) {
 		}
 
 		async function poll(manualUpdate) {
+			if (isPolling) return;
+
+			isPolling = true;
+
 			stopAutoUpdate();
 			document.getElementById('update_secs').textContent = _('Updating...');
 
@@ -191,7 +197,7 @@ function scrollStopped(element, callback) {
 				const data = await response.text();
 				const parser = new DOMParser();
 				const doc = parser.parseFromString(data, 'text/html');
-				await handleNewPosts(doc);
+				const loadedPosts = await handleNewPosts(doc);
 
 				if (autoUpdateStatus.checked) {
 					adjustPollIntervalDelay(loadedPosts, manualUpdate);
@@ -201,6 +207,8 @@ function scrollStopped(element, callback) {
 				}
 			} catch (error) {
 				handleError(error);
+			} finally {
+				isPolling = false;
 			}
 		}
 
@@ -243,18 +251,23 @@ function scrollStopped(element, callback) {
 			doc.querySelectorAll('div.post.reply').forEach((post) => {
 				const id = post.id;
 				if (!document.getElementById(id)) {
-					processNewPost(post);
 					loadedPosts += 1;
-					elementsToAppend.push(document.importNode(post, true));
-					const clearBr = Vichan.createElement('br', { className: 'clear' });
-					elementsToAppend.push(clearBr);
-					elementsToTriggerEvent.push(post);
+					elementsToAppend.push(document.createElement('br'));
+					const cloned = document.importNode(post, true);
+					elementsToAppend.push(cloned);
+					elementsToTriggerEvent.push(cloned);
 				}
 			});
 
 			appendNewPosts(elementsToAppend);
 			triggerNewPostEvents(elementsToTriggerEvent);
 			recheckActivated();
+
+			if (loadedPosts > 0) {
+				stopAutoUpdate();
+				document.getElementById('update_secs').textContent = '';
+			}
+			return loadedPosts;
 		}
 
 		function processNewPost(post) {
@@ -264,11 +277,26 @@ function scrollStopped(element, callback) {
 					(notify == 'mention' && post.querySelector('.own_post'))
 				) {
 					const bodyText = post
-						.querySelector('.body')
-						.innerHTML.replace(/<br\s*\/?>/gi, '\n');
-					new Notification(`${_('New reply to ')}${document.title}`, {
-						body: bodyText,
-					});
+						.querySelector('.body').innerHTML
+						.replace(/<br\s*\/?>/gi, '\n')
+						.replace(/<\/p>/gi, '\n')
+						.replace(/<[^>]*>/g, '')
+						.trim();
+					if (Notification.permission === 'granted') {
+						new Notification(`${_('New reply to ')}${document.title}`, {
+							body: bodyText,
+							icon: faviconUrl,
+						});
+					} else if(Notification.permission !== 'denied') {
+						Notification.requestPermission().then((permission) => {
+							if (permission === 'granted') {
+								new Notification(`${_('New reply to ')}${document.title}`, {
+									body: bodyText,
+									icon: faviconUrl,
+								});
+							}
+						});
+					}
 				}
 			}
 			newPosts += 1;
@@ -285,7 +313,8 @@ function scrollStopped(element, callback) {
 
 		function triggerNewPostEvents(elements) {
 			elements.forEach((ele) => {
-				triggerCustomEvent('new_post_js', document, { detail: ele })
+				triggerCustomEvent('new_post_js', document, { detail: ele });
+				processNewPost(ele);
 			});
 		}
 
@@ -321,18 +350,28 @@ function scrollStopped(element, callback) {
 
 		function handleNotificationPermission(inputElement) {
 			if (!('Notification' in window)) return;
+
 			const setting = inputElement.parentNode.id;
+
 			if (inputElement.checked) {
 				Notification.requestPermission().then((permission) => {
 					if (permission === 'granted') {
 						localStorage[setting] = 'true';
 					}
+					if (setting === 'auto_thread_desktop_notifications') {
+						notify = 'mention';
+					} else if (setting === 'auto_thread_desktop_notifications_all') {
+						notify = 'all';
+					}
 				});
-				if (Notification.permission === 'granted') {
-					localStorage[setting] = 'true';
-				}
 			} else {
 				localStorage[setting] = 'false';
+				if (setting === 'auto_thread_desktop_notifications') {
+					notify = (document.querySelector('#auto_thread_desktop_notifications_all > input').checked) ? 'all' : false;
+				}
+				if (setting === 'auto_thread_desktop_notifications_all') {
+					notify = (document.querySelector('#auto_thread_desktop_notifications > input').checked) ? 'mention' : false;
+				}
 			}
 		}
 	});
