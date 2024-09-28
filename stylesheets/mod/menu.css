@@ -83,3 +83,21 @@
     padding: 2px;
     background-color: #f0f0f0;
 }
+
+.clickable-gear {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    display: inline-block;
+}
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.clickable-gear:active {
+    animation: spin 0.5s ease-in-out;
+    transform: scale(1.2);
+}
