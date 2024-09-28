@@ -1,4 +1,4 @@
-<span class="dir-links">
+<span class="dir-links {% if bottom %} bottom-links{% endif %}">
     {% if config.catalog_link %}
     <a id="unimportant"
         href="{{ mod ? config.file_mod ~ '?' : '' }}{{ config.root }}{{ board.dir }}{{ config.catalog_link }}">

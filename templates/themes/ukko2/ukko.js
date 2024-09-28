@@ -1,5 +1,5 @@
 (function() {
-    // Cache for pages
+
     let cache = [];
     let loading = false;
     let ukkotimer = null;
@@ -10,11 +10,13 @@
         localStorage.setItem('hiddenboards', JSON.stringify(hiddenboards));
     };
 
-    const toggleBoardVisibility = function(event) {
+    const toggleBoardVisibility = function (event) {
+        event.preventDefault();
+
         const boardHeader = event.target.closest('h2#board-header');
         const boardElement = boardHeader?.nextElementSibling;
 
-        if (!boardElement || !boardElement.dataset.board) return;
+        if (!boardElement?.dataset.board) return;
 
         const board = boardElement.dataset.board;
         hiddenboards[board] = !hiddenboards[board];
@@ -42,13 +44,14 @@
         return false;
     };
 
-    const addUkkohide = function(header) {
+    const addUkkohide = function (header) {
         const ukkohide = document.createElement('a');
         ukkohide.className = 'unimportant ukkohide';
+        ukkohide.href = '#';
 
         const boardElement = header?.nextElementSibling;
 
-        if (!boardElement || !boardElement.dataset.board) return;
+        if (!boardElement?.dataset.board) return;
 
         const board = boardElement.dataset.board;
         const hr = document.createElement('hr');
@@ -68,23 +71,29 @@
     };
 
     const showLoadingMessage = (message) => {
-        const pages = document.querySelector('.pages');
+        const pages = document.querySelector('.bottom-links');
         if (pages) {
             pages.style.display = 'block';
             pages.innerHTML = message;
         }
     };
 
-    const loadNext = function() {
+    const loadNext = async function() {
+        if (loading) return;
+
         const overflow = JSON.parse(document.getElementById('overflow-data')?.textContent || '[]');
         if (overflow.length === 0) {
             showLoadingMessage("No more threads to display");
             return;
         }
 
-        while (window.scrollY + window.innerHeight + 1000 > document.documentElement.scrollHeight && !loading && overflow.length > 0) {
+        if (window.scrollY + window.innerHeight + 1000 <= document.documentElement.scrollHeight) {
+            return;
+        }
+
+        while (overflow.length > 0 && !loading) {
             const nextItem = overflow.shift();
-            const page = getModRoot() + nextItem.board + '/' + nextItem.page;
+            const page = `${getModRoot()}${nextItem.board}/${nextItem.page}`;
             const thread = document.querySelector(`div#thread_${nextItem.id}[data-board="${nextItem.board}"]`);
 
             if (thread && thread.getAttribute('data-cached') !== 'yes') {
@@ -93,58 +102,77 @@
 
             const boardheader = document.createElement('h2');
             boardheader.id = "board-header";
-            boardheader.innerHTML = `<a href="/${nextItem.board}/">/${nextItem.board}/</a>`;
+            boardheader.innerHTML = `<a href="${getModRoot()}${nextItem.board}/">/${nextItem.board}/</a>`;
 
             if (cache.includes(page)) {
                 if (thread) {
                     displayThread(thread, boardheader, nextItem.board);
                 }
-            } else {
-                fetchPageData(page, nextItem, boardheader, overflow);
-                break;
+                continue;
+            } try {
+                loading = true;
+                await fetchPageData(page, nextItem, boardheader);
+            } catch (error) {
+                console.error(`Failed to fetch page data for ${page}:`, error);
+            } finally {
+                loading = false;
             }
+            break;
         }
 
         clearTimeout(ukkotimer);
         ukkotimer = setTimeout(loadNext, 1000);
     };
 
-    const fetchPageData = (page, nextItem, boardheader, overflow) => {
+    const fetchPageData = async (page, nextItem, boardheader) => {
         loading = true;
         showLoadingMessage("Loading...");
 
-        fetch(page)
-            .then(response => response.text())
-            .then(data => {
-                cache.push(page);
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data;
+        try {
+            const response = await fetch(page);
+            if (!response.ok) {
+                throw new Error(`${_("Failed to load page")} ${page}: ${response.statusText}`);
+            }
 
-                tempDiv.querySelectorAll('div[id*="thread_"]').forEach(threadDiv => {
-                    const threadId = threadDiv.id.replace('thread_', '');
-                    if (!document.querySelector(`div#thread_${threadId}[data-board="${nextItem.board}"]`)) {
-                        const postcontrols = document.querySelector('form[name="postcontrols"]');
-                        postcontrols?.insertAdjacentElement('afterbegin', threadDiv);
+            const data = await response.text();
+            cache.push(page);
+            const tempDiv = document.createElement('div');
+
+            tempDiv.innerHTML = data;
+
+            const threadDivs = tempDiv.querySelectorAll('div[id*="thread_"]');
+            for (let threadDiv of threadDivs) {
+                const threadId = threadDiv.id.split('_')[1];
+                const existingThread = document.querySelector(`div#thread_${threadId}[data-board="${nextItem.board}"]`);
+                if (!existingThread) {
+                    const postcontrols = document.querySelector('form[name="postcontrols"]');
+                    if (postcontrols) {
+                        postcontrols.insertAdjacentElement('beforeend', threadDiv);
                         threadDiv.style.display = 'none';
                         threadDiv.setAttribute('data-cached', 'yes');
                         threadDiv.setAttribute('data-board', nextItem.board);
+                    } else {
+                        console.warn('Postcontrols form not found.');
                     }
-                });
-
-                const thread = document.querySelector(`div#thread_${nextItem.id}[data-board="${nextItem.board}"][data-cached="yes"]`);
-
-                if (thread) {
-                    displayThread(thread, boardheader, nextItem.board);
                 }
+            }
 
-                loading = false;
-                const pages = document.querySelector('.pages');
-                if (pages) {
-                    pages.style.display = 'none';
-                    pages.innerHTML = '';
-                }
-            });
-    };
+            const fetchedThread = document.querySelector(`div#thread_${nextItem.id}[data-board="${nextItem.board}"][data-cached="yes"]`);
+            if (fetchedThread) {
+                displayThread(fetchedThread, boardheader, nextItem.board)
+            } else {
+                console.warn(`Fetched thread for ID ${nextItem.id} not found.`);
+            }
+
+            const pages = document.querySelector('.bottom-links');
+            if (pages) {
+                page.style.display = 'none';
+                pages.innerHTML = '';
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
 
     const displayThread = (thread, boardheader, board) => {
         const lastThread = document.querySelector('div[id*="thread_"]:last-of-type');
@@ -152,7 +180,10 @@
         if (lastThread) {
             lastThread.insertAdjacentElement('afterend', thread);
         } else {
-            document.querySelector('form[name="postcontrols"]')?.insertAdjacentElement('afterbegin', thread);
+            const postcontrols = document.querySelector('form[name="postcontrols"]');
+            if (postcontrols) {
+                postcontrols.insertAdjacentElement('beforeend', thread);
+            }
         }
 
         thread.style.display = 'block';
@@ -163,10 +194,26 @@
         triggerCustomEvent('new_post_js', document, { detail: thread });
     };
 
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('h2#board-header').forEach(header => addUkkohide(header));
-        document.querySelector('.pages')?.style.setProperty('display', 'none');
-        window.addEventListener('scroll', loadNext);
+        const pages = document.querySelector('.pages');
+        if (pages) {
+            pages.style.display = 'none';
+        }
+        const debounceLoad = debounce(loadNext, 200); 
+        window.addEventListener('scroll', debounceLoad);
         ukkotimer = setTimeout(loadNext, 1000);
     });
 })();
