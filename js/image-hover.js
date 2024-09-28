@@ -6,6 +6,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+	const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+	if (isTouchDevice) return;
+
 	// Extend options tab if available
 	if (window.Options && Options.get_tab('general')) {
 		Options.extend_tab(
@@ -103,9 +106,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	function getMeta(url, callback) {
 		const img = new Image();
 		img.src = url;
-		img.onload = function () {
-			callback(this.width, this.height);
-		};
+		img.addEventListener('load', () => {
+			callback(img.width, img.height);
+		});
 	}
 
 	function followCursor(e, hoverImage) {
