@@ -532,6 +532,7 @@ var configRoot = "{{ config.root }}";
 var max_filesize = {{ config.max_filesize }};
 var max_body = {{ config.max_body }};
 var forced_anon = "{{ config.field_disable_name ? 'true' : 'false' }}";
+var favicon_url = "{{ config.url_favicon }}";
 
 document.addEventListener("securitypolicyviolation", () => {
     console.log('(⇀‸↼‶) por que você está fazendo isso?');    
