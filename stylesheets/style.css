@@ -1802,7 +1802,7 @@ input[type="text"] {
 }
 
 .countdown.warning {
-    color: red;
+    color: red !important;
     font-weight: bold;
 }
 
