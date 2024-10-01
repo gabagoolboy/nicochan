@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<title>{{ settings.title }}</title>
-		<link rel="stylesheet" media="screen" href="{{ config.root ~ settings.css }}" />
+		<link rel="stylesheet" media="screen" href="{{ config.root ~ settings.css }}?v={{ config.resource_version }}" />
 		<span id="active-page" data-page="page"></span>
 		{% include 'header.html' %}
 	</head>
