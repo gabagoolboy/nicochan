@@ -1,7 +1,7 @@
-{% if post.embed %}
-    {{ post.embed }}
-{% else %}
     <div class="files">
+        {% if post.embed %}
+            {{ post.embed }}
+        {% endif %}
         {% for index, file in post.files %}
             <div class="file{{ post.num_files > 1 ? ' multifile' }}" style="{{ post.num_files > 1 ? 'width:' ~ (file.thumbwidth + 40) ~ 'px' }}">
                 {% if file.file == 'deleted' %}
@@ -35,4 +35,3 @@
             </div>
         {% endfor %}
     </div>
-{% endif %}

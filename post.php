@@ -632,7 +632,7 @@ function handle_post()
     $post['email'] = str_replace(' ', '%20', htmlspecialchars($_POST['email']));
     $post['body'] = $_POST['body'];
     $post['password'] = sha256Salted($_POST['password']);
-    $post['has_file'] = (!isset($post['embed']) && (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0));
+    $post['has_file'] = (($post['op'] && !isset($post['no_longer_require_an_image_for_op']) && $config['force_image_op']) || count($_FILES) > 0);
     $post['shadow'] = 0;
 
     if (isset($_POST['rmexif']) && $post['has_file'] && $config['strip_exif_single']) {
@@ -771,6 +771,10 @@ function handle_post()
 
     if (empty($post['files'])) {
         $post['has_file'] = false;
+    } else {
+        if (isset($post['embed']) && sizeof($post['files']) === $config['max_images']) {
+            error(sprintf(_('You cannot upload %s images and embed at the same time. Please remove one image to continue.'), $config['max_images']));
+        }
     }
 
     // Check for a file
