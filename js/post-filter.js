@@ -764,16 +764,12 @@ document.addEventListener('menu_ready_js', function () {
 				quickToggle(post, threadId);
 			} else {
 				threadId = post.id.split('_')[1];
-				const opPost = post.querySelector('.op');
-				if (opPost) {
-					filter(opPost, threadId, pageData);
-					quickToggle(opPost, threadId);
-				}
-				return;
+				const replies = post.querySelectorAll('.op, .reply');
+				replies.forEach(reply => {
+					filter(reply, threadId, pageData);
+					quickToggle(reply, threadId);
+				});
 			}
-
-			filter(post, threadId, pageData);
-			quickToggle(post, threadId);
 		});
 
 		document.addEventListener('filter_page', function () {
