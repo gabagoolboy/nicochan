@@ -873,6 +873,8 @@ function handle_post()
 
             $file['is_an_image'] = !in_array($file['extension'], $config['allowed_ext_files']);
 
+            $file['is_a_video'] = in_array($file['extension'], ['webm', 'mp4']);
+
             // Truncate filename if it is too long
             $file['filename'] = mb_substr($file['filename'], 0, $config['max_filename_len']);
 

@@ -4306,9 +4306,14 @@ function mod_ban_hash(string $board, int $post_no, int|null $index = null, bool 
         $toDelete = false;
     }
 
-    if (!$files[$index]->is_an_image) {
+	if (
+		!($files[$index]->is_an_image ||
+		(isset($files[$index]->is_a_video) && $files[$index]->is_a_video) ||
+		in_array($files[$index]->extension, ['webm', 'mp4'])
+		)
+	) {
         error(sprintf($config['error']['fileext'], $files[$index]->extension));
-    }
+	}
 
     if (isset($_POST['reason'])) {
 
@@ -4316,9 +4321,13 @@ function mod_ban_hash(string $board, int $post_no, int|null $index = null, bool 
             error(sprintf($config['error']['required'], 'reason'));
         }
 
+		$isVideo = (isset($files[$index]->is_a_video) && $files[$index]->is_a_video) || in_array($files[$index]->extension, ['webm', 'mp4']);
+
         if (isset($post['shadow']) && $post['shadow']) {
-            $config['dir']['img'] = $config['dir']['shadow_del'] . $config['dir']['img'];
-        }
+            $config['dir']['img'] = $config['dir']['shadow_del'] . (!$isVideo ? $config['dir']['img'] : $config['dir']['thumb']);
+        } elseif ($isVideo) {
+			$config['dir']['img'] = $config['dir']['thumb'];
+		}
 
 		if (!isset($files[$index]->blockhash)) {
         	$hash = blockhash_hash_of_file(sprintf($config['board_path'], $board) . $config['dir']['img'] . $files[$index]->file, true);
