@@ -31,9 +31,20 @@ function addFormListener(formId, callback) {
     }
 }
 
+function embedMobileShort(sel = document) {
+    const isSmallScreen = window.innerWidth <= 768;
+    if (!isSmallScreen) return;
+
+    const embeds = sel.querySelectorAll('.yt-help > a');
+    embeds?.forEach(embed => {
+        embed.innerText = `${embed.innerText.substr(0, 20)}...`;
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     addListenersToElements(document.querySelectorAll('.highlight-link'), highlightReply);
     addListenersToElements(document.querySelectorAll('.cite-link'), citeReply);
+    embedMobileShort();
 
     addFormListener('post-form', dopost);
     addFormListener('report-form', doreport);
@@ -44,4 +55,5 @@ document.addEventListener('new_post_js', (event) => {
 
     handleNewElement(newPost, '.highlight-link', highlightReply);
     handleNewElement(newPost, '.cite-link', citeReply);
+    embedMobileShort(newPost);
 });

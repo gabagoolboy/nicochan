@@ -1296,7 +1296,7 @@
 		'regex'	=> '/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|shorts\/|watch\?v=|watch\?&v=))([a-zA-Z0-9\-_]{11})/i',
 		'oembed' => 'https://www.youtube.com/oembed?url=%s&format=json',
 		'service' => 'youtube',
-		'html' => '<div class="video-container" data-video="$1"><span class="unimportant yt-help" title="%%VIDEO_FULLNAME%%">YouTube: <a href="https://youtu.be/$1">%%VIDEO_NAME%%</a></span><br><a href="$0" target="_blank" class="file"><img style="width:%%tb_width%%px" src="//img.youtube.com/vi/$1/0.jpg" class="post-image"/></a></div>'];
+		'html' => '<div class="video-container" data-video="$1"><span class="unimportant yt-help" title="%%VIDEO_FULLNAME%%"><p class="provider-embed">YT: </p><a href="https://youtu.be/$1">%%VIDEO_NAME%%</a></span><br><a href="$0" target="_blank" class="file"><img style="width:%%tb_width%%px" src="//img.youtube.com/vi/$1/0.jpg" class="post-image"/></a></div>'];
 	$config['embeds'][] = [
 		'regex' => '/^https?:\/\/(\w+\.)?vimeo\.com\/(\d{2,10})$/i',
 		'oembed' => 'https://vimeo.com/api/oembed.json?url=%s',
