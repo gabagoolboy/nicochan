@@ -171,6 +171,7 @@
 
 		postForm.querySelector('textarea[name="body"]').setAttribute('placeholder', _('Comment'));
 		postForm.querySelector('input[name="subject"]').setAttribute('placeholder', _('Subject'));
+		postForm.querySelector('input[name="embed"]').setAttribute('placeholder', _('Embed'));
 
 		postForm.querySelectorAll('br').forEach(br => br.remove());
 

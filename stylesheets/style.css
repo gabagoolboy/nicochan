@@ -311,6 +311,11 @@ div.video-container {
   }
 }
 
+.files {
+  display: flex;
+  flex-flow: row wrap;
+}
+
 .fileinfo-mobile {
   display: none;
 }
