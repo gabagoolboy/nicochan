@@ -243,7 +243,15 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	document.addEventListener('new_post_js', function (e) {
-		addButton(e.detail.detail);
+		const post = e.detail.detail;
+		if (post.classList.contains('reply')) {
+			addButton(post);
+		} else {
+			const replies = post.querySelectorAll('.op, .reply');
+			replies.forEach(reply => {
+				addButton(reply);
+			});
+		}
 	});
 
 	triggerCustomEvent('menu_ready_js');
