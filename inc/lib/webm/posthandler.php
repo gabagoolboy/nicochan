@@ -49,6 +49,10 @@ function handleWebmWithFFmpeg(object $file, array $board, bool $op, array $confi
 
         if (make_webm_thumbnail($config, $file->file_path, $tnPath, $file->thumbwidth, $file->thumbheight, $webmInfo['duration']) === 0) {
             $file->thumb = $file->file_id . '.webp';
+            $file->blockhash = blockhash_hash_of_file($tnPath);
+            if (!verifyUnbannedHash($config, $file->blockhash)) {
+                return $config['error']['blockhash'];
+            }
         } else {
             $file->thumb = 'file';
         }
