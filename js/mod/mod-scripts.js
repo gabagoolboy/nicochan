@@ -333,7 +333,7 @@ function doModMenu(postElement = document) {
 		});
 
 		document.addEventListener('click', (event) => {
-			if (!hamburgerIcon.contains(event.target)) {
+			if (!hamburgerIcon.contains(event.target) && !menuContent.contains(event.target)) {
 				const container = hamburgerIcon.closest('.hamburger-menu-container');
 				container.classList.remove('menu-open');
 				menuContent.classList.remove('visible');
