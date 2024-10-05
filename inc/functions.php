@@ -169,32 +169,10 @@ function loadConfig() {
         $config['image_locked'] = $config['image_locked'] ?? $config['dir']['static'] . 'locked.gif';
         $config['image_bumplocked'] = $config['image_bumplocked'] ?? $config['dir']['static'] . 'sage.gif';
         $config['image_deleted'] = $config['image_deleted'] ?? $config['dir']['static'] . 'deleted.png';
-		if (isset($board)) {
-			if (!isset($config['uri_thumb'])) {
-				$config['uri_thumb'] = $config['root'] . $board['dir'] . $config['dir']['thumb'];
-			} elseif (isset($board['dir'])) {
-				$config['uri_thumb'] = sprintf($config['uri_thumb'], $board['dir']);
-			}
-
-			if (!isset($config['uri_img'])) {
-				$config['uri_img'] = $config['root'] . $board['dir'] . $config['dir']['img'];
-			} elseif (isset($board['dir'])) {
-				$config['uri_img'] = sprintf($config['uri_img'], $board['dir']);
-			}
-
-			if (!isset($config['uri_shadow_thumb'])) {
-				$config['uri_shadow_thumb'] = $config['root'] . $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'];
-			} elseif (isset($board['dir'])) {
-				$config['uri_shadow_thumb'] = sprintf($config['uri_shadow_thumb'], $board['dir']);
-			}
-
-			if (!isset($config['uri_shadow_img'])) {
-				$config['uri_shadow_img'] = $config['root'] . $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'];
-			} elseif (isset($board['dir'])) {
-				$config['uri_shadow_img'] = sprintf($config['uri_shadow_img'], $board['dir']);
-			}
-		}
-
+		$config['uri_thumb'] = $config['uri_thumb'] ?? $config['root'] . $config['dir']['media'];
+		$config['uri_img'] = $config['uri_img'] ?? $config['root'] . $config['dir']['media'];
+		$config['uri_shadow_thumb'] = $config['uri_shadow_thumb'] ?? $config['root'] . $config['dir']['shadow_del'];
+		$config['uri_shadow_img'] = $config['uri_shadow_img'] ?? $config['root'] . $config['dir']['shadow_del'];
 		$config['uri_stylesheets'] = $config['uri_stylesheets'] ?? $config['root'] . 'stylesheets/';
 		$config['url_stylesheet'] = $config['url_stylesheet'] ?? $config['uri_stylesheets'] . 'style.css';
         $config['url_javascript'] = $config['url_javascript'] ?? $config['root'] . $config['file_script'];
@@ -494,8 +472,6 @@ function setupBoard($array) {
 
     $directories = [
         $board['dir'],
-        $board['dir'] . $config['dir']['img'],
-        $board['dir'] . $config['dir']['thumb'],
         $board['dir'] . $config['dir']['res'],
 
         $board['dir'] . $config['dir']['archive'],
@@ -513,9 +489,6 @@ function setupBoard($array) {
         $board['dir'] . $config['dir']['mod_archive'] . $config['dir']['thumb'],
         $board['dir'] . $config['dir']['mod_archive'] . $config['dir']['res'],
 
-        $board['dir'] . $config['dir']['shadow_del'],
-        $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'],
-        $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'],
     ];
 
 	foreach ($directories as $dir) {
@@ -1244,14 +1217,9 @@ function bumpThread($id) {
 }
 
 // Remove file from post
-function deleteFile($id, $remove_entirely_if_already = true, $file = null, $optBoard = null)
+function deleteFile($id, $remove_entirely_if_already = true, $file = null)
 {
 	global $board, $config;
-
-	if (!is_null($optBoard)) {
-		$board = getBoardInfo($optBoard);
-		$board['dir'] = sprintf($config['board_path'], $board['uri']);
-	}
 
     $query = prepare(sprintf(
         "SELECT `thread`, `files`, `num_files` FROM ``posts_%s`` WHERE `id` = :id LIMIT 1", 
@@ -1285,12 +1253,12 @@ function deleteFile($id, $remove_entirely_if_already = true, $file = null, $optB
 			if (($file !== false && $i == $file) || $file === null) {
 				// Delete thumbnail
 				if (isset ($f->thumb) && $f->thumb) {
-					file_unlink($board['dir'] . $config['dir']['thumb'] . $f->thumb);
+					file_unlink($config['dir']['media'] . $f->thumb);
 					unset($files[$i]->thumb);
 				}
 
 				// Delete file
-				file_unlink($board['dir'] . $config['dir']['img'] . $f->file);
+				file_unlink($config['dir']['media'] . $f->file);
 				$files[$i]->file = 'deleted';
 				$files[$i]->thumb = 'deleted';
 				$size_delete_image = @getimagesize($config['image_deleted']);
@@ -1439,8 +1407,8 @@ function deletePostPermanent($id, $error_if_doesnt_exist=true, $rebuild_after=tr
 			// Delete file
 			foreach (json_decode($post['files']) as $i => $f) {
 				if ($f->file !== 'deleted') {
-					file_unlink($board['dir'] . $config['dir']['img'] . $f->file);
-					file_unlink($board['dir'] . $config['dir']['thumb'] . $f->thumb);
+					file_unlink($config['dir']['media'] . $f->file);
+					file_unlink($config['dir']['media'] . $f->thumb);
 				}
 			}
 		}
@@ -3368,16 +3336,22 @@ function process_filenames($_file, $board, $multiple, $i){
 
 	$_file['filename'] = urldecode($_file['name']);
 	$_file['extension'] = strtolower(mb_substr($_file['filename'], mb_strrpos($_file['filename'], '.') + 1));
-	if (isset($config['filename_func']))
+	if (isset($config['filename_func'])) {
 		$_file['file_id'] = $config['filename_func']($_file);
-	else
-		$_file['file_id'] = time() . substr(microtime(), 2, 3);
+	} else {
+		$_file['file_id'] = time() . hrtime(true) . $board . mt_rand();
+		$_file['file_id_unix'] = time() . substr(microtime(), 2, 3);;
+	}
 
-	if ($multiple)
+	if ($multiple) {
 		$_file['file_id'] .= "-$i";
+		$_file['file_id_unix'] .= "-$i";
+	}
 
-	$_file['file_path'] = $board . $config['dir']['img'] . $_file['file_id'] . '.' . $_file['extension'];
-	$_file['thumb_path'] = $board . $config['dir']['thumb'] . $_file['file_id'] . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $_file['extension']);
+	$_file['file_id'] = hash('sha256', $_file['file_id']);
+
+	$_file['file_path'] = $config['dir']['media'] . $_file['file_id'] . '.' . $_file['extension'];
+	$_file['thumb_path'] = $config['dir']['media'] . $_file['file_id'] . '_t' . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $_file['extension']);
 	return $_file;
 }
 

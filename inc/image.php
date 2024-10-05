@@ -686,7 +686,7 @@ class ImageProcessing {
 		global $board;
 		require_once 'inc/lib/webm/ffmpeg.php';
 		require_once 'inc/lib/webm/posthandler.php';
-		$file->thumb_path = $board['dir'] . $this->config['dir']['thumb'] . $file->file_id . '.webp';
+		$file->thumb_path = $this->config['dir']['media'] . $file->file_id . '_t' . '.webp';
 
 		$file = set_thumbnail_dimensions($op, $file, $this->config);
 		$webminfo = get_webm_info($file->file_path, $this->config);

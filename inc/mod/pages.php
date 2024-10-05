@@ -1634,13 +1634,8 @@ function mod_move_reply($originBoard, $postID) {
 		}
 
 		if ($post['files']) {
-			$post['files'] = json_decode($post['files'], TRUE);
+			$post['files'] = json_decode($post['files']);
 			$post['has_file'] = true;
-			foreach ($post['files'] as $i => &$file) {
-				$file['file_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file'];
-				if (isset($file['thumb']))
-				$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
-			}
 		} else {
 			$post['has_file'] = false;
 		}
@@ -1679,14 +1674,6 @@ function mod_move_reply($originBoard, $postID) {
 
 		// bool indicator if it is a move from one board to another
 		$board_move = !($originBoard == $targetBoard);
-
-		if ($post['has_file'] && $board_move) {
-			foreach ($post['files'] as $i => &$file) {
-				// move the image
-				clone_files('rename', $file, $board['uri']);
-
-				}
-			}
 
 		// build index
 		buildIndex();
@@ -1755,21 +1742,12 @@ function mod_move($originBoard, $postID) {
 		if ($targetBoard === $originBoard)
 			error(_('Target and source board are the same.'));
 
-		// copy() if leaving a shadow thread behind; else, rename().
-		$clone = $shadow ? 'link' : 'rename';
-
 		// indicate that the post is a thread
 		$post['op'] = true;
 
 		if ($post['files']) {
-			$post['files'] = json_decode($post['files'], TRUE);
+			$post['files'] = json_decode($post['files']);
 			$post['has_file'] = true;
-			foreach ($post['files'] as $i => &$file) {
-				if ($file['file'] === 'deleted')
-					continue;
-				$file['file_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file'];
-				$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
-			}
 		} else {
 			$post['has_file'] = false;
 		}
@@ -1809,13 +1787,6 @@ function mod_move($originBoard, $postID) {
 		$op = $post;
 		$op['id'] = $newID;
 
-		if ($post['has_file']) {
-			// copy image
-			foreach ($post['files'] as $i => &$file) {
-				clone_files($clone, $file, $board['uri']);
-			}
-		}
-
 		// go back to the original board to fetch replies
 		openBoard($originBoard);
 
@@ -1830,14 +1801,8 @@ function mod_move($originBoard, $postID) {
 			$post['thread'] = $newID;
 
 			if ($post['files']) {
-				$post['files'] = json_decode($post['files'], TRUE);
+				$post['files'] = json_decode($post['files']);
 				$post['has_file'] = true;
-				foreach ($post['files'] as $i => &$file) {
-					$file['file_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file'];
-
-					if (isset($file['thumb']))
-						$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
-				}
 			} else {
 				$post['has_file'] = false;
 			}
@@ -1871,13 +1836,6 @@ function mod_move($originBoard, $postID) {
 
 			$post['op'] = false;
 			$post['tracked_cites'] = markup($post['body'], true);
-
-			if ($post['has_file']) {
-				// copy image
-				foreach ($post['files'] as $i => &$file) {
-					clone_files($clone, $file, $board['uri']);
-					}
-				}
 
 			$post['allhashes'] = '';
 			if ($post['has_file']) {
@@ -2411,7 +2369,7 @@ function mod_spoiler_image($board, $unspoiler, $post, $file) {
 
 	if (!$unspoiler) {
 		$size_spoiler_image = @getimagesize($config['spoiler_image']);
-		file_unlink($board . '/' . $config['dir']['thumb'] . $files[$file]->thumb);
+		file_unlink($config['dir']['media'] . $files[$file]->thumb);
 		$files[$file]->thumb = 'spoiler';
 		$files[$file]->thumbwidth = $size_spoiler_image[0];
 		$files[$file]->thumbheight = $size_spoiler_image[1];
@@ -2422,7 +2380,7 @@ function mod_spoiler_image($board, $unspoiler, $post, $file) {
 		$img = new ImageProcessing($config);
 		if ($files[$file]->extension === 'mp4' || $files[$file]->extension === 'webm') {
 			$files[$file] = $img->createWebmThumbnail($files[$file], !$result['thread']);
-			$files[$file]->thumb = $files[$file]->file_id . '.webp';
+			$files[$file]->thumb = $files[$file]->file_id . '_t' . '.webp';
 
 		} else {
 			$files[$file] = $img->createThumbnail($files[$file], !$result['thread']);
@@ -3992,14 +3950,8 @@ function mod_merge($originBoard, $postID) {
 		$post['op'] = true;
 
 		if ($post['files']) {
-			$post['files'] = json_decode($post['files'], TRUE);
+			$post['files'] = json_decode($post['files']);
 			$post['has_file'] = true;
-			foreach ($post['files'] as $i => &$file) {
-				if ($file['file'] === 'deleted')
-					continue;
-			$file['file_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file'];
-			$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
-			}
 		} else {
 			$post['has_file'] = false;
 		}
@@ -4036,15 +3988,6 @@ function mod_merge($originBoard, $postID) {
 		$op = $post;
 		$op['id'] = $newID;
 
-		$clone = $shadow ? 'link' : 'rename';
-
-		if ($post['has_file']) {
-			// copy image
-			foreach ($post['files'] as $i => &$file) {
-				clone_files($clone, $file, $board['uri']);
-			}
-		}
-
 		// go back to the original board to fetch replies
 		openBoard($originBoard);
 
@@ -4059,12 +4002,8 @@ function mod_merge($originBoard, $postID) {
 			$post['thread'] = $newID;
 
 			if ($post['files']) {
-				$post['files'] = json_decode($post['files'], TRUE);
+				$post['files'] = json_decode($post['files']);
 				$post['has_file'] = true;
-				foreach ($post['files'] as $i => &$file) {
-					$file['file_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['img'] . $file['file'];
-					$file['thumb_path'] = sprintf($config['board_path'], $board['uri']) . $config['dir']['thumb'] . $file['thumb'];
-				}
 			} else {
 				$post['has_file'] = false;
 			}
@@ -4099,12 +4038,6 @@ function mod_merge($originBoard, $postID) {
 			$post['op'] = false;
 			$post['tracked_cites'] = markup($post['body'], true);
 
-			if ($post['has_file']) {
-				// copy image
-				foreach ($post['files'] as $i => &$file) {
-					clone_files($clone, $file, $board['uri']);
-				}
-			}
 			// insert reply
 			$newIDs[$post['id']] = $newPostID = post($post);
 
@@ -4322,15 +4255,17 @@ function mod_ban_hash(string $board, int $post_no, int|null $index = null, bool 
         }
 
 		$isVideo = (isset($files[$index]->is_a_video) && $files[$index]->is_a_video) || in_array($files[$index]->extension, ['webm', 'mp4']);
+		$file = $files[$index]->file;
 
         if (isset($post['shadow']) && $post['shadow']) {
-            $config['dir']['img'] = $config['dir']['shadow_del'] . (!$isVideo ? $config['dir']['img'] : $config['dir']['thumb']);
-        } elseif ($isVideo) {
-			$config['dir']['img'] = $config['dir']['thumb'];
+            $config['dir']['img'] = $config['dir']['shadow_del'];
+        }
+		if ($isVideo) {
+			$file = $files[$index]->thumb;	
 		}
 
 		if (!isset($files[$index]->blockhash)) {
-        	$hash = blockhash_hash_of_file(sprintf($config['board_path'], $board) . $config['dir']['img'] . $files[$index]->file, true);
+        	$hash = blockhash_hash_of_file($config['dir']['media'] . $file, true);
 		} else {
 			$hash = $files[$index]->blockhash;
 		}
@@ -4345,7 +4280,7 @@ function mod_ban_hash(string $board, int $post_no, int|null $index = null, bool 
         }
 
         if (!isset($toDelete)) {
-            deleteFile($post_no, true, $index, $board);
+            deleteFile($post_no, true, $index);
         }
 
         // Rebuild board

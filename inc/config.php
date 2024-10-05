@@ -1457,6 +1457,7 @@
 	$config['dir']['img'] = 'src/';
 	$config['dir']['thumb'] = 'thumb/';
 	$config['dir']['res'] = 'res/';
+	$config['dir']['media'] = 'media/';
 
 	// Shadow Del dir for files (non perm deleted)
 	$config['dir']['shadow_del'] = 'tempura/';

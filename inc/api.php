@@ -109,6 +109,8 @@ class Api
 
         $apiPost['ext'] = substr($file->file, $dotPos);
         $apiPost['tim'] = substr($file->file, 0, $dotPos);
+        $apiPost['full_path'] = $this->config['dir']['media'] . $file->file;
+        $apiPost['thumb_path'] = $this->config['dir']['media'] . $file->thumb;
 
         // Add spoiler flag to API data
         if (isset($file->thumb) && $file->thumb == 'spoiler') {

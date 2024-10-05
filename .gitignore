@@ -2,6 +2,8 @@
 res/
 src/
 thumb/
+media/*
+tempura/*
 *.html
 inc/instance-config.php
 

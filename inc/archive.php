@@ -86,13 +86,10 @@ class Archive {
             if ($post['files']) {
                 foreach (json_decode($post['files']) as $i => $f) {
                     if ($f->file !== 'deleted') {
-                        @copy($board['dir'] . $config['dir']['img'] . $f->file, $board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . $f->file);
-                        @copy($board['dir'] . $config['dir']['thumb'] . $f->thumb, $board['dir'] . $config['dir']['archive'] . $config['dir']['thumb'] . $f->thumb);
+                        @copy($config['dir']['media'] . $f->file, $board['dir'] . $config['dir']['archive'] . $config['dir']['img'] . $f->file);
+                        @copy($config['dir']['media'] . $f->thumb, $board['dir'] . $config['dir']['archive'] . $config['dir']['thumb'] . $f->thumb);
 
                         $file_list[] = $f;
-
-                        // $file_list[$i]['file'] = $f->file;
-                        // $file_list[$i]['thumb'] = $f->thumb;
                     }
                 }
             }

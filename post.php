@@ -756,13 +756,13 @@ function handle_post()
                 // Add all files
                 foreach($tmp_fi_file as $fi_key => $fi_file) {
                     if ($fi_file['size'] && $fi_file['tmp_name']) {
-                        $post['files'][] = process_filenames($fi_file, $board['dir'], sizeof($_FILES) > 1 || sizeof($file['size']) > 1, $i);
+                        $post['files'][] = process_filenames($fi_file, $board['uri'], sizeof($_FILES) > 1 || sizeof($file['size']) > 1, $i);
                         $i++;
                     }
                 }
             } else {
                 if ($file['size'] && $file['tmp_name']) {
-                    $post['files'][] = process_filenames($file, $board['dir'], sizeof($_FILES) > 1, $i);
+                    $post['files'][] = process_filenames($file, $board['uri'], sizeof($_FILES) > 1, $i);
                     $i++;
                 }
             }
@@ -1193,9 +1193,9 @@ function handle_post()
     // Remove board directories before inserting them into the database.
     if ($post['has_file']) {
         foreach ($post['files'] as $key => &$file) {
-            $file['file'] = mb_substr($file['file_path'], mb_strlen($board['dir'] . $config['dir']['img']));
+            $file['file'] = mb_substr($file['file_path'], mb_strlen($config['dir']['media']));
             if (!isset($file['thumb'])) {
-                $file['thumb'] = mb_substr($file['thumb_path'], mb_strlen($board['dir'] . $config['dir']['thumb']));
+                $file['thumb'] = mb_substr($file['thumb_path'], mb_strlen($config['dir']['media']));
             }
         }
     }
