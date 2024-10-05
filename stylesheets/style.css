@@ -311,7 +311,7 @@ div.video-container {
   }
 }
 
-.files {
+.files:has(.video-container) {
   display: flex;
   flex-flow: row wrap;
 }
