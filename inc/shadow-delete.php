@@ -233,11 +233,11 @@ class ShadowDelete
 
         foreach (json_decode($files) as $f) {
             if ($f->file !== 'deleted') {
-                $originalFile = $board['dir'] . $config['dir']['img'] . $f->file;
-                $originalThumb = $board['dir'] . $config['dir']['thumb'] . $f->thumb;
+                $originalFile = $config['dir']['media'] . $f->file;
+                $originalThumb =  $config['dir']['media'] . $f->thumb;
 
-                $shadowFile = $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file, $config['shadow_del']['filename_seed']);
-                $shadowThumb = $board['dir'] . $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb, $config['shadow_del']['filename_seed']);
+                $shadowFile = $config['dir']['shadow_del'] . $config['dir']['img'] . self::hashShadowDelFilename($f->file, $config['shadow_del']['filename_seed']);
+                $shadowThumb = $config['dir']['shadow_del'] . $config['dir']['thumb'] . self::hashShadowDelFilename($f->thumb, $config['shadow_del']['filename_seed']);
 
                 $spoilerThumb = $f->thumb === 'spoiler';
 

@@ -14,9 +14,9 @@ function postHandler(object $post): null | string
     foreach ($post->files as &$file) {
         if (in_array($file->extension, ['webm', 'mp4'])) {
             if ($config['webm']['use_ffmpeg']) {
-                $error = handleWebmWithFFmpeg($file, $board, $post->op, $config);
+                $error = handleWebmWithFFmpeg($file, $post->op, $config);
             } else {
-                $error = handleWebmWithoutFFmpeg($file, $board, $post->op, $config);
+                $error = handleWebmWithoutFFmpeg($file, $post->op, $config);
             }
 
             if ($error) {
@@ -28,7 +28,7 @@ function postHandler(object $post): null | string
     return null;
 }
 
-function handleWebmWithFFmpeg(object $file, array $board, bool $op, array $config): null | string
+function handleWebmWithFFmpeg(object $file, bool $op, array $config): null | string
 {
 
     require_once dirname(__FILE__) . '/ffmpeg.php';
@@ -45,10 +45,10 @@ function handleWebmWithFFmpeg(object $file, array $board, bool $op, array $confi
         $file = webm_set_spoiler($file, $config['spoiler_image']);
     } else {
         $file = set_thumbnail_dimensions($op, $file, $config);
-        $tnPath = $board['dir'] . $config['dir']['thumb'] . $file->file_id . '.webp';
+        $tnPath = $config['dir']['media'] . $file->file_id . '_t' . '.webp';
 
         if (make_webm_thumbnail($config, $file->file_path, $tnPath, $file->thumbwidth, $file->thumbheight, $webmInfo['duration']) === 0) {
-            $file->thumb = $file->file_id . '.webp';
+            $file->thumb = $file->file_id . '_t' . '.webp';
             $file->blockhash = blockhash_hash_of_file($tnPath);
             if (!verifyUnbannedHash($config, $file->blockhash)) {
                 return $config['error']['blockhash'];
@@ -61,7 +61,7 @@ function handleWebmWithFFmpeg(object $file, array $board, bool $op, array $confi
     return null;
 }
 
-function handleWebmWithoutFFmpeg(object $file, array $board, bool $op, array $config): null | string
+function handleWebmWithoutFFmpeg(object $file, bool $op, array $config): null | string
 {
 
     require_once dirname(__FILE__) . '/videodata.php';
@@ -71,7 +71,7 @@ function handleWebmWithoutFFmpeg(object $file, array $board, bool $op, array $co
         return $webmInfo['error']['msg'];
     }
 
-    $file->thumb = setThumbnailFromVideoDetails($file, $videoDetails, $board, $config);
+    $file->thumb = setThumbnailFromVideoDetails($file, $videoDetails, $config);
     $file->width = $videoDetails['width'] ?? $file->width;
     $file->height = $videoDetails['height'] ?? $file->height;
 
@@ -82,10 +82,10 @@ function handleWebmWithoutFFmpeg(object $file, array $board, bool $op, array $co
     return null;
 }
 
-function setThumbnailFromVideoDetails(object $file, array $videoDetails, array $board, array $config): string
+function setThumbnailFromVideoDetails(object $file, array $videoDetails, array $config): string
 {
 
-    $thumbName = $board['dir'] . $config['dir']['thumb'] . $file->file_id . '.webm';
+    $thumbName = $config['dir']['media'] . $file->file_id . '.webm';
 
     if ($config['spoiler_images'] && isset($_POST['spoiler'])) {
         $file = webm_set_spoiler($file, $config['spoiler_image']);

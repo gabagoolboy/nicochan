@@ -6,11 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
             `<fieldset><legend>${_('Misc.')}</legend>
             <label class="misc-settings" id="removeElevator"><input type="checkbox">${_('Remove elevator')}</label>
             <label class="misc-settings" id="showSpoilerText"><input type="checkbox">${_('Always show spoiler')}</label>
+            <label class="misc-settings" id="downloadNewFilename"><input type="checkbox">${_('Download with new filename')}</label>
             </fieldset>`
         );
     }
 
-    ['removeElevator', 'showSpoilerText'].forEach(id => {
+    ['removeElevator', 'showSpoilerText', 'downloadNewFilename'].forEach(id => {
         const checkbox = document.querySelector(`#${id} > input`);
         if (checkbox) {
             if (localStorage.getItem(id) === 'true') {
@@ -57,5 +58,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
+
+        if (id === 'downloadNewFilename') {
+            updateDownloadFilename(isChecked);
+        }
     }
+
+    function updateDownloadFilename(isChecked, sel = document) {
+        const icons = sel.querySelectorAll('a.download-image-icon');
+        icons?.forEach(icon => {
+            if (isChecked) {
+                icon.setAttribute('download', icon.dataset.newFilename);
+            } else {
+                icon.setAttribute('download', icon.dataset.unixFilename);
+            }
+        });
+    }
+
+    document.addEventListener('new_post_js', (event) => {
+        const isChecked = localStorage.getItem('downloadNewFilename') === 'true';
+        updateDownloadFilename(isChecked, event.detail.detail);
+    })
 });

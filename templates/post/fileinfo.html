@@ -8,7 +8,7 @@
                     <img class="post-image deleted" src="{{ config.root ~ config.image_deleted }}" alt="" />
                 {% else %}
                     <p class="fileinfo">
-                        {% trans %}File:{% endtrans %}<a href="{{ config.uri_img ~ file.file }}" download="{{ file.file }}"><i class="fa fa-download"></i></a>
+                        {% trans %}File:{% endtrans %}<a class="download-image-icon" href="{{ config.uri_img ~ file.file }}" download="{{ file.file_id_unix ~ '.' ~ file.extension }}" data-unix-filename="{{ file.file_id_unix ~ '.' ~ file.extension }}" data-new-filename="{{ file.file }}"><i class="fa fa-download"></i></a>
                         <a class="file-url" href="{{ post.shadow ? config.uri_shadow_img : config.uri_img }}{{ file.file }}">{{ file.file }}</a>
                         <span class="unimportant fileinfo-desktop">
                             &nbsp;
