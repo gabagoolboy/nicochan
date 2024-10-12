@@ -250,4 +250,38 @@ class Api
 
         return $apiCatalog;
     }
+
+    public function serializeBoardsWithConfig(array $boards): string
+    {
+        global $config; // we need to use global here because of openBoard
+
+        $apiBoard = [];
+        foreach ($boards as $_board) {
+            if (!openBoard($_board['uri'])) {
+                break;
+            }
+
+            $board_config = [
+                'board_locked' => $config['board_locked'],
+                'thread_captcha' => $config['captcha']['thread_captcha'],
+                'post_captcha' => $config['captcha']['post_captcha'],
+                'allow_delete' => $config['allow_delete'],
+                'image_hard_limit' => $config['image_hard_limit'],
+                'reply_hard_limit' => $config['reply_hard_limit'],
+                'spoiler_images' => $config['spoiler_images'],
+                'max_images' => $config['max_images'],
+                'poster_id' => $config['poster_ids'],
+                'hide_poster_id_op' => $config['hide_poster_id_thread'],
+                'forced_flag' => $config['countryballs'],
+                'flag' => $config['show_countryballs_single'],
+            ];
+
+            $apiBoard[] = [
+                'board' => $_board,
+                'config' => $board_config
+            ];
+        }
+
+        return json_encode($apiBoard);
+    }
 }
