@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			let targetPost = document.getElementById(`reply_${citeId}`) || document.getElementById(`op_${citeId}`);
 			if (!targetPost) return;
 
-            if (targetPost.classList.contains('op')) {
+            if (targetPost.classList.contains('op') && !['index', 'ukko'].includes(getActivePage())) {
 				if (targetPost.id.split('_')[1] === citeId) {
                 	const opTag = Vichan.createElement('small', { className: 'op_cite', text: ' (OP)' });
                 	if (!link.nextElementSibling?.textContent?.includes(opTag.textContent)) {
