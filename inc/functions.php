@@ -3537,7 +3537,7 @@ function getLatestReplies($config): array
 			$id = $post['thread'] ? $post['thread'] . '#' . $post['id'] : $post['id'];
 
 			$body = str_replace("\n", ' ', $post['body_nomarkup']);
-			$post['title'] = mb_substr($body, 0, 500) . '&hellip;';
+			$post['title'] = strip_tags(mb_substr($body, 0, 500) . '...');
 			$post['body_nomarkup'] = pm_snippet($body, 90);
             $post['link'] =  $dir . $config['dir']['res'] . $id;
 
