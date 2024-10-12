@@ -182,7 +182,7 @@
 					$files = json_decode($post['files']);
 
 					if ($files[0]) {
-						if ($files[0]->file == 'deleted') {
+						if ($files[0]->file == 'deleted' || $files[0]->thumb == 'deleted') {
 							if (count($files) > 1) {
 								foreach ($files as $file) {
 									if (($file == $files[0]) || ($file->file == 'deleted')) {

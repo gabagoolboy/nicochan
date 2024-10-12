@@ -4,7 +4,7 @@
         {% endif %}
         {% for index, file in post.files %}
             <div class="file{{ post.num_files > 1 ? ' multifile' }}" style="{{ post.num_files > 1 ? 'width:' ~ (file.thumbwidth + 40) ~ 'px' }}">
-                {% if file.file == 'deleted' %}
+                {% if file.file == 'deleted' or file.thumb == 'deleted' %}
                     <img class="post-image deleted" src="{{ config.root ~ config.image_deleted }}" alt="" />
                 {% else %}
                     <p class="fileinfo">
