@@ -18,6 +18,7 @@ function mod_page($title, $template, $args, $subtitle = false) {
 		'title' => $title,
 		'subtitle' => $subtitle,
 		'boardlist' => createBoardlist($mod),
+		'pm' => create_pm_header(),
 		'body' => Element($template,
 				array_merge(
 					array('config' => $config, 'mod' => $mod),
@@ -785,6 +786,7 @@ function mod_view_board($boardName, $page_no = 1) {
 	$page['btn'] = getPageButtons($page['pages'], true);
 	$page['mod'] = true;
 	$page['config'] = $config;
+	$page['pm'] = create_pm_header();
 
 	echo Element('index.html', $page);
 }
@@ -2998,6 +3000,7 @@ function mod_reports() {
 			'report' => $report,
 			'config' => $config,
 			'mod' => $mod,
+			'pm' => create_pm_header(),
 			'token' => make_secure_link_token('reports/' . $report['id'] . '/dismiss'),
 			'token_all' => make_secure_link_token('reports/' . $report['id'] . '/dismiss&all'),
 			'token_post' => make_secure_link_token('reports/'. $report['id'] . '/dismiss&post')
@@ -3111,6 +3114,7 @@ function mod_config($board_config = false) {
 			'boards' => listBoards(),
 			'board' => $board_config,
 			'file' => $config_file,
+			'pm' => create_pm_header(),
 			'token' => make_secure_link_token('config' . ($board_config ? '/' . $board_config : ''))
 		));
 		return;
@@ -3189,6 +3193,7 @@ function mod_config($board_config = false) {
 					$config_append = str_replace("\n", '&#010;', $config_append);
 				$page = array();
 				$page['title'] = 'Cannot write to file!';
+				$page['pm'] = create_pm_header();
 				$page['config'] = $config;
 				$page['body'] = '
 					<p style="text-align:center">Tinyboard could not write to <strong>' . $config_file . '</strong> with the ammended configuration, probably due to a permissions error.</p>
@@ -3454,6 +3459,7 @@ function mod_edit_page($id) {
 		$html = Element('page.html', array(
 			'config' => $config,
 			'boardlist' => createBoardlist(false),
+			'pm' => create_pm_header(),
 			'body' => $body,
 			'title' => utf8tohtml($page['title'])
 		));
