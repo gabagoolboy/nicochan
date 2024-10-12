@@ -17,11 +17,17 @@
 (function () {
   const getPosts = () => JSON.parse(localStorage.getItem('own_posts') || '{}');
   const setPosts = (posts) => localStorage.setItem('own_posts', JSON.stringify(posts));
-  const getBoard = () => document.querySelector('input[name="board"]')?.value;
+  const getBoard = (el) => {
+    if (el instanceof Element) {
+      return el.closest('[data-board]')?.getAttribute('data-board')
+    } else {
+      return document.querySelector('input[name="board"]')?.value || null;
+    }
+  }
 
   const updateReferenceMarkers = (postId, action, rootElement = document) => {
     const posts = getPosts();
-    const board = currentBoard;
+    const board = getBoard(rootElement);
 
     rootElement.querySelectorAll(`div.body .highlight-link[data-cite="${postId}"]`).forEach(link => {
       const youMarker = link.nextElementSibling?.matches('small.own_post');
@@ -33,9 +39,9 @@
     });
   };
 
-  const modifyPost = (postId, action) => {
+  const modifyPost = (postId, action, postElement) => {
     const posts = getPosts();
-    const board = currentBoard;
+    const board = getBoard(postElement);
     const postList = posts[board] || [];
 
     if (action === 'add' && !postList.includes(postId)) {
@@ -53,7 +59,6 @@
 
     setPosts(posts);
 
-    const postElement = document.getElementById(`reply_${postId}`) || document.getElementById(`op_${postId}`);
     if (postElement) {
       if (action === 'add') {
         postElement.classList.add('you');
@@ -72,7 +77,7 @@
 
   const updateReferencesInsidePost = (postElement) => {
     const posts = getPosts();
-    const board = currentBoard;
+    const board = getBoard(postElement);
 
     postElement.querySelectorAll('div.body .highlight-link').forEach(link => {
       const citedPostId = link.dataset.cite;
@@ -121,13 +126,14 @@
   let currentBoard = null;
 
   document.addEventListener('DOMContentLoaded', () => {
-    currentBoard = getBoard();
+    currentBoard = getBoard(document);
     updateAllPosts();
   });
 
   document.addEventListener('ajax_after_post', (event) => {
     const postId = event.detail.detail.id;
-    modifyPost(postId, 'add');
+    const postElement = document.getElementById(`reply_${postId}`) || document.getElementById(`op_${postId}`);
+    modifyPost(postId, 'add', postElement);
   });
 
   document.addEventListener('new_post_js', (event) => {
