@@ -228,7 +228,7 @@ class ShadowDelete
     * @param array $board Board-specific information.
     * @return void
     */
-    private static function handleFiles(string $files, string $operation, array $config, array $board): void
+    private static function handleFiles(string $files, string $operation, array $config): void
     {
 
         foreach (json_decode($files) as $f) {
@@ -293,7 +293,8 @@ class ShadowDelete
 
             if ($post['files']) {
                 // Move files to temp storage
-                self::handleFiles($post['files'], 'delete', $config, $board);
+                $files[] = $post['files'];
+                self::handleFiles($post['files'], 'delete', $config);
             }
 
             $ids[] = (int)$post['id'];
@@ -387,7 +388,7 @@ class ShadowDelete
             // Restore Files
             if ($post['files']) {
                 // Move files from temp storage
-                self::handleFiles($post['files'], 'restore', $config, $board);
+                self::handleFiles($post['files'], 'restore', $config);
             }
 
             $ids[] = (int)$post['id'];
@@ -466,7 +467,7 @@ class ShadowDelete
         while ($post = $query->fetch(PDO::FETCH_ASSOC)) {
             event('shadow-perm-delete', $post);
             if ($post['files']) {
-                self::handleFiles($post['files'], 'purge', $config, $board);
+                self::handleFiles($post['files'], 'purge', $config);
             }
 
             $ids[] = (int)$post['id'];
@@ -511,11 +512,10 @@ class ShadowDelete
         while ($shadow_post = $query->fetch(PDO::FETCH_ASSOC)) {
             event('shadow-perm-delete', $shadow_post);
 
-            // Set Board Dir for Deletion
-            $board['dir'] = sprintf($config['board_path'], $shadow_post['board']);
-
             // Delete files from temp storage
-            self::handleFiles($shadow_post['files'], 'purge', $config, $board);
+            foreach (json_decode($shadow_post['files']) as $file) {
+                self::handleFiles($file, 'purge', $config);
+            }
 
             self::dbDeleteShadowPost($shadow_post['board'], $shadow_post['post_id']);
 
