@@ -249,27 +249,32 @@ function modLog(string $action, ?string $_board = null): void {
 function create_pm_header(): mixed {
 	global $mod, $config;
 
-	if ($config['cache']['enabled'] && !$header = cache::get('pm_unread_' . $mod['id'])) {
-		if ($header === true)
-			return false;
+	if (!$mod) {
+		return null;
+	}
 
-		return $header;
+	if ($config['cache']['enabled']) {
+		$header = cache::get('pm_unread_' . $mod['id']);
+
+		if ($header) {
+			return $header;
+		}
 	}
 
 	$query = prepare("SELECT `id` FROM ``pms`` WHERE `to` = :id AND `unread` = 1");
 	$query->bindValue(':id', $mod['id'], PDO::PARAM_INT);
 	$query->execute() or error(db_error($query));
+	$pms = $query->fetchAll(PDO::FETCH_ASSOC);
 
-	if ($pm = $query->fetch(PDO::FETCH_ASSOC))
-		$header = ['id' => $pm['id'], 'waiting' => $query->rowCount() - 1];
-	else
-		$header = true;
+	if ($pms) {
+		$header = ['id' => $pms[0]['id'], 'waiting' => count($pms) - 1];
+	} else {
+		$header = null;
+	}
 
-	if ($config['cache']['enabled'])
+	if ($config['cache']['enabled']) {
 		cache::set('pm_unread_' . $mod['id'], $header);
-
-	if ($header === true)
-		return false;
+	}
 
 	return $header;
 }

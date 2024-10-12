@@ -461,6 +461,7 @@ class Post extends AbstractPost
             'board' => $this->full_board,
             'post' => &$this,
             'index' => $index,
+			'pm' => $this->mod ? create_pm_header() : null,
             'mod' => $this->mod
         ]);
     }
@@ -521,6 +522,7 @@ class Thread extends AbstractPost
             'index' => $index,
             'hasnoko50' => $hasnoko50,
             'isnoko50' => $isnoko50,
+			'pm' => $this->mod ? create_pm_header() : null,
             'mod' => $this->mod
         ]);
     }

@@ -1610,10 +1610,6 @@ function index($page, $mod=false) {
 		$body .= $thread->build(true);
 	}
 
-	if ($config['file_board']) {
-		$body = Element('fileboard.html', array('body' => $body, 'mod' => $mod));
-	}
-
 	return array(
 		'board' => $board,
 		'body' => $body,
@@ -1922,7 +1918,7 @@ function incrementSpamHash($hash) {
 }
 
 function buildIndex($global_api = 'yes') {
-	global $board, $config, $build_pages;
+	global $board, $config, $build_pages, $mod;
 
 	$pages = getPages();
 	if (!$config['try_smarter'])
@@ -1986,6 +1982,9 @@ function buildIndex($global_api = 'yes') {
 		$content['pages'][$page-1]['selected'] = true;
 		$content['btn'] = getPageButtons($content['pages']);
 		$content['antibot'] = $antibot;
+		if ($mod) {
+			$content['pm'] = create_pm_header();
+		}
 
 		file_write($filename, Element('index.html', $content));
 	}
@@ -2734,6 +2733,7 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 			'id' => $id,
 			'mod' => $mod,
 			'hasnoko50' => $hasnoko50,
+			'pm' => $mod ? create_pm_header() : null,
 			'isnoko50' => false,
 			'antibot' => $antibot,
 			'reports' => $mod ? getCountReports() : false,
@@ -2765,7 +2765,7 @@ function buildThread($id, $return = false, $mod = false, $shadow = false) {
 }
 
 function buildThread50($id, $return = false, $mod = false, $thread = null, $antibot = false) {
-	global $board, $config, $build_pages;
+	global $board, $config;
 	$id = round($id);
 
 	if ($antibot)
@@ -2835,6 +2835,7 @@ function buildThread50($id, $return = false, $mod = false, $thread = null, $anti
 		'config' => $config,
 		'id' => $id,
 		'mod' => $mod,
+		'pm' => $mod ? create_pm_header() : null,
 		'hasnoko50' => $hasnoko50,
 		'isnoko50' => true,
 		'antibot' => $mod ? false : ($antibot ? $antibot : create_antibot($board['uri'], $id)),
