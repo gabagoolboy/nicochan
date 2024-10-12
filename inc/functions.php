@@ -721,24 +721,29 @@ function hasPermission($action = null, $board = null, $_mod = null) {
 function listBoards($just_uri = false) {
 	global $config;
 
-	$just_uri ? $cache_name = 'all_boards_uri' : $cache_name = 'all_boards';
+	$cache_name = $just_uri ? 'all_boards_uri' : 'all_boards';
 
-	if ($config['cache']['enabled'] && ($boards = cache::get($cache_name)))
-		return $boards;
-
-	if (!$just_uri) {
-		$query = query("SELECT * FROM ``boards`` ORDER BY `uri`") or error(db_error());
-		$boards = $query->fetchAll();
-	} else {
-		$boards = array();
-		$query = query("SELECT `uri` FROM ``boards``") or error(db_error());
-		while ($board = $query->fetchColumn()) {
-			$boards[] = $board;
+	if ($config['cache']['enabled']) {
+		$cached_boards =  Cache::get($cache_name);
+		if ($cached_boards) {
+			return $cached_boards;
 		}
 	}
 
-	if ($config['cache']['enabled'])
-		cache::set($cache_name, $boards);
+	$sql = $just_uri ? "SELECT `uri` FROM ``boards``" : "SELECT * FROM ``boards`` ORDER BY `uri`";
+	$query = query($sql) or error(db_error());
+	$boards = $just_uri ? $query->fetchAll(PDO::FETCH_COLUMN) : $query->fetchAll(PDO::FETCH_ASSOC);
+
+	if ($config['api']['enabled'] && !$just_uri) {
+		$api = new Api($config);
+		$apiBoards = $api->serializeBoardsWithConfig($boards);
+		file_write($config['dir']['home'] . 'boards.json', $apiBoards);
+	}
+
+
+	if ($config['cache']['enabled']) {
+		Cache::set($cache_name, $boards);
+	}
 
 	return $boards;
 }
