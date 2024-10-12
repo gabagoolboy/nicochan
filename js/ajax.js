@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const updateProgress = (e) => {
                 const percentage = Math.round((e.loaded * 100) / e.total);
-                submitButton.value = _(`Posting... (${percentage}%)`);
+                submitButton.value = fmt(_(`Posting... ({0}%)`), [percentage]);
                 submitButton.setAttribute('disabled', 'disabled');
             };
 
