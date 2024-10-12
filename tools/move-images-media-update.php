@@ -40,9 +40,9 @@ foreach ($boards as $board) {
 			if ($image !== 'deleted') {
 				$update = _process_filenames($image, $board['uri'], count($images) > 1, $i);
 
-				if (isset($image['thumb']) && !in_array($image['thumb'], ['spoiler', 'deleted', 'file']) && file_exists($image['thumb_path'])) {
+				if (isset($image['thumb']) && !in_array($image['thumb'], ['spoiler', 'deleted', 'file'])) {
 					echo "Post #{$post['id']}: Has valid thumbnail.\n";
-					$old_thumb = $image['thumb_path'];
+					$old_thumb = $config['dir']['thumb'] . $image['thumb'];
 					$image['thumb_path'] = $update['thumb_path'];
 					$image['thumb'] = mb_substr($image['thumb_path'], mb_strlen($config['dir']['media']));
 
@@ -53,7 +53,7 @@ foreach ($boards as $board) {
 					}
 				}
 
-				$old_src = $image['file_path'];
+				$old_src = $config['dir']['src'] . $image['file'];
 				$image['file_path'] = $update['file_path'];
 				$image['file'] = mb_substr($image['file_path'], mb_strlen($config['dir']['media']));
             	$image['file_id'] = $update['file_id'];
@@ -90,6 +90,7 @@ function _process_filenames($_file, $board, $multiple, $i){
 	do {
 		$_file['file_id'] = time() . hrtime(true) . $board . mt_rand();
 		$_file['file_id_unix'] = time() . substr(microtime(), 2, 3);
+		$_file['thumb_ext'] = strtolower(mb_substr($_file['thumb_path'], mb_strrpos($_file['thumb_path'], '.') + 1));
 
 		if ($multiple) {
 			$_file['file_id'] .= "-$i";
@@ -101,6 +102,6 @@ function _process_filenames($_file, $board, $multiple, $i){
 	} while (file_exists($config['dir']['media'] . $_file['file_id'] . '.' . $_file['extension']));
 
 	$_file['file_path'] = $config['dir']['media'] . $_file['file_id'] . '.' . $_file['extension'];
-	$_file['thumb_path'] = $config['dir']['media'] . $_file['file_id'] . '_t' . '.' . ($config['thumb_ext'] ? $config['thumb_ext'] : $_file['extension']);
+	$_file['thumb_path'] = $config['dir']['media'] . $_file['file_id'] . '_t' . '.' . $_file['thumb_ext'];
 	return $_file;
 }
