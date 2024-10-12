@@ -309,7 +309,7 @@ function check_login(bool $prompt = false): void {
 		$user = $query->fetch(PDO::FETCH_ASSOC);
 
 		// validate password hash
-		if ($cookie[1] !== mkhash($cookie[0], $user['password'], $cookie[2])) {
+		if (!$user || $cookie[1] !== mkhash($cookie[0], $user['password'], $cookie[2])) {
 			// Malformed cookies
 			destroyCookies();
 			if ($prompt) mod_login();
