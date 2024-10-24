@@ -3389,28 +3389,27 @@ function getMaxmind($ip)
 	global $config;
 
 	try {
-	$reader = new GeoIp2\Database\Reader($config['maxmind_db_path'], ['pt-BR', 'en']);
-	$record = $reader->city($ip);
-	$countryIso = strtolower($record->country->isoCode);
+		$reader = new GeoIp2\Database\Reader($config['maxmind']['db_path'], $config['maxmind']['locale']);
+		$record = $reader->city($ip);
+		$countryIso = strtolower($record->country->isoCode);
 	}catch(Exception $e){
-		$stateCode = '55-BR';
-		$stateName = 'Índia';
-		return ['country' => $stateCode, 'country_name' => $stateName];
+		return [
+			$config['maxmind']['country_fallback'],
+			$config['maxmind']['code_fallback']
+		];
 	}
-	if($countryIso === 'br' && ($config['countryballs'] || $config['show_countryballs_single'])){
+
+	$stateName = $record->country->name;
+	$stateCode = &$countryIso;
+
+	if ($countryIso === $config['maxmind']['country_specific'] && $config['maxmind']['use_most_specific_subdivision']) {
 		$stateName = $record->mostSpecificSubdivision->name;
-		$stateCode = strtolower($record->mostSpecificSubdivision->isoCode);
+		$stateCode = strtolower($record->mostSpecificSubdivision->isoCode) . '-' . strtoupper($config['maxmind']['country_specific']);
+	}
 
-		// lol
-		if (empty($stateName)) {
-			$stateName = 'Índia';
-			$stateCode = '55';
-		}
-
-		$stateCode .= '-BR';
-	} else {
-		$stateName = $record->country->name;
-		$stateCode = &$countryIso;
+	if (empty($stateName)) {
+		$stateName = $config['maxmind']['country_fallback'];
+		$stateCode = $config['maxmind']['code_fallback'];
 	}
 
 	return [$stateCode, $stateName];

@@ -837,7 +837,7 @@ function handle_post()
         if ($post['flag_iso']) {
             $post['flag_ext'] = $config['mod']['forcedflag_countries'][$post['flag_iso']];
         } else {
-            list($post['flag_iso'], $post['flag_ext']) = array_values(getMaxmind($_SERVER['REMOTE_ADDR']));
+            list($post['flag_iso'], $post['flag_ext']) = getMaxmind($_SERVER['REMOTE_ADDR']);
         }
 
     }

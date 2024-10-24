@@ -2229,8 +2229,29 @@
 	// Securimage options
 	$config['securimage_options'] = ['send_headers' => false, 'no_exit' => true];
 
-	// Maxmind db path
-	$config['maxmind_db_path'] = '/usr/share/GeoIP/GeoLite2-City.mmdb';
+	// Maxmind configuration
+	$config['maxmind'] = [
+		// Path to the MaxMind GeoLite2 City database file used for IP geolocation.
+		'db_path' => '/usr/share/GeoIP/GeoLite2-City.mmdb',
+
+		// Array of preferred locales to use when fetching location data.
+		// The first locale in the array will be prioritized.
+		'locale' => ['pt-BR', 'en'],
+
+		// Default country name to use if no geolocation data is found for the IP address.
+		'country_fallback' => 'Missing',
+		// Default country code to use if no geolocation data is found.
+		'code_fallback' => '00',
+
+		// Whether to fetch the most specific subdivision (e.g., state or province)
+		// in addition to country-level information. If false, only country data is fetched.
+		'use_most_specific_subdivision' => false,
+
+		// The specific country ISO code (e.g., 'br' for Brazil) for which detailed
+		// information will be fetched when 'use_most_specific_subdivision' is set to true.
+		// This value is also used to append the country code to the subdivision information.
+		'country_specific' => 'br'
+	];
 
 	// Salt for passwords
 	$config['secure_password_salt'] = "abcdefghijklmnopqrstuvxz";
