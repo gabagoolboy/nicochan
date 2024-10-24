@@ -1967,7 +1967,7 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 
 	$security_token = make_secure_link_token($board . '/ban' . $delete . '/' . $post);
 
-	$query = prepare(sprintf('SELECT ' . ($config['ban_show_post'] ? '*' : '`ip`, `cookie`, `thread`') .
+	$query = prepare(sprintf('SELECT ' . ($config['ban_show_post'] ? '*' : '`ip`, `cookie`, `thread`, `locked`') .
 		' FROM ``posts_%s`` WHERE `id` = :id', $board));
 	$query->bindValue(':id', $post);
 	$query->execute() or error(db_error($query));
