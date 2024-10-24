@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!isMobile) return;
 
     const boardList = document.querySelector('.boardlist');
+    boardList.classList.add('hidden');
     const links = boardList.querySelectorAll('a[href]');
     const selectElement = document.createElement("select");
 
@@ -102,4 +103,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     boardList.replaceChildren(selectElement, indexButton, backButton);
+    boardList.classList.remove('hidden');
 });
