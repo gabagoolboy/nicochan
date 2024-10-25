@@ -19,7 +19,7 @@
 
     <meta property="og:title" content="{{ meta_subject }}">
     <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id ~ '.html') }}">
+    <meta property="og:url" content="{{ config.domain }}/{{ board.uri }}/{{ config.dir.res }}{{ thread.id ~ '.html' }}">
     {% if thread.files[0].thumb is defined %}
         <meta property="og:image" content="{{ config.domain }}/{{ config.dir.media }}{{ thread.files.0.thumb }}">
     {% endif %}
