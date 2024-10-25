@@ -3601,3 +3601,71 @@ function verifyUnbannedHash(array $config, string $filehash)
 
 	return true;
 }
+
+function getIpAddress(): ?string
+{
+    $localIpPatterns = "/^(::1|fc00::|fd00::|10\.|127\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.|0\.|255\.)/";
+
+    if (preg_match($localIpPatterns, $_SERVER['REMOTE_ADDR'])) {
+        return null; // Skip local IP addresses
+    }
+
+    return $_SERVER['REMOTE_ADDR'];
+}
+
+function getGeoIpData(): array
+{
+	global $config;
+
+    $ip = getIpAddress();
+
+    $defaultResult = [
+        'proxy' => false,
+        'ip' => $ip,
+    ];
+
+	if ($ip === null) {
+        return $defaultResult;
+    }
+
+	if ($config['cache']['enabled']) {
+		$cacheKey = "ip_result_api_{$ip}";
+		$ret = Cache::get($cacheKey);
+		if ($ret) {
+			return $ret;
+		}
+	}
+
+    $apiUrl = "http://ip-api.com/json/{$ip}?fields=proxy,status";
+    $apiResponse = @file_get_contents($apiUrl);
+	if ($apiResponse !== false) {
+    	$apiJson = json_decode($apiResponse, true);
+    	if ($apiJson['status'] === 'success') {
+        	$geoData = array_merge($defaultResult, [
+            	'proxy' => $apiJson['proxy'],
+        	]);
+
+			if ($config['cache']['enabled']) {
+				Cache::set($cacheKey, $geoData, 3 * 24 * 60 * 60);
+			}
+
+			return $geoData;
+    	}
+}
+
+    return $defaultResult;
+}
+
+function handleBlocks(): bool
+{
+    global $config;
+
+    $geoData = getGeoIpData();
+    $isNotMod = empty($_POST['mod']);
+
+    if ($config['block_proxy_vpn']['enabled'] && $geoData['proxy'] && $isNotMod) {
+        return true;
+    }
+
+	return false;
+}

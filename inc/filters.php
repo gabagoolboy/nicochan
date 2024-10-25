@@ -201,7 +201,7 @@ class FilterAction
         }
 
         if ($this->reject) {
-            error($this->message ?? 'You have been banned.');
+            error($this->message ?? _('You have been banned. <a href="/banned.php">Click here to view.</a>'));
         }
     }
 }

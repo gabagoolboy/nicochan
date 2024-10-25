@@ -2266,3 +2266,31 @@
 	// Loading lazy
 	// https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading
 	$config['content_loading_lazy'] = true;
+
+	// Block proxy or vpn. If true, use the filter below to activate block/reject
+	$config['block_proxy_vpn'] = [
+		// Enable or disable blocking of proxy and VPN users.
+		// When set to true, the system will attempt to detect and block users accessing the site via proxies or VPNs.
+		'enabled' => false,
+		// Determines whether the filter system should be used to apply actions like bans on proxy/VPN users.
+		// IMPORTANT: For this to work, the filter configuration below must be uncommented.
+		// When set to true, the configured filter (below) will be applied to users identified as using proxies or VPNs.
+		'use_filter' => false,
+		// Specifies the ban duration (in seconds) for proxy/VPN users if 'use_filter' is set to false.	
+		'ban_time' => 0,
+		// Same as ban_time but for reason
+		'ban_reason' => 'PROXY/VPN'
+	];
+
+	/*
+	$config['filters'][] = [
+		'condition' => [
+			'custom' => 'handleBlocks'
+		],
+		'action' => 'ban', // can be reject
+		'addNote' => true, // will add post attempt to ip notes
+		'allBoards' => true,
+    	'expires' => 0,
+    	'reason' => 'PROXY/VPN'
+	];
+	*/

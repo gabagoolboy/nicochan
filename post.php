@@ -455,6 +455,14 @@ function handle_post()
 
     checkDNSBL();
 
+    if ($config['block_proxy_vpn']['enabled'] && !$config['block_proxy_vpn']['use_filter'] && handleBlocks()) {
+        Bans::new_ban($post['ip'],
+            get_uuser_cookie(),
+            $config['block_proxy_vpn']['ban_reason'],
+            $config['block_proxy_vpn']['ban_time'],
+        );
+    }
+
     // Check if banned, warned or nicenoticed
     checkBan($board['uri']);
 
