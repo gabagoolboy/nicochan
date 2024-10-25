@@ -4373,3 +4373,40 @@ function mod_change_hashlist(int $id)
 
 	header('Location: ?/hashlist', true, $config['redirect_http']);
 }
+
+function mod_whitelist_region(){
+	global $config;
+
+	if (!hasPermission($config['mod']['view_whitelist']))
+		error($config['error']['noaccess']);
+
+	$query = prepare('SELECT * FROM ``whitelist_region``');
+	$query->execute() or error(db_error());
+	$token_list = $query->fetchAll(PDO::FETCH_CLASS);
+	mod_page(_('Whitelist'), 'mod/whitelist_tokens.html', array(
+		'security_token' => make_secure_link_token('change_wl'),
+		'wl_tokens' => $token_list
+	));
+}
+
+function mod_change_whitelist($ip = false){
+	global $config;
+
+	if (!hasPermission($config['mod']['view_whitelist']))
+		error($config['error']['noaccess']);
+
+	if (isset($_POST['ip']) && isset($_POST['create'])) {
+
+		$re = new Regionblock($_POST['ip'], $_POST['tokenu'] ?? null);
+		$re->addUser();
+
+	} elseif (isset($ip) && $ip) {
+
+		$re = new Regionblock($ip);
+		$re->revokeWhitelist();
+	}
+	else
+		error(_('Fields are not set'));
+
+	header('Location: ?/wl_region', true, $config['redirect_http']);
+}

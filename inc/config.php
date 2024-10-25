@@ -2267,6 +2267,14 @@
 	// https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading
 	$config['content_loading_lazy'] = true;
 
+	// For this to work, you need to use the custom filter handleBlocks
+	// This will not ban the user, but reject the message
+	$config['regionblock'] = [
+		'enabled' => false,
+		'error_message' => _('It\'s not allowed to post from a foreign country.</br></br>Do you think this was a mistake?</br>Send us an email with your IP (%s) to:</br><strong>email@</strong>'),
+		'countries_allowed' => ['BR'],
+	];
+
 	// Block proxy or vpn. If true, use the filter below to activate block/reject
 	$config['block_proxy_vpn'] = [
 		// Enable or disable blocking of proxy and VPN users.

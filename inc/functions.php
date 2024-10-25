@@ -3620,8 +3620,10 @@ function getGeoIpData(): array
     $ip = getIpAddress();
 
     $defaultResult = [
+		'country' => '',
         'proxy' => false,
         'ip' => $ip,
+		'token' => $_COOKIE['token'] ?? false
     ];
 
 	if ($ip === null) {
@@ -3642,6 +3644,7 @@ function getGeoIpData(): array
     	$apiJson = json_decode($apiResponse, true);
     	if ($apiJson['status'] === 'success') {
         	$geoData = array_merge($defaultResult, [
+				'country' => in_array($apiJson['countryCode'], $config['regionblock']['countries_allowed']),
             	'proxy' => $apiJson['proxy'],
         	]);
 
@@ -3656,12 +3659,40 @@ function getGeoIpData(): array
     return $defaultResult;
 }
 
+function getRegionWhitelist(array $config, array $geoData) {
+	$whitelistCacheKey = "regionblock_whitelist_ip_{$geoData['ip']}";
+
+	if ($config['cache']['enabled']) {
+		$whitelist = Cache::get($whitelistCacheKey);
+	}
+
+	if (!isset($whitelist)) {
+		$regionBlock = new Regionblock(null, $geoData['token']);
+		$whitelist = $regionBlock->validateToken();
+
+		if ($config['cache']['enabled']) {
+			if ($whitelist) {
+				Cache::set($whitelistCacheKey, $whitelist, 3 * 24 * 60 * 60);
+			} else {
+				Cache::set($whitelistCacheKey, $whitelist, 60 * 60);
+			}
+		}
+	}
+
+	return $whitelist;
+}
+
 function handleBlocks(): bool
 {
     global $config;
 
     $geoData = getGeoIpData();
     $isNotMod = empty($_POST['mod']);
+
+	if ($config['regionblock']['enabled'] && !$geoData['country'] && !$geoData['proxy'] && $isNotMod && !getRegionWhitelist($config, $geoData)) {
+		error(sprintf($config['error']['regionblock'], $geoData['ip']));
+		return true;
+	}
 
     if ($config['block_proxy_vpn']['enabled'] && $geoData['proxy'] && $isNotMod) {
         return true;

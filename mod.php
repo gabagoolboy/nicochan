@@ -79,6 +79,9 @@ class Router {
 			'/edit_page/(\d+)' => 'secure_POST edit_page', // edit site-wide static pages
 			'/edit_pages/delete/([a-z0-9]+)' => 'secure delete_page', // delete site-wide static pages
 			'/edit_pages/delete/([a-z0-9]+)/(\%b)' => 'secure delete_page_board', // delete static pages from board
+
+			'/wl_region' => 'whitelist_region', // view whitelist
+			'/change_wl(/([\w.:]+))?' => 'secure_POST change_whitelist', // modify whitelist
 			'/hashlist' => 'hashlist', // view hashban list
 			'/hashlist/(\d+)' => 'secure_POST change_hashlist', // modify hashban list
 
