@@ -84,7 +84,7 @@ li {
             {% endif %}
             <li>
                 <a href="?/noticeboard">
-                    <i class="fa fa-newspaper-o"></i>&nbsp;{% trans %}View all noticeboard entries{% endtrans %}
+                    <i class="fa-solid fa-newspaper"></i>&nbsp;{% trans %}View all noticeboard entries{% endtrans %}
                 </a>
             </li>
         {% endif %}
@@ -157,7 +157,7 @@ li {
             <li><a href="?/recent/25"><i class="fa fa-comments"></i>&nbsp;{% trans %}Recent posts{% endtrans %}</a></li>
         {% endif %}
         {% if mod|hasPermission(config.mod.view_shadow_posts) %}
-            <li><a href="?/recent_shadow/25"><i class="fa fa-comments-o"></i>&nbsp;{% trans %}Recent shadow deleted posts{% endtrans %}</a></li>
+            <li><a href="?/recent_shadow/25"><i class="fa fa-comment-slash"></i>&nbsp;{% trans %}Recent shadow deleted posts{% endtrans %}</a></li>
         {% endif %}
         {% if mod|hasPermission(config.mod.view_statistics) %}
             <li><a href="?/statistics"><i class="fa fa-area-chart"></i>&nbsp;{% trans %}View Statistics{% endtrans %}</a></li>

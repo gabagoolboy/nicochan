@@ -50,7 +50,12 @@
                     {% endif %}
                     {% if mod|hasPermission(config.mod.bandeletebyip, board.uri) %}
                         <li>
-                            <a title="{% trans %}Ban & Delete all post by IP{% endtrans %}" data-action="bandeleteglobal" href="?/{{ board.dir }}ban&amp;deletebyip/{{ post.id }}">{{ config.mod.link_bandeletebyip }} - {% trans %}Ban & Delete all post by IP{% endtrans %}</a>
+                            <a title="{% trans %}Ban & Delete all post by IP{% endtrans %}" data-action="bandeleteip" href="?/{{ board.dir }}ban&amp;deletebyip/{{ post.id }}">{{ config.mod.link_bandeletebyip }} - {% trans %}Ban & Delete all post by IP{% endtrans %}</a>
+                        </li>
+                    {% endif %}
+                    {% if mod|hasPermission(config.mod.bandeletebyipglobal, board.uri) %}
+                        <li>
+                            <a title="{% trans %}Ban & Delete all post by IP global{% endtrans %}" data-action="bandeleteipglobal" href="?/{{ board.dir }}ban&amp;deletebyipglobal/{{ post.id }}">{{ config.mod.link_bandeletebyipglobal }} - {% trans %}Ban & Delete all post by IP global{% endtrans %}</a>
                         </li>
                     {% endif %}
                     {% if mod|hasPermission(config.mod.warning, board.uri) and mod|hasPermission(config.mod.delete, board.uri) %}

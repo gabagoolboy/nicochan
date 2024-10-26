@@ -132,7 +132,7 @@ class Router {
 			'/(\%b)/shadow_restore/(\d+)/(\d+)' => 'secure_POST shadow_restore_post', // restore shadow deleted post
 			'/(\%b)/shadow_delete/(\d+)' => 'secure_POST shadow_delete_post', // permanent delete shadow deleted post
 
-			'/(\%b)/ban(&delete|&deletebyip)?/(\d+)' => 'secure_POST ban_post', // ban poster
+			'/(\%b)/ban(&delete|&deletebyip|&deletebyipglobal)?/(\d+)' => 'secure_POST ban_post', // ban poster
 			'/(\%b)/hash/(\d+)/(\d+)' => 'secure_POST ban_hash', // hashban a file
 			'/(\%b)/move/(\d+)' => 'secure_POST move', // move thread
 			'/(\%b)/move_reply/(\d+)' => 'secure_POST move_reply', // move reply

@@ -7,7 +7,12 @@
     <link rel="stylesheet" type="text/css" id="stylesheet" href="{{ config.uri_stylesheets }}{{ config.default_stylesheet[1] }}?v={{ config.resource_version }}">
 {% endif %}
 {% if config.font_awesome %}
-    <link rel="stylesheet" href="{{ config.root }}{{ config.font_awesome_css }}?v={{ config.resource_version }}">
+    {% for css in config.font_awesome_css %}
+        <link rel="stylesheet" href="{{ config.root }}{{ css }}">
+    {% endfor %}
+{% endif %}
+{% if config.css_special %}
+    <link rel="stylesheet" href="{{ config.root }}{{ config.css_special_css }}">
 {% endif %}
 {% if config.country_flags_condensed %}
     <link rel="stylesheet" href="{{ config.root }}{{ config.country_flags_condensed_css }}?v={{ config.resource_version }}">

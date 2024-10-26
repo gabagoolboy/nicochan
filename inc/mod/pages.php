@@ -1956,6 +1956,11 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 				error($config['error']['noaccess']);
 			}
 			break;
+		case '&deletebyipglobal':
+			if (!hasPermission($config['mod']['deletebyip_global'], $board)) {
+				error($config['error']['noaccess']);
+			}
+			break;
 		case '&delete':
 		case '':
 		default:
@@ -2031,6 +2036,9 @@ function mod_ban_post($board, $delete, $post, $token = false) {
 					break;
 				case '&deletebyip':
 					mod_deletebyip($board, '', $post);
+					break;
+				case '&deletebyipglobal':
+					mod_deletebyip($board, '&global', $post);
 					break;
 				case '':
 				default:
@@ -3168,7 +3176,7 @@ function mod_config($board_config = false) {
 
 				$config_append .= ' = ';
 				if (@$var['permissions'] && isset($config['mod']['groups'][$value])) {
-					$config_append .= $config['mod']['groups'][$value];
+					$config_append .= strtoupper($config['mod']['groups'][$value]);
 				} else {
 					$config_append .= var_export($value, true);
 				}

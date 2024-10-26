@@ -5,11 +5,12 @@ thumb/
 media/*
 tempura/*
 *.html
-inc/instance-config.php
+/inc/config.php
+/inc/instance-config.php
+/static/favicon.png
 
 # include some files though
 !/templates/*.html
-!/inc/config.php
 
 # minify
 /inc/lib/minify
@@ -70,7 +71,7 @@ favicon.ico
 
 # Banners
 /static/banners/*
-/static/banners_priority/
+/static/banners_priority/*
 
 # Images from twemoji
 js/twemoji/16x16/

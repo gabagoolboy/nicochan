@@ -461,7 +461,7 @@ function doreport (form) {
 }
 
 function handleArchiveMessage() {
-    handleSortable();
+    //handleSortable();
     const voteLink = document.querySelectorAll('.vote-link');
     if (voteLink) {
         voteLink.forEach((link) => {

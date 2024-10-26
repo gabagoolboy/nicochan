@@ -52,12 +52,7 @@
                         {{ antibot.html() }}
                     </th>
                     <td>
-                        <select id="select_m" name="name">
-                            <option value="">{% trans %}Select a capcode{% endtrans %}</option>
-                            {% for capcode in capcodes %}
-                                <option value="## {{ capcode }}">{{ capcode }}</option>
-                            {% endfor %}
-                        </select>
+				        <input type="text" name="name" size="25" maxlength="35" autocomplete="off">
                         {{ antibot.html() }}
                     </td>
                 </tr>

@@ -505,7 +505,7 @@ div.post.reply {
   border-style: none solid solid none;
   border-color: #B7C5D9;
   display: inline-block;
-  max-width: 63%;
+  max-width: 78%;
 }
 
 span.trip {
@@ -1573,7 +1573,6 @@ table.archive-list tr:hover td {
   cursor: pointer;
   text-decoration: none;
   background: none;
-  color: #ff477e !important;
   z-index: 10;
 }
 

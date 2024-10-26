@@ -41,13 +41,6 @@ const banlist_init = (token, inMod) => {
 
   const createColumnDefs = () => [
     {
-      headerName: _('Unban'),
-      field: 'unban',
-      width: 10,
-      checkboxSelection: true,
-      hide: !inMod,
-    },
-    {
       headerName: _('ID'),
       field: 'id',
       width: 10,
@@ -159,10 +152,10 @@ const banlist_init = (token, inMod) => {
     const columnDefs = createColumnDefs();
 
     const gridOptions = {
+      theme: customTheme,
       columnDefs,
       rowData: data,
       localeText: AG_GRID_LOCALE_BR,
-      rowSelection: 'multiple',
       enableCellTextSelection: true,
       suppressMovableColumns: true,
       pagination: true,
@@ -170,6 +163,11 @@ const banlist_init = (token, inMod) => {
       paginationPageSizeSelector: [50, 100, 200, 300, 500],
       domLayout: 'autoHeight',
       suppressHorizontalScroll: false,
+      selection: {
+        mode: 'multiRow',
+        checkboxes: inMod,
+        enableClickSelection: false
+      },
       onGridReady: ({ api }) => {
         api.sizeColumnsToFit();
         gridApi = api;

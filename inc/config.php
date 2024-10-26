@@ -1169,7 +1169,11 @@
 	// http://fortawesome.github.io/Font-Awesome/icon/pushpin/
 	// http://fortawesome.github.io/Font-Awesome/icon/lock/
 	$config['font_awesome'] = true;
-	$config['font_awesome_css'] = 'stylesheets/font-awesome/css/font-awesome.min.css';
+	$config['font_awesome_css'] = [
+		'stylesheets/font-awesome/css/fontawesome.min.css',
+		'stylesheets/font-awesome/css/solid.min.css',
+		'stylesheets/font-awesome/css/regular.min.css',
+	];
 
 	/*
 	 * For lack of a better name, “boardlinks” are those sets of navigational links that appear at the top
@@ -1577,6 +1581,7 @@
 	$config['mod']['link_hash'] = '[H]';
 	$config['mod']['link_bandelete'] = '[B&amp;D]';
 	$config['mod']['link_bandeletebyip'] = '[B&amp;D+]';
+	$config['mod']['link_bandeletebyipglobal'] = '[B&amp;D++]';
 	$config['mod']['link_deletefile'] = '[F]';
 	$config['mod']['link_spoilerimage'] = '[S]';
 	$config['mod']['link_unspoilerimage'] = '<s>[S]</s>';
