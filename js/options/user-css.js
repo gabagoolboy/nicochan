@@ -35,7 +35,8 @@
 
     function applyCustomCSS() {
         document.querySelectorAll('.user-css').forEach(el => el.remove());
-        const lastStylesheet = document.querySelector('link[rel="stylesheet"]:last-of-type');
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        const lastStylesheet = links[links.length - 1];
         const styleElement = Vichan.createElement('style', {
             className: 'user-css',
             text: localStorage.user_css || ''
